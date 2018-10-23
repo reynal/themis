@@ -41,9 +41,6 @@ public class ADSREnveloppe {
 	public void setReleaseMs(double releaseMs) {
 		this.releaseMs = releaseMs;
 	}
-	
-	
-	
-	
+
 
 }
