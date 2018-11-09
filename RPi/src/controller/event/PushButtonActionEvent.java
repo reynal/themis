@@ -15,6 +15,11 @@ public class PushButtonActionEvent extends EventObject {
 
 		public PushButtonActionEvent(Object source) {
 			super(source);
-			// TODO Auto-generated constructor stub
+			
+		}
+
+		public PushButtonActionEvent(Object source, boolean state) {
+			super(source);
+			this.state = state;
 		}
 }
