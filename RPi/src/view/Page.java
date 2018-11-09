@@ -1,10 +1,16 @@
 package view;
 
+/**
+ * TODO : doc de Page
+ * @author sydxrey
+ *
+ */
 public class Page {
 	
-	void setContentView(View v) {
+	// TODO : implementer le double arbre view/model
+	/*void setContentView(View v) {
 		
-	}
+	}*/
 	
 	/**
 	 * initialize page.
