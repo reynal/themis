@@ -1,0 +1,14 @@
+---
+bg: "pf.jpg"
+layout: default
+crawlertitle: "Themis a hybrid music synthetiser"
+title: "Themis"
+summary: "main page"
+---
+
+{% for post in site.posts limit: 5 %}
+  <article class="index-page">
+    <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+    {{ post.excerpt }}
+  </article>
+{% endfor %}
