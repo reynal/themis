@@ -40,3 +40,5 @@ sass:
 
 
 images: '/assets/images'
+
+theme: jekyll-theme-cayman
