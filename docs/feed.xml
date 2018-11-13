@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>The Themis Project</title>
+    <description>Themis is a hybrid digital-analog music synthetiser that takes the best from both worlds in order to produce the best sound ever.
+</description>
+    <link>http://reynal.github.io/themis//</link>
+    <atom:link href="http://reynal.github.io/themis//feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Tue, 13 Nov 2018 02:15:06 +0100</pubDate>
+    <lastBuildDate>Tue, 13 Nov 2018 02:15:06 +0100</lastBuildDate>
+    <generator>Jekyll v3.8.5</generator>
+    
+      <item>
+        <title>What is Themis</title>
+        <description>&lt;p&gt;Analog electronics has gained renewed interest in the last decade in the stimulating field of music synthetisers due to the onset of renowned brands like Arturia or Dave Smith Instruments. The initial impetus was to enrich the sound created by the instrument and make it more “human” by inserting analog chips at specific location in the signal path. These chips are non-linear by essence, and sensitive to temperature and humidity in a way that is too complex to model in a microprocessor.
+Analog or digital? But hold on: why should we relinquish to any of them? Themis brings together the best of both realms. The signal path is analog all the way up from the source oscillators to the voltage controlled amplifier, while control, calibration and LFO’s are digitally controlled by an STM32F7 microcontroller. Add a Raspberry Pi based human-interface written in JavaFX — one of the most versatile and powerful toolkits to date — and you have one of the most promising synthetizer project.&lt;/p&gt;
+
+&lt;p&gt;Themis is fully open source. Eagle schematics and board routing, java code, C code for STM32: everything is open.&lt;/p&gt;
+</description>
+        <pubDate>Tue, 13 Nov 2018 14:00:00 +0100</pubDate>
+        <link>http://reynal.github.io/themis//posts/themis/</link>
+        <guid isPermaLink="true">http://reynal.github.io/themis//posts/themis/</guid>
+        
+        <category>front-end</category>
+        
+        
+        <category>posts</category>
+        
+      </item>
+    
+  </channel>
+</rss>
