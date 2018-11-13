@@ -10,9 +10,9 @@ title: The Themis Project
 email: reynal@ensea.fr
 description: > # this means to ignore newlines until "baseurl:"
   Themis is a hybrid digital-analog music synthetiser that takes the best from both worlds in order to produce the best sound ever.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/themis" # the subpath of your site, e.g. /blog
 lang: "en"
-url: "http://reynal.github.io/themis/" # the base hostname & protocol for your site
+url: "http://reynal.github.io/themis" # the base hostname & protocol for your site
 twitter_username: sydxrey
 github_username:  reynal
 disqus_username:
