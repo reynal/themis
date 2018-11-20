@@ -1,10 +1,16 @@
 package controller;
 
-/**
- * This class models the whole synthetizer front pane, i.e., push buttons and rotary encoders.
- * @author sydxrey
- *
- */
-public class FrontPane {
+import controller.component.PushButton;
 
+public class FrontPane {
+	
+	private PerformancePad performancePad;
+	private SynthController synthController;
+	
+	public static void setOnTop() {
+	//Set every concerned component as Listener
+	
+	}
+	 
+	 
 }

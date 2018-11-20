@@ -1,5 +1,6 @@
 package model;
 
+
 /**
  * Contains the parameters for an ADSR enveloppe, Attack, Decay, Sustain, Release
  *
@@ -9,6 +10,7 @@ package model;
 public class ADSREnveloppe {
 	
 	private double attackMs, decayMs, sustainLevel, releaseMs;
+	//what about attackLevel or decayLevel ?
 
 	public double getAttackMs() {
 		return attackMs;
@@ -41,6 +43,7 @@ public class ADSREnveloppe {
 	public void setReleaseMs(double releaseMs) {
 		this.releaseMs = releaseMs;
 	}
-
-
+	
+	
+	
 }

@@ -1,7 +1,13 @@
 package model;
 
-public class MixerV2140D {
-	
+import java.util.List;
+
+import controller.component.Control;
+import controller.event.RotaryEncoderChangeListener;
+import controller.event.RotaryEncoderEvent;
+
+public class MixerV2140D implements RotaryEncoderChangeListener {
+
 	private double gain1dB;
 	private double gain2dB;
 	private double gain3dB;
@@ -31,5 +37,14 @@ public class MixerV2140D {
 	public void setGain4dB(double gain4dB) {
 		this.gain4dB = gain4dB;
 	}
+	
+	List<Control> getControl() {
+		return null; //new Control[] {new RotaryEncoderEv
+	}
+	
 
+	@Override
+	public void encoderRotated(RotaryEncoderEvent e) {
+		e.getValue();
+	}
 }

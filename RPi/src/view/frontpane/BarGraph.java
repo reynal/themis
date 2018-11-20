@@ -1,13 +1,7 @@
 package view.frontpane;
 
-/**
- * A class that displays a value in a bargraph on the front pane
- * 
- * @author sydxrey
- *
- */
 public class BarGraph {
-	
+
 	public static final int MIN_VALUE = 0;
 	public static final int MAX_VALUE = 10;
 	
@@ -20,5 +14,4 @@ public class BarGraph {
 			throw new IllegalArgumentException(v + " lower than " + MIN_VALUE);
 		value = v;
 	}
-
 }

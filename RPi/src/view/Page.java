@@ -1,22 +1,19 @@
 package view;
 
-/**
- * TODO : doc de Page
- * @author sydxrey
- *
- */
+import javax.swing.text.View;
+import javafx.scene.*;
+
 public class Page {
-	
-	// TODO : implementer le double arbre view/model
-	/*void setContentView(View v) {
+
+	void setContentView(View v) {
 		
-	}*/
+	}
 	
 	/**
 	 * initialize page.
 	 */
 	void onCreate() {
-		
+		//setFill(Color.BLACK);
 	}
 	
 	/**

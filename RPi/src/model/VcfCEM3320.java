@@ -1,7 +1,7 @@
 package model;
 
 public class VcfCEM3320 {
-	
+
 	private double cutoff, egDepth, kbdTracking, resonance;
 
 	public double getCutoff() {
@@ -36,6 +36,6 @@ public class VcfCEM3320 {
 		this.resonance = resonance;
 	}
 	
-	
+
 
 }

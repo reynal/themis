@@ -2,7 +2,7 @@ package controller.event;
 
 import java.util.EventObject;
 
-import controller.RotaryEncoderDirection;
+import controller.component.RotaryEncoderDirection;
 
 public class RotaryEncoderEvent extends EventObject {
 
@@ -12,8 +12,11 @@ public class RotaryEncoderEvent extends EventObject {
 	RotaryEncoderDirection direction;
 
 	public RotaryEncoderEvent(Object source) {
-		super(source);
-		// TODO Auto-generated constructor stub
+		super(source); // appelle le constructeur de la superclasse
 	}
-
+	
+	public long getValue() {
+		return encoderValue;
+	}
+	
 }
