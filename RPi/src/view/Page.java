@@ -1,7 +1,6 @@
 package view;
 
 import javax.swing.text.View;
-import javafx.scene.*;
 
 public class Page {
 
