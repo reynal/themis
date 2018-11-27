@@ -15,31 +15,33 @@ import controller.event.PushButtonActionListener;
  *
  */
 public class Vco implements PushButtonActionListener, SynthParameterProvider {
-	protected SynthParameter detune;
-	protected SynthParameter waveform;
-	protected Octave octave;
+	
+	protected DoubleParameter detune;
+	protected SynthParameter waveform; //TODO: syd create EnumParameter class
+	protected SynthParameter octave;
 	
 	Vco(){
-		octave = Octave.FOUR_INCHES;
+		detune = new DoubleParameter();
+		//octave = Octave.FOUR_INCHES;
 		/*PushButton pushBut = PerformancePad.getPerformancePadPushButton(5, 4);
 		pushBut.addPushButtonActionListener(this);
 		*/
 		
 	}
 	
-	public Octave getOctave() { // TODO Sylvain utiliser une enum
+	public SynthParameter getOctave() { // TODO Sylvain utiliser une enum
 		return octave;
 	}
 
-	public void setOctave(Octave octave) {
+	public void setOctave(SynthParameter octave) {
 		this.octave = octave;
 	}
 	
-	public void setDetune(SynthParameter detune) {
+	public void setDetune(DoubleParameter detune) {
 		this.detune = detune;
 	}
 	
-	public SynthParameter getDetune() {
+	public DoubleParameter getDetune() {
 		return detune;
 	}
 	
@@ -62,7 +64,7 @@ public class Vco implements PushButtonActionListener, SynthParameterProvider {
 	public List<SynthParameter> getParameters() {
 		List<SynthParameter> l =new ArrayList<SynthParameter>();
 		l.add(detune);
-		l.add(waveform);
+		//l.add(waveform);
 		return l;
 	}
 	

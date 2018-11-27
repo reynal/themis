@@ -3,8 +3,15 @@ package controller.component;
 import javax.swing.event.EventListenerList;
 
 import controller.event.*;
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 
+/**
+ * 
+ * @author sydxrey
+ *
+ */
 public abstract class AbstractRotaryEncoder extends Control {
 
 	public AbstractRotaryEncoder(String label) {
@@ -48,8 +55,13 @@ public abstract class AbstractRotaryEncoder extends Control {
 
 	@Override
 	public Node getJavaFXView() {
-		// TODO Auto-generated method stub
-		return null;
+		Slider slider = new Slider(0, 1, 0.5);
+		slider.setOrientation(Orientation.VERTICAL);
+		slider.setShowTickMarks(true);
+		slider.setShowTickLabels(true);
+		slider.setMajorTickUnit(0.25f);
+		slider.setBlockIncrement(0.1f);		
+		return slider;
 	} 
 	
 	
