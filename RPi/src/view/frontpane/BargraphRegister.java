@@ -47,7 +47,7 @@ public class BargraphRegister {
 		
 		int adr = IS31FL3731_ONOFF_REG_BASE_ADDR + 2*row;
 		//if (row%2 == 0) System.out.println("You select State Mode for A" + row +"row");
-		//else System.out.println("You select State Mode for B" + row+1 +"row");
+		//else System.out.println("You select State Mode for B" + row +"row");
 		return adr;
 	}
 	
@@ -55,7 +55,7 @@ public class BargraphRegister {
 		
 		int adr = IS31FL3731_PWM_REG_BASE_ADDR+255*row;
 		//if (row%2 == 0) System.out.println("You select PWM Mode for A" + row +"row");
-		//else System.out.println("You select PWM Mode for B" + row+1 +"row");
+		//else System.out.println("You select PWM Mode for B" + row +"row");
 		return adr;
 	}
 }
