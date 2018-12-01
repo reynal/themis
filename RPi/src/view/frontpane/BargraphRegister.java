@@ -1,9 +1,11 @@
 
-public class Registres {
+public class BargraphRegister {
+
+//ADRESSES of the registers
 	
-	byte 	IS31FL3731_BUS1 = (byte)0x74; //Adress of the first Bus I²C
-	byte 	IS31FL3731_BUS2 = (byte)0x75; //Adress of the second Bus I²C
-	byte 	IS31FL3731_BUS3 = (byte)0x76; //Adress of the third Bus I²C
+	byte 	IS31FL3731_BUS1 = (byte)0x74; //Adress of the first Bus IÂ²C
+	byte 	IS31FL3731_BUS2 = (byte)0x75; //Adress of the second Bus IÂ²C
+	byte 	IS31FL3731_BUS3 = (byte)0x76; //Adress of the third Bus IÂ²C
 	
 	byte	IS31FL3731_CMD_REG =         (byte) 0xFD; // write to this register to select current frame register (or the Function Register, aka Page 9, which sets general parameters)
 	byte	IS31FL3731_PAGE_FRAME1 =     (byte) 0x00; // page 1
@@ -39,20 +41,21 @@ public class Registres {
 	byte	IS31FL3731_AGC =           		   (byte) 0x0B; // slow/fast AGC, enables AGC, audio gain
 	byte	IS31FL3731_AUDIO_ADC_RATE =		   (byte) 0x0C; // sets audio sample rate
 
+//Set Mode of a row
 	
 	protected int rowRegisterOfStateLED(int row) {
 		
 		int adr = IS31FL3731_ONOFF_REG_BASE_ADDR + 2*row;
-		if (row%2 == 0) System.out.println("You select State Mode for A" + row +"row");
-		else System.out.println("You select State Mode for B" + row+1 +"row");
+		//if (row%2 == 0) System.out.println("You select State Mode for A" + row +"row");
+		//else System.out.println("You select State Mode for B" + row+1 +"row");
 		return adr;
 	}
 	
 	protected int rowRegisterOfPWMLED(int row) {
 		
-		int adr = IS31FL3731_PWM_REG_BASE_ADDR+(int)0xFF*row;
-		if (row%2 == 0) System.out.println("You select PWM Mode for A" + row +"row");
-		else System.out.println("You select PWM Mode for B" + row+1 +"row");
+		int adr = IS31FL3731_PWM_REG_BASE_ADDR+255*row;
+		//if (row%2 == 0) System.out.println("You select PWM Mode for A" + row +"row");
+		//else System.out.println("You select PWM Mode for B" + row+1 +"row");
 		return adr;
 	}
 }
