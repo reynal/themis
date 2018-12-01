@@ -4,7 +4,7 @@ layout: page
 title: "About Themis"
 crawlertitle: "Why and how this blog was created"
 permalink: /about/
-summary: "A hybrid synthetiser"
+summary: "A hybrid music synthetiser"
 active: about
 ---
 
