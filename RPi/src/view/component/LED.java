@@ -1,4 +1,4 @@
-package view.frontpane;
+package view.component;
 
 public class LED {
 

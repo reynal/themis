@@ -1,5 +1,9 @@
-package view.frontpane;
+package view.component;
 
+/**
+ * This component represents a bargraph based on the IS31FL3731 device.
+ * @author SR
+ */
 public class BarGraph {
 
 	public static final int MIN_VALUE = 0;
