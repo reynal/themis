@@ -20,7 +20,7 @@ public abstract class SynthParameter<T>{
 	/**
 	 * @return Return a concrete subclass of Control that is appropriate to control this paramater from the UI.
 	 */
-	public abstract Control getControl();
+	public abstract Control createControl();
 	
 	/**
 	 * @return An UI label for this parameter

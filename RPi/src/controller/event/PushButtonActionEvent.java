@@ -10,12 +10,12 @@ public class PushButtonActionEvent extends EventObject {
 	
 	boolean state;
 
-	public PushButtonActionEvent(Object source) {
-		super(source);		
-	}
-
 	public PushButtonActionEvent(Object source, boolean state) {
 		super(source);
 		this.state = state;
-}
+	}
+	
+	public boolean getState() {
+		return state;
+	}
 }

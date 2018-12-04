@@ -45,6 +45,6 @@ public class MixerV2140D implements RotaryEncoderChangeListener {
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
-		e.getValue();
+		//e.getValue();
 	}
 }

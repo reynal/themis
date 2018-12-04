@@ -8,8 +8,7 @@ import controller.component.*;
 public class EnumParameter<T extends Enum<?>> extends SynthParameter<Enum<?>> {
 
 	@Override
-	public Control getControl() {
-		//return new NumberRotaryEncoder(getLabel(), getMin(), getMax());
+	public Control createControl() {
 		return null;
 	}
 

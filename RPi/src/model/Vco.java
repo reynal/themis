@@ -2,10 +2,10 @@ package model;
 
 import java.util.*;
 
-import controller.FrontPane;
-import controller.PerformancePad;
-import controller.component.Control;
-import controller.component.PushButton;
+//import controller.FrontPane;
+//import controller.PerformancePad;
+//import controller.component.Control;
+//import controller.component.PushButton;
 import controller.event.PushButtonActionEvent;
 import controller.event.PushButtonActionListener;
 
@@ -14,44 +14,44 @@ import controller.event.PushButtonActionListener;
  * @author Bastien Fratta
  *
  */
-public class Vco implements PushButtonActionListener, SynthParameterProvider {
+public abstract class Vco implements PushButtonActionListener, SynthParameterProvider {
 	
 	protected DoubleParameter detune;
-	protected SynthParameter waveform; //TODO: syd create EnumParameter class
-	protected SynthParameter octave;
+	protected EnumParameter<Octave> octave;
+	protected final List<SynthParameter<?>> parameterList = new ArrayList<SynthParameter<?>>();
 	
-	Vco(){
-		detune = new DoubleParameter();
-		//octave = Octave.FOUR_INCHES;
+	/**
+	 * 
+	 */
+	public Vco(){
+		detune = new DoubleParameter("VCO Detune");
+		octave = new EnumParameter<Octave>("VCO Octave");
+		parameterList.add(detune);
+		parameterList.add(octave);
+
 		/*PushButton pushBut = PerformancePad.getPerformancePadPushButton(5, 4);
 		pushBut.addPushButtonActionListener(this);
 		*/
 		
 	}
 	
-	public SynthParameter getOctave() { // TODO Sylvain utiliser une enum
+	public EnumParameter<Octave> getOctave() { // TODO Sylvain utiliser une enum
 		return octave;
 	}
 
-	public void setOctave(SynthParameter octave) {
+	public void setOctave(EnumParameter<Octave> octave) {
 		this.octave = octave;
-	}
-	
-	public void setDetune(DoubleParameter detune) {
-		this.detune = detune;
 	}
 	
 	public DoubleParameter getDetune() {
 		return detune;
 	}
-	
-	public void setWaveform(SynthParameter waveform) {
-		this.waveform = waveform;
+
+	public void setDetune(DoubleParameter detune) {
+		this.detune = detune;
 	}
 	
-	public SynthParameter getWaveform() {
-		return waveform;
-	}
+	
 
 	@Override
 	public void actionPerformed(PushButtonActionEvent e) {
@@ -61,11 +61,8 @@ public class Vco implements PushButtonActionListener, SynthParameterProvider {
 	}
 
 	@Override
-	public List<SynthParameter> getParameters() {
-		List<SynthParameter> l =new ArrayList<SynthParameter>();
-		l.add(detune);
-		//l.add(waveform);
-		return l;
+	public List<SynthParameter<?>> getParameters() {		
+		return parameterList;
 	}
 	
 }

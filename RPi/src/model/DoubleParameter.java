@@ -1,36 +1,50 @@
 package model;
 
 import controller.component.*;
+import controller.event.RotaryEncoderChangeListener;
+import controller.event.RotaryEncoderEvent;
 
 /**
  * This class represents a model parameter of type "double"
  */
-public class DoubleParameter extends SynthParameter<Double> {
+public class DoubleParameter extends SynthParameter<Double> implements RotaryEncoderChangeListener {
 
-	private double min, max;
+	private double min, max,step;
 	
-	public static final double DEFAULT_MIN = 0.0;
-	public static final double DEFAULT_MAX = 1.0;
-	
+	/**
+	 * Construct a new DoubleParameter with the given bounds and increment step
+	 * @param min lower bound
+	 * @param max upper bound
+	 * @param step the increment/decrement step
+	 */
+	public DoubleParameter(double min, double max, double step) {
+		super();
+		this.min = min;
+		this.max = max;
+		this.step = step;
+	}
+
 	@Override
-	public Control getControl() {
-		return new NumberRotaryEncoder<Double>(getLabel(), getMin(), getMax());
+	public Control createControl() {
+		DoubleNumberRotaryEncoder e = new DoubleNumberRotaryEncoder();
+		e.addRotaryEncoderChangeListener(this);
+		return e;
 	}
 
-	/**
-	 * @return the upper bound for this parameter. 
-	 * May be used by the UI to be able to display ticks and grid labels
-	 */
-	public double getMax() {
-		return 1.0;
-	}
-
-	/**
-	 * @return the lower bound for this parameter. 
-	 * May be used by the UI to be able to display ticks and grid labels
-	 */
-	public double getMin() {
-		return 0.0;
+	@Override
+	public void encoderRotated(RotaryEncoderEvent e) {
+		switch (e.getDirection()) {
+		case UP : 
+			value+=step; 
+			if (value > max) value=max;
+			break;
+			
+		case DOWN : 
+			value-=step;
+			if (value < min) value =min;
+			break;
+		}
+		
 	}	
 
 }
