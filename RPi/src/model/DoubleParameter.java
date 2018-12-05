@@ -11,7 +11,7 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 
 	// inherited : Double value
 	private double min, max, step;
-	
+
 	/**
 	 * Construct a new DoubleParameter with the given bounds and increment step
 	 * @param min lower bound
