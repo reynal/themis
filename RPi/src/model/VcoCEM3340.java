@@ -2,33 +2,51 @@ package model;
 
 import java.util.List;
 
-import controller.component.Control;
-import javafx.scene.Node;
-
+/** 
+ * 
+ */
 public class VcoCEM3340 extends Vco{
 
-	enum WaveShape {
+	
+	private EnumParameter<WaveShape> shape;
+	private BooleanParameter syncFrom13700;
+	
+	public VcoCEM3340() {
+		super();
+		parameterList.add(shape = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
+		// TODO : add "syncFrom13700"
+	}
+
+	public EnumParameter<WaveShape> getWaveShape() {
+		return shape;
+	}
+	
+	public void setWaveShape(EnumParameter<WaveShape> waveshape) {
+		this.shape = waveshape;
+	}
+
+	// ----------- enum -------------
+	
+	public static enum WaveShape {
 		
 		SQUARE,
 		TRIANGLE,
 		PULSE,
 		SAWTOOTH;
 	}
-	
-	private WaveShape shape;
-	private boolean syncFrom13700;
 
-	// =========================================
-	
+	// ------------ test -------------
 	public static void main(String[] args) {
-		
-		/*VcoCEM3340 vco = new VcoCEM3340();
-		List<SynthParameter> params = vco.getParameters();		
-		for (SynthParameter p : params) {
-			Control c = p.getControl();
-			Node n = c.getJavaFXView();
-			
-		}*/
-	}
 	
+		VcoCEM3340 vco1 = new VcoCEM3340();
+		List<SynthParameter<?>> paramsVCO1 = vco1.getParameters();
+		for (SynthParameter<?> p : paramsVCO1) {
+
+			System.out.println(p);
+			System.out.println(p.createControl());
+			//System.out.println(p.createControl().getJavaFXView());
+		}
+	}
 }
+
+

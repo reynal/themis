@@ -8,15 +8,15 @@ public class RotaryEncoderEvent extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 	
-	long encoderValue;
 	RotaryEncoderDirection direction;
 
-	public RotaryEncoderEvent(Object source) {
-		super(source); // appelle le constructeur de la superclasse
+	public RotaryEncoderEvent(Object source, RotaryEncoderDirection direction) {
+		super(source);
+		this.direction = direction;
 	}
 	
-	public long getValue() {
-		return encoderValue;
+	public RotaryEncoderDirection getDirection() {
+		return direction;
 	}
 	
 }

@@ -1,24 +1,35 @@
 package controller.component;
 
-import javax.swing.event.EventListenerList;
-
-import controller.*;
-import controller.event.RotaryEncoderChangeListener;
-import controller.event.RotaryEncoderEvent;
+import javafx.geometry.Orientation;
+import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 
-public class NumberRotaryEncoder<T extends Number> extends AbstractRotaryEncoder {
+/**
+ * A rotary encoder than can be linked to a DoubleParameter.
+ * @author SR
+ */
+public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 
-	private T encoderValue, min, max;
-	
-	public NumberRotaryEncoder(String label, T min, T max) {
+	/**
+	 * construct a pushbutton with the given UI label
+	 */
+	public NumberRotaryEncoder(String label) {
 		super(label);
-		this.min = min;
-		this.max = max;
-	}
+	}	
 	
-	public T getValue() {
-        return encoderValue;
-    }
-    	
+	@Override
+	public Node createJavaFXView() {
+		Group g = new Group();
+		Slider slider = new Slider(0, 1, 0.5);
+		slider.setOrientation(Orientation.VERTICAL);
+		slider.setShowTickMarks(true);
+		slider.setShowTickLabels(true);
+		slider.setMajorTickUnit(0.25f);
+		slider.setBlockIncrement(0.1f);		
+		g.getChildren().addAll(slider);
+		g.getChildren().addAll(new Label(label));		
+		return g;
+	} 
+	
 }

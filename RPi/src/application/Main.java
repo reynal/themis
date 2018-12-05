@@ -24,7 +24,7 @@ import controller.*;
 import controller.component.Control;
 
 /*
- SPIDevice pour faire spécif matériel (module de communication)
+ SPIDevice pour faire spï¿½cif matï¿½riel (module de communication)
  Permet de communiquer entre Code Java et ce qui arrive/part sur le bus SPI
  */
 	
@@ -40,15 +40,71 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window) throws Exception {
 	
-        HBox layout = new HBox();
+        GridPane layout = new GridPane();
+        layout.setHgap(10);
+        layout.setVgap(10);
+        layout.setPadding(new Insets(0, 10, 0, 10));
 
         // VCO -> parameters 
-		VcoCEM3340 vco = new VcoCEM3340();
-		List<SynthParameter> params = vco.getParameters();		
-		for (SynthParameter p : params) {
-			Control c = p.getControl();
+		VcoCEM3340 vco1 = new VcoCEM3340();
+		VcoLM13700 vco2 = new VcoLM13700();
+		MixerV2140D mixer = new MixerV2140D();
+		List<SynthParameter<?>> paramsVCO1 = vco1.getParameters();
+		List<SynthParameter<?>> paramsVCO2 = vco2.getParameters();
+		List<SynthParameter<?>> paramsMixer = mixer.getParameters();
+		
+		/*int[] index = {0,1,2};
+		for (int i : index)*/
+		/*
+		String lab = params.get(0).getLabel();
+		System.out.println(lab);
+		Control c = params.get(0).getControl();
+		System.out.print(c);
+		
+		String lab1 = params.get(1).getLabel();
+		System.out.println(lab1);
+		Control c1 = params.get(1).getControl();
+		System.out.print(c1);
+		
+		String lab2 = params.get(2).getLabel();
+		System.out.println(lab2);
+		Control c2 = params.get(2).getControl();
+		System.out.print(c2);*/
+		int i=0;
+		for (SynthParameter<?> p : paramsVCO1) {
+			i=i+1;
+			//String lbl = p.getLabel();
+			Label label = new Label(p.getLabel());
+			Control c = p.createControl();
+			System.out.println(p);
 			Node n = c.getJavaFXView();
-			layout.getChildren().add(n);
+			layout.add(n,i,0);
+			//layout.add(lbl,i,1);
+			layout.add(label,i,1);
+		}
+		i=0;
+		for (SynthParameter<?> p : paramsVCO2) {
+			i=i+1;
+			//String lbl = p.getLabel();
+			Label label = new Label(p.getLabel());
+			Control c = p.createControl();
+			System.out.println(p);
+			Node n = c.getJavaFXView();
+			layout.add(n,i,2);
+			//layout.add(lbl,i,1);
+			layout.add(label,i,3);
+		}
+		i=0;
+		for (SynthParameter<?> p : paramsMixer) {
+			i=i+1;
+			//String lbl = p.getLabel();
+			Label label = new Label(p.getLabel());
+			Control c = p.createControl();
+			System.out.println(p);
+			Node n = c.getJavaFXView();
+			layout.add(n,4+i,0);
+			//layout.add(lbl,i,1);
+			layout.add(label,4+i,0);
 		}
 	
 		Scene s = new Scene(layout, 1280,720);

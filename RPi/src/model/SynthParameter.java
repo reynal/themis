@@ -12,15 +12,23 @@ import controller.component.Control;
  * @author S.Rey
  *
  */
-public abstract class SynthParameter<T>{
+public abstract class SynthParameter<T> {
 	
 	private String label;
 	protected T value;
-		
+
+	/**
+	 * 
+	 * @param label
+	 */
+	public SynthParameter(String label) {
+		this.label = label;
+	}
+
 	/**
 	 * @return Return a concrete subclass of Control that is appropriate to control this paramater from the UI.
 	 */
-	public abstract Control getControl();
+	public abstract Control createControl();
 	
 	/**
 	 * @return An UI label for this parameter
@@ -36,6 +44,15 @@ public abstract class SynthParameter<T>{
 		return value;
 	}
 	
+	public void setValue(T value) {
+		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		
+		return super.toString() + "; label=\"" + label + "\"; value = \"" + value + "\"";
+	}
 	
 
 }
