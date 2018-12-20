@@ -6,36 +6,36 @@ import controller.component.Control;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
 
-public class MixerV2140D implements RotaryEncoderChangeListener {
+public class MixerV2140D extends AbstractModel implements RotaryEncoderChangeListener {
 
-	private double gain1dB;
-	private double gain2dB;
-	private double gain3dB;
-	private double gain4dB;
+	protected DoubleParameter gain1dB;
+	protected DoubleParameter gain2dB;
+	protected DoubleParameter gain3dB;
+	protected DoubleParameter gain4dB;
 
 	public double getGain1dB() {
-		return gain1dB;
+		return gain1dB.getValue();
 	}
 	public void setGain1dB(double gain1dB) {
-		this.gain1dB = gain1dB;
+		this.gain1dB.setValue(gain1dB);
 	}
 	public double getGain2dB() {
-		return gain2dB;
+		return gain2dB.getValue();
 	}
 	public void setGain2dB(double gain2dB) {
-		this.gain2dB = gain2dB;
+		this.gain2dB.setValue(gain2dB);
 	}
 	public double getGain3dB() {
-		return gain3dB;
+		return gain3dB.getValue();
 	}
 	public void setGain3dB(double gain3dB) {
-		this.gain3dB = gain3dB;
+		this.gain3dB.setValue(gain3dB);
 	}
 	public double getGain4dB() {
-		return gain4dB;
+		return gain4dB.getValue();
 	}
 	public void setGain4dB(double gain4dB) {
-		this.gain4dB = gain4dB;
+		this.gain4dB.setValue(gain4dB);
 	}
 	
 	List<Control> getControl() {

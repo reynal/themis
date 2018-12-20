@@ -3,28 +3,27 @@ package controller.component;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 
 /**
- * a rotary encoder for enum types
- * @author sydxrey
- *
- * @param <T>
+ * A rotary encoder than can be linked to a DoubleParameter.
+ * @author SR
  */
-public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder {
+public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 
-	
-	public EnumRotaryEncoder(String label) {
+	/**
+	 * construct a pushbutton with the given UI label
+	 */
+	public NumberRotaryEncoder(String label) {
 		super(label);
-	}
+	}	
 	
 	@Override
 	public Node createJavaFXView() {
 		Group g = new Group();
 		Slider slider = new Slider(0, 1, 0.5);
 		slider.setOrientation(Orientation.VERTICAL);
-		slider.setShowTickMarks(true); // TODO : add enum labels!
+		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
 		slider.setMajorTickUnit(0.25f);
 		slider.setBlockIncrement(0.1f);		
@@ -32,4 +31,5 @@ public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder 
 		g.getChildren().addAll(new Label(label));		
 		return g;
 	} 
+	
 }

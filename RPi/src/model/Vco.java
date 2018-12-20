@@ -14,28 +14,20 @@ import controller.event.PushButtonActionListener;
  * @author Bastien Fratta
  *
  */
-public abstract class Vco implements PushButtonActionListener, SynthParameterProvider {
+public abstract class Vco extends AbstractModel implements PushButtonActionListener {
 	
 	protected DoubleParameter detune;
 	protected EnumParameter<Octave> octave;
-	protected final List<SynthParameter<?>> parameterList = new ArrayList<SynthParameter<?>>();
 	
 	/**
 	 * 
 	 */
 	public Vco(){
-		detune = new DoubleParameter("VCO Detune");
-		octave = new EnumParameter<Octave>("VCO Octave");
-		parameterList.add(detune);
-		parameterList.add(octave);
-
-		/*PushButton pushBut = PerformancePad.getPerformancePadPushButton(5, 4);
-		pushBut.addPushButtonActionListener(this);
-		*/
-		
+		parameterList.add(detune = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
+		parameterList.add(octave = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
 	}
 	
-	public EnumParameter<Octave> getOctave() { // TODO Sylvain utiliser une enum
+	public EnumParameter<Octave> getOctave() { 
 		return octave;
 	}
 
@@ -58,11 +50,6 @@ public abstract class Vco implements PushButtonActionListener, SynthParameterPro
 		// TODO Auto-generated method stub
 		
 		
-	}
-
-	@Override
-	public List<SynthParameter<?>> getParameters() {		
-		return parameterList;
 	}
 	
 }

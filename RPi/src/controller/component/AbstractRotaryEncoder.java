@@ -13,6 +13,10 @@ import javafx.scene.control.*;
  */
 public abstract class AbstractRotaryEncoder extends Control {
 
+	public AbstractRotaryEncoder(String label) {
+		super(label);
+	}
+
 	/**
 	 * Adds the specified listener to receive action events from this encoder.
 	 * @param l the listener

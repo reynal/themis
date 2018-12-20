@@ -9,6 +9,6 @@ import java.util.List;
  */
 public interface SynthParameterProvider {
 	
-	List<SynthParameter> getParameters();
+	List<SynthParameter<?>> getParameters();
 	
 }

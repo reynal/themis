@@ -11,13 +11,24 @@ import model.SynthParameter;
  */
 public abstract class Control {
 	
+	/** the control label for a UI simulator or debugging */
+	protected String label;
+	
 	/** a list of event listeners for this control */
 	protected EventListenerList listenerList;
 	
 	/** a java fx component that represents this control graphically in an interface simulator */
 	protected Node javaFXView;
 	
-	
+	/**
+	 * construct a Control with the given UI label
+	 * @param label
+	 */
+	public Control(String label) {
+		listenerList = new EventListenerList();
+		this.label = label;
+	}
+
 	/**
 	 * @return the component that represents this control graphically in an interface simulator
 	 */

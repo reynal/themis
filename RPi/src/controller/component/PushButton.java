@@ -13,6 +13,13 @@ import javafx.scene.control.*;
 public class PushButton extends Control {
 
 	/**
+	 * construct a pushbutton with the given UI label
+	 */
+	public PushButton(String label) {
+		super(label);
+	}
+
+	/**
 	 * Adds the specified listener to receive action events from this button.
 	 * 
 	 * @param l the listener
@@ -59,7 +66,7 @@ public class PushButton extends Control {
 	@Override
 	public Node createJavaFXView() {
 
-		Button b = new Button();
+		Button b = new Button(label);
 		return b;
 
 	}

@@ -9,16 +9,18 @@ import controller.event.RotaryEncoderEvent;
  */
 public class DoubleParameter extends SynthParameter<Double> implements RotaryEncoderChangeListener {
 
-	private double min, max,step;
-	
+	// inherited : Double value
+	private double min, max, step;
+
 	/**
 	 * Construct a new DoubleParameter with the given bounds and increment step
 	 * @param min lower bound
 	 * @param max upper bound
 	 * @param step the increment/decrement step
 	 */
-	public DoubleParameter(double min, double max, double step) {
-		super();
+	public DoubleParameter(String lbl, double min, double max, double step) {
+		super(lbl);
+		value=0.0;
 		this.min = min;
 		this.max = max;
 		this.step = step;
@@ -26,7 +28,7 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 
 	@Override
 	public Control createControl() {
-		DoubleNumberRotaryEncoder e = new DoubleNumberRotaryEncoder();
+		NumberRotaryEncoder e = new NumberRotaryEncoder(getLabel());
 		e.addRotaryEncoderChangeListener(this);
 		return e;
 	}

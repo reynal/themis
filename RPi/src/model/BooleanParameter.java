@@ -12,14 +12,14 @@ public class BooleanParameter extends SynthParameter<Boolean> implements PushBut
 	/**
 	 * Constructs a default parameter with "false" as the default value
 	 */
-	public BooleanParameter() {
-		super();
+	public BooleanParameter(String name) {
+		super(name);
 		value = false;
 	}
 
 	@Override
 	public Control createControl() {
-		PushButton b = new PushButton();
+		PushButton b = new PushButton(getLabel());
 		b.addPushButtonActionListener(this);
 		return b;
 	}

@@ -71,11 +71,11 @@ public class Main extends Application {
 		Control c2 = params.get(2).getControl();
 		System.out.print(c2);*/
 		int i=0;
-		for (SynthParameter p : paramsVCO1) {
+		for (SynthParameter<?> p : paramsVCO1) {
 			i=i+1;
 			//String lbl = p.getLabel();
 			Label label = new Label(p.getLabel());
-			Control c = p.getControl();
+			Control c = p.createControl();
 			System.out.println(p);
 			Node n = c.getJavaFXView();
 			layout.add(n,i,0);
@@ -83,11 +83,11 @@ public class Main extends Application {
 			layout.add(label,i,1);
 		}
 		i=0;
-		for (SynthParameter p : paramsVCO2) {
+		for (SynthParameter<?> p : paramsVCO2) {
 			i=i+1;
 			//String lbl = p.getLabel();
 			Label label = new Label(p.getLabel());
-			Control c = p.getControl();
+			Control c = p.createControl();
 			System.out.println(p);
 			Node n = c.getJavaFXView();
 			layout.add(n,i,2);
@@ -95,11 +95,11 @@ public class Main extends Application {
 			layout.add(label,i,3);
 		}
 		i=0;
-		for (SynthParameter p : paramsMixer) {
+		for (SynthParameter<?> p : paramsMixer) {
 			i=i+1;
 			//String lbl = p.getLabel();
 			Label label = new Label(p.getLabel());
-			Control c = p.getControl();
+			Control c = p.createControl();
 			System.out.println(p);
 			Node n = c.getJavaFXView();
 			layout.add(n,4+i,0);
