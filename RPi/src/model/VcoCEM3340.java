@@ -14,7 +14,7 @@ public class VcoCEM3340 extends Vco{
 	public VcoCEM3340() {
 		super();
 		parameterList.add(shape = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
-		// TODO : add "syncFrom13700"
+		parameterList.add(syncFrom13700 = new BooleanParameter("Sync"));
 	}
 
 	public EnumParameter<WaveShape> getWaveShape() {
@@ -24,9 +24,19 @@ public class VcoCEM3340 extends Vco{
 	public void setWaveShape(EnumParameter<WaveShape> waveshape) {
 		this.shape = waveshape;
 	}
+	
+	public BooleanParameter getSyncFrom13700() {
+		return syncFrom13700;
+	}
+
+	public void setSyncFrom13700(BooleanParameter syncFrom13700) {
+		this.syncFrom13700 = syncFrom13700;
+	}
+
 
 	// ----------- enum -------------
 	
+
 	public static enum WaveShape {
 		
 		SQUARE,

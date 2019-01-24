@@ -18,6 +18,7 @@ public abstract class SynthParameter<T> {
 	
 	private String label;
 	protected T value;
+	protected Control control;
 
 	/**
 	 * 
@@ -31,6 +32,14 @@ public abstract class SynthParameter<T> {
 	 * @return Return a concrete subclass of Control that is appropriate to control this paramater from the UI.
 	 */
 	public abstract Control createControl();
+	
+	/**
+	 * Lazily creates a UI (physical or virtual) control for this class 
+	 */
+	public Control getControl(){
+		if (control == null) control = createControl();
+		return control;
+	}
 	
 	/**
 	 * @return An UI label for this parameter
