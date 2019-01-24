@@ -10,6 +10,8 @@ import controller.component.Control;
  * Every parameter has a name and is able to produce the appropriate control 
  * for a UI (be it virtual through javafx or physical).
  * @author S.Rey
+ * 
+ * TODO : ajouter des listener de ModelChangedEvent pour les bargraphs
  *
  */
 public abstract class SynthParameter<T> {
@@ -46,6 +48,8 @@ public abstract class SynthParameter<T> {
 	
 	public void setValue(T value) {
 		this.value = value;
+		// todo : fire ModelChangedEvent
+
 	}
 
 	@Override

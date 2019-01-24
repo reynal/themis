@@ -1,10 +1,7 @@
 package controller.component;
 
 import controller.event.*;
-<<<<<<< HEAD
 import javafx.geometry.Orientation;
-=======
->>>>>>> 61b42d4e59f1e3c10fc32372c01ece1df7f31154
 import javafx.scene.*;
 import javafx.scene.control.*;
 

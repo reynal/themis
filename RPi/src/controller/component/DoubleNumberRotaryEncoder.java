@@ -11,6 +11,10 @@ import model.*;
  */
 public class DoubleNumberRotaryEncoder extends AbstractRotaryEncoder {
 
+	public DoubleNumberRotaryEncoder(String label) {
+		super(label);
+	}
+
 	@Override
 	public Node createJavaFXView() {
 		Slider slider = new Slider(0, 1, 0.5);
