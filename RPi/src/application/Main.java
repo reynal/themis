@@ -53,7 +53,7 @@ public class Main extends Application {
         AnchorPane.setLeftAnchor(screen, 410.0);
         AnchorPane.setLeftAnchor(screen, 230.0);
         
-        ImageView iv1 = new ImageView(new Image("resources/img/logo.png"));
+        ImageView iv1 = new ImageView(new Image("file:src/resources/img/logo.png"));
         iv1.setStyle("-fx-border-color : grey");
         screen.getChildren().add(iv1);
         
@@ -224,8 +224,7 @@ public class Main extends Application {
 	           	pads.add(butt,x,y);
 	        }
 	    }
-	           		
-		
+	    
 		encoders.add(buttonGroup1,0,0);
 		encoders.add(buttonGroup2,1,0);
 		encoders.add(buttonGroup3,2,0);
