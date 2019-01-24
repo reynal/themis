@@ -231,14 +231,16 @@ public class Main extends Application {
 		encoders.add(buttonGroup4,0,1);
 		encoders.add(buttonGroup5,1,1);
 		encoders.add(buttonGroup6,2,1);
-
+		
+		//TODO gestion message erreur communication bus SPI (fenêtre ou pop up)
+		
 	    layout.setBottom(encoders);
 	    layout.setLeft(screen);
 	    layout.setRight(pads);
 		//layout.getChildren().add(encoders);
 		Scene s = new Scene(layout, 1600,910);
 		window.setScene(s);
-		window.setTitle("Pulsar");
+		window.setTitle("Themis");
 		window.setResizable(true);
 		window.show();
 	

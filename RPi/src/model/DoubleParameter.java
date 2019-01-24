@@ -35,6 +35,7 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
+		System.out.println("Encoder rotated => double parameter : " + e);
 		switch (e.getDirection()) {
 		case UP : 
 			value+=step; 

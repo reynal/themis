@@ -26,7 +26,9 @@ public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
 		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);		
+		slider.setBlockIncrement(0.1f);	
+		//todo : add JavaFX event handler !
+		// des qu'un event est genere, il faut appeler ... fireRotaryEncoderEvent(RotaryEncoderDirection...)
 		g.getChildren().addAll(slider);
 		g.getChildren().addAll(new Label(label));		
 		return g;

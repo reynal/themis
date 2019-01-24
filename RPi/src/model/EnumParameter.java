@@ -60,7 +60,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<Enum<T>> im
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
-		
+		System.out.println("Encoder rotated => enum parameter : " + e);
 		switch (e.getDirection()) {
 		case UP : 
 			if (value.ordinal() < getOrdinal()) value = clazz.getEnumConstants()[value.ordinal()+1]; 
