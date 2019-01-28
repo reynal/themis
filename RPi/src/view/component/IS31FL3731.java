@@ -3,6 +3,7 @@ package view.component;
 import java.io.IOException;
 
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
 
 /**
@@ -47,16 +48,18 @@ public class IS31FL3731 {
 	// -------------- constructors --------------
 	
 	/**
+	 * @throws IOException 
+	 * @throws UnsupportedBusNumberException 
 	 * 
 	 */
-	public IS31FL3731(DeviceAddress address) {
+	public IS31FL3731(DeviceAddress address) throws UnsupportedBusNumberException, IOException {
 		
-		// TODO : 
-		// - init I2C bus, create device using given address
+		I2CBus bus1 = I2CFactory.getInstance(I2CBus.BUS_1);
+		this.i2cDevice = bus1.getDevice((byte) 0x74);		
+		// TODO :
 		// - select function register
 		// - write appropriate parameter values to function register
 		// - then selects default frame 1
-		
 	}
 	
 	
@@ -240,7 +243,27 @@ public class IS31FL3731 {
 	}
 	
 	/**
+	 * Sets the intensity of the given LED for a given matrix
+	 * @param m A or B
+	 * @param row
+	 * @param col 0 <= col <= 7
+	 * @param pwm 0-255
+	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
+	 */
+	void setLEDpwm(Matrix m, int row, int col, int pwm) throws IOException {
+		
+		col &= 0x7; // make sure it's inside 0-7
+		switch (m){
+			case A : setLEDpwm(row, col, pwm); break;
+			case B : setLEDpwm(row, col + 8, pwm); break;
+		}
+		
+		
+	}
+	
+	/**
 	 * Display a bargraph-like picture from the given "val"
+	 * @param val a value b/w 0 and 16
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus 
 	 */
 	void bargraph(int val) throws IOException {
@@ -502,6 +525,13 @@ public class IS31FL3731 {
 		public int getValue() {
 			return mask;
 		}		
+	}
+	
+	/**
+	 * an enumeration for matrix A (left part) and B (right part)
+	 */
+	public static enum Matrix {
+		A,B;
 	}
 	
 // NOT USED ANYMORE but wait before removing permanently (SR)	
