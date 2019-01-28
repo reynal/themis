@@ -18,5 +18,11 @@ public class RotaryEncoderEvent extends EventObject {
 	public RotaryEncoderDirection getDirection() {
 		return direction;
 	}
-	
+
+	@Override
+	public String toString() {
+		
+		return super.toString() + ", direction = " + direction;
+	}
+
 }

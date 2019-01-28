@@ -7,7 +7,7 @@ import controller.event.RotaryEncoderEvent;
 /**
  * This class represents a model parameter of type "double"
  */
-public class EnumParameter<T extends Enum<T>> extends SynthParameter<Enum<T>> implements RotaryEncoderChangeListener {
+public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implements RotaryEncoderChangeListener {
 	
 	protected Class<T> clazz; //
 
@@ -19,7 +19,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<Enum<T>> im
 
 	@Override
 	public Control createControl() {
-		EnumRotaryEncoder e = new EnumRotaryEncoder(getLabel());
+		EnumRotaryEncoder<T> e = new EnumRotaryEncoder<T>(getLabel());
 		e.addRotaryEncoderChangeListener(this);
 		return e;
 	}
@@ -48,15 +48,6 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<Enum<T>> im
 		return clazz.getEnumConstants().length;
 	}
 	
-	// test
-	
-	public static void main(String[] args){
-		EnumParameter<Octave> p = new EnumParameter<Octave>(Octave.class, "octave");
-		System.out.println(p.getOrdinal());
-		System.out.println(p.getMin());
-		System.out.println(p.getMax());
-		
-	}
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
@@ -72,6 +63,27 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<Enum<T>> im
 		}
 		
 	}
+	
+	// ------------------ test ------
+	
+	// the following test allows one to understand how to use EnumParameter and check listener mechanics:
+	// test
+	
+	public static void main(String[] args){
+		EnumParameter<Octave> p = new EnumParameter<Octave>(Octave.class, "octave");
+		System.out.println(p.getOrdinal());
+		System.out.println(p.getMin());
+		System.out.println(p.getMax());
+		// add a listener using functional programming:
+		p.addSynthParameterEditListener(e -> System.out.println(e));
+
+		//new EnumParameter<Double>(Double.class, "% of duty cycle"); // "bound mismatch" compile error : Double is not an enum
+		Octave o = p.getValue();
+		System.out.println(o);
+		p.setValue(Octave.TWO_INCHES);
+		System.out.println(o);
+	}
+	
 	
 
 

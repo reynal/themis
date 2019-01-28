@@ -18,4 +18,11 @@ public class PushButtonActionEvent extends EventObject {
 	public boolean getState() {
 		return state;
 	}
+	
+	@Override
+	public String toString() {
+		
+		return super.toString() + ", state = " + state;
+	}
+	
 }

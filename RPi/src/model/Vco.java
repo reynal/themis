@@ -11,10 +11,10 @@ import controller.event.PushButtonActionListener;
 
 /**
  * 
- * @author Bastien Fratta
+ * @author Bastien Fratta, S. Reynal
  *
  */
-public abstract class Vco extends AbstractModel implements PushButtonActionListener {
+public abstract class Vco extends AbstractModel {
 	
 	protected DoubleParameter detune;
 	protected EnumParameter<Octave> octave;
@@ -25,31 +25,30 @@ public abstract class Vco extends AbstractModel implements PushButtonActionListe
 	public Vco(){
 		parameterList.add(detune = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
 		parameterList.add(octave = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
+		
 	}
 	
-	public EnumParameter<Octave> getOctave() { 
-		return octave;
+	public Octave getOctave() { 
+		return octave.getValue();
 	}
 
-	public void setOctave(EnumParameter<Octave> octave) {
-		this.octave = octave;
+	public void setOctave(Octave v) {
+		octave.setValue(v);
 	}
 	
-	public DoubleParameter getDetune() {
+	public double getDetune() {
+		return detune.getValue();
+	}
+
+	public void setDetune(double v) {
+		detune.setValue(v);
+	}
+	
+	public DoubleParameter getDetuneParameter() {
 		return detune;
 	}
-
-	public void setDetune(DoubleParameter detune) {
-		this.detune = detune;
+	
+	public EnumParameter<Octave> getOctaveParameter(){
+		return octave;
 	}
-	
-	
-
-	@Override
-	public void actionPerformed(PushButtonActionEvent e) {
-		// TODO Auto-generated method stub
-		
-		
-	}
-	
 }
