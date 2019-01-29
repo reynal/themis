@@ -2,19 +2,24 @@ package model;
 
 import java.util.List;
 
+import model.event.*;
+
 /** 
  * 
  */
-public class VcoCEM3340 extends Vco{
+public class VcoCEM3340 extends Vco {
 
 	
 	private EnumParameter<WaveShape> shape;
+	private DoubleParameter duty;
 	private BooleanParameter syncFrom13700;
 	
 	public VcoCEM3340() {
 		super();
 		parameterList.add(shape = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
+		parameterList.add(duty = new DoubleParameter("Duty",-100,100,0));
 		parameterList.add(syncFrom13700 = new BooleanParameter("Sync"));
+		
 	}
 
 	public EnumParameter<WaveShape> getWaveShape() {
@@ -32,11 +37,17 @@ public class VcoCEM3340 extends Vco{
 	public void setSyncFrom13700(BooleanParameter syncFrom13700) {
 		this.syncFrom13700 = syncFrom13700;
 	}
+	
+	public DoubleParameter getDuty() {
+		return duty;
+	}
 
+	public void setDuty(DoubleParameter duty) {
+		this.duty = duty;
+	}
 
 	// ----------- enum -------------
 	
-
 	public static enum WaveShape {
 		
 		SQUARE,
@@ -45,6 +56,8 @@ public class VcoCEM3340 extends Vco{
 		SAWTOOTH;
 	}
 
+
+	
 	// ------------ test -------------
 	public static void main(String[] args) {
 	
@@ -57,6 +70,7 @@ public class VcoCEM3340 extends Vco{
 			//System.out.println(p.createControl().getJavaFXView());
 		}
 	}
+
 }
 
 

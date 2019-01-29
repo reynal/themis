@@ -13,6 +13,7 @@ import javafx.scene.control.Slider;
  * @param <T>
  */
 public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder {
+	
 
 	
 	public EnumRotaryEncoder(String label) {
@@ -21,15 +22,17 @@ public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder 
 	
 	@Override
 	public Node createJavaFXView() {
-		Group g = new Group();
-		Slider slider = new Slider(0, 1, 0.5);
+		//Slider slider = new Slider(0, 1, 0.5);
+		slider.setMax(3.0);
+		slider.setMin(0.0);
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setShowTickMarks(true); // TODO : add enum labels!
-		slider.setShowTickLabels(true);
-		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);		
-		g.getChildren().addAll(slider);
-		g.getChildren().addAll(new Label(label));		
-		return g;
+		slider.setShowTickLabels(false);
+		slider.setSnapToTicks(true);
+		slider.setValue(0);
+		slider.setMajorTickUnit(4f);
+		slider.setBlockIncrement(1f);
+		//g.getChildren().addAll(new Label(label));		
+		return slider;
 	} 
 }

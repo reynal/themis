@@ -37,7 +37,7 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	public void encoderRotated(RotaryEncoderEvent e) {
 		switch (e.getDirection()) {
 		case UP : 
-			value+=step; 
+			value+=step;
 			if (value > max) value=max;
 			break;
 			
@@ -55,7 +55,6 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	public static void main(String[] args) {
 		
 		VcoCEM3340 model = new VcoCEM3340();
-		
 		
 		model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));

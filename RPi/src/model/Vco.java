@@ -15,8 +15,8 @@ public abstract class Vco extends AbstractModel {
 	 * 
 	 */
 	public Vco(){
-		parameterList.add(detune = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
-		parameterList.add(octave = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
+		parameterList.add(detune = new DoubleParameter("Detune", -5, 5, 0.1));
+		parameterList.add(octave = new EnumParameter<Octave>(Octave.class, "Octave"));
 		
 	}
 	

@@ -27,6 +27,7 @@ public class SynthParameterEditEvent<T> extends EventObject {
 	}
 	
 	public T getValue() {
+		
 		return value;
 	}
 	

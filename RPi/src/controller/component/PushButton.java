@@ -65,8 +65,9 @@ public class PushButton extends Control {
 
 	@Override
 	public Node createJavaFXView() {
-
-		Button b = new Button(label);
+		Button b = new Button();
+		b.setMinSize(20.0,20.0);
+       	b.setStyle("-fx-background-color : white;");
 		return b;
 
 	}
