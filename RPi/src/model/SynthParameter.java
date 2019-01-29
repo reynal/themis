@@ -40,7 +40,7 @@ public abstract class SynthParameter<T> {
 	 * 
 	 * @param l the listener
 	 */
-	public void addSynthParameterEditListener(SynthParameterEditListener l) {
+	public void addSynthParameterEditListener(SynthParameterEditListener<?> l) {
 		listenerList.add(SynthParameterEditListener.class, l);
 	}
 
@@ -51,7 +51,7 @@ public abstract class SynthParameter<T> {
 	 * @param l
 	 *            the listener that was previously added
 	 */
-	public void removeSynthParameterEditListener(SynthParameterEditListener l) {
+	public void removeSynthParameterEditListener(SynthParameterEditListener<?> l) {
 		listenerList.remove(SynthParameterEditListener.class, l);
 	}
 

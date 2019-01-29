@@ -13,6 +13,8 @@ import javafx.scene.control.*;
  */
 public abstract class AbstractRotaryEncoder extends Control {
 
+	public Slider slider = new Slider(0, 1, 0.5);
+	
 	public AbstractRotaryEncoder(String label) {
 		super(label);
 	}

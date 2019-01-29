@@ -5,6 +5,7 @@ import java.util.List;
 import controller.component.Control;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
+import model.VcoLM13700.WaveShape;
 
 public class MixerV2140D extends AbstractModel implements RotaryEncoderChangeListener {
 
@@ -12,7 +13,16 @@ public class MixerV2140D extends AbstractModel implements RotaryEncoderChangeLis
 	protected DoubleParameter gain2dB;
 	protected DoubleParameter gain3dB;
 	protected DoubleParameter gain4dB;
+	protected DoubleParameter gain5dB;
 
+	public MixerV2140D(){
+		super();
+		parameterList.add(gain1dB = new DoubleParameter("Gain 1",-48,6,0.2));//TODO verification of mixer cutting/gain values
+		parameterList.add(gain2dB = new DoubleParameter("Gain 2",-48,6,0.2));
+		parameterList.add(gain3dB = new DoubleParameter("Gain 3",-48,6,0.2));
+		parameterList.add(gain4dB = new DoubleParameter("Gain 4",-48,6,0.2));
+		parameterList.add(gain5dB = new DoubleParameter("Gain 5",-48,6,0.2));
+	}
 	public double getGain1dB() {
 		return gain1dB.getValue();
 	}
@@ -37,7 +47,12 @@ public class MixerV2140D extends AbstractModel implements RotaryEncoderChangeLis
 	public void setGain4dB(double gain4dB) {
 		this.gain4dB.setValue(gain4dB);
 	}
-	
+	public double getGain5dB() {
+		return gain5dB.getValue();
+	}
+	public void setGain5dB(double gain5dB) {
+		this.gain5dB.setValue(gain5dB);
+	}
 	List<Control> getControl() {
 		return null; //new Control[] {new RotaryEncoderEv
 	}

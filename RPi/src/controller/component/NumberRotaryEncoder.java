@@ -20,16 +20,16 @@ public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 	
 	@Override
 	public Node createJavaFXView() {
-		Group g = new Group();
 		Slider slider = new Slider(0, 1, 0.5);
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
 		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);		
-		g.getChildren().addAll(slider);
-		g.getChildren().addAll(new Label(label));		
-		return g;
+		slider.setBlockIncrement(0.1f);	
+		//todo : add JavaFX event handler !
+		// des qu'un event est genere, il faut appeler ... fireRotaryEncoderEvent(RotaryEncoderDirection...)
+		//g.getChildren().addAll(new Label(label));		
+		return slider;
 	} 
 	
 }
