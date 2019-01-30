@@ -1,27 +1,19 @@
 package application;
 	
 import javafx.application.Application;
-import javafx.event.*;
 import javafx.scene.*;
-import view.*;
 import model.*;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-//import javafx.geometry.Pos;
-//import javafx.application.Preloader;
-import javafx.stage.Stage;
-//import javafx.stage.Window;
+import javafx.geometry.*;
+import javafx.stage.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import java.util.*;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.value.*;
 import controller.component.Control;
-
-import model.midi.*;
+//import model.midi.*;
 import model.spi.*;
 /*
  SPIDevice pour faire spï¿½cif matï¿½riel (module de communication)
@@ -44,8 +36,8 @@ public class Main extends Application {
 	private ADSREnveloppe adsr;
 	
 	private SpiTransmitter spi;
-	private DumpReceiver midiDump;
-	private MidiInHandler midiIn;
+	//private DumpReceiver midiDump;
+	//private MidiInHandler midiIn;
 	
 	
 	
@@ -62,7 +54,7 @@ public class Main extends Application {
 		int i=0;
 		for (SynthParameter<?> p : params) {
 			i=i+1;
-			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramètres
+			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramï¿½tres
 			//title.setStyle("-fx-text-fill: magenta;");
 			Label label = new Label(p.getLabel());
 			label.setStyle("-fx-text-fill: lightpink;");
@@ -102,8 +94,8 @@ public class Main extends Application {
 	public void start(Stage window) throws Exception {
 		
 		spi = new SpiTransmitter();
-		midiDump = new DumpReceiver(System.out);
-		midiIn = new MidiInHandler();
+		//midiDump = new DumpReceiver(System.out);
+		//midiIn = new MidiInHandler();
 		
 		
 		controlsGroup1 = new GridPane();
@@ -197,7 +189,7 @@ public class Main extends Application {
 		encoders.add(controlsGroup6,2,1);
 		encoders.add(controlsGroup7,2,0);
 		
-		//TODO gestion message erreur communication bus SPI (fenêtre ou pop up)
+		//TODO gestion message erreur communication bus SPI (fenï¿½tre ou pop up)
 		
 	    layout.setBottom(encoders);
 	    layout.setLeft(screen);
