@@ -1,71 +1,45 @@
 package view.component;
 
-import model.event.SynthParameterEditEvent;
-import model.event.SynthParameterEditListener;
+import java.io.IOException;
 
-/**
- * This component represents a bargraph with 8 LEDs based on one row (A or B) of the IS31FL3731 device.
- * @author SR
- */
-public class BarGraph implements SynthParameterEditListener<Double> {
-	
-	// -------------- fields --------------
-	
-	protected IS31FL3731 device;
-	protected IS31FL3731.Matrix matrix;
-	protected int row;
-	
-	public static final int MIN_VALUE = 0;
-	public static final int MAX_VALUE = 10;
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
-	private int value; // must be b/w 0 (no LED active) and MAX_VALUE;
+public class BarGraph extends IS31FL3731{
 
-	public static final int LED_MIN_VALUE = 0;
-	public static final int LED_MAX_VALUE = 8;
-	public static final int MIDI_MIN_VALUE = 0;
-	public static final int MIDI_MAX_VALUE = 128;	
+//CONSTRUCTORS
 	
-	private static int ledValue; // must be b/w 0 (no LED active) and 8
-	private static int midiValue; // must be b/w 0 (no LED active) and 128
-	private static int incValue; // must be 1 or -1
-	
-	
-	// -------------- constructors --------------
-	
-	/**
-	 * Constructs a BarGraph based on 8 led located on the given matrix (A or B) and given
-	 * row of the given IS31FL3731 device, that can accept up to 128 distinct values according
-	 * to the MIDI standard.
-	 * @param m A or B
-	 * @param device a properly init'd IS31FL3731
-	 * @param the matrix row (must be b/w 0 and 9)
-	 */
-	public BarGraph(IS31FL3731 device, IS31FL3731.Matrix matrix, int row) {
+	public BarGraph(int row, int AB, int state) throws Exception { //if we want to impose the state
 		
-		if (row < 0 || row > 9) throw new IllegalArgumentException("For IS31FL3731 row must be b/w 0 and 9 inclusive!");
-		this.device = device;
-		this.matrix = matrix;
+		super();
 		this.row = row;
+		this.col = AB;
+		this.stateValue = state;
+	}
+	
+	public BarGraph(int row, int AB) throws Exception { //if let the encoder free to choose the state
 		
+		super();
+		this.row = row;
+		this.col = AB;
 	}
 
-	// -------------- public and protected methods --------------
+//ATTRIBUTES
+
+	public final int LED_MIN_VALUE = 0;
+	public final int LED_MAX_VALUE = 7;
+	public final int MIDI_MIN_VALUE = 0;
+	public final int MIDI_MAX_VALUE = 127;
+	public final int HIGH = 1;
+	public final int LOW = 0;
 	
+	private int ledValue;
+	private int midiValue; // must be b/w 0 (no LED active) and 128
+	private int stateValue; //
+	private int row;
+	private int col;
 	
-	
-	public void setValue(int v) {
-		if (v > MAX_VALUE)
-			throw new IllegalArgumentException(v + " greater than " + MAX_VALUE);
-		else if (v < MIN_VALUE)
-			throw new IllegalArgumentException(v + " lower than " + MIN_VALUE);
-		value = v;
-	}
-	
-	
-	//Accessor
-	
-	//LED VALUE
-	public  void setLedValue(int v) {
+	//LED VALUE 
+	public void setLEDValue(int v) {
 		if (v > LED_MAX_VALUE)
 			throw new IllegalArgumentException(v + " greater than " + LED_MAX_VALUE);
 		else if (v < LED_MIN_VALUE)
@@ -73,90 +47,118 @@ public class BarGraph implements SynthParameterEditListener<Double> {
 		ledValue = v;
 	}
 	
-	public  int getLedValue() {
-		return ledValue;
+	public int getLEDValue() {
+		return ledValue;	
 	}
 	
 	//MIDI VALUE
 	
-	public  void setMidiValue(int v) {
+	public void setMidiValue(int v) {
 		if (v > MIDI_MAX_VALUE)
 			throw new IllegalArgumentException(v + " greater than " + MIDI_MAX_VALUE);
 		else if (v < MIDI_MIN_VALUE)
 			throw new IllegalArgumentException(v + " lower than " + MIDI_MIN_VALUE);
 		midiValue = v;
-		// SR : ok mais ensuite faut faire quelque chose avec ça !
 	}
 	
-	public  int getMidiValue() {
+	public int getMidiValue() {
 		return midiValue;
 		
 	}
 	
+	//STATE VALUE 
 	
-	/*public  int getRowAddress() {
-		return registerOfStateLED(row);
+	public void setStateValue(int v) {
+		if (v ==0 | v==1)
+			stateValue = v;
+		else
+			throw new IllegalArgumentException(v + " lower than " + this.MIDI_MIN_VALUE);
+	}
+	
+	public int getStateValue() {
+		return stateValue;
 		
-	}*/
-	
-	//INCREMENTAION VALUE
-	
-	public  void setIncValue(int i) {
-		if (i == 1 | i == -1 | i==0 )
-			throw new IllegalArgumentException("inc value is wrong"); // ah ? pq ?
-		incValue = i;
 	}
 	
-	public  int getIncValue() {
-		return incValue;
+	//Binary way to turn on LEDs
+	
+	private void updateBargraphBinary(int row ,int val, int col) throws IOException, InterruptedException, UnsupportedBusNumberException  {
+
+		val = val | 7;
+		if(col==1) {
+			val=val+this.LED_MAX_VALUE;
+		}
+		int i;
+		for (i=this.LED_MIN_VALUE;i<val;i++) {
+			switchLED(row,i,HIGH);
+			Thread.sleep(50);
+		}
+		for (i=val;i<this.LED_MAX_VALUE;i++) {
+			switchLED(row,i,LOW);
+			Thread.sleep(50);
+		}
 	}
 	
 	
-	// ------------------- test methods ------------------------
+	//Change state of LED by a smooth way thanks to PWM when we use MIDI
+	private void updateBargraphPWM(int row ,int val, int col) throws IOException, InterruptedException, UnsupportedBusNumberException  {
+
+		val = val | this.MIDI_MAX_VALUE;
+		
+		if(col==1) {
+			col=col+this.LED_MAX_VALUE;
+		}
+		
+		int position = val/16;
+		int i;
+		for (i=this.LED_MIN_VALUE;i<position+1;i++) {
+			switchLED(row,i,HIGH);
+			Thread.sleep(50);
+		}
+		for (i=position;i<this.LED_MAX_VALUE;i++) {
+			switchLED(row,i,LOW);
+			Thread.sleep(50);
+		}
+		
+		int pwmVal = (val-(position*16-1))*16;
+		setLEDpwm(row, position+1, pwmVal);
+		
+	}
+
 	
 	public static void main (String args[]) throws Exception {
 		
-		BarGraph barGraph = new BarGraph(null, IS31FL3731.Matrix .A, 0);
-		int i;
-		//for (i=0;i<16;i++) barGraph.resetLED(i); //reset all LED before starting [SR : dot être fait dans le constructeur, pas ici]
-		
-		
-		//MODIFIED VALUES
-		int led=0;
-		int midi=65;
-		int inc=1;
+		BarGraph bg1 = new BarGraph(0,0,0); //information of A 8-LED bargraph of the row 1, on state 0 (Turn on or turn of a LED)
+		BarGraph bg2 = new BarGraph(0,1,1); //information of B 8-LED bargraph of the row 1, on state 1 (Use midi information, then PWM)
+		BarGraph bg3 = new BarGraph(1,0); //information of A 8-LED bargraph of the row 2 (No state is ordered)
+		bg3.setStateValue(0);//bg3 is on state 0 as default
 		
 		while(true) {
-			int old; //OLD VALUE TO COMPARE WITH
 			
-			//SWITCHING OFF/ON LED
-			old = ledValue;
-			barGraph.setLedValue(led);
-			if (old != ledValue)
-				barGraph.setIncValue(inc);
-				//barGraph.LedInDecBinary(row, getIncValue(), getLedValue(), 0);
+			bg1.setLEDValue(3); //received value by the listener (TODO), Here in example, the value is 3)
+			bg1.updateBargraphBinary(bg1.row ,bg1.ledValue, bg1.col);
 			
+			Thread.sleep(50);
 			
-			//INCREASING INTENSITY
-			old = midiValue;
-			barGraph.setMidiValue(midi);
-			if (old != midiValue)
-				barGraph.setIncValue(inc);
-			//barGraph.LedInDecPWM(row, getLedValue(), getIncValue(),getMidiValue(), 0);
+			bg2.setMidiValue(48); //received value by the listener (TODO), Here in example, the value is 48)
+			bg2.updateBargraphPWM(bg2.row ,bg2.midiValue, bg2.col);
 			
+			Thread.sleep(50);
+			
+			bg3.setStateValue(0); //received value by the listener (TODO), Here in example, the state is 0)
+			if (bg3.stateValue == 0) {				
+				bg3.setLEDValue(3); //received value by the listener (TODO), Here in example, the value is 3)
+				bg3.updateBargraphBinary(bg3.row ,bg3.ledValue, bg3.col);
+			}
+			else {
+				bg3.setMidiValue(48); //received value by the listener (TODO), Here in example, the value is 48)
+				bg3.updateBargraphPWM(bg3.row ,bg3.midiValue, bg3.col);				
+			}
 			
 			Thread.sleep(50);
 			
 			
 		}
 	}
-
-	@Override
-	public void synthParameterEdited(SynthParameterEditEvent<Double> e) {
-		double x = e.getValue();
-		// TODO : utiliser x pour mettre à jour le bargraph via la méthode setLEDPwm()
-		
-	}
-
 			
 }
