@@ -1,6 +1,7 @@
 package application;
 	
 import javafx.application.Application;
+
 import javafx.scene.*;
 import model.*;
 import javafx.geometry.*;
@@ -11,18 +12,23 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import java.util.*;
 
-import javafx.beans.value.*;
+import com.sun.prism.paint.Color;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import controller.component.Control;
 //import model.midi.*;
 import model.spi.*;
-/*
- SPIDevice pour faire sp�cif mat�riel (module de communication)
- Permet de communiquer entre Code Java et ce qui arrive/part sur le bus SPI
- */
-	
+
+/**
+ * SR -> BF :  Documentation a ecrire !
+ */	
 public class Main extends Application {
 	
-	Stage window;
+	Stage windows;
+	private Scene simulator,select,themis;
+	private BorderPane selectLayout,simulatorLayout,touchScreenLayout;
+	
 	private VcoCEM3340 vco3340;
 	private VcoLM13700 vco13700;
 	private VcoCEM3340 vcoDig;
@@ -38,6 +44,7 @@ public class Main extends Application {
 	private SpiTransmitter spi;
 	//private DumpReceiver midiDump;
 	//private MidiInHandler midiIn;
+	
 	
 	
 	
@@ -83,20 +90,54 @@ public class Main extends Application {
 		}	
 	
 	
-	
-	public static void main(String[] args) {
-		Application.launch(Main.class,args);
-		
-	}
-	
-	
 	@Override
-	public void start(Stage window) throws Exception {
+	public void start(Stage windows) throws Exception {
+		
+		selectLayout = new BorderPane();
+		selectLayout.setStyle("-fx-background-color: #222;");
+        selectLayout.setPadding(new Insets(0));
+        
+        select = new Scene(selectLayout, 200,120);
+		windows.setScene(select);
+		windows.setTitle("Themis Start");
+		windows.setX(0);
+		windows.setY(0);
+		windows.setResizable(false);
+		
+		Button button1= new Button("Simulator");
+		button1.setMinSize(100,50);
+		button1.setStyle("-fx-background-color: #222;"+"-fx-border-color: #CCC;"+"-fx-text-fill: #FFF;"+"-fx-border-radius: 0;");
+		Button button2= new Button("Touch Screen");
+		button2.setMinSize(100,50);
+		button2.setStyle("-fx-background-color: #222;"+"-fx-border-color: #CCC;"+"-fx-text-fill: #FFF;"+"-fx-border-radius: 0;");
+		button1.setOnAction(e -> windows.setScene(simulator));
+		button2.setOnAction(e -> windows.setScene(themis));
+		HBox buttons = new HBox();
+		buttons.getChildren().addAll(button1,button2);
+		buttons.setAlignment(Pos.CENTER);
+		selectLayout.setCenter(buttons);
+		
+        simulatorLayout = new BorderPane();
+		simulatorLayout.setStyle("-fx-background-color: #222;");
+        simulatorLayout.setPadding(new Insets(10));
+        
+        touchScreenLayout = new BorderPane();
+        touchScreenLayout.setStyle("-fx-background-color: #000;");
+        touchScreenLayout.setPadding(new Insets(10));
+        
+		simulator = new Scene(simulatorLayout,1600,910);
+		/*simulatorStage.setScene(simulator);
+		simulatorStage.setTitle("Themis Simulator");
+		simulatorStage.setResizable(true);*/
+		
+		themis = new Scene(touchScreenLayout,800,480);
+		/*simulatorStage.setScene(themis);
+		simulatorStage.setTitle("Themis");
+		simulatorStage.setResizable(false);*/
 		
 		spi = new SpiTransmitter();
 		//midiDump = new DumpReceiver(System.out);
 		//midiIn = new MidiInHandler();
-		
 		
 		controlsGroup1 = new GridPane();
 		controlsGroup2 = new GridPane();
@@ -113,8 +154,6 @@ public class Main extends Application {
 		vcf = new VcfCEM3320();
 		vca = new VcaLM13700();
 		adsr = new ADSREnveloppe();
-		
-		
 
 		paramsVco3340 = vco3340.getParameters();
 		paramsVco13700 = vco13700.getParameters();
@@ -125,9 +164,7 @@ public class Main extends Application {
 		paramsAdsr = adsr.getParameters();
 		
 		
-		BorderPane layout = new BorderPane();
-		layout.setStyle("-fx-background-color: #222;");
-        layout.setPadding(new Insets(10));
+		
         
         GridPane encoders = new GridPane();
         //encoders.setStyle("-fx-background-color: black;");
@@ -183,24 +220,29 @@ public class Main extends Application {
 	    
 		encoders.add(controlsGroup1,0,0);
 		encoders.add(controlsGroup2,1,0);
-		encoders.add(controlsGroup3,3,0);
+		//encoders.add(controlsGroup3,3,0);
 		encoders.add(controlsGroup4,0,1);
 		encoders.add(controlsGroup5,1,1);
 		encoders.add(controlsGroup6,2,1);
 		encoders.add(controlsGroup7,2,0);
 		
-		//TODO gestion message erreur communication bus SPI (fen�tre ou pop up)
-		
-	    layout.setBottom(encoders);
-	    layout.setLeft(screen);
-	    layout.setRight(pads);
+		//TODO gestion message erreur communication bus SPI (fenetre ou pop up)
+	    simulatorLayout.setBottom(encoders);
+	    simulatorLayout.setLeft(screen);
+	    simulatorLayout.setRight(pads);
 		//layout.getChildren().add(encoders);
-		Scene s = new Scene(layout, 1600,910);
-		window.setScene(s);
-		window.setTitle("Themis");
-		window.setResizable(true);
-		window.show();
+	    
+	    touchScreenLayout.getChildren().add(encoders);
+		
+	    windows.setScene(select);
+		windows.show();
 		
 		//MidiInHandler.main(null);
 	}
+
+
+public static void main(String[] args) {
+	Application.launch(Main.class,args);
+}
+
 }
