@@ -2,122 +2,83 @@ package model.midi;
 
 import java.io.IOException;
 
-import javax.sound.midi.Transmitter;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Synthesizer;
+import javax.sound.midi.*;
 
-/*	If the compilation fails because this class is not available,
-	get gnu.getopt from the URL given in the comment below.
-*/
-//import gnu.getopt.Getopt;
+import model.spi.SpiTransmitter;
 
 
+/**
+ * Capture midi input events, dispatching them to the SPI bus transmitter
+ */
+public class MidiInHandler implements Receiver {
 
-/**	<titleabbrev>MidiInDump</titleabbrev>
-	<title>Listens to a MIDI port and dump the received event to the console</title>
+	private MidiDevice device;
+	private SpiTransmitter spiTransmitter;
 
-	<formalpara><title>Purpose</title>
-	<para>Listens to a MIDI port and dump the received event to the console.</para></formalpara>
+	/**
+	 * 
+	 * @throws MidiUnavailableException
+	 */
+	public MidiInHandler(SpiTransmitter spiTransmitter) throws MidiUnavailableException {
 
-	<formalpara><title>Usage</title>
-	<para>
-	<cmdsynopsis>
-	<command>java MidiInDump</command>
-	<arg choice="plain"><option>-l</option></arg>
-	</cmdsynopsis>
-	<cmdsynopsis>
-	<command>java MidiInDump</command>
-	<arg choice="plain"><option>-d <replaceable>devicename</replaceable></option></arg>
-	<arg choice="plain"><option>-n <replaceable>device#</replaceable></option></arg>
-	</cmdsynopsis>
-	</para></formalpara>
+		this.spiTransmitter = spiTransmitter;
 
-	<formalpara><title>Parameters</title>
-	<variablelist>
-	<varlistentry>
-	<term><option>-l</option></term>
-	<listitem><para>list the availabe MIDI devices</para></listitem>
-	</varlistentry>
-	<varlistentry>
-	<term><option>-d <replaceable>devicename</replaceable></option></term>
-	<listitem><para>reads from named device (see <option>-l</option>)</para></listitem>
-	</varlistentry>
-	<varlistentry>
-	<term><option>-n <replaceable>device#</replaceable></option></term>
-	<listitem><para>reads from device with given index (see <option>-l</option>)</para></listitem>
-	</varlistentry>
-	</variablelist>
-	</formalpara>
+		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
-	<formalpara><title>Bugs, limitations</title>
-	<para>
-	For the Sun J2SDK 1.3.x or 1.4.0, MIDI IN does not work. See the <olink targetdoc="faq_midi" targetptr="faq_midi">FAQ</olink> for alternatives.
-	</para></formalpara>
+		for (MidiDevice.Info info : infos) {
 
-	<formalpara><title>Source code</title>
-	<para>
-	<ulink url="MidiInDump.java.html">MidiInDump.java</ulink>,
-	<ulink url="DumpReceiver.java.html">DumpReceiver.java</ulink>,
-	<ulink url="MidiCommon.java.html">MidiCommon.java</ulink>,
-	<ulink url="http://www.urbanophile.com/arenn/hacking/download.html">gnu.getopt.Getopt</ulink>
-	</para>
-	</formalpara>
+			this.device = MidiSystem.getMidiDevice(info);
+			System.out.println("Found: " + device);
 
-*/
-public class MidiInHandler
-{
-	/**	Flag for debugging messages.
-	 	If true, some messages are dumped to the console
-	 	during operation.
-	*/
-	private static boolean		DEBUG = true;
+			int maxTransmitters = device.getMaxTransmitters();
+			System.out.println("  Max transmitters: " + maxTransmitters);
 
+			if (maxTransmitters == -1 || maxTransmitters > 0) {
+				Transmitter transmitter = device.getTransmitter();
+				transmitter.setReceiver(this);
+				// transmitter.setReceiver(new DumpReceiver()); // DEBUG
+				System.out.println("Opening " + info);
+				device.open();
+				return; 
+			}
+		}
+
+		throw new MidiUnavailableException("Could not find any midi input sources");
+	}
+
+
+	@Override
+	public void send(MidiMessage message, long timeStamp) {
+		System.out.println(message + " received at time " + timeStamp);
+		if (message instanceof ShortMessage) {
+			ShortMessage sm = (ShortMessage)message;
+			System.out.println("\tStatus=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
+			if (spiTransmitter != null)
+				try {
+					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF || sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
+						spiTransmitter.transmitMidiMessage(sm);
+						System.out.println("\tSend message " + sm + " over SPI bus to STM32");
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+
+	}
+
+	@Override
+	public void close() {
+		System.out.println("Closing device " + device);
+		device.close();
+	}
 
 	public static void main(String[] args) throws Exception {
 
-		/*
-		 *	The device name/index to listen to.
-		 */
-		String	strDeviceName = null;
-		int	nDeviceIndex = 0;
-		boolean bUseDefaultSynthesizer = false;
-		// TODO: synchronize options with MidiPlayer
-		
-		MidiCommon.listDevicesAndExit(true, false,true);
-		
-		MidiDevice.Info	info = MidiCommon.getMidiDeviceInfo(nDeviceIndex);
-		MidiDevice	inputDevice = MidiSystem.getMidiDevice(info);
-		inputDevice.open();
-		Receiver r = new DumpReceiver(System.out);
-		Transmitter	t = inputDevice.getTransmitter();
-		t.setReceiver(r);
-		Thread.sleep(100000);	
-		inputDevice.close();
+		SpiTransmitter spi = new SpiTransmitter();
+		MidiInHandler mih = new MidiInHandler(spi);
 	}
 
-
-
-	private static void out(String strMessage)
-	{
-		System.out.println(strMessage);
-	}
-
-
-
-	private static void out(Throwable t)
-	{
-		if (DEBUG) {
-			t.printStackTrace();
-		} else {
-			out(t.toString());
-		}
-	}
 }
 
-
-
-/*** MidiInDump.java ***/
 

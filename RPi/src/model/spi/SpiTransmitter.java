@@ -34,7 +34,7 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 	 * @param sm
 	 * @throws IOException 
 	 */
-	void transmitMidiMessage(ShortMessage sm) throws IOException {
+	public void transmitMidiMessage(ShortMessage sm) throws IOException {
 		
 		spiDevice.write(sm.getMessage());
 		
@@ -45,7 +45,7 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 	 * @param sm
 	 * @throws IOException 
 	 */
-	void transmitMidiMessage(short status, short data1, short data2) throws IOException {
+	public void transmitMidiMessage(short status, short data1, short data2) throws IOException {
 		
 		spiDevice.write(status, data1, data2);
 		
@@ -58,7 +58,7 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 		/*if (o instanceof Double) bla bla bla
 		else if (o instance of Boolean) bla bla bla
 		else bla bla bla*/
-		// @loic : c'est ici que tu dois décortiquer l'event "e" et envoyer les données correspondantes sur le bus
+		// @loic : c'est ici que tu dois decortiquer l'event "e" et envoyer les donnees correspondantes sur le bus
 	}
 
 
@@ -68,13 +68,15 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 		int velocity = 100;
 		ShortMessage smOn = new ShortMessage(ShortMessage.NOTE_ON, note, velocity);
 		ShortMessage smOff = new ShortMessage(ShortMessage.NOTE_OFF, note, velocity);
-		while (true) {
+		//while (true) {
 			//st.transmitMidiMessage((short)0xA0,(short)0xA5,(short)0xAF);
+			System.out.println("NOTE ON");
 			st.transmitMidiMessage(smOn);
 			Thread.sleep(1000);
+			System.out.println("NOTE OFF");
 			st.transmitMidiMessage(smOff);
 			Thread.sleep(1000);
-		}
+		//}
 	}
 	
 }

@@ -1,7 +1,5 @@
 package model.midi;
 
-
-
 /*
  *	DumpReceiver.java
  *
@@ -108,6 +106,10 @@ public class DumpReceiver implements	Receiver
 	private PrintStream		m_printStream;
 	private boolean			m_bDebug;
 	private boolean			m_bPrintTimeStampAsTicks;
+
+	public DumpReceiver() {
+		this(System.out, false);
+	}
 
 
 
