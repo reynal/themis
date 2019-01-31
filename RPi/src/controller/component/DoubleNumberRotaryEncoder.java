@@ -18,12 +18,13 @@ public class DoubleNumberRotaryEncoder extends AbstractRotaryEncoder {
 	}
 
 	public Node createJavaFXView() {
-		Slider slider = new Slider(0,1,0);
+		Slider slider = new Slider(0,127,1);
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
-		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);
+		slider.setSnapToTicks(true);
+		slider.setMajorTickUnit(1f);
+		slider.setBlockIncrement(1f);
 		return slider;
 	}
 

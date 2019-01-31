@@ -61,7 +61,7 @@ public class Main extends Application {
 		int i=0;
 		for (SynthParameter<?> p : params) {
 			i=i+1;
-			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de param�tres
+			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramtres
 			//title.setStyle("-fx-text-fill: magenta;");
 			Label label = new Label(p.getLabel());
 			label.setStyle("-fx-text-fill: lightpink;");

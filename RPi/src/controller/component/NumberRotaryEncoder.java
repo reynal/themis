@@ -4,6 +4,9 @@ import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import controller.component.*;
 
 /**
  * A rotary encoder than can be linked to a DoubleParameter.
@@ -20,14 +23,14 @@ public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 	
 	@Override
 	public Node createJavaFXView() {
-		Slider slider = new Slider(0, 1, 0.5);
+		Slider slider = new Slider(0,127,1);
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setShowTickMarks(true);
 		slider.setShowTickLabels(true);
-		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);	
-		//todo : add JavaFX event handler !
-		// des qu'un event est genere, il faut appeler ... fireRotaryEncoderEvent(RotaryEncoderDirection...)
+		slider.setSnapToTicks(true);
+		slider.setMajorTickUnit(32f);
+		slider.setBlockIncrement(1f);	
+
 		//g.getChildren().addAll(new Label(label));		
 		return slider;
 	} 

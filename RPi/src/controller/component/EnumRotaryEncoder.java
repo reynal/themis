@@ -5,6 +5,9 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import controller.component.Control;
 
 /**
  * a rotary encoder for enum types
@@ -22,16 +25,14 @@ public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder 
 	
 	@Override
 	public Node createJavaFXView() {
-		//Slider slider = new Slider(0, 1, 0.5);
-		slider.setMax(3.0);
-		slider.setMin(0.0);
+		Slider slider = new Slider(0,127,32);
 		slider.setOrientation(Orientation.VERTICAL);
 		slider.setShowTickMarks(true); // TODO : add enum labels!
 		slider.setShowTickLabels(false);
 		slider.setSnapToTicks(true);
 		slider.setValue(0);
-		slider.setMajorTickUnit(4f);
-		slider.setBlockIncrement(1f);
+		slider.setMajorTickUnit(127f);
+		slider.setBlockIncrement(127f);
 		//g.getChildren().addAll(new Label(label));		
 		return slider;
 	} 
