@@ -1,4 +1,4 @@
-package controller.component;
+		 package controller.component;
 
 import controller.event.*;
 import javafx.scene.Node;
@@ -69,7 +69,8 @@ public class PushButton extends Control {
 		b.setMinSize(20.0,20.0);
        	b.setStyle("-fx-background-color : white;");
 		return b;
-
 	}
+	
+	
 
 }
