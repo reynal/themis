@@ -1,4 +1,4 @@
-package controller.component;
+		 package controller.component;
 
 import java.awt.Component;
 
@@ -74,6 +74,8 @@ public class PushButton extends Control {
        	b.setStyle("-fx-background-color : white;");
 		return b;
 	}
+	
+	
 
 	public Component createJavaSwingView() {
 		JButton b = new JButton();
