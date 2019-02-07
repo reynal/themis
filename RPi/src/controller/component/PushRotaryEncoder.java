@@ -1,5 +1,11 @@
 package controller.component;
 
+import java.awt.Component;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+
 import controller.event.*;
 import javafx.geometry.Orientation;
 import javafx.scene.*;
@@ -62,6 +68,19 @@ public class PushRotaryEncoder extends AbstractRotaryEncoder {
 		g.getChildren().addAll(new Button(label));		
 		return g;
 		
+	}
+
+	@Override
+	public Component createJavaSwingView() {
+		JPanel panel = new JPanel();
+		JButton button = new JButton();
+		JSlider slider = new JSlider(JSlider.VERTICAL);
+		slider.setMaximum(127);
+		slider.setMinimum(0);
+		slider.setMajorTickSpacing(32);	
+		panel.add(slider);
+		panel.add(button);	
+		return panel;
 	} 
 	
 }

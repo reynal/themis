@@ -112,7 +112,6 @@ public abstract class SynthParameter<T> {
 
 	@Override
 	public String toString() {
-		
 		return super.toString() + "; label=\"" + label + "\"; value = \"" + value + "\"";
 	}
 	

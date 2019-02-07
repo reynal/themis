@@ -3,6 +3,7 @@ package model;
 import controller.component.*;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
+import javafx.beans.value.ObservableValue;
 
 /**
  * This class represents a model parameter of type "double"
@@ -63,6 +64,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		}
 		
 	}
+
 	
 	// ------------------ test ------
 	
@@ -75,7 +77,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		System.out.println(p.getMin());
 		System.out.println(p.getMax());
 		// add a listener using functional programming:
-		p.addSynthParameterEditListener(e -> System.out.println(e));
+		//p.addSynthParameterEditListener(e -> System.out.println(e));
 
 		//new EnumParameter<Double>(Double.class, "% of duty cycle"); // "bound mismatch" compile error : Double is not an enum
 		Octave o = p.getValue();

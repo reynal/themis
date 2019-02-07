@@ -54,7 +54,8 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 	@Override
 	public void synthParameterEdited(SynthParameterEditEvent<Object> e) {
 		
-		Object o = e.getValue();
+		//Object o = e.getValue();
+		System.out.println(e.getSource() + " : " + e.getValue());
 		/*if (o instanceof Double) bla bla bla
 		else if (o instance of Boolean) bla bla bla
 		else bla bla bla*/

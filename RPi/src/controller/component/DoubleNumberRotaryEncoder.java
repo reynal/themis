@@ -1,5 +1,10 @@
 package controller.component;
 
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
@@ -27,6 +32,13 @@ public class DoubleNumberRotaryEncoder extends AbstractRotaryEncoder {
 		slider.setBlockIncrement(1f);
 		return slider;
 	}
-
+	
+	public Component createJavaSwingView() {
+		JSlider slider = new JSlider(JSlider.VERTICAL);
+		slider.setMaximum(127);
+		slider.setMinimum(0);
+		slider.setMajorTickSpacing(32);
+		return slider;
+	}
 	
 }

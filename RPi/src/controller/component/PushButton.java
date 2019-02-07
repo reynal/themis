@@ -1,5 +1,9 @@
 package controller.component;
 
+import java.awt.Component;
+
+import javax.swing.JButton;
+
 import controller.event.*;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -69,7 +73,10 @@ public class PushButton extends Control {
 		b.setMinSize(20.0,20.0);
        	b.setStyle("-fx-background-color : white;");
 		return b;
-
 	}
 
+	public Component createJavaSwingView() {
+		JButton b = new JButton();
+		return b;
+	}
 }

@@ -6,6 +6,12 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+
 import controller.component.*;
 
 /**
@@ -35,4 +41,11 @@ public class NumberRotaryEncoder extends AbstractRotaryEncoder {
 		return slider;
 	} 
 	
+	public Component createJavaSwingView() {
+		JSlider slider = new JSlider(JSlider.VERTICAL);
+		slider.setMaximum(127);
+		slider.setMinimum(0);
+		slider.setMajorTickSpacing(32);
+		return slider;
+	}
 }

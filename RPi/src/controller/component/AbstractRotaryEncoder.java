@@ -1,5 +1,7 @@
 package controller.component;
 
+import javax.swing.JSlider;
+
 import controller.event.*;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -13,7 +15,7 @@ import javafx.scene.control.*;
  */
 public abstract class AbstractRotaryEncoder extends Control {
 
-	public Slider slider = new Slider(0, 1, 0.5);
+	public JSlider slider = new JSlider();
 	
 	public AbstractRotaryEncoder(String label) {
 		super(label);

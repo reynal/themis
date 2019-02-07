@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.sound.midi.*;
 
+import javafx.scene.control.Label;
 import model.spi.SpiTransmitter;
 
 
@@ -14,14 +15,16 @@ public class MidiInHandler implements Receiver {
 
 	private MidiDevice device;
 	private SpiTransmitter spiTransmitter;
+	private Label label; // used to display information on a UI
 
 	/**
 	 * 
 	 * @throws MidiUnavailableException
 	 */
-	public MidiInHandler(SpiTransmitter spiTransmitter) throws MidiUnavailableException {
+	public MidiInHandler(SpiTransmitter spiTransmitter, Label label) throws MidiUnavailableException {
 
 		this.spiTransmitter = spiTransmitter;
+		this.label = label;
 
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
@@ -53,12 +56,14 @@ public class MidiInHandler implements Receiver {
 		if (message instanceof ShortMessage) {
 			ShortMessage sm = (ShortMessage)message;
 			System.out.println("\tStatus=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
+			if (label != null) label.setText("Status=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
 			if (spiTransmitter != null)
 				try {
 					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF || sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
 						spiTransmitter.transmitMidiMessage(sm);
 						System.out.println("\tSend message " + sm + " over SPI bus to STM32");
 					}
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -75,8 +80,8 @@ public class MidiInHandler implements Receiver {
 
 	public static void main(String[] args) throws Exception {
 
-		SpiTransmitter spi = new SpiTransmitter();
-		MidiInHandler mih = new MidiInHandler(spi);
+		/*SpiTransmitter spi = new SpiTransmitter();
+		MidiInHandler mih = new MidiInHandler(spi);*/
 	}
 
 }

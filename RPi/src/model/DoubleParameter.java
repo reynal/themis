@@ -3,11 +3,13 @@ package model;
 import controller.component.*;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 /**
  * This class represents a model parameter of type "double"
  */
-public class DoubleParameter extends SynthParameter<Double> implements RotaryEncoderChangeListener {
+public class DoubleParameter extends SynthParameter<Double> implements RotaryEncoderChangeListener, ChangeListener<Number> {
 
 	// inherited : Double value
 	private double min, max, step;
@@ -49,6 +51,13 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 		
 	}	
 	
+	@Override
+	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+			
+		System.out.println(toString() + " : New Value " + newValue);
+		value = newValue.doubleValue();
+	}
+
 	// -------------------------------
 	
 	// test method to check the listener mechanics
@@ -56,11 +65,12 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 		
 		VcoCEM3340 model = new VcoCEM3340();
 
-		model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
-		model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));
+		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
+		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));
 		
 		model.setDetune(0.03);
 		model.setOctave(Octave.TWO_INCHES);
 
 	}
+
 }

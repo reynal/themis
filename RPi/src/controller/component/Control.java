@@ -1,5 +1,9 @@
 package controller.component;
 
+import java.awt.Component;
+
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.event.EventListenerList;
 
 import javafx.scene.*;
@@ -19,6 +23,7 @@ public abstract class Control {
 	
 	/** a java fx component that represents this control graphically in an interface simulator */
 	protected Node javaFXView;
+	protected Component javaSwingView;
 	
 	/**
 	 * construct a Control with the given UI label
@@ -39,9 +44,17 @@ public abstract class Control {
 		
 	}
 	
+	public Component getJavaSwingView() {
+		
+		if (javaSwingView==null) javaSwingView = createJavaSwingView();
+		return javaSwingView;
+		
+	}
+	
 	/**
 	 * creates a java fx component that represents this control graphically in an interface simulator
 	 */
 	abstract Node createJavaFXView();
+	public abstract Component createJavaSwingView();
 
 }

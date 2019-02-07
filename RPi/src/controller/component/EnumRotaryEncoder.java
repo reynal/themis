@@ -7,6 +7,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+
+import java.awt.Component;
+import java.util.Hashtable;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+
 import controller.component.Control;
 
 /**
@@ -36,4 +44,20 @@ public class EnumRotaryEncoder<T extends Enum<T>> extends AbstractRotaryEncoder 
 		//g.getChildren().addAll(new Label(label));		
 		return slider;
 	} 
+	
+	public Component createJavaSwingView() {
+		JSlider slider = new JSlider(JSlider.VERTICAL);
+		Hashtable labelTable = new Hashtable();
+		labelTable.put( new Integer(0), new JLabel("Enum") );
+		labelTable.put( new Integer(127/3), new JLabel("Une") );
+		labelTable.put( new Integer(127*2/3), new JLabel("Est") );
+		labelTable.put( new Integer(127), new JLabel("Ceci") );
+		slider.setLabelTable(labelTable);
+		slider.setMaximum(127);
+		slider.setMinimum(0);
+		slider.setMajorTickSpacing(32);
+		slider.setPaintTicks(true);
+		slider.setPaintLabels(true);
+		return slider;
+	}
 }
