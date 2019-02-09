@@ -15,6 +15,8 @@ import com.pi4j.io.i2c.I2CFactory.*;
 import static device.MCP23017.Register.*;
 
 /**
+ * A class that represents the MCP23017 GPIO expander.
+ *
  * GPB0	1	MCP23017		28	GPA7
  * GPB1	2				27	GPA6
  * GPB2	3				26	GPA5
@@ -37,11 +39,10 @@ public class MCP23017 implements GpioPinListenerDigital {
 
 	// -------------- fields --------------
 	
-	/* write to this register to select current frame register (or the Function Register, aka Page 9, which sets general parameters) */
 	private I2CDevice i2cDevice; 
 	private I2CBus i2cBus;
 	
-	/** a list of event listeners for this control */
+	/** a list of event listeners for this device */
 	protected EventListenerList listenerList;
 	
 	// -------------- constructors --------------
