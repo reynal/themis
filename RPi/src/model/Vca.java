@@ -9,33 +9,40 @@ package model;
 
 public class Vca extends AbstractModel {
 	
-	private DoubleParameter enveloppeGeneratorDepth,keyboardTracking;
+	private DoubleParameter enveloppeGeneratorDepthParameter,velocityTrackingParameter;
+	private ADSREnveloppe adsrEnveloppe;
 	
 	public Vca() {
 		
-		keyboardTracking = new DoubleParameter("KBD Tracking", 0, 0, 0);
-		enveloppeGeneratorDepth = new DoubleParameter("EG Depth", 0, 0, 0);
-		parameterList.add(keyboardTracking);
-		parameterList.add(enveloppeGeneratorDepth);
+		adsrEnveloppe = new ADSREnveloppe();
+		parameterList.addAll(adsrEnveloppe.getParameters());
+		velocityTrackingParameter = new DoubleParameter("KBD Tracking", 0, 0, 0);
+		enveloppeGeneratorDepthParameter = new DoubleParameter("EG Depth", 0, 0, 0);
+		parameterList.add(velocityTrackingParameter);
+		parameterList.add(enveloppeGeneratorDepthParameter);
 	}
+	
+	// ---- value getters and setters --- (write operating may fire change events)
 
 	public double getEnveloppeGeneratorDepth() {
-		return enveloppeGeneratorDepth.getValue();
+		return enveloppeGeneratorDepthParameter.getValue();
 	}
 
 	/**
 	 * @param egDepth b/w 0 and 1
 	 */
 	public void setEnveloppeGeneratorDepth(double egDepth) {
-		this.enveloppeGeneratorDepth.setValue(egDepth);
+		this.enveloppeGeneratorDepthParameter.setValue(egDepth);
 	}
 
 	public double getKeyboardTracking() {
-		return keyboardTracking.getValue();
+		return velocityTrackingParameter.getValue();
 	}
 
 	public void setKeyboardTracking(double kbdTracking) {
-		this.keyboardTracking.setValue(kbdTracking);
+		this.velocityTrackingParameter.setValue(kbdTracking);
 	}
+	
+	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
 }

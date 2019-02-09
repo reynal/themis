@@ -22,8 +22,8 @@ public class SynthControllerPane {
 		JPanel p = SwingMain.createDecoratedPanel("SW");
 		p.setLayout(new GridLayout(5,2, 10,10)); // rows, cols, hgap, vgap
 		
-		VcoCEM3340 vco1 = new VcoCEM3340();
-		add(p, vco1.getShapeParameter());
+		Vco3340 vco1 = new Vco3340();
+		add(p, vco1.getWaveShapeParameter());
 		add(p, vco1.getDutyParameter());
 		add(p, vco1.getSyncFrom13700Parameter());
 		

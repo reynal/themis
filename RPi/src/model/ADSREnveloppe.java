@@ -25,6 +25,8 @@ public class ADSREnveloppe extends AbstractModel {
 		parameterList.add(releaseMs);
 	}
 	
+	// ---- value getters and setters --- (write operating may fire change events)
+	
 	public double getAttackMs() {
 		return attackMs.getValue();
 	}
@@ -57,7 +59,8 @@ public class ADSREnveloppe extends AbstractModel {
 		this.releaseMs = releaseMs;
 	}
 
-	
+
+	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
 	
 }

@@ -2,7 +2,8 @@ package model;
 
 public class Lfo extends AbstractModel {
 	
-	protected DoubleParameter frequency;
+	private DoubleParameter frequencyParameter;
+	private EnumParameter<WaveShape> waveShapeParameter;
 	
 	enum WaveShape {
 		
@@ -11,13 +12,17 @@ public class Lfo extends AbstractModel {
 		PULSE,
 		SAWTOOTH;
 	}
-	WaveShape shape;
+		
+	// ---- value getters and setters --- (write operating may fire change events)
 	
 	public double getFrequency() {
-		return frequency.getValue();
+		return frequencyParameter.getValue();
 	}
 
 	public void setFrequency(double frequency) {
-		this.frequency.setValue(frequency);
+		this.frequencyParameter.setValue(frequency);
 	}
+	
+	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
+	
 }
