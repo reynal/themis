@@ -1,26 +1,29 @@
 package model;
 
-
 /**
  * 
  * @author Bastien Fratta, S. Reynal
  *
  */
-public abstract class Vco extends AbstractModel {
-	
+public class Vco13700 extends AbstractModel {
+
 	protected DoubleParameter detune;
 	protected EnumParameter<Octave> octave;
+	private EnumParameter<WaveShape> shape;
 	
-	/**
-	 * 
-	 */
-	public Vco(){
-
+	public Vco13700() {
+		super();
 		parameterList.add(detune = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
 		parameterList.add(octave = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
-		
+		parameterList.add(shape = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
 	}
-	
+		
+	enum WaveShape {
+		
+		SQUARE,
+		TRIANGLE;
+	}
+
 	public Octave getOctave() { 
 		return octave.getValue();
 	}

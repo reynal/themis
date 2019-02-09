@@ -54,6 +54,9 @@ public class AbstractModel implements SynthParameterProvider {
 			//layout.add(lbl,i,1);
 			group.add(label,i,2);
 			
+			// debug only: listen to model change:
+			p.addSynthParameterEditListener(e -> System.out.println(e));
+			
 		}
 		return group;
 	}
@@ -81,15 +84,14 @@ public class AbstractModel implements SynthParameterProvider {
 			label.setForeground(Color.pink);
 
 			Control c = p.getControl();
-			//System.out.println(p);
-			
 			JComponent n = c.getSwingView();
-			//System.out.println(c.getJavaFXView());
 
-			//group.add(title,2,0);
 			group.add(n);
-			//layout.add(lbl,i,1);
 			group.add(label);
+			
+			// debug only: listen to model change:
+			p.addSynthParameterEditListener(e -> System.out.println(e));
+			
 			
 		}
 		return group;

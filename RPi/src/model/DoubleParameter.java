@@ -101,7 +101,7 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	// test method to check the listener mechanics
 	public static void main(String[] args) {
 		
-		VcoCEM3340 model = new VcoCEM3340();
+		Vco3340 model = new Vco3340();
 
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));

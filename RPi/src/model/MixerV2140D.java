@@ -5,7 +5,7 @@ import java.util.List;
 import controller.component.Control;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
-import model.VcoLM13700.WaveShape;
+import model.Vco13700.WaveShape;
 
 public class MixerV2140D extends AbstractModel implements RotaryEncoderChangeListener {
 
