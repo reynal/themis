@@ -22,33 +22,71 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	 */
 	public DoubleParameter(String lbl, double min, double max, double step) {
 		super(lbl);
-		value=0.0;
+		this.value=0.0;
 		this.min = min;
 		this.max = max;
 		this.step = step;
 	}
+	
+	/**
+	 * Utility method for, e.g., bargraphs.
+	 * @return (value - min)/(max - min), that is, the parameter value as a ratio from 0.0 to 1.0.   
+	 */
+	public double getValueAsRatio() {
+		
+		return (value - min)/(max - min);
+	}
+	
+	/**
+	 * @return the lower bound for this DoubleParameter
+	 */
+	public double getMin() {
+		return min;
+	}
+
+	/**
+	 * @return the upper bound for this DoubleParameter
+	 */
+	public double getMax() {
+		return max;
+	}
+
+	/**
+	 * @return the step
+	 */
+	public double getStep() {
+		return step;
+	}
+
+	/**
+	 * @param step the step to set
+	 */
+	public void setStep(double step) {
+		this.step = step;
+	}	
 
 	@Override
 	public Control createControl() {
-		NumberRotaryEncoder e = new NumberRotaryEncoder(getLabel());
+		RotaryEncoder e = new RotaryEncoder(getLabel());
 		e.addRotaryEncoderChangeListener(this);
 		return e;
 	}
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
+		double old = getValue();
 		switch (e.getDirection()) {
 		case UP : 
-			value+=step;
-			if (value > max) value=max;
+			this.value+=step;
+			if (this.value > max) this.value=max;
 			break;
 			
 		case DOWN : 
-			value-=step;
-			if (value < min) value =min;
+			this.value-=step;
+			if (this.value < min) this.value = min;
 			break;
 		}
-		
+		if (this.value != old) fireSynthParameterEditEvent(value);
 	}	
 	
 	@Override

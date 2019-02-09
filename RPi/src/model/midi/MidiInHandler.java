@@ -10,21 +10,20 @@ import model.spi.SpiTransmitter;
 
 /**
  * Capture midi input events, dispatching them to the SPI bus transmitter
+ * SR TODO : need to implement a proper listener mechanism so that all interested objects may listen to incoming MIDI msg
  */
 public class MidiInHandler implements Receiver {
 
 	private MidiDevice device;
 	private SpiTransmitter spiTransmitter;
-	private Label label; // used to display information on a UI
 
 	/**
 	 * 
 	 * @throws MidiUnavailableException
 	 */
-	public MidiInHandler(SpiTransmitter spiTransmitter, Label label) throws MidiUnavailableException {
+	public MidiInHandler(SpiTransmitter spiTransmitter) throws MidiUnavailableException {
 
 		this.spiTransmitter = spiTransmitter;
-		this.label = label;
 
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
@@ -45,27 +44,26 @@ public class MidiInHandler implements Receiver {
 				return; 
 			}
 		}
-
 		throw new MidiUnavailableException("Could not find any midi input sources");
 	}
 
-
+	// the following method is called for every incoming MIDI message...
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
 		System.out.println(message + " received at time " + timeStamp);
 		if (message instanceof ShortMessage) {
 			ShortMessage sm = (ShortMessage)message;
 			System.out.println("\tStatus=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
-			if (label != null) label.setText("Status=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
 			if (spiTransmitter != null)
 				try {
 					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF || sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
-						spiTransmitter.transmitMidiMessage(sm);
+						spiTransmitter.transmitMidiMessage(sm);						
 						System.out.println("\tSend message " + sm + " over SPI bus to STM32");
+						// TODO : SR, ici il faut ajouter les modeles pour qu'ils soient informes puisque 
+						// les CONTROL_CHANGE s'adressent a eux !
 					}
 					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}

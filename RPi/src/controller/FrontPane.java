@@ -10,7 +10,7 @@ import controller.component.PushButton;
 public class FrontPane {
 	
 	private PerformancePad performancePad;
-	private SynthController synthController;
+	private SynthControllerPane synthController;
 	
 	public void setOnTop() {
 		

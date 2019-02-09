@@ -1,13 +1,9 @@
 package controller.component;
 
 import java.awt.Component;
-
-import javax.swing.JPanel;
-import javax.swing.JSlider;
+import javax.swing.JComponent;
 import javax.swing.event.EventListenerList;
-
 import javafx.scene.*;
-import model.SynthParameter;
 
 /** 
  * this object represents a physical control that also has
@@ -21,10 +17,13 @@ public abstract class Control {
 	/** a list of event listeners for this control */
 	protected EventListenerList listenerList;
 	
-	/** a java fx component that represents this control graphically in an interface simulator */
+	/** a java fx component that represents this control graphically in a JavaFX based interface simulator */
 	protected Node javaFXView;
 	protected Component javaSwingView;
 	
+	/** a Swing component that represents this control graphically in a Swing based interface simulator */
+	protected JComponent swingView;
+
 	/**
 	 * construct a Control with the given UI label
 	 * @param label
@@ -43,18 +42,24 @@ public abstract class Control {
 		return javaFXView;
 		
 	}
-	
-	public Component getJavaSwingView() {
 		
-		if (javaSwingView==null) javaSwingView = createJavaSwingView();
-		return javaSwingView;
+	/**
+	 * creates a java fx component that represents this control graphically in an interface simulator
+	 */
+	abstract Node createJavaFXView();
+
+	/**
+	 * @return the component that represents this control graphically in an interface simulator
+	 */
+	public JComponent getSwingView() {
+		
+		if (swingView==null) swingView = createSwingView();
+		return swingView;
 		
 	}
 	
 	/**
 	 * creates a java fx component that represents this control graphically in an interface simulator
 	 */
-	abstract Node createJavaFXView();
-	public abstract Component createJavaSwingView();
-
+	public abstract JComponent createSwingView();
 }

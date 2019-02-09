@@ -1,11 +1,10 @@
 package controller.component;
 
-import java.awt.Component;
-
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import javax.swing.*;
 import controller.event.*;
 import javafx.geometry.Orientation;
 import javafx.scene.*;
@@ -17,7 +16,7 @@ import javafx.scene.control.*;
  * @author SR
  *
  */
-public class PushRotaryEncoder extends AbstractRotaryEncoder {
+public class PushRotaryEncoder extends RotaryEncoder {
 
 	public PushRotaryEncoder(String label) {
 		super(label);
@@ -49,7 +48,7 @@ public class PushRotaryEncoder extends AbstractRotaryEncoder {
 			if (listeners[i] == PushButtonActionListener.class) {
 				// Lazily create the event:
 				if (e == null)
-					e = new PushButtonActionEvent(this, state);
+					e = new PushButtonActionEvent(this);
 				((PushButtonActionListener) listeners[i + 1]).actionPerformed(e); // TODO (reynal) fire changes on EDT!
 			}
 		}
@@ -71,7 +70,7 @@ public class PushRotaryEncoder extends AbstractRotaryEncoder {
 	}
 
 	@Override
-	public Component createJavaSwingView() {
+	public JComponent createSwingView() {
 		JPanel panel = new JPanel();
 		JButton button = new JButton();
 		JSlider slider = new JSlider(JSlider.VERTICAL);

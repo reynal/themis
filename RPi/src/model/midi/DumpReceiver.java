@@ -484,6 +484,3 @@ public class DumpReceiver implements	Receiver
 	}
 }
 
-
-
-/*** DumpReceiver.java ***/

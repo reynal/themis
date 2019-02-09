@@ -27,8 +27,9 @@ public class BooleanParameter extends SynthParameter<Boolean> implements PushBut
 	@Override
 	public void actionPerformed(PushButtonActionEvent e) {
 		
-		value = e.getState();
-		
+		value = !value;
+		fireSynthParameterEditEvent(value);
+
 	}
 
 }

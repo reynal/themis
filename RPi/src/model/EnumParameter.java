@@ -20,7 +20,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 
 	@Override
 	public Control createControl() {
-		EnumRotaryEncoder<T> e = new EnumRotaryEncoder<T>(getLabel());
+		RotaryEncoder e = new RotaryEncoder(getLabel());
 		e.addRotaryEncoderChangeListener(this);
 		return e;
 	}
@@ -35,31 +35,44 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 
 	/**
 	 * @return the lower bound for this parameter. 
-	 * May be used by the UI to be able to display ticks and grid labels
+	 * May be used by the UI to to display ticks and grid labels
 	 */
 	public T getMin() {
 		return clazz.getEnumConstants()[0];	
 	}	
 	
 	/**
-	 * Get the number of constants for this EnumParameter
-	 * @return
+	 * @return the number of constants for this EnumParameter
+	 */
+	public int getSize() {
+		return clazz.getEnumConstants().length;
+	}
+	
+	/**
+	 * @return the rank of the current value in the set of enum fields
 	 */
 	public int getOrdinal() {
-		return clazz.getEnumConstants().length;
+		return value.ordinal();
 	}
 	
 
 	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
 		
+		// depending on direction, switch to next or previous enum field
 		switch (e.getDirection()) {
 		case UP : 
-			if (value.ordinal() < getOrdinal()) value = clazz.getEnumConstants()[value.ordinal()+1]; 
+			if (value.ordinal() < getSize()-1) {
+				value = clazz.getEnumConstants()[value.ordinal()+1];
+				fireSynthParameterEditEvent(value);
+			}			
 			break;
 			
 		case DOWN : 
-			if (value.ordinal() > 0) value = clazz.getEnumConstants()[value.ordinal()-1]; 
+			if (value.ordinal() > 0) {
+				value = clazz.getEnumConstants()[value.ordinal()-1];
+				fireSynthParameterEditEvent(value);
+			}			
 			break;
 		}
 		
@@ -73,7 +86,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 	
 	public static void main(String[] args){
 		EnumParameter<Octave> p = new EnumParameter<Octave>(Octave.class, "octave");
-		System.out.println(p.getOrdinal());
+		System.out.println(p.getSize());
 		System.out.println(p.getMin());
 		System.out.println(p.getMax());
 		// add a listener using functional programming:

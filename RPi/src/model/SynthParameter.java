@@ -14,7 +14,6 @@ import model.event.*;
  * for a UI (be it virtual through javafx or physical).
  * @author S.Rey
  * 
- * TODO : ajouter des listener de ModelChangedEvent pour les bargraphs
  *
  */
 public abstract class SynthParameter<T> {
@@ -22,7 +21,7 @@ public abstract class SynthParameter<T> {
 	private String label;
 	protected T value;
 	protected Control control;
-	/** a list of event listeners for this parameter */
+	/** a list of event listeners (e.g., view or spi transmitter) for this parameter */
 	protected EventListenerList listenerList;
 	
 
@@ -84,7 +83,8 @@ public abstract class SynthParameter<T> {
 	public abstract Control createControl();
 	
 	/**
-	 * Lazily creates a UI (physical or virtual) control for this class 
+	 * Lazily creates a UI control for this class. The control itself may be either purely physical or have
+	 * a UI representation (e.g., JavaFX) when in simulator mode. 
 	 */
 	public Control getControl(){
 		if (control == null) control = createControl();

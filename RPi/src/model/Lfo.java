@@ -1,7 +1,9 @@
 package model;
 
-public class Lfo {
-	private double frequency;
+public class Lfo extends AbstractModel {
+	
+	protected DoubleParameter frequency;
+	
 	enum WaveShape {
 		
 		SQUARE,
@@ -12,10 +14,10 @@ public class Lfo {
 	WaveShape shape;
 	
 	public double getFrequency() {
-		return frequency;
+		return frequency.getValue();
 	}
 
 	public void setFrequency(double frequency) {
-		this.frequency = frequency;
+		this.frequency.setValue(frequency);
 	}
 }

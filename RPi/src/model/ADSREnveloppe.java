@@ -1,7 +1,5 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class instantiate every parameters of a ADSR type module and create a list of those parameters
@@ -10,13 +8,13 @@ import java.util.List;
  * @author Bastien Fratta
  */
 
-public class ADSREnveloppe {
+public class ADSREnveloppe extends AbstractModel {
 	
-	protected final List<SynthParameter<?>> parameterList = new ArrayList<SynthParameter<?>>();
 	private DoubleParameter attackMs, decayMs, sustainLevel, releaseMs;
 	//what about attackLevel or decayLevel ?
 
 	public ADSREnveloppe() {
+
 		attackMs = new DoubleParameter("Attack", 0, 200, 0.1);
 		decayMs = new DoubleParameter("Decay", 0, 0, 0);
 		sustainLevel = new DoubleParameter("Sustain", 0, 0, 0);
@@ -27,20 +25,20 @@ public class ADSREnveloppe {
 		parameterList.add(releaseMs);
 	}
 	
-	public DoubleParameter getAttackMs() {
-		return attackMs;
+	public double getAttackMs() {
+		return attackMs.getValue();
 	}
 
-	public void setAttackMs(DoubleParameter attackMs) {
-		this.attackMs = attackMs;
+	public void setAttackMs(double attackMs) {
+		this.attackMs.setValue(attackMs);
 	}
 
-	public DoubleParameter getDecayMs() {
-		return decayMs;
+	public double getDecayMs() {
+		return decayMs.getValue();
 	}
 
-	public void setDecayMs(DoubleParameter decayMs) {
-		this.decayMs = decayMs;
+	public void setDecayMs(double decayMs) {
+		this.decayMs.setValue(decayMs);
 	}
 
 	public DoubleParameter getSustainLevel() {
@@ -59,9 +57,6 @@ public class ADSREnveloppe {
 		this.releaseMs = releaseMs;
 	}
 
-	public List<SynthParameter<?>> getParameters() {
-		return parameterList;
-	}
 	
 	
 	

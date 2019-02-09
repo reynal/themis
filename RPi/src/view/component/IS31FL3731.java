@@ -55,8 +55,7 @@ public class IS31FL3731 {
 		
 		// - init I2C bus, create device using given address
 	
-		I2CBus bus1 = I2CFactory.getInstance(I2CBus.BUS_1);
-		I2CDevice i2cDevice = bus1.getDevice(DeviceAddress.AD_GND.getValue());
+		i2cDevice = I2CFactory.getInstance(I2CBus.BUS_1).getDevice(DeviceAddress.AD_GND.getValue());
 		
 		
 		// - select function register

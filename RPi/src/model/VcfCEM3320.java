@@ -3,12 +3,12 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VcfCEM3320 {
+public class VcfCEM3320 extends AbstractModel {
 
 	private DoubleParameter cutoff, egDepth, kbdTracking, resonance;
-	protected final List<SynthParameter<?>> parameterList = new ArrayList<SynthParameter<?>>();
 	
 	public VcfCEM3320() {
+		
 		cutoff = new DoubleParameter("Cutoff", 0, 1, 0.01);
 		resonance = new DoubleParameter("Reso", 0, 1, 0.01);
 		kbdTracking = new DoubleParameter("Keyboard", 0, 1, 0.01);
@@ -18,39 +18,36 @@ public class VcfCEM3320 {
 		parameterList.add(kbdTracking);
 		parameterList.add(egDepth);
 	}
-	public DoubleParameter getCutoff() {
-		return cutoff;
+	public double getCutoff() {
+		return cutoff.getValue();
 	}
 
-	public void setCutoff(DoubleParameter cutoff) {
-		this.cutoff = cutoff;
+	public void setCutoff(double f) {
+		this.cutoff.setValue(f);
 	}
 
-	public DoubleParameter getEnvGenDepth() {
-		return egDepth;
+	public double getEnvGenDepth() {
+		return egDepth.getValue();
 	}
 
-	public void setEnvGenDepth(DoubleParameter egDepth) {
-		this.egDepth = egDepth;
+	public void setEnvGenDepth(double d) {
+		this.egDepth.setValue(d);
 	}
 
-	public DoubleParameter getKbdTracking() {
-		return kbdTracking;
+	public double getKbdTracking() {
+		return kbdTracking.getValue();
 	}
 
-	public void setKbdTracking(DoubleParameter kbdTracking) {
-		this.kbdTracking = kbdTracking;
+	public void setKbdTracking(double k) {
+		this.kbdTracking.setValue(k);
 	}
 
-	public DoubleParameter getResonance() {
-		return resonance;
+	public double getResonance() {
+		return resonance.getValue();
 	}
 
-	public void setResonance(DoubleParameter resonance) {
-		this.resonance = resonance;
+	public void setResonance(double r) {
+		this.resonance.setValue(r);
 	}
 	
-	public List<SynthParameter<?>> getParameters() {
-		return parameterList;
-	}
 }
