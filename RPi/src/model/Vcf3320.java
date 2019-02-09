@@ -1,18 +1,20 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class VcfCEM3320 extends AbstractModel {
+/**
+ * A model for the CEM or AS3320 VCF
+ * @author sydxrey
+ *
+ */
+public class Vcf3320 extends AbstractModel {
 
 	private DoubleParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter;
 	
-	public VcfCEM3320() {
+	public Vcf3320() {
 		
-		cutoffParameter = new DoubleParameter("Cutoff", 0, 1, 0.01);
-		resonanceParameter = new DoubleParameter("Reso", 0, 1, 0.01);
-		kbdTrackingParameter = new DoubleParameter("Keyboard", 0, 1, 0.01);
-		egDepthParameter = new DoubleParameter("EG.Depth", 0, 1, 0.01);
+		cutoffParameter = new DoubleParameter("Cutoff");
+		resonanceParameter = new DoubleParameter("Reso");
+		kbdTrackingParameter = new DoubleParameter("Keyboard");
+		egDepthParameter = new DoubleParameter("EG.Depth");
 		parameterList.add(cutoffParameter);
 		parameterList.add(resonanceParameter);
 		parameterList.add(kbdTrackingParameter);

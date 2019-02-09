@@ -1,8 +1,8 @@
 package view.component;
 
 import java.io.IOException;
-
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
+import device.IS31FL3731;
 
 public class BarGraph extends IS31FL3731{
 

@@ -34,7 +34,7 @@ public class Main {
 		models.add(new Vco13700());
 		//encoders.add(controlsGroup3,3,0);
 		models.add(new MixerV2140D());
-		models.add(new VcfCEM3320());
+		models.add(new Vcf3320());
 		models.add(new Vca());
 		models.add(new ADSREnveloppe());
 		return models;

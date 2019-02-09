@@ -7,6 +7,8 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
+import device.IS31FL3731;
+
 public class LED extends IS31FL3731 {
 	
 	//CONSTRUCTORS

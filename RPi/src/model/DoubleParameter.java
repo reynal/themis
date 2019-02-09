@@ -29,6 +29,14 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	}
 	
 	/**
+	 * Construct a new DoubleParameter that can vary b/w 0 and 1 by steps of 0.01
+	 * This is perfect for percentages.
+	 */
+	public DoubleParameter(String lbl) {
+		this(lbl, 0.0, 1.0, 0.01);
+	}
+
+	/**
 	 * Utility method for, e.g., bargraphs.
 	 * @return (value - min)/(max - min), that is, the parameter value as a ratio from 0.0 to 1.0.   
 	 */

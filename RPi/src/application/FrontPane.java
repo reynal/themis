@@ -1,5 +1,6 @@
-package controller;
+package application;
 
+import controller.PerformancePad;
 import controller.component.PushButton;
 
 /**

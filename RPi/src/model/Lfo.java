@@ -22,7 +22,23 @@ public class Lfo extends AbstractModel {
 	public void setFrequency(double frequency) {
 		this.frequencyParameter.setValue(frequency);
 	}
-	
+
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
+	
+	/**
+	 * @return the frequencyParameter
+	 */
+	public DoubleParameter getFrequencyParameter() {
+		return frequencyParameter;
+	}
+
+	/**
+	 * @return the waveShapeParameter
+	 */
+	public EnumParameter<WaveShape> getWaveShapeParameter() {
+		return waveShapeParameter;
+	}
+	
+	
 	
 }

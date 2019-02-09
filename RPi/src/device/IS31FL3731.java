@@ -1,6 +1,6 @@
-package view.component;
-import java.io.IOException;
+package device;
 
+import java.io.IOException;
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 
 
@@ -308,7 +308,7 @@ public class IS31FL3731 {
 	 * @param state true for the "on" state, false otherwise
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
 	 */
-	static void switchLED(int row, int col, int state) throws IOException{
+	public void switchLED(int row, int col, int state) throws IOException{
 		
 		  int reg, bit;
 		  col &= 0xF; // restrains to 0-15
@@ -337,7 +337,7 @@ public class IS31FL3731 {
 	 * @param pwm 0-255
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
 	 */
-	static void setLEDpwm(int row, int col, int pwm) throws IOException {
+	public void setLEDpwm(int row, int col, int pwm) throws IOException {
 
 		col &= 0xF; // make sure it's inside 0-15
 		int reg = FrameRegister.PWM_REG_BASE_ADDR.getAddress() + 16*row + col;
@@ -349,7 +349,7 @@ public class IS31FL3731 {
 	 * Display a bargraph-like picture from the given "val"
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus 
 	 */
-	void bargraph(int val) throws IOException {
+	public void bargraph(int val) throws IOException {
 		
 	  switch(val & 0xFF){ // make sure val is  lower than 16
 	    case 0:
@@ -482,7 +482,7 @@ public class IS31FL3731 {
 	
 	// Set Mode of a row
 	// As one entire row has two encoder (column A and B), return state LED register address of 1 row among the 18 
-	protected static int registerOfStateLED(int row) { //@Lucien : private to protected for BarGraph class
+	protected static int getRegisterAdresseForLED(int row) { //@Lucien : private to protected for BarGraph class
 		
 		int addr = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row;
 		if (row%2 == 0) System.out.println("You select State Mode for A" + row +"row");
@@ -491,7 +491,7 @@ public class IS31FL3731 {
 	}
 	
 	// As one entire row has two encoder (column A and B), return PWM LED register address of 1 row among the 18 
-	protected int registerOfPWMLED(int row) { //@Lucien : private to protected for BarGraph class
+	protected int getRegisterAdresseForPWM(int row) { //@Lucien : private to protected for BarGraph class
 		
 		int addr = FrameRegister.PWM_REG_BASE_ADDR.getAddress() + 255*row;
 		if (row%2 == 0) System.out.println("You select PWM Mode for A" + row +"row");
