@@ -3,48 +3,42 @@ package application;
 import model.*;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import controller.component.*;
 
 
 /**
- * SR -> BF :  Documentation a ecrire !
+ * UI Factory when using Swing API
  */	
 public class SwingMain extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
 	public SwingMain() throws HeadlessException {
+		
 		super("Themis");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		if (Main.SIMULATOR) setContentPane(createSimulator());
-		else setContentPane(createRaspberryTouchscreen());        
+		else setContentPane(new TouchScreen());        
 		pack();		
 		setLocation(0,0);
 		setResizable(false);
+		System.out.println("Starting Swing Themis application");
 		setVisible(true);
 		
 	}
 	
 	
-	// real themis
-	private JPanel createRaspberryTouchscreen(){
-
-		JPanel touchScreenLayout = new JPanel();
-		touchScreenLayout.setBackground(Color.black);
-		//touchScreenLayout.setPadding(new Insets(10));
-	    //touchScreenLayout.getChildren().add(createSimulatorEncoders());
-		//return new Scene(touchScreenLayout,800,480);
-		return touchScreenLayout;
-	}
 	
-	// simulator
+	/**
+	 * Simulator
+	 * @return
+	 */
 	private JPanel createSimulator(){
 
 		JPanel p = new JPanel();
@@ -62,38 +56,35 @@ public class SwingMain extends JFrame {
 		
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private JPanel createSimulatorTouchscreen(){
         
-        //AnchorPane screen = new AnchorPane();
-        //AnchorPane.setLeftAnchor(screen, 410.0);
-        //AnchorPane.setLeftAnchor(screen, 230.0);
-        
-        // 	TODO : il faut pas encoder les resources comme ça, il faut utiliser getResource()
-        //ImageView iv1 = new ImageView(new Image("file:src/resources/img/logo.png")); 
-        //iv1.setStyle("-fx-border-color : grey");
-		JPanel p = createDecoratedPanel("RPi touchscreen");
-		try {
-			BufferedImage image = ImageIO.read(new File("src/resources/img/logo.png"));
-		    JLabel label = new JLabel(new ImageIcon(image));
-		    p.add(label);        
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        return p;
+		JPanel p = createDecoratedPanel("Simulated RPi touchscreen");
+		p.add(new TouchScreen());
+		return p;
 	}
 	
-	
+	/**
+	 * 
+	 * @return
+	 */
 	private JPanel createSimulatorEncoders(){
 		
         JPanel p = createDecoratedPanel("Encoders");
         p.setLayout(new GridLayout(2,4,10,10));
         for (AbstractModel m : Main.createModels()){
-        		p.add(m.createSimulatorSwingControlGroup());
+        		p.add(createSimulatorControlPane(m));
         }
 		return p;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	private JPanel createSimulatorPads(){
 		
 		JPanel p = createDecoratedPanel("PADS");
@@ -114,6 +105,83 @@ public class SwingMain extends JFrame {
 	    return p;
 	}
 
+
+	/**
+	 * 
+	 * @param model
+	 * @return
+	 */
+	public JComponent createSimulatorControlPane(AbstractModel model) {
+		
+		JPanel group = SwingMain.createDecoratedPanel(getClass().getName());
+		group.setLayout(new GridLayout(model.getParameters().size(), 1, 10, 10));
+		//group.setStyle("-fx-background-color: black;"+"-fx-border-color: magenta;");
+		//group.setBackground(Color.black);
+		//group.setBorder(BorderFactory.createLineBorder(java.awt.Color.PINK));
+		//group.setHgap(10);
+		//group.setVgap(10);
+		//group.setMinSize(250,200);
+		//group.setPreferredSize(250,200);
+        //group.setMaxSize(250,200);
+		//group.setPadding(new Insets(0, 10, 0, 10));
+		
+		int i=0;
+		for (SynthParameter<?> p : model.getParameters()) {
+			i=i+1;
+			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramtres
+			//title.setStyle("-fx-text-fill: magenta;");
+
+			JLabel label = new JLabel(p.getLabel());
+			label.setForeground(Color.pink);
+
+			Control c = p.getControl();
+			JComponent n = createUIForControl(c);
+
+			group.add(n);
+			group.add(label);
+			
+			// debug only: listen to model change:
+			p.addSynthParameterEditListener(e -> System.out.println(e));
+			
+			
+		}
+		return group;
+	}	
+	
+	/**
+	 * Return an appropriate Swing component for the given physical control
+	 * that may be used inside an interface simulator.
+	 */
+	public static JComponent createUIForControl(Control c) {
+		
+		if (c instanceof PushButton) {
+			
+			JButton b = new JButton(c.getLabel());
+			b.addActionListener(e -> ((PushButton)c).firePushButtonActionEvent());
+			return b;
+
+		}
+		else if (c instanceof RotaryEncoder) {
+			
+			JPanel p = new JPanel();
+			p.setBackground(Color.black);
+			p.setLayout(new GridLayout(1,3));
+			JButton butMinus = new JButton("<-");
+			p.add(butMinus);
+			JLabel lbl = new JLabel(c.getLabel());
+			lbl.setForeground(Color.white);
+			p.add(lbl);
+			JButton butPlus = new JButton("->");
+			p.add(butPlus);
+			butPlus.addActionListener(e -> ((RotaryEncoder)c).fireRotaryEncoderEvent(RotaryEncoderDirection.UP));
+			butMinus.addActionListener(e -> ((RotaryEncoder)c).fireRotaryEncoderEvent(RotaryEncoderDirection.DOWN));
+			return p;			
+			
+		}
+		else return null;
+	}
+	
+			
 	// --- utilities ---
 	public static JPanel createDecoratedPanel(String title) {
 		JPanel p = new JPanel();
@@ -130,6 +198,6 @@ public class SwingMain extends JFrame {
 				Color.white ));
 		return p;
 	}
-	
+		
 
 }

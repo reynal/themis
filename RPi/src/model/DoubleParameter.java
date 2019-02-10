@@ -1,15 +1,14 @@
 package model;
 
 import controller.component.*;
+import controller.event.PushButtonActionEvent;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 /**
  * This class represents a model parameter of type "double"
  */
-public class DoubleParameter extends SynthParameter<Double> implements RotaryEncoderChangeListener, ChangeListener<Number> {
+public class DoubleParameter extends SynthParameter<Double> {
 
 	// inherited : Double value
 	private double min, max, step;
@@ -98,10 +97,12 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 	}	
 	
 	@Override
-	public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-			
-		System.out.println(toString() + " : New Value " + newValue);
-		value = newValue.doubleValue();
+	public void actionPerformed(PushButtonActionEvent e) {
+
+		this.value+=step;
+		if (this.value > max) this.value=min;
+		fireSynthParameterEditEvent(value);
+		
 	}
 
 	// -------------------------------
@@ -118,5 +119,6 @@ public class DoubleParameter extends SynthParameter<Double> implements RotaryEnc
 		model.setOctave(Octave.TWO_INCHES);
 
 	}
+
 
 }

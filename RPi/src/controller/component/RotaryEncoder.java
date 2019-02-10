@@ -1,24 +1,12 @@
 package controller.component;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 
-import javax.swing.*;
 import javax.swing.event.EventListenerList;
-
-import com.pi4j.io.gpio.PinState;
-
-import device.MCP23017.InterruptEvent;
-import device.MCP23017.InterruptListener;
+import com.pi4j.io.gpio.PinState; // SR TODO : make this class independent from pi4j
+import device.MCP23017.*;
 import device.MCP23017;
 import controller.event.*;
-import javafx.geometry.Orientation;
-import javafx.scene.Node;
-import javafx.scene.control.Slider;
-import com.pi4j.io.gpio.*;
 
 /**
  * A physical quadratic encoder that can fire UP or DOWN change events upon rotation.
@@ -28,9 +16,6 @@ import com.pi4j.io.gpio.*;
  */
 public class RotaryEncoder extends Control  {
 
-	// labels for UI buttons
-	static final String CW_LBL = "->";
-	static final String CCW_LBL = "<-";
 	
 	private MCP23017.Pin channelA; // pin GPIO entree A sur MCP23017
 	private MCP23017.Pin channelB; // pin GPIO entree B sur MCP23017
@@ -52,22 +37,25 @@ public class RotaryEncoder extends Control  {
 	public RotaryEncoder(String label, MCP23017 mcpDevice, MCP23017.Pin gpioA, MCP23017.Pin gpioB) throws IOException{
 
 		super(label);
-		this.channelA = gpioA;
-		this.channelB = gpioB;
-		levelA=PinState.LOW;
-		levelB=PinState.LOW;
-		previousTriggeringChannel=null;
-		listenerList = new EventListenerList();
 
-		mcpDevice.setInput(MCP23017.Port.A); // encoder
-		mcpDevice.setPullupResistors(MCP23017.Port.A, true); // Port A pull up enabled (le bouton doit connecter le port a la masse)
-		mcpDevice.setInterruptOnChange(MCP23017.Port.A, true); // Port A : enables GPIO input pin for interrupt-on-change
-		mcpDevice.addInterruptListener(new PhysicalEncoderChangeListener());
+		if (mcpDevice != null) {
+			this.channelA = gpioA;
+			this.channelB = gpioB;
+			levelA=PinState.LOW;
+			levelB=PinState.LOW;
+			previousTriggeringChannel=null;
+			mcpDevice.setInput(MCP23017.Port.A); // encoder
+			mcpDevice.setPullupResistors(MCP23017.Port.A, true); // Port A pull up enabled (le bouton doit connecter le port a la masse)
+			mcpDevice.setInterruptOnChange(MCP23017.Port.A, true); // Port A : enables GPIO input pin for interrupt-on-change
+			mcpDevice.addInterruptListener(new PhysicalEncoderChangeListener());
+		}
+		else System.out.println("No MCP23017 registered for " + toString());
 	}
 	
 	
 	public RotaryEncoder(String label) {
 		super(label);
+		System.out.println("No MCP23017 registered for " + toString());
 	}
 
 	/**
@@ -92,7 +80,7 @@ public class RotaryEncoder extends Control  {
 	 * is lazily created using the parameters passed into
 	 * the fire method.
 	 */
-	 protected void fireRotaryEncoderEvent(RotaryEncoderDirection dir) {
+	 public void fireRotaryEncoderEvent(RotaryEncoderDirection dir) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simumlator mode
 		 
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
@@ -113,7 +101,7 @@ public class RotaryEncoder extends Control  {
 	  * 	Listens to changes event coming from a real encoder through the MCP23017 GPIO expander
 	  * @author sydxrey
 	  */
-	 class PhysicalEncoderChangeListener implements InterruptListener {
+	 private class PhysicalEncoderChangeListener implements InterruptListener {
 		 
 		/**
 		 * Callback lorsque la pin INTA du MCP23017 est asserted ; signifie qu'une des pins du PORT A a changé, donc qu'un encodeur a tourné, mais pas forcément celui-ci !
@@ -158,54 +146,5 @@ public class RotaryEncoder extends Control  {
 		}	 
 	 }
 
-	 /**
-	  * Listens to change event coming from the simulator UI ; this is just an event forwarder
-	  * to RotaryEncoderChangeListener's.
-	  * @author sydxrey
-	  */
-	class VirtualEncoderChangeListener implements java.awt.event.ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getActionCommand().equals(CW_LBL))
-				fireRotaryEncoderEvent(RotaryEncoderDirection.UP);
-			else if (e.getActionCommand().equals(CCW_LBL))
-				fireRotaryEncoderEvent(RotaryEncoderDirection.DOWN);
-			
-		}
-	}	
-	
-	@Override
-	public Node createJavaFXView() {
-		Slider slider = new Slider(0,127,1);
-		//slider.valueProperty().addListener(new VirtualEncoderChangeListener());
-		slider.setOrientation(Orientation.VERTICAL);
-		slider.setShowTickMarks(true);
-		slider.setShowTickLabels(true);
-		slider.setSnapToTicks(true);
-		slider.setMajorTickUnit(1f);
-		slider.setBlockIncrement(1f);
-		return slider;
-	}
-
-	
-	
-	@Override
-	public JComponent createSwingView() {
-		JPanel p = new JPanel();
-		p.setBackground(Color.black);
-		p.setLayout(new GridLayout(1,2));
-		JButton butMinus = new JButton(CCW_LBL);
-		p.add(butMinus);
-		JButton butPlus = new JButton(CW_LBL);
-		p.add(butPlus);
-		butPlus.addActionListener(new VirtualEncoderChangeListener());
-		butMinus.addActionListener(new VirtualEncoderChangeListener());
-		return p;
-	}
-
-	
-	// TODO : registerComponent(MCP23017 mcpDevice, int pintA, int pinB){...}
-	
 	
 }

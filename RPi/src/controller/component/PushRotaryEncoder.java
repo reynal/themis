@@ -1,14 +1,6 @@
 package controller.component;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-
-import javax.swing.*;
 import controller.event.*;
-import javafx.geometry.Orientation;
-import javafx.scene.*;
-import javafx.scene.control.*;
 
 /**
  * a quadratic encoder with push capability
@@ -53,33 +45,5 @@ public class PushRotaryEncoder extends RotaryEncoder {
 			}
 		}
 	}
-	
-	@Override
-	public Node createJavaFXView() {
-		Group g = new Group();
-		Slider slider = new Slider(0, 1, 0.5);
-		slider.setOrientation(Orientation.VERTICAL);
-		slider.setShowTickMarks(true);
-		slider.setShowTickLabels(true);
-		slider.setMajorTickUnit(0.25f);
-		slider.setBlockIncrement(0.1f);		
-		g.getChildren().addAll(slider);
-		g.getChildren().addAll(new Button(label));		
-		return g;
 		
-	}
-
-	@Override
-	public JComponent createSwingView() {
-		JPanel panel = new JPanel();
-		JButton button = new JButton();
-		JSlider slider = new JSlider(JSlider.VERTICAL);
-		slider.setMaximum(127);
-		slider.setMinimum(0);
-		slider.setMajorTickSpacing(32);	
-		panel.add(slider);
-		panel.add(button);	
-		return panel;
-	} 
-	
 }

@@ -2,8 +2,6 @@ package application;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.application.Application;
 import model.*;
 import model.midi.*;
 import model.spi.*;
@@ -23,7 +21,7 @@ public class Main {
 		if (ACTIVATE_MIDI) new MidiInHandler(spiTransmitter); // TODO : add other listeners
 		if (DEBUG_MIDI) new DumpReceiver(System.out);
 
-		if (JAVAFX) Application.launch(JavaFXMain.class,args);
+		if (JAVAFX) javafx.application.Application.launch(JavaFXMain.class,args);
 		else new SwingMain(); 
 	}
 	

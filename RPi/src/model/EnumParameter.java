@@ -1,6 +1,7 @@
 package model;
 
 import controller.component.*;
+import controller.event.PushButtonActionEvent;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
 import javafx.beans.value.ObservableValue;
@@ -78,6 +79,15 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		
 	}
 
+	@Override
+	public void actionPerformed(PushButtonActionEvent e) {
+		if (value.ordinal() < getSize()-1) 
+			value = clazz.getEnumConstants()[value.ordinal()+1];
+		else
+			value = clazz.getEnumConstants()[0];
+		fireSynthParameterEditEvent(value);
+		
+	}
 	
 	// ------------------ test ------
 	
@@ -98,6 +108,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		p.setValue(Octave.TWO_INCHES);
 		System.out.println(o);
 	}
+
 	
 	
 

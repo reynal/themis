@@ -2,8 +2,6 @@ package model;
 
 import java.util.List;
 
-import model.event.*;
-
 /** 
  * A model for a VCO based on the CEM or AS3340 device.
  * 

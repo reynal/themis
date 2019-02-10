@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 import controller.event.*;
+import device.MCP23017;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
@@ -15,6 +16,14 @@ import javafx.scene.control.*;
  *
  */
 public class PushButton extends Control {
+
+	/**
+	 * construct a pushbutton with the given UI label that is connected to the given pin of the given MCP23017 device
+	 */
+	public PushButton(String label, MCP23017 mcpDevice, MCP23017.Pin gpio) {
+		super(label);
+		// TODO : handle interrupt from MCP23017
+	}
 
 	/**
 	 * construct a pushbutton with the given UI label
@@ -49,7 +58,7 @@ public class PushButton extends Control {
 	 * into the fire method.
 	 *
 	 */
-	protected void firePushButtonActionEvent() {
+	public void firePushButtonActionEvent() { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simumlator mode
 
 		// Guaranteed to return a non-null array
 		Object[] listeners = listenerList.getListenerList();
@@ -67,37 +76,4 @@ public class PushButton extends Control {
 		}
 	}
 
-	@Override
-	public Node createJavaFXView() {
-		Button b = new Button();
-		b.setMinSize(20.0,20.0);
-       	b.setStyle("-fx-background-color : white;");
-		return b;
-	}
-
-	@Override
-	public JComponent createSwingView() {
-		JButton b = new JButton("Push");
-		b.addActionListener(new VirtualEncoderChangeListener());
-		return b;
-	}
-	
-	 /**
-	  * Listens to change event coming from the simulator UI ; this is just an event forwarder
-	  * to RotaryEncoderChangeListener's.
-	  * @author sydxrey
-	  */
-	protected class VirtualEncoderChangeListener implements java.awt.event.ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			firePushButtonActionEvent();
-		}
-	}	
-	
-
-	public Component createJavaSwingView() {
-		JButton b = new JButton();
-		return b;
-	}
 }

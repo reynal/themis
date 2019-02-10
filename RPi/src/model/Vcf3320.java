@@ -1,5 +1,7 @@
 package model;
 
+import model.Vco3340.WaveShape;
+
 /**
  * A model for the CEM or AS3320 VCF
  * @author sydxrey
@@ -8,6 +10,7 @@ package model;
 public class Vcf3320 extends AbstractModel {
 
 	private DoubleParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter;
+	private EnumParameter<FilterOrder> filterOrderParameter;  
 	
 	public Vcf3320() {
 		
@@ -15,6 +18,7 @@ public class Vcf3320 extends AbstractModel {
 		resonanceParameter = new DoubleParameter("Reso");
 		kbdTrackingParameter = new DoubleParameter("Keyboard");
 		egDepthParameter = new DoubleParameter("EG.Depth");
+		parameterList.add(filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, "FilterOrder"));
 		parameterList.add(cutoffParameter);
 		parameterList.add(resonanceParameter);
 		parameterList.add(kbdTrackingParameter);
@@ -54,8 +58,53 @@ public class Vcf3320 extends AbstractModel {
 	public void setResonance(double r) {
 		this.resonanceParameter.setValue(r);
 	}
+
+	// ----------- enum -------------
+	
+	public static enum FilterOrder {
+		
+		SECOND_ORDER,
+		FOURTH_ORDER;
+	}
 	
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
+	
+	/**
+	 * @return the cutoffParameter
+	 */
+	public DoubleParameter getCutoffParameter() {
+		return cutoffParameter;
+	}
+
+	/**
+	 * @return the egDepthParameter
+	 */
+	public DoubleParameter getEgDepthParameter() {
+		return egDepthParameter;
+	}
+
+	/**
+	 * @return the kbdTrackingParameter
+	 */
+	public DoubleParameter getKbdTrackingParameter() {
+		return kbdTrackingParameter;
+	}
+
+	/**
+	 * @return the resonanceParameter
+	 */
+	public DoubleParameter getResonanceParameter() {
+		return resonanceParameter;
+	}
+
+	/**
+	 * @return the filterOrderParameter
+	 */
+	public EnumParameter<FilterOrder> getFilterOrderParameter() {
+		return filterOrderParameter;
+	}
+	
+	
 	
 	
 	

@@ -3,6 +3,7 @@ package model;
 import javax.swing.event.EventListenerList;
 
 import controller.component.Control;
+import controller.event.*;
 import model.event.*;
 
 /**
@@ -16,7 +17,7 @@ import model.event.*;
  * 
  *
  */
-public abstract class SynthParameter<T> {
+public abstract class SynthParameter<T> implements RotaryEncoderChangeListener, PushButtonActionListener {
 	
 	private String label;
 	protected T value;
