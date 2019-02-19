@@ -60,20 +60,23 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 			int value = 0x00;
 			if (o instanceof Boolean){
 				boolean b = (Boolean)o;
-				if (b) value = 0x7F;
-				else value = 0x01;
+				if (b) value = 0x127;
+				else value = 0x0;
+				//On envoie 0 (valeur min) pour faux et 127 (valeur max) pour vrai
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
 			}
 			else if (o instanceof Double) {
 				DoubleParameter param = (DoubleParameter)e.getSource();
 				value = (int)(127.0 * param.getValueAsRatio());
+				//getValueAsRatio renvoie un nombre entre 0 et 1 qu'on multiplie par 127 pour balayer la plage 0-127
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
 			}
 			else if (o instanceof Enum) {
 				EnumParameter enu = (EnumParameter)e.getSource();
 				value = enu.getOrdinal();
+				//On envoie la postion de l'Enum dans le tableau des enumeration
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
 			}
