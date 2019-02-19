@@ -54,13 +54,31 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 	@Override
 	public void synthParameterEdited(SynthParameterEditEvent<Object> e) {
 		
-		//Object o = e.getValue();
-		System.out.println(e.getSource() + " : " + e.getValue());
-		/*if (o instanceof Double) bla bla bla
-		else if (o instance of Boolean) bla bla bla
-		else bla bla bla*/
-		// @loic : c'est ici que tu dois decortiquer l'event "e" et envoyer les donnees correspondantes sur le bus
-	}
+				try {
+			Object o = e.getValue();
+			int parameterId = 0x00;
+			int value = 0x00;
+			if (o instanceof Boolean){
+				boolean b = (Boolean)o;
+				if (b) value = 0x7F;
+				else value = 0x01;
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+			}
+			else if (o instanceof Double) {
+				DoubleParameter param = (DoubleParameter)e.getSource();
+				value = (int)(127.0 * param.getValueAsRatio());
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+			}
+			else if (o instanceof Enum) {
+				EnumParameter enu = (EnumParameter)e.getSource();
+				value = enu.getOrdinal();
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+			}
+			//Mettre le transmitLidiMessage dans les if : si on ne reconnait pas o on n'envoie pas de message
+			//pour avoir le parameterId on peut utiliser le String lbl ou name (faire une méthode getParameter qui renvoie un entier en fonction du nom avec un switch case)
 
 
 	public static void main(String[] args) throws Exception {
