@@ -7,6 +7,7 @@ import controller.event.RotaryEncoderEvent;
 
 /**
  * This class represents a model parameter of type "double"
+ * @deprecated use MIDIParameter instead
  */
 public class DoubleParameter extends SynthParameter<Double> {
 
@@ -39,9 +40,8 @@ public class DoubleParameter extends SynthParameter<Double> {
 	 * Utility method for, e.g., bargraphs.
 	 * @return (value - min)/(max - min), that is, the parameter value as a ratio from 0.0 to 1.0.   
 	 */
-	public double getValueAsRatio() {
-		
-		return (value - min)/(max - min);
+	public int getValueAsMIDICode() {		
+		return (int)(127.0 * (value - min)/(max - min));		
 	}
 	
 	/**
@@ -73,13 +73,6 @@ public class DoubleParameter extends SynthParameter<Double> {
 	}	
 
 	@Override
-	public Control createControl() {
-		RotaryEncoder e = new RotaryEncoder(getLabel());
-		e.addRotaryEncoderChangeListener(this);
-		return e;
-	}
-
-	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
 		double old = getValue();
 		switch (e.getDirection()) {
@@ -93,7 +86,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 			if (this.value < min) this.value = min;
 			break;
 		}
-		if (this.value != old) fireSynthParameterEditEvent(value);
+		if (this.value != old) fireSynthParameterEditEvent();
 	}	
 	
 	@Override
@@ -101,7 +94,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 
 		this.value+=step;
 		if (this.value > max) this.value=min;
-		fireSynthParameterEditEvent(value);
+		fireSynthParameterEditEvent();
 		
 	}
 
@@ -115,7 +108,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));
 		
-		model.setDetune(0.03);
+		model.setDetune(3);
 		model.setOctave(Octave.TWO_INCHES);
 
 	}

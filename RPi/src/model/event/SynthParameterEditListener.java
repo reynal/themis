@@ -11,12 +11,12 @@ import java.util.EventListener;
  * @author sydxrey
  *
  */
-public interface SynthParameterEditListener<T> extends EventListener {
+public interface SynthParameterEditListener extends EventListener {
 	
 	/**
 	 * Invoked when an edit occurs.
 	 * @param e
 	 */
-	void synthParameterEdited(SynthParameterEditEvent<T> e);
+	void synthParameterEdited(SynthParameterEditEvent e);
 
 }

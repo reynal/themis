@@ -1,5 +1,6 @@
 package device;
 
+import java.awt.Point;
 import java.io.IOException;
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 
@@ -40,7 +41,7 @@ public class IS31FL3731 {
 	/* write to this register to select current frame register (or the Function Register, aka Page 9, which sets general parameters) */
 	private static final int COMMAND_REGISTER = 0xFD; 
 	private static final int FUNCTION_REGISTER = 0x0B;
-	protected static I2CDevice i2cDevice; 
+	protected I2CDevice i2cDevice; 
 	
 	// -------------- constructors --------------
 	
@@ -48,23 +49,16 @@ public class IS31FL3731 {
 	 * @throws Exception 
 	 * 
 	 */
-	
-	
 	public IS31FL3731() throws Exception {
-		//TODO - DONE
 		
 		// - init I2C bus, create device using given address
-	
 		i2cDevice = I2CFactory.getInstance(I2CBus.BUS_1).getDevice(DeviceAddress.AD_GND.getValue());
-		
 		
 		// - select function register
 		selectFunctionRegister();
 		
 		// - write appropriate parameter values to function register
-		DisplayMode displayMode = DisplayMode.PICTURE_MODE;//TODO select the mode to use
-		
-		setDisplayMode(displayMode, 0);
+		setDisplayMode(DisplayMode.PICTURE_MODE, 0);
 		setDisplayedFrame(0);
 		setAutoPlayLoopingParameters(1, 1);
 		setAutoPlayFrameDelayTime(23);
@@ -271,7 +265,7 @@ public class IS31FL3731 {
 	}
 	
 	/**
-	 * Sets the audio sammple rate of the input signal when in Audio Frame Play Mode.
+	 * Sets the audio sample rate of the input signal when in Audio Frame Play Mode.
 	 * @param sampleRateMs
 	 * @throws Exception 
 	 */
@@ -287,16 +281,15 @@ public class IS31FL3731 {
 		}
 	}
 	
-	// TODO : - DONE write a method that reads the Frame State Register (07h)
-	
+	/**
+	 * Read the value of the FrameState register, i.e., the index of the currently active frame.
+	 * @throws Exception
+	 */
 	public int readFrameStateRegister () throws Exception {
 		
 		selectFunctionRegister();
 		int address = FunctionRegister.FRAME_STATE.getAddress(); 
-		int val = i2cRead(address);
-		
-		val &= 0b111;
-		
+		int val = i2cDevice.read(address);
 		return val;
 		
 	}
@@ -308,28 +301,45 @@ public class IS31FL3731 {
 	 * @param state true for the "on" state, false otherwise
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
 	 */
-	public void switchLED(int row, int col, int state) throws IOException{
+	public void switchLED(LEDCoordinate ledCoordinate, boolean state) throws IOException{
 		
-		  int reg, bit;
-		  col &= 0xF; // restrains to 0-15
-		  if (col < 8) { // matrix A
-		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row;
-		      bit  = 1 << (col & 7) ;
-		  }
-		  else { // matrix B
-		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row + 1;
-		      col -= 8;
-		      bit  = 1 << (col & 7) ;
-		  }
-
+		  int reg = getLEDRegisterAdress(ledCoordinate.getRow(), ledCoordinate.AorB); 
+		  int bit  = 1 << (ledCoordinate.getColumn() & 7) ;
 		  int old = i2cDevice.read(reg);
-		  if (state == 0)
+		  if (state == false)
 		    old &= (~bit) ;
 		  else
 		    old |=   bit ;
 		  i2cDevice.write(reg, (byte)old);		
 	}
 	
+	/**
+	 * Switches a complete row of 8 LEDs on or off
+	 * @param row
+	 * @param onLeds a byte with 1 where LEDs are on and 0 otherwise
+	 * @param m either A or B (see device datasheet)
+	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
+	 */
+	public void switchLEDrow(int row, Matrix m, int onLeds) throws IOException{
+		
+		  int reg;
+		  onLeds &= 0xFF; // make sure "onLeds" is a byte
+		  switch (m) { 
+		  // matrix A
+		  case A : 
+		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row;
+		      i2cDevice.write(reg, (byte)onLeds);
+		      break;
+		   // matrix B
+		   case B :		  
+		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row + 1;
+		      i2cDevice.write(reg, (byte)onLeds);
+		  break;
+		  }
+
+		  		
+	}
+
 	/**
 	 * Sets the intensity of the given LED.
 	 * @param row
@@ -342,9 +352,27 @@ public class IS31FL3731 {
 		col &= 0xF; // make sure it's inside 0-15
 		int reg = FrameRegister.PWM_REG_BASE_ADDR.getAddress() + 16*row + col;
 		i2cDevice.write(reg, (byte)(pwm & 0xFF));
-		
 	}
 	
+	/**
+	 * Sets the intensity of the given LED.
+	 * @param row
+	 * @param col 0 <= col <= 7
+	 * @param m A or B
+	 * @param pwm 0-255
+	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
+	 */
+	public void setLEDpwm(int row, int col, Matrix m, int pwm) throws IOException {
+		
+		col &= 0x7; // make sure it's inside 0-7
+		switch (m){
+		case A :
+			setLEDpwm(row, col, pwm); break;
+		case B :
+			setLEDpwm(row, col+8, pwm); break;
+		}
+	}
+
 	/**
 	 * Display a bargraph-like picture from the given "val"
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus 
@@ -437,9 +465,7 @@ public class IS31FL3731 {
 		
 		if (frame < 0 || frame > 8) throw new IllegalArgumentException("Valid page number ranges from 0 to 7 : " + frame);
 		
-		// TODO : - DONE write "frame" to COMMAND_REGISTER
-		
-		i2cWrite (COMMAND_REGISTER, frame);
+		i2cDevice.write(COMMAND_REGISTER, (byte)frame);
 		
 	}
 	
@@ -452,9 +478,7 @@ public class IS31FL3731 {
 	 */
 	private void selectFunctionRegister() throws Exception {
 	
-		// TODO - DONE : write FUNCTION_REGISTER to COMMAND_REGISTER
-		
-		i2cWrite(COMMAND_REGISTER, 0b1011);
+		i2cDevice.write(COMMAND_REGISTER, (byte)FUNCTION_REGISTER);
 	}
 	
 	/**
@@ -464,43 +488,78 @@ public class IS31FL3731 {
 	 */
 	private void configure(FunctionRegister register, int value) throws Exception {
 		
-		// TODO - DONE : read Command Register to know what is the currently active page so that we can go back to it later
-		
-		int current = i2cRead(COMMAND_REGISTER);
+		// read Command Register to keep track of the currently active page so that we can go back to it later
+		int current = i2cDevice.read(COMMAND_REGISTER);
 		
 		selectFunctionRegister();
 
-		// TODO - DONE: write value to register.getAddress()
+		i2cDevice.write(register.getAddress(),(byte)value);
 		
-		i2cWrite (register.getAddress(),value);
-		
-		// TODO - DONE : make previously active PAGE active again
-		
-		i2cWrite (COMMAND_REGISTER, current);
+		// make previously active PAGE active again		
+		i2cDevice.write(COMMAND_REGISTER, (byte)current);
 	}
 	
 	
-	// Set Mode of a row
-	// As one entire row has two encoder (column A and B), return state LED register address of 1 row among the 18 
-	protected static int getRegisterAdresseForLED(int row) { //@Lucien : private to protected for BarGraph class
+	/**
+	 * @param ledRow
+	 * @param matrixAB
+	 * @return the adress of the ON/OFF register for the given row
+	 */
+	public static int getLEDRegisterAdress(int ledRow, Matrix matrixAB) { 
 		
-		int addr = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row;
-		if (row%2 == 0) System.out.println("You select State Mode for A" + row +"row");
-		else System.out.println("You select State Mode for B" + row +"row");
+		int addr = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*ledRow;
+		if (matrixAB == Matrix.B) addr++;
 		return addr;
 	}
 	
-	// As one entire row has two encoder (column A and B), return PWM LED register address of 1 row among the 18 
-	protected int getRegisterAdresseForPWM(int row) { //@Lucien : private to protected for BarGraph class
+	/**
+	 * @param row
+	 * @return the adress of the PWM register for the given (row,col) coordinate
+	 */
+	public static int getPWMRegisterAdress(LEDCoordinate ledCoordinate) { 
 		
-		int addr = FrameRegister.PWM_REG_BASE_ADDR.getAddress() + 255*row;
-		if (row%2 == 0) System.out.println("You select PWM Mode for A" + row +"row");
-		else System.out.println("You select PWM Mode for B" + row +"row");
-		return addr;
+		return ledCoordinate.getPWMRegisterAdress();
 		
 	}	
 	
 	// -------------- enums and inner classes --------------
+	
+	/**
+	 * this class represents a pair of (row, column) coordinate for a given matrix.
+	 * @author sydxrey
+	 *
+	 */
+	public static class LEDCoordinate extends Point {
+
+		private static final long serialVersionUID = 1L;
+		public Matrix AorB;
+
+		public LEDCoordinate(int row, int col, Matrix AorB) {
+			super (col, row);
+			this.AorB = AorB;
+		}
+		public int getPWMRegisterAdress() {
+			int addr = FrameRegister.PWM_REG_BASE_ADDR.getAddress();
+			addr += y * 16; // 16 leds per row (A+B)
+			addr += x;
+			if (AorB == Matrix.B) addr += 8;
+			return addr;
+		}
+		
+		public int getColumn() { return x;}
+		
+		public int getRow() { return y;}
+		
+		public void setColumn(int x) { this.x = x;}
+		
+		public void setRow(int y) { this.y = y;}
+		
+		public boolean equals(Object obj) {
+			
+			return super.equals(obj) && ((LEDCoordinate)obj).AorB == this.AorB; 
+		}
+		
+	}
 	
 	/**
 	 * An enumeration of possible I2C device addresses depending on the connection of the "AD" pin
@@ -529,6 +588,16 @@ public class IS31FL3731 {
 	}
 		
 	/**
+	 * An enum for the two matrices of this IS31FL3731 device
+	 * Matrix A corresponds to columns below 7 and B to columns above
+	 * @author sydxrey
+	 */
+	public static enum Matrix {
+		A, B;
+	}
+	
+
+	/**
 	 * an enumeration of registers that can be used when a "frame" page is currently active
 	 * When the "function register" is active, use a FunctionRegister instead.
 	 * @author SR
@@ -542,7 +611,7 @@ public class IS31FL3731 {
 		// etc
 		ONOFF_REG_BASE_ADDR(0x00), // there are 18 such registers, two for each row (A then B)
 		BLINK_REG_BASE_ADDR(0x12), // ibid (remember to configure DISP_OPTION first by setting bit BE to one)
-		PWM_REG_BASE_ADDR(0x24); // there are 144 such registers, one for each LED (from left to right)
+		PWM_REG_BASE_ADDR(0x24); // there are 144=2x72 such registers, one for each LED (from left to right)
 
 	
 		private int address; // the register address or the constant data field
@@ -622,25 +691,6 @@ public class IS31FL3731 {
 		}		
 	}
 	
-	public void i2cWrite(int adress, int value) throws Exception{
-		
-		//INTIALISATION DU BUS1
-		I2CBus bus1 = I2CFactory.getInstance(I2CBus.BUS_1);
-		I2CDevice IS31FL3731 = bus1.getDevice((byte)0x74);
-		
-		IS31FL3731.write(adress,(byte) value);
-		
-	}
-	
-	public int i2cRead(int adress) throws Exception {
-		
-		//INTIALISATION DU BUS1
-		I2CBus bus1 = I2CFactory.getInstance(I2CBus.BUS_1);
-		I2CDevice IS31FL3731 = bus1.getDevice((byte)0x74);
-		
-		return IS31FL3731.read(adress);
-		
-	}
 	
 // NOT USED ANYMORE but wait before removing permanently (SR)	
 //	/**

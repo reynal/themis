@@ -1,10 +1,8 @@
 package model;
 
-import controller.component.*;
 import controller.event.PushButtonActionEvent;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
-import javafx.beans.value.ObservableValue;
 
 /**
  * This class represents a model parameter of type "double"
@@ -17,13 +15,6 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		super(lbl);
 		this.clazz = clazz;
 		value = getMin();
-	}
-
-	@Override
-	public Control createControl() {
-		RotaryEncoder e = new RotaryEncoder(getLabel());
-		e.addRotaryEncoderChangeListener(this);
-		return e;
 	}
 
 	/**
@@ -65,14 +56,14 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		case UP : 
 			if (value.ordinal() < getSize()-1) {
 				value = clazz.getEnumConstants()[value.ordinal()+1];
-				fireSynthParameterEditEvent(value);
+				fireSynthParameterEditEvent();
 			}			
 			break;
 			
 		case DOWN : 
 			if (value.ordinal() > 0) {
 				value = clazz.getEnumConstants()[value.ordinal()-1];
-				fireSynthParameterEditEvent(value);
+				fireSynthParameterEditEvent();
 			}			
 			break;
 		}
@@ -85,10 +76,22 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 			value = clazz.getEnumConstants()[value.ordinal()+1];
 		else
 			value = clazz.getEnumConstants()[0];
-		fireSynthParameterEditEvent(value);
+		fireSynthParameterEditEvent();
 		
 	}
 	
+	public double getValueAsRatio() {
+			
+			return getOrdinal() / (getSize() - 1.0);
+	}
+
+	@Override
+	public int getValueAsMIDICode() {
+		
+		return getOrdinal();
+		
+	}
+
 	// ------------------ test ------
 	
 	// the following test allows one to understand how to use EnumParameter and check listener mechanics:
@@ -99,6 +102,8 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		System.out.println(p.getSize());
 		System.out.println(p.getMin());
 		System.out.println(p.getMax());
+		p.setValue(Octave.FOUR_INCHES);
+		System.out.println(p.getValueAsRatio());
 		// add a listener using functional programming:
 		//p.addSynthParameterEditListener(e -> System.out.println(e));
 
@@ -108,9 +113,6 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		p.setValue(Octave.TWO_INCHES);
 		System.out.println(o);
 	}
-
-	
-	
 
 
 }

@@ -1,5 +1,7 @@
 package view.component;
 
+import javax.swing.JComponent;
+
 import device.*;
 
 /**
@@ -25,5 +27,7 @@ public abstract class AbstractView implements View {
 		this.is31fl3731 = is31fl3731;
 		this.matrix = matrix;
 	}	
+	
+	public abstract JComponent getUIForSimulator();
 	
 }

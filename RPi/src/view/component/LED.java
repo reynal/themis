@@ -2,14 +2,19 @@ package view.component;
 
 import java.io.IOException;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
 import device.IS31FL3731;
+import device.IS31FL3731.LEDCoordinate;
 import model.DoubleParameter;
 import model.event.SynthParameterEditEvent;
+import model.event.SynthParameterEditListener;
 
 /**
  * A view that represents a hardware single LED based on the IS31FL3731 device.
@@ -17,15 +22,18 @@ import model.event.SynthParameterEditEvent;
  * progressively switching this led on using PWM, or to represent boolean data
  * by simply switching b/w off and on.
  * 
+ * This view is an appropriate listener for a BooleanParameter
+ * 
  * @author reynal
  * @author lucien
  */
-public class LED extends AbstractView {
+public class LED extends AbstractView implements SynthParameterEditListener  {
 
 	// --------------------- fields ---------------------
 
 	public final int LED_COUNT = 8;
 	private int col, row;
+	private JLabel lblForUISimulator;
 
 	// ------------- CONSTRUCTORS ---------------
 
@@ -36,9 +44,9 @@ public class LED extends AbstractView {
 	 * @param col
 	 * @param matrix
 	 */
-	public LED(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix, int row, int col) {
+	public LED(IS31FL3731 is31fl3731, IS31FL3731.LEDCoordinate ledCoordinate) {
 
-		super(is31fl3731, matrix);
+		super(is31fl3731, ledCoordinate.AorB);
 		this.row = row;
 		this.col = col;
 	}
@@ -48,8 +56,11 @@ public class LED extends AbstractView {
 	 */
 	public void setValue(boolean v) {
 		
-		// TODO (lucien)
+		if (is31fl3731 != null) {
+			// TODO (lucien)
+		}
 		
+		if (lblForUISimulator != null) lblForUISimulator.setText(v ? "ON":"OFF");
 	}
 
 	/**
@@ -65,7 +76,7 @@ public class LED extends AbstractView {
 	/**
 	 * Listener method for parameter changes
 	 */
-	public void synthParameterEdited(SynthParameterEditEvent<Integer> e) {
+	public void synthParameterEdited(SynthParameterEditEvent e) {
 			
 		// TODO (lucien)
 		
@@ -73,8 +84,7 @@ public class LED extends AbstractView {
 	
 	
 	// Binary way to turn on LEDs
-	private void updateBargraphBinary(int row, int val, int col)
-			throws IOException, InterruptedException, UnsupportedBusNumberException {
+	private void updateBargraphBinary(int row, int val, int col) throws IOException, InterruptedException, UnsupportedBusNumberException {
 
 		val = val | 7;
 		if (col == 1) {
@@ -91,6 +101,19 @@ public class LED extends AbstractView {
 		}
 	}
 
+	// --------------------- UI ----------------------
+
+	public JComponent getUIForSimulator() {
+
+		if (lblForUISimulator == null) {
+			lblForUISimulator = new JLabel();
+		}
+		return lblForUISimulator;
+
+	}
+	
+	// --------------------- test ----------------------
+	
 	// Change state of LED by a smooth way thanks to PWM when we use MIDI
 
 

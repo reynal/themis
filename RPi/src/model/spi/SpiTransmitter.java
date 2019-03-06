@@ -14,7 +14,7 @@ import model.event.SynthParameterEditListener;
  * @author sydxrey
  *
  */
-public class SpiTransmitter implements SynthParameterEditListener<Object> {
+public class SpiTransmitter implements SynthParameterEditListener {
 
 	private SpiDevice spiDevice;
 	
@@ -52,10 +52,10 @@ public class SpiTransmitter implements SynthParameterEditListener<Object> {
 	}
 
 	@Override
-	public void synthParameterEdited(SynthParameterEditEvent<Object> e) {
+	public void synthParameterEdited(SynthParameterEditEvent e) {
 		
 		//Object o = e.getValue();
-		System.out.println(e.getSource() + " : " + e.getValue());
+		System.out.println(e.getSource());
 		/*if (o instanceof Double) bla bla bla
 		else if (o instance of Boolean) bla bla bla
 		else bla bla bla*/

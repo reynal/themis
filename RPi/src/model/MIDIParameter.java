@@ -32,13 +32,6 @@ public class MIDIParameter extends SynthParameter<Integer> {
 	}		
 
 	@Override
-	public Control createControl() {
-		RotaryEncoder e = new RotaryEncoder(getLabel());
-		e.addRotaryEncoderChangeListener(this);
-		return e;
-	}
-
-	@Override
 	public void encoderRotated(RotaryEncoderEvent e) {
 		double old = getValue();
 		switch (e.getDirection()) {
@@ -52,7 +45,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 			if (this.value < 0) this.value = 0;
 			break;
 		}
-		if (this.value != old) fireSynthParameterEditEvent(value);
+		if (this.value != old) fireSynthParameterEditEvent();
 	}	
 	
 	@Override
@@ -60,7 +53,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 
 		this.value++;
 		if (this.value > 127) this.value=0;
-		fireSynthParameterEditEvent(value);
+		fireSynthParameterEditEvent();
 		
 	}
 
@@ -74,7 +67,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));
 		
-		model.setDetune(0.03);
+		model.setDetune(3);
 		model.setOctave(Octave.TWO_INCHES);
 
 	}

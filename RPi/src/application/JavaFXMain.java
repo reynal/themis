@@ -158,7 +158,7 @@ public class JavaFXMain extends Application { // implements UIFactory<Node> {
 	public void addToContainer(Node container, SynthParameter<?> param) {
 		
 		Group group = (Group)container;
-		Control c = param.getControl(); 
+		Control c = null; //param.getControl(); 
 		group.getChildren().add(createUIForControl(c));
 		Label label = new Label(param.getLabel());
 		//label.setForeground(Color.pink);
@@ -188,7 +188,7 @@ public class JavaFXMain extends Application { // implements UIFactory<Node> {
 			Label label = new Label(p.getLabel());
 			label.setStyle("-fx-text-fill: lightpink;");
 
-			Control c = p.getControl();
+			Control c = null; // p.getControl();
 			//System.out.println(p);
 			
 			Node n = (Node)createUIForControl(c);

@@ -1,7 +1,7 @@
 package application;
 	
 import model.*;
-
+import view.component.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -126,6 +126,7 @@ public class SwingMain extends JFrame {
 		//group.setPadding(new Insets(0, 10, 0, 10));
 		
 		int i=0;
+		ControlFactory controlFactory = new ControlFactory(null);
 		for (SynthParameter<?> p : model.getParameters()) {
 			i=i+1;
 			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramtres
@@ -134,7 +135,11 @@ public class SwingMain extends JFrame {
 			JLabel label = new JLabel(p.getLabel());
 			label.setForeground(Color.pink);
 
-			Control c = p.getControl();
+			Control c;
+			if (p instanceof BooleanParameter) c = controlFactory.createControl((BooleanParameter)p, null);
+			else if (p instanceof EnumParameter<?>) c = controlFactory.createControl((EnumParameter<?>)p, null);
+			else if (p instanceof MIDIParameter) c = controlFactory.createControl((MIDIParameter)p, null,null);
+			else throw new IllegalArgumentException("Unsupported Parameter: " + p);
 			JComponent n = createUIForControl(c);
 
 			group.add(n);
@@ -180,6 +185,7 @@ public class SwingMain extends JFrame {
 		}
 		else return null;
 	}
+	
 	
 			
 	// --- utilities ---

@@ -1,6 +1,5 @@
 package model;
 
-import model.Vco3340.WaveShape;
 
 /**
  * A model for the CEM or AS3320 VCF
@@ -9,20 +8,25 @@ import model.Vco3340.WaveShape;
  */
 public class Vcf3320 extends AbstractModel {
 
-	private DoubleParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter;
+	private MIDIParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter;
 	private EnumParameter<FilterOrder> filterOrderParameter;  
+	private ADSREnveloppe adsrEnveloppe;
 	
 	public Vcf3320() {
 		
-		cutoffParameter = new DoubleParameter("Cutoff");
-		resonanceParameter = new DoubleParameter("Reso");
-		kbdTrackingParameter = new DoubleParameter("Keyboard");
-		egDepthParameter = new DoubleParameter("EG.Depth");
+		cutoffParameter = new MIDIParameter("Cutoff");
+		resonanceParameter = new MIDIParameter("Reso");
+		kbdTrackingParameter = new MIDIParameter("Keyboard");
+		egDepthParameter = new MIDIParameter("EG.Depth");
+		adsrEnveloppe = new ADSREnveloppe();
+		parameterList.addAll(adsrEnveloppe.getParameters());
 		parameterList.add(filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, "FilterOrder"));
 		parameterList.add(cutoffParameter);
 		parameterList.add(resonanceParameter);
 		parameterList.add(kbdTrackingParameter);
 		parameterList.add(egDepthParameter);
+		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e));  // for debug purpose only
+
 	}
 	
 	// ---- value getters and setters --- (write operating may fire change events)
@@ -31,32 +35,44 @@ public class Vcf3320 extends AbstractModel {
 		return cutoffParameter.getValue();
 	}
 
+	/**
+	 * @param f b/w 0.0 and 1.0 (aka percentage)
+	 */
 	public void setCutoff(double f) {
-		this.cutoffParameter.setValue(f);
+		this.cutoffParameter.setValue((int)(127.0 * f));
 	}
 
 	public double getEnvGenDepth() {
 		return egDepthParameter.getValue();
 	}
 
+	/**
+	 * @param f b/w 0.0 and 1.0 (aka percentage)
+	 */
 	public void setEnvGenDepth(double d) {
-		this.egDepthParameter.setValue(d);
+		this.egDepthParameter.setValue((int)(127.0 * d));
 	}
 
 	public double getKbdTracking() {
 		return kbdTrackingParameter.getValue();
 	}
 
+	/**
+	 * @param f b/w 0.0 and 1.0 (aka percentage)
+	 */
 	public void setKbdTracking(double k) {
-		this.kbdTrackingParameter.setValue(k);
+		this.kbdTrackingParameter.setValue((int)(127.0 * k));
 	}
 
 	public double getResonance() {
 		return resonanceParameter.getValue();
 	}
 
+	/**
+	 * @param f b/w 0.0 and 1.0 (aka percentage)
+	 */
 	public void setResonance(double r) {
-		this.resonanceParameter.setValue(r);
+		this.resonanceParameter.setValue((int)(127.0 * r));
 	}
 
 	// ----------- enum -------------
@@ -72,28 +88,28 @@ public class Vcf3320 extends AbstractModel {
 	/**
 	 * @return the cutoffParameter
 	 */
-	public DoubleParameter getCutoffParameter() {
+	public MIDIParameter getCutoffParameter() {
 		return cutoffParameter;
 	}
 
 	/**
 	 * @return the egDepthParameter
 	 */
-	public DoubleParameter getEgDepthParameter() {
+	public MIDIParameter getEgDepthParameter() {
 		return egDepthParameter;
 	}
 
 	/**
 	 * @return the kbdTrackingParameter
 	 */
-	public DoubleParameter getKbdTrackingParameter() {
+	public MIDIParameter getKbdTrackingParameter() {
 		return kbdTrackingParameter;
 	}
 
 	/**
 	 * @return the resonanceParameter
 	 */
-	public DoubleParameter getResonanceParameter() {
+	public MIDIParameter getResonanceParameter() {
 		return resonanceParameter;
 	}
 

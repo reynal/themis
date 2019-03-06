@@ -9,20 +9,20 @@ import java.util.List;
  */
 public class Vco3340 extends AbstractModel {
 
-	private DoubleParameter detuneParameter;
+	private MIDIParameter detuneParameter;
 	private EnumParameter<Octave> octaveParameter;	
 	private EnumParameter<WaveShape> waveShapeParameter;
-	private DoubleParameter dutyParameter;
+	private MIDIParameter dutyParameter;
 	private BooleanParameter syncFrom13700Parameter;
 	
 	public Vco3340() {
 		super();
-		parameterList.add(detuneParameter = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
+		parameterList.add(detuneParameter = new MIDIParameter("VCO Detune %"));
 		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
 		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
-		parameterList.add(dutyParameter = new DoubleParameter("Duty", 0, 100, 1));
+		parameterList.add(dutyParameter = new MIDIParameter("Duty"));
 		parameterList.add(syncFrom13700Parameter = new BooleanParameter("Sync"));
-		
+		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
 	}
 
 	// ---- value getters and setters --- (write operating may fire change events)
@@ -49,8 +49,11 @@ public class Vco3340 extends AbstractModel {
 		return dutyParameter.getValue();
 	}
 
+	/**
+	 * @param duty b/w 0.0 and 1.0
+	 */
 	public void setDuty(double duty) {
-		this.dutyParameter.setValue(duty);
+		this.dutyParameter.setValue((int)(127.0*duty));
 	}
 	
 	public Octave getOctave() { 
@@ -65,13 +68,16 @@ public class Vco3340 extends AbstractModel {
 		return detuneParameter.getValue();
 	}
 
-	public void setDetune(double v) {
-		detuneParameter.setValue(v);
+	/**
+	 * @param detune b/w -64 and 63 cents
+	 */
+	public void setDetune(int detune) {
+		detuneParameter.setValue((detune + 64));
 	}
 	
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
-	public DoubleParameter getDetuneParameter() {
+	public MIDIParameter getDetuneParameter() {
 		return detuneParameter;
 	}
 	
@@ -87,7 +93,7 @@ public class Vco3340 extends AbstractModel {
 		return waveShapeParameter;
 	}
 
-	public DoubleParameter getDutyParameter() {
+	public MIDIParameter getDutyParameter() {
 		return dutyParameter;
 	}
 
@@ -110,10 +116,7 @@ public class Vco3340 extends AbstractModel {
 		Vco3340 vco1 = new Vco3340();
 		List<SynthParameter<?>> paramsVCO1 = vco1.getParameters();
 		for (SynthParameter<?> p : paramsVCO1) {
-
 			System.out.println(p);
-			System.out.println(p.createControl());
-			//System.out.println(p.createControl().getJavaFXView());
 		}
 	}
 

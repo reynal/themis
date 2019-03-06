@@ -1,8 +1,7 @@
 package model.event;
 
 import java.util.EventObject;
-
-import javafx.event.EventHandler;
+import model.SynthParameter;
 
 /**
  * 
@@ -10,25 +9,14 @@ import javafx.event.EventHandler;
  *
  * @param <T> the parametrized type of the source parameter, e.g., Double or Enum or Boolean.
  */
-public class SynthParameterEditEvent<T> extends EventObject {
+public class SynthParameterEditEvent extends EventObject {
 
 	private static final long serialVersionUID = 1L;
 	
-	T value;
-
 	/**
-	 * 
 	 * @param source the SynthParameter that changed
-	 * @param state
 	 */
-	public SynthParameterEditEvent(Object source, T value) {
+	public SynthParameterEditEvent(SynthParameter<?> source) {
 		super(source);
-		this.value = value;
-	}
-	
-	public T getValue() {
-		return value;
-	}
-	
-	
+	}	
 }
