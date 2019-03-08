@@ -1,12 +1,9 @@
 package view.component;
 
-import java.io.IOException;
-import java.util.HashSet;
-import device.IS31FL3731;
-import device.MCP23017;
-import model.BooleanParameter;
-import model.EnumParameter;
-import model.MIDIParameter;
+import java.util.*;
+import java.io.*;
+import device.*;
+import model.*;
 
 /**
  * A factory that can build a view (a bargraph, a group of leds, etc) for a synth parameter 
@@ -18,10 +15,11 @@ import model.MIDIParameter;
 public class ViewFactory {
 
 	private IS31FL3731 device;
-	private HashSet<IS31FL3731.LEDCoordinate> usedLeds = new HashSet<IS31FL3731.LEDCoordinate>();
+	private HashSet<IS31FL3731.LEDCoordinate> usedLedsA = new HashSet<IS31FL3731.LEDCoordinate>();
+	private HashSet<IS31FL3731.LEDCoordinate> usedLedsB = new HashSet<IS31FL3731.LEDCoordinate>();
 		
 	/**
-	 * @param device
+	 * Construct a new factory for views based on the given IS31FL3731 device.
 	 */
 	public ViewFactory(IS31FL3731 device) {		
 		this.device = device;		
@@ -29,17 +27,17 @@ public class ViewFactory {
 	
 	
 	/**
-	 * 
-	 * @param param
-	 * @param ledCoordinate
+	 * Creates a view based on a single LED.
 	 */
-	public LED createView(BooleanParameter param, IS31FL3731.LEDCoordinate ledCoordinate) throws IOException{
+	public LED createView(SynthParameter<?> param, IS31FL3731.LEDCoordinate ledCoordinate) throws IOException{
 		
+		System.out.println("ViewFactory: creating LED for " + param + " at " + ledCoordinate);
+		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (ledCoordinate.AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
 		if (usedLeds.add(ledCoordinate) == false)
-			throw new IllegalArgumentException("LED " + ledCoordinate + " of the MCP23017 device is already in use");
+			throw new IllegalArgumentException("[SingleLED] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		
 		LED led = new LED(this.device, ledCoordinate);
-		param.addSynthParameterEditListener(led);
+		if (param != null) param.addSynthParameterEditListener(led);
 		
 		return led;
 	}
@@ -50,19 +48,23 @@ public class ViewFactory {
 	 * @param param the corresponding MIDI parameter
 	 * @param row a row of 8 leds, see IS31FL3731 datasheet 
 	 */
-	public BarGraph createView(MIDIParameter param, IS31FL3731.Matrix AorB, int row) throws IOException{
+	public BarGraph createView(SynthParameter<?> param, IS31FL3731.Matrix AorB, int row) throws IOException{
+		
+		System.out.println("ViewFactory: creating a BarGraph for " + param + " at row " + row + " on matrix "+AorB);
+		
+		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
 		
 		// check use of pins:
 		IS31FL3731.LEDCoordinate ledCoordinate = new IS31FL3731.LEDCoordinate(row, 0, AorB); 
 		for (int col=0; col < 8; col++) {
 			ledCoordinate.setColumn(col);
 			if (usedLeds.add(ledCoordinate) == false)
-				throw new IllegalArgumentException("LED " + ledCoordinate + " of the MCP23017 device is already in use");
+				throw new IllegalArgumentException("[BarGraph] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		}
 
 		// parameter -> bar graph
 		BarGraph barGraph = new BarGraph(device, AorB, row);
-		param.addSynthParameterEditListener(barGraph);
+		if (param != null) param.addSynthParameterEditListener(barGraph);
 		return barGraph;
 	}
 	
@@ -71,19 +73,30 @@ public class ViewFactory {
 	 * 
 	 * @param row row in matrix A or B, see IS31FL3731 datasheet 
 	 */
-	public LEDGroup createView(EnumParameter<?> param, IS31FL3731.Matrix AorB, int row, int colStart) throws IOException{
+	public BarGraph createView(SynthParameter<?> param, IS31FL3731.Matrix AorB, int row, int colStart) throws IOException{
 		
-		int colEnd = colStart + param.getSize() - 1;
+		System.out.println("ViewFactory: creating a group of leds for " + param + " at row " + row + " on matrix "+AorB + " starting at column " + colStart);
+		
+		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
+		
+		int colEnd = param == null ? colStart + 1 : colStart + param.getSize() - 1;
 		IS31FL3731.LEDCoordinate ledCoordinate = new IS31FL3731.LEDCoordinate(row, colStart, AorB); 
 		for (int col=colStart; col <= colEnd; col++) {
 			ledCoordinate.setColumn(col);
 			if (usedLeds.add(ledCoordinate) == false)
-				throw new IllegalArgumentException("LED " + ledCoordinate + " of the MCP23017 device is already in use");
+				throw new IllegalArgumentException("[LEDGroup] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		}
 		
-		LEDGroup ledGroup = new LEDGroup(device, AorB, row, colStart, colEnd);
-		param.addSynthParameterEditListener(ledGroup);
+		BarGraph ledGroup = new BarGraph(device, AorB, row, colStart, colEnd);
+		if (param != null) param.addSynthParameterEditListener(ledGroup);
 		return ledGroup;
 	}
-			
+
+
+	@Override
+	public String toString() {
+		return super.toString() + " Used pins  " + usedLedsA + " " + usedLedsB;
+	}
+
+
 }

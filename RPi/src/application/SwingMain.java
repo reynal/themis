@@ -136,9 +136,9 @@ public class SwingMain extends JFrame {
 			label.setForeground(Color.pink);
 
 			Control c;
-			if (p instanceof BooleanParameter) c = controlFactory.createControl((BooleanParameter)p, null);
-			else if (p instanceof EnumParameter<?>) c = controlFactory.createControl((EnumParameter<?>)p, null);
-			else if (p instanceof MIDIParameter) c = controlFactory.createControl((MIDIParameter)p, null,null);
+			if (p instanceof BooleanParameter) c = controlFactory.createControl(p, null, null);
+			else if (p instanceof EnumParameter<?>) c = controlFactory.createControl(p, null, null);
+			else if (p instanceof MIDIParameter) c = controlFactory.createControl(p, null, null,null);
 			else throw new IllegalArgumentException("Unsupported Parameter: " + p);
 			JComponent n = createUIForControl(c);
 

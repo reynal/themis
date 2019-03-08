@@ -30,5 +30,12 @@ public abstract class Control {
 		return label;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + " \"" + getLabel() + "\" ";
+	}
+	
+	
+
 	
 }

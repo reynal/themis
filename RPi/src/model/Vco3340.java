@@ -17,11 +17,11 @@ public class Vco3340 extends AbstractModel {
 	
 	public Vco3340() {
 		super();
-		parameterList.add(detuneParameter = new MIDIParameter("VCO Detune %"));
-		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
-		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
-		parameterList.add(dutyParameter = new MIDIParameter("Duty"));
-		parameterList.add(syncFrom13700Parameter = new BooleanParameter("Sync"));
+		parameterList.add(detuneParameter = new MIDIParameter("VCO3340 Detune"));
+		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO3340 Octave"));
+		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "VCO3340 WaveShape"));
+		parameterList.add(dutyParameter = new MIDIParameter("VCO3340 Duty"));
+		parameterList.add(syncFrom13700Parameter = new BooleanParameter("VCO3340 Sync from 13700"));
 		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
 	}
 

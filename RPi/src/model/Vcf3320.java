@@ -74,9 +74,14 @@ public class Vcf3320 extends AbstractModel {
 	public void setResonance(double r) {
 		this.resonanceParameter.setValue((int)(127.0 * r));
 	}
+	
+	
 
 	// ----------- enum -------------
 	
+
+
+
 	public static enum FilterOrder {
 		
 		SECOND_ORDER,
@@ -120,8 +125,8 @@ public class Vcf3320 extends AbstractModel {
 		return filterOrderParameter;
 	}
 	
-	
-	
-	
+	public ADSREnveloppe getAdsrEnveloppeParameter() {
+		return adsrEnveloppe;
+	}
 	
 }

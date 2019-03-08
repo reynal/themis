@@ -1,14 +1,12 @@
 package model;
 
 import javax.swing.event.EventListenerList;
-
-import controller.component.Control;
 import controller.event.*;
 import model.event.*;
 
 /**
  * This class represents a model parameter (one Model may have several Parameter's), for instance:
- * - a real number encoded through a 7 bit MIDI value  (e.g.: frequency, detune), 
+ * - a real number encoded through a 7 bit MIDI value  (e.g.: frequency, detune)
  * - a boolean (e.g;: a switchable feature) 
  * - an enum
  * Every parameter has a name and is able to produce the appropriate control 
@@ -31,6 +29,11 @@ public abstract class SynthParameter<T> implements RotaryEncoderChangeListener, 
 		listenerList = new EventListenerList();
 	}
 
+	/**
+	 * @return the number of values for this parameter
+	 */
+	public abstract int getSize();
+	
 	/**
 	 * Adds the specified listener to receive action events from this button.
 	 * 
@@ -100,6 +103,16 @@ public abstract class SynthParameter<T> implements RotaryEncoderChangeListener, 
 	 */
 	public abstract int getValueAsMIDICode();
 	
+	/** Utility method for MIDI message parsing coming e.g. from external controllers */
+	public abstract void setValueAsMIDICode(int v);
+	
+	/**
+	 * Return a percentage b/w 0.0 and 1.0
+	 * @return (value - min)/(max - min)    
+	 */
+	public double getValueAsRatio() {
+		return getValueAsMIDICode()/127.0;
+	}
 
 	@Override
 	public String toString() {

@@ -1,13 +1,7 @@
 package controller.component;
 
-import java.awt.Component;
-import javax.swing.JButton;
-import java.awt.event.ActionEvent;
-import javax.swing.*;
 import controller.event.*;
 import device.MCP23017;
-import javafx.scene.Node;
-import javafx.scene.control.*;
 
 /**
  * a class that represents a push button on the front pane
@@ -18,11 +12,15 @@ import javafx.scene.control.*;
 public class PushButton extends Control {
 
 	/**
-	 * construct a pushbutton with the given UI label that is connected to the given pin of the given MCP23017 device
+	 * construct a pushbutton with the given UI label that is connected to the given pin of the given MCP23017 device and port
 	 */
-	public PushButton(String label, MCP23017 mcpDevice, MCP23017.Pin gpio) {
-		super(label);
-		// TODO : handle interrupt from MCP23017
+	public PushButton(String label, MCP23017 mcpDevice, MCP23017.Port portAorB, MCP23017.Pin gpio) {
+		super(label + "[" + portAorB + ":" + gpio + "]");
+		if (mcpDevice != null) {
+			// TODO : handle interrupt from MCP23017
+		}
+		else System.out.println("No MCP23017 registered for " + toString() +" -> simulator mode only");
+
 	}
 
 	/**

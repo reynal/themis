@@ -19,13 +19,11 @@ public abstract class AbstractView implements View {
 	public final int LOW = 0;
 
 	protected IS31FL3731 is31fl3731;
-	protected IS31FL3731.Matrix matrix; // A or B
 
-	public AbstractView(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix) { //if we want to impose the state
+	public AbstractView(IS31FL3731 is31fl3731) { //if we want to impose the state
 		
 		super();
 		this.is31fl3731 = is31fl3731;
-		this.matrix = matrix;
 	}	
 	
 	public abstract JComponent getUIForSimulator();

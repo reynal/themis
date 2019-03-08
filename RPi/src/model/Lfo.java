@@ -2,8 +2,10 @@ package model;
 
 public class Lfo extends AbstractModel {
 	
-	private DoubleParameter frequencyParameter;
+	private MIDIParameter frequencyParameter;
 	private EnumParameter<WaveShape> waveShapeParameter;
+	
+	public static final double FREQ_MIDI_TO_HZ = 0.1;
 	
 	enum WaveShape {
 		
@@ -16,11 +18,11 @@ public class Lfo extends AbstractModel {
 	// ---- value getters and setters --- (write operating may fire change events)
 	
 	public double getFrequency() {
-		return frequencyParameter.getValue();
+		return frequencyParameter.getValueAsMIDICode() * FREQ_MIDI_TO_HZ;
 	}
 
 	public void setFrequency(double frequency) {
-		this.frequencyParameter.setValue(frequency);
+		this.frequencyParameter.setValueAsMIDICode((int)(frequency / FREQ_MIDI_TO_HZ));
 	}
 
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
@@ -28,7 +30,7 @@ public class Lfo extends AbstractModel {
 	/**
 	 * @return the frequencyParameter
 	 */
-	public DoubleParameter getFrequencyParameter() {
+	public MIDIParameter getFrequencyParameter() {
 		return frequencyParameter;
 	}
 

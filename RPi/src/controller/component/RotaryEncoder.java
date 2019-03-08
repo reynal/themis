@@ -9,7 +9,7 @@ import device.MCP23017;
 import controller.event.*;
 
 /**
- * A physical quadratic encoder that can fire UP or DOWN change events upon rotation.
+ * A hardware quadratic encoder that can fire UP or DOWN change events upon rotation.
  * 
  * @author SR
  * 
@@ -27,16 +27,17 @@ public class RotaryEncoder extends Control  {
 	
 	
 	/**
-	 * 
-	 * @param mcpDevice le MCP23017 sur lequel sont connectées les broches de l'encoder
-	 * @param gpioA broche (port A) du MCP32017 connectée à la sortie A de l'encodeur
-	 * @param gpioB broche (port A) du MCP32017 connectée à la sortie B de l'encodeur
-	 * @param gpioIntRpi broche de la RPi connectée à la sortie INTA du MCP23017
-	 * @throws IOException 
+	 * Constructor for a rotary encoder connected to two input pins of the MCP23017 device.
+	 * MC23017 inputs have pull-up enabled, so that encoder channels must connect inputs to ground.
+	 * @param mcpDevice the MCP23017 device that connects the encoder pins ; if null only the UI simulator mode is used
+	 * @pram portAorB the MCP23017 port encoder outputs are connected to 
+	 * @param gpioA pin number for encoder output A
+	 * @param gpioB pin number for encoder output B
+	 * @throws IOException in case there's an I2C bus issue 
 	 */
-	public RotaryEncoder(String label, MCP23017 mcpDevice, MCP23017.Pin gpioA, MCP23017.Pin gpioB) throws IOException{
+	public RotaryEncoder(String label, MCP23017 mcpDevice, MCP23017.Port portAorB, MCP23017.Pin gpioA, MCP23017.Pin gpioB) throws IOException{
 
-		super(label);
+		super(label + "[" + portAorB + ":" + gpioA + "&" + gpioB + "]");
 
 		if (mcpDevice != null) {
 			this.channelA = gpioA;
@@ -44,15 +45,19 @@ public class RotaryEncoder extends Control  {
 			levelA=PinState.LOW;
 			levelB=PinState.LOW;
 			previousTriggeringChannel=null;
-			mcpDevice.setInput(MCP23017.Port.A); // encoder
-			mcpDevice.setPullupResistors(MCP23017.Port.A, true); // Port A pull up enabled (le bouton doit connecter le port a la masse)
-			mcpDevice.setInterruptOnChange(MCP23017.Port.A, true); // Port A : enables GPIO input pin for interrupt-on-change
+			mcpDevice.setInput(portAorB); // encoder
+			mcpDevice.setPullupResistors(portAorB, true); // pull up enabled
+			mcpDevice.setInterruptOnChange(portAorB, true); // enables GPIO input pin for interrupt-on-change
 			mcpDevice.addInterruptListener(new PhysicalEncoderChangeListener());
 		}
-		else System.out.println("No MCP23017 registered for " + toString());
+		else System.out.println("No MCP23017 registered for " + toString()+" -> simulator mode only");
 	}
 	
 	
+	/**
+	 * Simulator mode constructor
+	 * @param label the name of the encoder on the UI
+	 */
 	public RotaryEncoder(String label) {
 		super(label);
 		System.out.println("No MCP23017 registered for " + toString());
@@ -80,7 +85,7 @@ public class RotaryEncoder extends Control  {
 	 * is lazily created using the parameters passed into
 	 * the fire method.
 	 */
-	 public void fireRotaryEncoderEvent(RotaryEncoderDirection dir) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simumlator mode
+	 public void fireRotaryEncoderEvent(RotaryEncoderDirection dir) { // TODO note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
 		 
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();

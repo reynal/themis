@@ -80,6 +80,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		
 	}
 	
+	@Override
 	public double getValueAsRatio() {
 			
 			return getOrdinal() / (getSize() - 1.0);
@@ -92,6 +93,13 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		
 	}
 
+	@Override
+	public void setValueAsMIDICode(int v) {
+		v = v % getSize();
+		value = clazz.getEnumConstants()[v];
+		
+	}
+	
 	// ------------------ test ------
 	
 	// the following test allows one to understand how to use EnumParameter and check listener mechanics:
@@ -113,6 +121,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		p.setValue(Octave.TWO_INCHES);
 		System.out.println(o);
 	}
+
 
 
 }

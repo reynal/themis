@@ -16,6 +16,12 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 	}
 
 
+	/**
+	 * @return the number of constants for this param
+	 */
+	public int getSize() {
+		return 2;
+	}	
 	
 	@Override
 	public void actionPerformed(PushButtonActionEvent e) {
@@ -33,6 +39,7 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 		
 	}
 
+	@Override
 	public double getValueAsRatio() {
 		
 		if (value) return 1.0;
@@ -41,8 +48,16 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 
 	@Override
 	public int getValueAsMIDICode() {
-		if (value) return 0xFF;
+		if (value) return 127;
 		return 0;
+	}
+
+
+	@Override
+	public void setValueAsMIDICode(int v) {
+		if (v < 64) value = false;
+		else value = true;
+		
 	}
 
 }

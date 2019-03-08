@@ -3,6 +3,7 @@ package device;
 import java.awt.Point;
 import java.io.IOException;
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
 
 /**
@@ -46,10 +47,11 @@ public class IS31FL3731 {
 	// -------------- constructors --------------
 	
 	/**
-	 * @throws Exception 
+	 * @throws UnsupportedBusNumberException 
+	 * @throws IOException 
 	 * 
 	 */
-	public IS31FL3731() throws Exception {
+	public IS31FL3731() throws IOException, UnsupportedBusNumberException  {
 		
 		// - init I2C bus, create device using given address
 		i2cDevice = I2CFactory.getInstance(I2CBus.BUS_1).getDevice(DeviceAddress.AD_GND.getValue());
@@ -83,9 +85,8 @@ public class IS31FL3731 {
 	 * Configure the current display mode in the Configuration Register (00h)
 	 * @param startFrame in Auto Frame Play Mode, sets the initial frame from which the animation starts
 	 * @author SR
-	 * @throws Exception 
 	 */
-	public void setDisplayMode(DisplayMode displayMode, int startFrame) throws Exception {
+	public void setDisplayMode(DisplayMode displayMode, int startFrame) throws IOException {
 		
 		startFrame %= 8; // must be lower than 8
 		configure(FunctionRegister.CONFIG_REG, displayMode.getValue() | startFrame);
@@ -95,9 +96,8 @@ public class IS31FL3731 {
 	/**
 	 * sets the currently displayed frame when in Picture Mode (01h)
 	 * @author SR
-	 * @throws Exception 
 	 */
-	public void setDisplayedFrame(int frame) throws Exception {
+	public void setDisplayedFrame(int frame) throws IOException {
 		
 		configure(FunctionRegister.PICTURE_DISPLAY, frame % 8);
 		
@@ -108,9 +108,8 @@ public class IS31FL3731 {
 	 * @param loopCount the number of loops playing, from 1 to 7 ; 0 for endless looping
 	 * @param frameCount the number of frames playing, from 1 to 7 ; 0 for all frames
 	 * @author SR
-	 * @throws Exception 
 	 */
-	public void setAutoPlayLoopingParameters(int loopCount, int frameCount) throws Exception {
+	public void setAutoPlayLoopingParameters(int loopCount, int frameCount) throws IOException {
 		
 		loopCount %= 8;
 		frameCount %= 8;
@@ -123,9 +122,8 @@ public class IS31FL3731 {
 	 * Set the delay in MS between frames in Auto Play Mode. The methods picks the closest register parameter value.
 	 * @param delayMs
 	 * @author SR
-	 * @throws Exception 
 	 */
-	public void setAutoPlayFrameDelayTime(int delayMs) throws Exception {
+	public void setAutoPlayFrameDelayTime(int delayMs) throws IOException {
 		
 		// tau = 11ms (typ., see datasheet page 12)
 		int fdt = (int)Math.round(0.09090909 * delayMs); // i.e. divided by 11ms
@@ -141,9 +139,8 @@ public class IS31FL3731 {
 	 * @param blinkEnable enable led blinking
 	 * @param blinkPeriodTimeSec sets the blinking period in seconds (picks the closest permitted value ; max is 2 seconds)
 	 * @author SR
-	 * @throws Exception 
 	 */
-	public void setDisplayOptions(boolean useFrame1IntensityForAllFrames, boolean enableBlink, double blinkPeriodTimeSec) throws Exception {
+	public void setDisplayOptions(boolean useFrame1IntensityForAllFrames, boolean enableBlink, double blinkPeriodTimeSec) throws IOException {
 		
 		// tau = 0.27s, see datasheet page 13
 		int value = (int)Math.round(3.7037037 * blinkPeriodTimeSec);
@@ -155,9 +152,8 @@ public class IS31FL3731 {
 	
 	/**
 	 * @param enableSync enable audio signal to modulate the intensity of the matrix
-	 * @throws Exception 
 	 */
-	public void setAudioSynchronization(boolean enableSync) throws Exception {
+	public void setAudioSynchronization(boolean enableSync) throws IOException {
 		
 		if (enableSync)
 			configure(FunctionRegister.AUDIO_SYNC, 0x01);
@@ -173,17 +169,15 @@ public class IS31FL3731 {
 	 * @param fadeOutTimeMs
 	 * @param fadeIntTimeMs
 	 * @param extinguishTimeMs
-	 * @throws Exception 
 	 */
-	public void setBreathControl(boolean enableBreathing, int fadeOutTimeMs, int fadeInTimeMs, int extinguishTimeMs) throws Exception {
+	public void setBreathControl(boolean enableBreathing, int fadeOutTimeMs, int fadeInTimeMs, int extinguishTimeMs) throws IOException {
 		
-		// TODO - DONE
 		byte val1 = 0;
 		byte val2 = 0;
 		
 		if (enableBreathing == false){
 			
-			val2 = val2 |= (byte) (1 << 4);
+			val2 |= (byte) (1 << 4);
 			configure(FunctionRegister.BREATH_CTRL2, val2);			
 		}
 		
@@ -191,14 +185,14 @@ public class IS31FL3731 {
 			
 			if (fadeOutTimeMs <8 && fadeInTimeMs <8) {
 			
-				val1 = val1 |= (byte) fadeInTimeMs;
-				val1 = val1 |= (byte) (fadeOutTimeMs << 4);
+				val1 |= (byte) fadeInTimeMs;
+				val1 |= (byte) (fadeOutTimeMs << 4);
 			}
 			
 			if (extinguishTimeMs <8) {
 			
-				val2 = val2 |= (byte) extinguishTimeMs;
-				val2 = val2 |= (byte) (1 << 4);
+				val2 |= (byte) extinguishTimeMs;
+				val2 |= (byte) (1 << 4);
 			
 			}
 		
@@ -214,24 +208,15 @@ public class IS31FL3731 {
 	/**
 	 * Shutdown register.
 	 * @param normal if true, sets the device to normal mode, otherwise shut it down (reduces energy)
-	 * @throws Exception 
 	 */
-	public void setShutdown(boolean normal) throws Exception {
-		
-		// TODO - DONE
+	public void setShutdown(boolean normal) throws IOException {
 		
 		if (normal == false) {
-			
 			configure(FunctionRegister.SHUTDOWN, 0x0);
-			
 		}
-		
 		else {
-			
 			configure(FunctionRegister.SHUTDOWN, 0x01);
-			
 		}
-		
 	}
 	
 	/**
@@ -239,9 +224,8 @@ public class IS31FL3731 {
 	 * @param enableAGC
 	 * @param fastMode
 	 * @param audioGain from 0dB to 21dB
-	 * @throws Exception 
 	 */
-	public void setAutoGainControl(boolean enableAGC, boolean fastMode, int audioGain) throws Exception {
+	public void setAutoGainControl(boolean enableAGC, boolean fastMode, int audioGain) throws IOException {
 		
 		int ags = audioGain / 3;
 		if (ags < 0) ags = 0;
@@ -267,9 +251,8 @@ public class IS31FL3731 {
 	/**
 	 * Sets the audio sample rate of the input signal when in Audio Frame Play Mode.
 	 * @param sampleRateMs
-	 * @throws Exception 
 	 */
-	public void setAudioSampleRate(int sampleRateMs) throws Exception {
+	public void setAudioSampleRate(int sampleRateMs) throws IOException {
 		
 		// TODO - DONE
 		if (sampleRateMs == 0) {
@@ -283,9 +266,9 @@ public class IS31FL3731 {
 	
 	/**
 	 * Read the value of the FrameState register, i.e., the index of the currently active frame.
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public int readFrameStateRegister () throws Exception {
+	public int readFrameStateRegister () throws IOException {
 		
 		selectFunctionRegister();
 		int address = FunctionRegister.FRAME_STATE.getAddress(); 
@@ -303,7 +286,7 @@ public class IS31FL3731 {
 	 */
 	public void switchLED(LEDCoordinate ledCoordinate, boolean state) throws IOException{
 		
-		  int reg = getLEDRegisterAdress(ledCoordinate.getRow(), ledCoordinate.AorB); 
+		  int reg = getLEDRowRegisterAdress(ledCoordinate.getRow(), ledCoordinate.AorB); 
 		  int bit  = 1 << (ledCoordinate.getColumn() & 7) ;
 		  int old = i2cDevice.read(reg);
 		  if (state == false)
@@ -320,38 +303,10 @@ public class IS31FL3731 {
 	 * @param m either A or B (see device datasheet)
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
 	 */
-	public void switchLEDrow(int row, Matrix m, int onLeds) throws IOException{
+	public void switchLEDRow(int row, Matrix m, int onLeds) throws IOException{
 		
-		  int reg;
-		  onLeds &= 0xFF; // make sure "onLeds" is a byte
-		  switch (m) { 
-		  // matrix A
-		  case A : 
-		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row;
-		      i2cDevice.write(reg, (byte)onLeds);
-		      break;
-		   // matrix B
-		   case B :		  
-		      reg = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*row + 1;
-		      i2cDevice.write(reg, (byte)onLeds);
-		  break;
-		  }
-
-		  		
-	}
-
-	/**
-	 * Sets the intensity of the given LED.
-	 * @param row
-	 * @param col 0 <= col <= 7 : matrix A ; 8 <= col <= 15 : matrix B
-	 * @param pwm 0-255
-	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
-	 */
-	public void setLEDpwm(int row, int col, int pwm) throws IOException {
-
-		col &= 0xF; // make sure it's inside 0-15
-		int reg = FrameRegister.PWM_REG_BASE_ADDR.getAddress() + 16*row + col;
-		i2cDevice.write(reg, (byte)(pwm & 0xFF));
+		  int reg = getLEDRowRegisterAdress(row, m);
+		  i2cDevice.write(reg, (byte)(onLeds & 0xFF));
 	}
 	
 	/**
@@ -362,94 +317,13 @@ public class IS31FL3731 {
 	 * @param pwm 0-255
 	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus
 	 */
-	public void setLEDpwm(int row, int col, Matrix m, int pwm) throws IOException {
+	public void setLEDpwm(LEDCoordinate ledCoordinate, int pwm) throws IOException {
 		
-		col &= 0x7; // make sure it's inside 0-7
-		switch (m){
-		case A :
-			setLEDpwm(row, col, pwm); break;
-		case B :
-			setLEDpwm(row, col+8, pwm); break;
-		}
+		int reg = ledCoordinate.getPWMRegisterAdress();
+		i2cDevice.write(reg, (byte)(pwm & 0xFF));
 	}
 
-	/**
-	 * Display a bargraph-like picture from the given "val"
-	 * @throws IOException in case byte cannot be written to the i2c device or i2c bus 
-	 */
-	public void bargraph(int val) throws IOException {
-		
-	  switch(val & 0xFF){ // make sure val is  lower than 16
-	    case 0:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x00);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 1:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x01);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 2:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x03);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 3:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x07);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 4:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x0F);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 5:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x1F);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 6:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x3F);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 7:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0x7F);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 8:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x00);
-	            break;
-	    case 9:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x01);
-	            break;
-	    case 10:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x03);
-	            break;
-	    case 11:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x07);
-	            break;
-	    case 12:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x0F);
-	            break;
-	    case 13:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x1F);
-	            break;
-	    case 14:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x3F);
-	            break;
-	    case 15:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0x7F);
-	            break;
-	    case 16:
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+1, (byte)0xFF);
-	            i2cDevice.write(FrameRegister.ONOFF_REG_BASE_ADDR.getAddress()+3, (byte)0xFF);
-	            break;
-	    }	
-	}
+
 	// -------------- private or package methods --------------
 
 	/**
@@ -459,9 +333,8 @@ public class IS31FL3731 {
 	 * though it doesn't mean this frame is the currently displayed one (both things are independent).
 	 * This method write to the special 0xFD command register.
 	 * @author SR
-	 * @throws Exception 
 	 */
-	private void selectFrameRegister(int frame) throws Exception {
+	private void selectFrameRegister(int frame) throws IOException {
 		
 		if (frame < 0 || frame > 8) throw new IllegalArgumentException("Valid page number ranges from 0 to 7 : " + frame);
 		
@@ -474,9 +347,9 @@ public class IS31FL3731 {
 	 * Further writing to registers will be directed to this special page. 
 	 * This method write to the special 0xFD command register.
 	 * @author SR
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	private void selectFunctionRegister() throws Exception {
+	private void selectFunctionRegister() throws IOException  {
 	
 		i2cDevice.write(COMMAND_REGISTER, (byte)FUNCTION_REGISTER);
 	}
@@ -485,18 +358,18 @@ public class IS31FL3731 {
 	 * Write the given value to the given FunctionRegister
 	 * @param register
 	 * @param value may be the result of FunctionRegisterMask or'ed together
+	 * @throws IOException 
 	 */
-	private void configure(FunctionRegister register, int value) throws Exception {
+	private void configure(FunctionRegister register, int value) throws IOException  {
 		
 		// read Command Register to keep track of the currently active page so that we can go back to it later
 		int current = i2cDevice.read(COMMAND_REGISTER);
-		
-		selectFunctionRegister();
+		if (current != FUNCTION_REGISTER) selectFunctionRegister();
 
 		i2cDevice.write(register.getAddress(),(byte)value);
 		
-		// make previously active PAGE active again		
-		i2cDevice.write(COMMAND_REGISTER, (byte)current);
+		// make previously active PAGE active again if this wasn't the FUNCTION REGISTER page		
+		if (current != FUNCTION_REGISTER) i2cDevice.write(COMMAND_REGISTER, (byte)current);
 	}
 	
 	
@@ -505,7 +378,7 @@ public class IS31FL3731 {
 	 * @param matrixAB
 	 * @return the adress of the ON/OFF register for the given row
 	 */
-	public static int getLEDRegisterAdress(int ledRow, Matrix matrixAB) { 
+	public static int getLEDRowRegisterAdress(int ledRow, Matrix matrixAB) { 
 		
 		int addr = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress() + 2*ledRow;
 		if (matrixAB == Matrix.B) addr++;
@@ -526,7 +399,7 @@ public class IS31FL3731 {
 	
 	/**
 	 * this class represents a pair of (row, column) coordinate for a given matrix.
-	 * @author sydxrey
+	 * @author SR
 	 *
 	 */
 	public static class LEDCoordinate extends Point {
@@ -535,7 +408,7 @@ public class IS31FL3731 {
 		public Matrix AorB;
 
 		public LEDCoordinate(int row, int col, Matrix AorB) {
-			super (col, row);
+			super (col % 8, row % 9);
 			this.AorB = AorB;
 		}
 		public int getPWMRegisterAdress() {
@@ -554,9 +427,12 @@ public class IS31FL3731 {
 		
 		public void setRow(int y) { this.y = y;}
 		
-		public boolean equals(Object obj) {
-			
+		public boolean equals(Object obj) {			
 			return super.equals(obj) && ((LEDCoordinate)obj).AorB == this.AorB; 
+		}
+		
+		public String toString() {
+			return AorB + "(" + x + "," + y + ")";
 		}
 		
 	}
@@ -737,7 +613,6 @@ public class IS31FL3731 {
 	// testing function register
 	private static void testFunctionRegister() {
 		
-		//Write the Exception method
 		
 		
 	}

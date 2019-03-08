@@ -10,53 +10,57 @@ package model;
 
 public class ADSREnveloppe extends AbstractModel {
 	
-	private DoubleParameter attackMs, decayMs, sustainLevel, releaseMs;
+	private MIDIParameter attackMsParameter, decayMsParameter, sustainLevelParameter, releaseMsParameter;
 	//what about attackLevel or decayLevel ?
+	
+	public static final double ATTACK_MIDI_TO_MS = 50.;
+	public static final double DECAY_MIDI_TO_MS = 50.;
+	public static final double RELEASE_MIDI_TO_MS = 50.;
 
 	public ADSREnveloppe() {
 
-		attackMs = new DoubleParameter("Attack", 0, 200, 0.1);
-		decayMs = new DoubleParameter("Decay", 0, 0, 0);
-		sustainLevel = new DoubleParameter("Sustain", 0, 0, 0);
-		releaseMs = new DoubleParameter("Release", 0, 0, 0);
-		parameterList.add(attackMs);
-		parameterList.add(decayMs);
-		parameterList.add(sustainLevel);
-		parameterList.add(releaseMs);
+		attackMsParameter = new MIDIParameter("Attack");
+		decayMsParameter = new MIDIParameter("Decay");
+		sustainLevelParameter = new MIDIParameter("Sustain");
+		releaseMsParameter = new MIDIParameter("Release");
+		parameterList.add(attackMsParameter);
+		parameterList.add(decayMsParameter);
+		parameterList.add(sustainLevelParameter);
+		parameterList.add(releaseMsParameter);
 	}
 	
 	// ---- value getters and setters --- (write operating may fire change events)
 	
 	public double getAttackMs() {
-		return attackMs.getValue();
+		return ATTACK_MIDI_TO_MS * attackMsParameter.getValueAsMIDICode();
 	}
 
 	public void setAttackMs(double attackMs) {
-		this.attackMs.setValue(attackMs);
+		this.attackMsParameter.setValueAsMIDICode((int)(attackMs/ATTACK_MIDI_TO_MS));
 	}
 
 	public double getDecayMs() {
-		return decayMs.getValue();
+		return DECAY_MIDI_TO_MS*decayMsParameter.getValueAsMIDICode();
 	}
 
 	public void setDecayMs(double decayMs) {
-		this.decayMs.setValue(decayMs);
+		this.decayMsParameter.setValueAsMIDICode((int)(decayMs/DECAY_MIDI_TO_MS));
 	}
 
-	public DoubleParameter getSustainLevel() {
-		return sustainLevel;
+	public double getSustainLevel() {
+		return sustainLevelParameter.getValueAsMIDICode() / 127.0;
 	}
 
-	public void setSustainLevel(DoubleParameter sustainLevel) {
-		this.sustainLevel = sustainLevel;
+	public void setSustainLevel(double sustainLevel) {
+		this.sustainLevelParameter.setValueAsMIDICode((int)(sustainLevel * 127.0));
 	}
 
-	public DoubleParameter getReleaseMs() {
-		return releaseMs;
+	public double getReleaseMs() {
+		return RELEASE_MIDI_TO_MS*releaseMsParameter.getValueAsMIDICode();
 	}
 
-	public void setReleaseMs(DoubleParameter releaseMs) {
-		this.releaseMs = releaseMs;
+	public void setReleaseMs(double releaseMs) {
+		this.releaseMsParameter.setValueAsMIDICode((int)(releaseMs/RELEASE_MIDI_TO_MS));
 	}
 
 

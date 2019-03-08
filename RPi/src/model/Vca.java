@@ -25,7 +25,7 @@ public class Vca extends AbstractModel {
 	// ---- value getters and setters --- (write operating may fire change events)
 
 	public double getEnveloppeGeneratorDepth() {
-		return enveloppeGeneratorDepthParameter.getValue();
+		return enveloppeGeneratorDepthParameter.getValue() / 127.0;
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class Vca extends AbstractModel {
 	}
 
 	public double getKeyboardTracking() {
-		return velocityTrackingParameter.getValue();
+		return velocityTrackingParameter.getValue() / 127.0;
 	}
 
 	public void setKeyboardTracking(double kbdTracking) {
@@ -44,5 +44,19 @@ public class Vca extends AbstractModel {
 	}
 	
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
+	
+
+
+	public MIDIParameter getEnveloppeGeneratorDepthParameter() {
+		return enveloppeGeneratorDepthParameter;
+	}
+
+	public MIDIParameter getVelocityTrackingParameter() {
+		return velocityTrackingParameter;
+	}
+
+	public ADSREnveloppe getAdsrEnveloppe() {
+		return adsrEnveloppe;
+	}
 	
 }

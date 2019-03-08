@@ -15,50 +15,25 @@ import model.*;
 public class ControlFactory {
 	
 	private MCP23017 device;
-	private HashSet<MCP23017.Pin> usedPins = new HashSet<MCP23017.Pin>();
+	private HashSet<MCP23017.Pin> usedPinsPortA = new HashSet<MCP23017.Pin>();
+	private HashSet<MCP23017.Pin> usedPinsPortB = new HashSet<MCP23017.Pin>();
 
 	public ControlFactory(MCP23017 device) {
 		
 		this.device = device;
 	}
 			
-	public PushButton createControl(SynthParameter<?> parameter, MCP23017.Pin pin) {
+	public PushButton createControl(SynthParameter<?> parameter, MCP23017.Port portAorB, MCP23017.Pin pin) {
 		
-		if (parameter instanceof BooleanParameter) return createControl((BooleanParameter)parameter, pin);
-		else if (parameter instanceof MIDIParameter) return createControl((MIDIParameter)parameter, pin);
-		else return null;
-	}
-	
-	/**
-	 * @param pin the MCP23017 pin the control is connected to
-	 * @return
-	 */	
-	public PushButton createControl(BooleanParameter parameter, MCP23017.Pin pin) {
-		
-		if (usedPins.add(pin) == false)
-			throw new IllegalArgumentException("Pin " + pin + " of the MCP23017 device is already in use");
-		PushButton b = new PushButton(parameter.getLabel(), device, pin);
-		b.addPushButtonActionListener(parameter);		
-		return b;
-		
-	}
-	
-	
-	/**
-	 * Creates a push button to control an enum param
-	 * 
-	 * @param pin the pin this button is connected to
-	 */
-	public PushButton createControl(EnumParameter<?> param, MCP23017.Pin pin)  {
-		
+		HashSet<MCP23017.Pin> usedPins = (portAorB == MCP23017.Port.A ? usedPinsPortA : usedPinsPortB); 
 		if (usedPins.add(pin) == false)
 			throw new IllegalArgumentException("Pin " + pin + " of the MCP23017 device is already in use");
 
-		// push button -> parameter
-		PushButton  pb = new PushButton(param.getLabel(), device, pin);
-		pb.addPushButtonActionListener(param);
-		return pb;
-	}	
+		PushButton b = new PushButton(parameter == null ? "Dummy" : parameter.getLabel(), device, portAorB, pin);
+		if (parameter != null) b.addPushButtonActionListener(parameter);		
+		return b;
+		
+	}
 
 	/**
 	 * Creates a rotary encoder to control a MIDI parameter
@@ -66,8 +41,9 @@ public class ControlFactory {
 	 * @param pinA the encoder A channel
 	 * @param pinB the encoder B channel
 	 */
-	public RotaryEncoder createControl(MIDIParameter param, MCP23017.Pin pinA, MCP23017.Pin pinB)  {
+	public RotaryEncoder createControl(SynthParameter<?> param, MCP23017.Port portAorB, MCP23017.Pin pinA, MCP23017.Pin pinB)  {
 		
+		HashSet<MCP23017.Pin> usedPins = (portAorB == MCP23017.Port.A ? usedPinsPortA : usedPinsPortB);
 		if (usedPins.add(pinA) == false)
 			throw new IllegalArgumentException("Pin " + pinA + " of the MCP23017 device is already in use");
 		if (usedPins.add(pinB) == false)
@@ -75,8 +51,8 @@ public class ControlFactory {
 
 		// push button -> parameter
 		try {
-			RotaryEncoder re = new RotaryEncoder(param.getLabel(), device, pinA, pinB);
-			re.addRotaryEncoderChangeListener(param);
+			RotaryEncoder re = new RotaryEncoder(param == null ? "Dummy" : param.getLabel(), device, portAorB, pinA, pinB);
+			if (param != null) re.addRotaryEncoderChangeListener(param);
 			return re;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

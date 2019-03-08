@@ -1,9 +1,6 @@
 package model;
 
-import controller.component.*;
-import controller.event.PushButtonActionEvent;
-import controller.event.RotaryEncoderChangeListener;
-import controller.event.RotaryEncoderEvent;
+import controller.event.*;
 
 /**
  * This class represents a model parameter of type "double"
@@ -98,6 +95,17 @@ public class DoubleParameter extends SynthParameter<Double> {
 		
 	}
 
+	@Override
+	public int getSize() {
+		return 0; // does not make sense here...
+	}
+
+	@Override
+	public void setValueAsMIDICode(int v) {
+		value = v/127.0 * (max-min) + min;		
+	}
+
+	
 	// -------------------------------
 	
 	// test method to check the listener mechanics

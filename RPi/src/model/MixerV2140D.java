@@ -3,7 +3,9 @@ package model;
 
 public class MixerV2140D extends AbstractModel {
 
-	private DoubleParameter gain1dBParameter,gain2dBParameter, gain3dBParameter, gain4dBParameter;
+	private MIDIParameter gain1dBParameter,gain2dBParameter, gain3dBParameter, gain4dBParameter;
+	
+	public static final double GAIN_MIDI_TO_dB = 0.5;
 
 	/**
 	 * Builds a mixer model with default channel values
@@ -21,37 +23,37 @@ public class MixerV2140D extends AbstractModel {
 	 */
 	public MixerV2140D(String lbl1, String lbl2, String lbl3, String lbl4){
 		super();
-		parameterList.add(gain1dBParameter = new DoubleParameter(lbl1,-48,6,0.2)); //TODO verification of mixer cutting/gain values
-		parameterList.add(gain2dBParameter = new DoubleParameter(lbl2,-48,6,0.2));
-		parameterList.add(gain3dBParameter = new DoubleParameter(lbl3,-48,6,0.2));
-		parameterList.add(gain4dBParameter = new DoubleParameter(lbl4,-48,6,0.2));
+		parameterList.add(gain1dBParameter = new MIDIParameter(lbl1)); 
+		parameterList.add(gain2dBParameter = new MIDIParameter(lbl2));
+		parameterList.add(gain3dBParameter = new MIDIParameter(lbl3));
+		parameterList.add(gain4dBParameter = new MIDIParameter(lbl4));
 	}
 	
 	// ---- value getters and setters --- (write operating may fire change events)
 	
 	public double getGain1dB() {
-		return gain1dBParameter.getValue();
+		return gain1dBParameter.getValue() * GAIN_MIDI_TO_dB;
 	}
 	public void setGain1dB(double gain1dB) {
-		this.gain1dBParameter.setValue(gain1dB);
+		this.gain1dBParameter.setValue((int)(gain1dB / GAIN_MIDI_TO_dB));
 	}
 	public double getGain2dB() {
-		return gain2dBParameter.getValue();
+		return gain2dBParameter.getValue() * GAIN_MIDI_TO_dB;
 	}
 	public void setGain2dB(double gain2dB) {
-		this.gain2dBParameter.setValue(gain2dB);
+		this.gain2dBParameter.setValue((int)(gain2dB / GAIN_MIDI_TO_dB));
 	}
 	public double getGain3dB() {
-		return gain3dBParameter.getValue();
+		return gain3dBParameter.getValue() * GAIN_MIDI_TO_dB;
 	}
 	public void setGain3dB(double gain3dB) {
-		this.gain3dBParameter.setValue(gain3dB);
+		this.gain3dBParameter.setValue((int)(gain3dB / GAIN_MIDI_TO_dB));
 	}
 	public double getGain4dB() {
-		return gain4dBParameter.getValue();
+		return gain4dBParameter.getValue() * GAIN_MIDI_TO_dB;
 	}
 	public void setGain4dB(double gain4dB) {
-		this.gain4dBParameter.setValue(gain4dB);
+		this.gain4dBParameter.setValue((int)(gain4dB / GAIN_MIDI_TO_dB));
 	}
 
 
@@ -61,28 +63,28 @@ public class MixerV2140D extends AbstractModel {
 	/**
 	 * @return the gain1dBParameter
 	 */
-	public DoubleParameter getGain1dBParameter() {
+	public MIDIParameter getGain1dBParameter() {
 		return gain1dBParameter;
 	}
 
 	/**
 	 * @return the gain2dBParameter
 	 */
-	public DoubleParameter getGain2dBParameter() {
+	public MIDIParameter getGain2dBParameter() {
 		return gain2dBParameter;
 	}
 
 	/**
 	 * @return the gain3dBParameter
 	 */
-	public DoubleParameter getGain3dBParameter() {
+	public MIDIParameter getGain3dBParameter() {
 		return gain3dBParameter;
 	}
 
 	/**
 	 * @return the gain4dBParameter
 	 */
-	public DoubleParameter getGain4dBParameter() {
+	public MIDIParameter getGain4dBParameter() {
 		return gain4dBParameter;
 	}
 	

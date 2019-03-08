@@ -1,5 +1,6 @@
 package model;
 
+
 /**
  * Model for a VCO based on the LM13700 OTA.
  * 
@@ -8,15 +9,16 @@ package model;
  */
 public class Vco13700 extends AbstractModel {
 
-	private DoubleParameter detuneParameter;
-	private EnumParameter<Octave> octaveParameter;
+	private MIDIParameter detuneParameter;
+	private EnumParameter<Octave> octaveParameter;	
 	private EnumParameter<WaveShape> waveShapeParameter;
 	
 	public Vco13700() {
 		super();
-		parameterList.add(detuneParameter = new DoubleParameter("VCO Detune %", -5, 5, 0.1));
-		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO Octave"));
-		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "WaveShape"));
+		parameterList.add(detuneParameter = new MIDIParameter("VCO13700 Detune"));
+		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO13700 Octave"));
+		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "VCO13700 WaveShape"));
+		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
 	}
 		
 	enum WaveShape {
@@ -26,6 +28,14 @@ public class Vco13700 extends AbstractModel {
 	}
 
 	// ---- value getters and setters --- (write operating may fire change events)
+	
+	public WaveShape getWaveShape() {
+		return waveShapeParameter.getValue();
+	}
+	
+	public void setWaveShape(WaveShape waveshape) {
+		this.waveShapeParameter.setValue(waveshape);
+	}
 	
 	public Octave getOctave() { 
 		return octaveParameter.getValue();
@@ -39,29 +49,25 @@ public class Vco13700 extends AbstractModel {
 		return detuneParameter.getValue();
 	}
 
-	public void setDetune(double v) {
-		detuneParameter.setValue(v);
-	}
-	
-	public WaveShape getWaveShape() {
-		return waveShapeParameter.getValue();
-	}
-	
-	public void setWaveShape(WaveShape shape) {
-		this.waveShapeParameter.setValue(shape);
+	/**
+	 * @param detune b/w -64 and 63 cents
+	 */
+	public void setDetune(int detune) {
+		detuneParameter.setValue((detune + 64));
 	}
 	
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
-	public DoubleParameter getDetuneParameter() {
+	public MIDIParameter getDetuneParameter() {
 		return detuneParameter;
 	}
 	
 	public EnumParameter<Octave> getOctaveParameter(){
 		return octaveParameter;
-	}
-
+	}	
+		
 	public EnumParameter<WaveShape> getWaveShapeParameter() {
 		return waveShapeParameter;
 	}
+
 }

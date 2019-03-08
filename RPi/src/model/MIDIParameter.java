@@ -1,9 +1,6 @@
 package model;
 
-import controller.component.Control;
-import controller.component.RotaryEncoder;
-import controller.event.PushButtonActionEvent;
-import controller.event.RotaryEncoderEvent;
+import controller.event.*;
 
 /**
  * This class represents a model parameter whose value is an integer that can vary b/w 0 and 127
@@ -21,6 +18,13 @@ public class MIDIParameter extends SynthParameter<Integer> {
 	public MIDIParameter(String lbl) {
 		super(lbl);
 		this.value=0;
+	}
+	
+	/**
+	 * @return the number of constants for this param
+	 */
+	public int getSize() {
+		return 127;
 	}
 	
 	/**
@@ -57,6 +61,12 @@ public class MIDIParameter extends SynthParameter<Integer> {
 		
 	}
 
+	@Override
+	public void setValueAsMIDICode(int v) {
+		value = v;
+		
+	}
+	
 	// -------------------------------
 	
 	// test method to check the listener mechanics
@@ -71,6 +81,8 @@ public class MIDIParameter extends SynthParameter<Integer> {
 		model.setOctave(Octave.TWO_INCHES);
 
 	}
+
+
 
 
 }
