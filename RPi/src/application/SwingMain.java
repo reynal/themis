@@ -1,13 +1,10 @@
 package application;
 	
-import model.*;
-import view.component.*;
 import java.awt.*;
-import java.awt.image.*;
 import java.io.*;
-import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 import controller.component.*;
 
 
@@ -18,13 +15,19 @@ public class SwingMain extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 
-	public SwingMain() throws HeadlessException {
+	/**
+	 * 
+	 */
+	public SwingMain() throws HeadlessException, IOException, UnsupportedBusNumberException {
 		
 		super("Themis");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		if (Main.SIMULATOR) setContentPane(createSimulator());
-		else setContentPane(new TouchScreen());        
+		else {
+			SynthControllerPane scp = new SynthControllerPane(false);
+			setContentPane(new TouchScreen());        
+		}
 		pack();		
 		setLocation(0,0);
 		setResizable(false);
@@ -36,19 +39,24 @@ public class SwingMain extends JFrame {
 	
 	
 	/**
-	 * Simulator
-	 * @return
+	 * Simulator comprised of control pane, pads and touchscreen.
+	 * @throws UnsupportedBusNumberException 
+	 * @throws IOException 
 	 */
-	private JPanel createSimulator(){
+	private JPanel createSimulator() throws IOException, UnsupportedBusNumberException{
 
 		JPanel p = new JPanel();
-		p.setLayout(new GridLayout(2,2,10,10));
+		p.setLayout(new GridLayout(2,1,10,10));
 		p.setBackground(Color.black); // #222
 		p.setBorder(new EmptyBorder(10,10,10,10));
 		
-	    //p.add(createSimulatorTouchscreen());
-	    //p.add(createSimulatorPads());
-	    p.add(createSimulatorEncoders());
+		JPanel northPane = new JPanel();
+		northPane.setLayout(new GridLayout(1,2,10,10));
+	    northPane.add(createTouchscreen());
+	    northPane.add(createPads());
+	    p.add(northPane);
+	    
+	    p.add(createEncoders());
 	    
 	    p.setPreferredSize(new Dimension(1600,910));
 	    
@@ -57,35 +65,31 @@ public class SwingMain extends JFrame {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Helper method for createSimulator()
 	 */
-	private JPanel createSimulatorTouchscreen(){
+	private JPanel createTouchscreen(){
         
 		JPanel p = createDecoratedPanel("Simulated RPi touchscreen");
+		p.setLayout(new GridLayout(1,1));
 		p.add(new TouchScreen());
 		return p;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Helper method for createSimulator()
+	 * @throws UnsupportedBusNumberException 
+	 * @throws IOException 
 	 */
-	private JPanel createSimulatorEncoders(){
-		
-        JPanel p = createDecoratedPanel("Encoders");
-        p.setLayout(new GridLayout(2,4,10,10));
-        for (AbstractModel m : Main.createModels()){
-        		p.add(createSimulatorControlPane(m));
-        }
-		return p;
+	private JPanel createEncoders() throws IOException, UnsupportedBusNumberException{
+
+		SynthControllerPane scp = new SynthControllerPane(true);
+		return scp.getSimulatorPane();
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Helper method for createSimulator()
 	 */
-	private JPanel createSimulatorPads(){
+	private JPanel createPads(){
 		
 		JPanel p = createDecoratedPanel("PADS");
 		p.setLayout(new GridLayout(4,8));
@@ -106,52 +110,7 @@ public class SwingMain extends JFrame {
 	}
 
 
-	/**
-	 * 
-	 * @param model
-	 * @return
-	 */
-	public JComponent createSimulatorControlPane(AbstractModel model) {
-		
-		JPanel group = SwingMain.createDecoratedPanel(getClass().getName());
-		group.setLayout(new GridLayout(model.getParameters().size(), 1, 10, 10));
-		//group.setStyle("-fx-background-color: black;"+"-fx-border-color: magenta;");
-		//group.setBackground(Color.black);
-		//group.setBorder(BorderFactory.createLineBorder(java.awt.Color.PINK));
-		//group.setHgap(10);
-		//group.setVgap(10);
-		//group.setMinSize(250,200);
-		//group.setPreferredSize(250,200);
-        //group.setMaxSize(250,200);
-		//group.setPadding(new Insets(0, 10, 0, 10));
-		
-		int i=0;
-		ControlFactory controlFactory = new ControlFactory(null);
-		for (SynthParameter<?> p : model.getParameters()) {
-			i=i+1;
-			//Label title = new Label(((SynthParameter<?>) params).getLabel()); //comment avoir un label pour la liste de paramtres
-			//title.setStyle("-fx-text-fill: magenta;");
-
-			JLabel label = new JLabel(p.getLabel());
-			label.setForeground(Color.pink);
-
-			Control c;
-			if (p instanceof BooleanParameter) c = controlFactory.createControl(p, null, null);
-			else if (p instanceof EnumParameter<?>) c = controlFactory.createControl(p, null, null);
-			else if (p instanceof MIDIParameter) c = controlFactory.createControl(p, null, null,null);
-			else throw new IllegalArgumentException("Unsupported Parameter: " + p);
-			JComponent n = createUIForControl(c);
-
-			group.add(n);
-			group.add(label);
-			
-			// debug only: listen to model change:
-			p.addSynthParameterEditListener(e -> System.out.println(e));
-			
-			
-		}
-		return group;
-	}	
+	// ================ UTILITIES ==================
 	
 	/**
 	 * Return an appropriate Swing component for the given physical control

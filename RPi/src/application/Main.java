@@ -1,8 +1,5 @@
 package application;
 
-import java.util.ArrayList;
-import java.util.List;
-import model.*;
 import model.midi.*;
 import model.spi.*;
 
@@ -24,18 +21,5 @@ public class Main {
 		if (JAVAFX) javafx.application.Application.launch(JavaFXMain.class,args);
 		else new SwingMain(); 
 	}
-	
-	static List<AbstractModel> createModels(){
-
-		List<AbstractModel> models = new ArrayList<AbstractModel>();
-		models.add(new Vco3340());
-		models.add(new Vco13700());
-		//encoders.add(controlsGroup3,3,0);
-		models.add(new MixerV2140D());
-		models.add(new Vcf3320());
-		models.add(new Vca());
-		models.add(new ADSREnveloppe());
-		return models;
-	}
-	
+		
 }

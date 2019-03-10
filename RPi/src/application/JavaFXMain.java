@@ -58,7 +58,7 @@ public class JavaFXMain extends Application { // implements UIFactory<Node> {
 		/*simulatorStage.setScene(simulator);
 		simulatorStage.setTitle("Themis Simulator");
 		simulatorStage.setResizable(true);*/
-	    simulatorLayout.setBottom(createSimulatorEncoders());
+	    //simulatorLayout.setBottom(createSimulatorEncoders());
 	    simulatorLayout.setLeft(createSimulatorTouchscreen());
 	    simulatorLayout.setRight(createSimulatorPads());
 		return new Scene(simulatorLayout,1600,910);
@@ -79,20 +79,6 @@ public class JavaFXMain extends Application { // implements UIFactory<Node> {
         return screen;
 	}
 	
-	private GridPane createSimulatorEncoders(){
-		
-        GridPane encoders = new GridPane();
-        //encoders.setStyle("-fx-background-color: black;");
-        encoders.setHgap(10);
-        encoders.setVgap(10);
-        int x=0,y=0;
-        for (AbstractModel m : Main.createModels()){
-        		encoders.add(createSimulatorControlPane(m), x%3, y%3);
-        		x++;
-        		if (x==3) {y++; x=0;}
-        }
-		return encoders;
-	}
 	
 	private GridPane createSimulatorPads(){
 		
