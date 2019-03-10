@@ -1,4 +1,4 @@
-package view;
+package view.touchscreen;
 
 
 public class Filter extends Page{

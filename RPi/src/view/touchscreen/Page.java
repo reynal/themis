@@ -1,4 +1,4 @@
-package view;
+package view.touchscreen;
 
 import javax.swing.text.View;
 

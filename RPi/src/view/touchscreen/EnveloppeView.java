@@ -1,4 +1,4 @@
-package view;
+package view.touchscreen;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
