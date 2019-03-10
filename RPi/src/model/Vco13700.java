@@ -13,6 +13,10 @@ public class Vco13700 extends AbstractModel {
 	private EnumParameter<Octave> octaveParameter;	
 	private EnumParameter<WaveShape> waveShapeParameter;
 	
+	public static final String DETUNE = "VCO13700 Detune";
+	public static final String OCTAVE = "VCO13700 Octave";
+	public static final String WAVE = "VCO13700 WaveShape";
+	
 	public Vco13700() {
 		super();
 		parameterList.add(detuneParameter = new MIDIParameter("VCO13700 Detune"));

@@ -16,13 +16,21 @@ public class ADSREnveloppe extends AbstractModel {
 	public static final double ATTACK_MIDI_TO_MS = 50.;
 	public static final double DECAY_MIDI_TO_MS = 50.;
 	public static final double RELEASE_MIDI_TO_MS = 50.;
+	
+	// list of label constant for use by clients:
+	public static final String ATTACK = "Attack";
+	public static final String DECAY = "Decay";
+	public static final String SUSTAIN = "Sustain";
+	public static final String RELEASE = "Release";
+
+	
 
 	public ADSREnveloppe() {
 
-		attackMsParameter = new MIDIParameter("Attack");
-		decayMsParameter = new MIDIParameter("Decay");
-		sustainLevelParameter = new MIDIParameter("Sustain");
-		releaseMsParameter = new MIDIParameter("Release");
+		attackMsParameter = new MIDIParameter(ATTACK);
+		decayMsParameter = new MIDIParameter(DECAY);
+		sustainLevelParameter = new MIDIParameter(SUSTAIN);
+		releaseMsParameter = new MIDIParameter(RELEASE);
 		parameterList.add(attackMsParameter);
 		parameterList.add(decayMsParameter);
 		parameterList.add(sustainLevelParameter);

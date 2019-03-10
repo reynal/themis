@@ -12,12 +12,18 @@ public class Vcf3320 extends AbstractModel {
 	private EnumParameter<FilterOrder> filterOrderParameter;  
 	private ADSREnveloppe adsrEnveloppe;
 	
+	// list of label constant for use by clients:
+	public static final String CUTOFF = "VCO3320 Cutoff";
+	public static final String RESO = "VCO3320 Reso";
+	public static final String KBD = "VCO3320 Keyboard";
+	public static final String EG_DEPTH = "VCO3320 EG.Depth";
+	
 	public Vcf3320() {
 		
-		cutoffParameter = new MIDIParameter("Cutoff");
-		resonanceParameter = new MIDIParameter("Reso");
-		kbdTrackingParameter = new MIDIParameter("Keyboard");
-		egDepthParameter = new MIDIParameter("EG.Depth");
+		cutoffParameter = new MIDIParameter(CUTOFF);
+		resonanceParameter = new MIDIParameter(RESO);
+		kbdTrackingParameter = new MIDIParameter(KBD);
+		egDepthParameter = new MIDIParameter(EG_DEPTH);
 		adsrEnveloppe = new ADSREnveloppe();
 		parameterList.addAll(adsrEnveloppe.getParameters());
 		parameterList.add(filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, "FilterOrder"));

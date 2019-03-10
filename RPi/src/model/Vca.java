@@ -12,12 +12,16 @@ public class Vca extends AbstractModel {
 	private MIDIParameter enveloppeGeneratorDepthParameter,velocityTrackingParameter;
 	private ADSREnveloppe adsrEnveloppe;
 	
+	// list of label constant for use by clients:
+	public static final String EG_DEPTH = "VCA EG.Detph";
+	public static final String VEL_TRACKING = "VCA Velocity Tracking";
+	
 	public Vca() {
 		
 		adsrEnveloppe = new ADSREnveloppe();
 		parameterList.addAll(adsrEnveloppe.getParameters());
-		velocityTrackingParameter = new MIDIParameter("KBD Tracking");
-		enveloppeGeneratorDepthParameter = new MIDIParameter("EG Depth");
+		velocityTrackingParameter = new MIDIParameter(VEL_TRACKING);
+		enveloppeGeneratorDepthParameter = new MIDIParameter(EG_DEPTH);
 		parameterList.add(velocityTrackingParameter);
 		parameterList.add(enveloppeGeneratorDepthParameter);
 	}

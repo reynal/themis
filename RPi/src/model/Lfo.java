@@ -1,5 +1,6 @@
 package model;
 
+// TODO : terminer d'implementer cette classe selon les standards des autres Model
 public class Lfo extends AbstractModel {
 	
 	private MIDIParameter frequencyParameter;

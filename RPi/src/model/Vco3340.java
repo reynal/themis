@@ -15,13 +15,20 @@ public class Vco3340 extends AbstractModel {
 	private MIDIParameter dutyParameter;
 	private BooleanParameter syncFrom13700Parameter;
 	
+	// list of label constant for use by clients:
+	public static final String DETUNE = "VCO3340 Detune";
+	public static final String OCTAVE = "VCO3340 Octave";
+	public static final String WAVE = "VCO3340 WaveShape";
+	public static final String DUTY = "VCO3340 Duty";
+	public static final String SYNC = "VCO3340 Sync from 13700";
+	
 	public Vco3340() {
 		super();
-		parameterList.add(detuneParameter = new MIDIParameter("VCO3340 Detune"));
-		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO3340 Octave"));
-		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "VCO3340 WaveShape"));
-		parameterList.add(dutyParameter = new MIDIParameter("VCO3340 Duty"));
-		parameterList.add(syncFrom13700Parameter = new BooleanParameter("VCO3340 Sync from 13700"));
+		parameterList.add(detuneParameter = new MIDIParameter(DETUNE));
+		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, OCTAVE));
+		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, WAVE));
+		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
+		parameterList.add(syncFrom13700Parameter = new BooleanParameter(SYNC));
 		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
 	}
 

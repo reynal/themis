@@ -116,7 +116,7 @@ public abstract class SynthParameter<T> implements RotaryEncoderChangeListener, 
 
 	@Override
 	public String toString() {
-		return super.toString() + "; label=\"" + label + "\"; midi = " + getValueAsMIDICode();
+		return super.toString() + "; label=\"" + label + "\"; value = " + getValue() + "\"; midi = " + getValueAsMIDICode();
 	}
 	
 
