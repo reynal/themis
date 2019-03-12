@@ -25,7 +25,7 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 		super();
 		setBackground(Color.black);		
 		animationTimer = new Timer(ANIMATION_TIMER , this);
-		setView(new DefaultView());
+		setView(new FilterVal());
 	}
 	
 	public void setView(TouchScreenView view) {
