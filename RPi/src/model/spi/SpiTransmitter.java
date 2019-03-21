@@ -6,6 +6,8 @@ import javax.sound.midi.ShortMessage;
 
 import com.pi4j.io.spi.*;
 
+import model.EnumParameter;
+import model.MIDIParameter;
 import model.event.SynthParameterEditEvent;
 import model.event.SynthParameterEditListener;
 
@@ -54,12 +56,36 @@ public class SpiTransmitter implements SynthParameterEditListener {
 	@Override
 	public void synthParameterEdited(SynthParameterEditEvent e) {
 		
-		//Object o = e.getValue();
-		System.out.println(e.getSource());
-		/*if (o instanceof Double) bla bla bla
-		else if (o instance of Boolean) bla bla bla
-		else bla bla bla*/
-		// @loic : c'est ici que tu dois decortiquer l'event "e" et envoyer les donnees correspondantes sur le bus
+		try {
+			Object o =e.getSource();
+			int parameterId=0;
+			int value = 0x00;
+			
+			if (o instanceof Boolean){
+				boolean b = (Boolean)o;
+				if (b) value = 0x127;
+				else value = 0x0;
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+				//send minimal value (o) if false and maximal value (127) if true
+			}
+			else if (o instanceof Double) {
+				MIDIParameter param = (MIDIParameter)o;
+				value = (int)(param.getValueAsMIDICode());
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+			}
+			else if (o instanceof Enum) {
+				EnumParameter enu = (EnumParameter)o;
+				value = enu.getOrdinal();
+				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
+				transmitMidiMessage(sm);
+				//send the position of the enum in the enum table
+			}
+			
+		} catch (Exception imde){
+			imde.printStackTrace();
+		}
 	}
 
 
