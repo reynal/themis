@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
-public class EnveloppeView extends Page{
+public class EnveloppeView {
 	
 	public static Scene env;{
 		

@@ -1,6 +1,6 @@
 package view.touchscreen;
 
 
-public class Filter extends Page{
+public class Filter  {
 	
 }
