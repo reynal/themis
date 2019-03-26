@@ -1,15 +1,12 @@
 package application;
 	
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.ImageObserver;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 import controller.component.*;
-import view.touchscreen.*;
+import model.spi.*;
 
 /**
  * UI Factory when using Swing API
@@ -17,38 +14,23 @@ import view.touchscreen.*;
 public class SwingMain extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	static TouchScreenView view = new VCO();
-	private TouchScreen touchScreen;
-	private JPanel touchScreenPane = new JPanel();
-	
-	private JMenuBar menuBar = new JMenuBar();
-	private JMenuItem menu3340 = new JMenuItem("3340");
-	private JMenuItem menu13700 = new JMenuItem("13700");
-	private JMenuItem menuVCF = new JMenuItem("VCF");
-	private JMenuItem menuVCA = new JMenuItem("VCA");
-	private JMenuItem menuMixer = new JMenuItem("Mixer");
+
 	/**
 	 * 
 	 */
-	public SwingMain() throws HeadlessException, IOException, UnsupportedBusNumberException {
+	public SwingMain(SpiTransmitter spiTransmitter) throws HeadlessException, IOException, UnsupportedBusNumberException {
 		
 		super("Themis");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		if (Main.SIMULATOR) setContentPane(createSimulator(view));
+		if (Main.SIMULATOR) setContentPane(createSimulator(spiTransmitter));
 		else {
-			SynthControllerPane scp = new SynthControllerPane(false);
-			view = new DefaultView();
-			touchScreen= new TouchScreen(view);
-			setContentPane(touchScreen);
-			
-
-			
+			SynthControllerPane scp = new SynthControllerPane(false, spiTransmitter);
+			setContentPane(new TouchScreen());        
 		}
 		pack();		
 		setLocation(0,0);
 		setResizable(false);
-		
 		System.out.println("Starting Swing Themis application");
 		setVisible(true);
 		
@@ -61,7 +43,7 @@ public class SwingMain extends JFrame {
 	 * @throws UnsupportedBusNumberException 
 	 * @throws IOException 
 	 */
-	private JPanel createSimulator(TouchScreenView view) throws IOException, UnsupportedBusNumberException{
+	private JPanel createSimulator(SpiTransmitter spiTransmitter) throws IOException, UnsupportedBusNumberException{
 
 		JPanel p = new JPanel();
 		p.setLayout(new GridLayout(2,1,10,10));
@@ -70,11 +52,11 @@ public class SwingMain extends JFrame {
 		
 		JPanel northPane = new JPanel();
 		northPane.setLayout(new GridLayout(1,2,10,10));
-	    northPane.add(createTouchscreen(view));
+	    northPane.add(createTouchscreen());
 	    northPane.add(createPads());
 	    p.add(northPane);
 	    
-	    p.add(createEncoders());
+	    p.add(createEncoders(spiTransmitter));
 	    
 	    p.setPreferredSize(new Dimension(1600,910));
 	    
@@ -85,60 +67,11 @@ public class SwingMain extends JFrame {
 	/**
 	 * Helper method for createSimulator()
 	 */
-	private JPanel createTouchscreen(TouchScreenView view){
+	private JPanel createTouchscreen(){
         
 		JPanel p = createDecoratedPanel("Simulated RPi touchscreen");
-		
 		p.setLayout(new GridLayout(1,1));
-		
-		p.add(new TouchScreen(view));
-		
-		menuBar.add(menu3340);
-		menuBar.add(menu13700);
-		menuBar.add(menuVCF);
-		menuBar.add(menuVCA);
-		menuBar.add(menuMixer);
-		
-		menu3340.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Selected: " + e.getActionCommand());
-				SwingMain.view=new VCO();
-				touchScreen= new TouchScreen(view);
-				System.out.println(createTouchscreen(view).getRootPane());
-			}
-		});
-		menu13700.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				System.out.println("Selected: " + e.getActionCommand());
-				repaint();
-			}
-		});
-		menuVCF.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				
-				System.out.println("Selected: " + e.getActionCommand());
-				repaint();
-			}
-		});
-		menuVCA.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Selected: " + e.getActionCommand());
-				
-			}
-		});
-		menuMixer.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Selected: " + e.getActionCommand());
-				
-			}
-		});
-		setJMenuBar(menuBar);
+		p.add(new TouchScreen());
 		return p;
 	}
 	
@@ -147,9 +80,9 @@ public class SwingMain extends JFrame {
 	 * @throws UnsupportedBusNumberException 
 	 * @throws IOException 
 	 */
-	private JPanel createEncoders() throws IOException, UnsupportedBusNumberException{
+	private JPanel createEncoders(SpiTransmitter spiTransmitter) throws IOException, UnsupportedBusNumberException{
 
-		SynthControllerPane scp = new SynthControllerPane(true);
+		SynthControllerPane scp = new SynthControllerPane(true, spiTransmitter);
 		return scp.getSimulatorPane();
 	}
 	
@@ -228,7 +161,6 @@ public class SwingMain extends JFrame {
 				TitledBorder.DEFAULT_POSITION, 
 				new Font("SansSerif", Font.BOLD, 10), 
 				Color.white ));
-		
 		return p;
 	}
 		

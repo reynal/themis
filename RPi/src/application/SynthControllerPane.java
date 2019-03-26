@@ -11,6 +11,7 @@ import controller.component.*;
 import device.*;
 import model.*;
 import view.component.*;
+import model.spi.*;
 
 /**
  * A subpart of the synth front pane dedicated to synth parameters (VCO, VCF, etc).
@@ -33,7 +34,7 @@ public class SynthControllerPane {
 	 * Creates the controller pane. This class is supposed to be a singleton. 
 	 * @param isSimulator if true, initializes a simulator Swing-based UI
 	 */
-	public SynthControllerPane(boolean isSimulator) throws IOException, UnsupportedBusNumberException {
+	public SynthControllerPane(boolean isSimulator, SpiTransmitter spiTransmitter) throws IOException, UnsupportedBusNumberException {
 		
 		MCP23017 mcpDevice1=null;
 		MCP23017 mcpDevice2=null;
@@ -45,12 +46,13 @@ public class SynthControllerPane {
 		}
 		this.controlFactory1 = new ControlFactory(mcpDevice1);
 		this.controlFactory2 = new ControlFactory(mcpDevice2);
-		this.viewFactory = new ViewFactory(is31Device);
+		this.viewFactory = new ViewFactory(is31Device, spiTransmitter);
 		cArray = new Control[columnCount][5];
 		vArray = new View[columnCount][5];
 
 		Vco3340 vco3340 = new Vco3340();
 		Vco13700 vco13700 = new Vco13700();
+		spiTransmitter.initParameterIdHashMap(vco3340, vco13700);
 		MCP23017.Port mcpPort;
 		IS31FL3731.Matrix is31Matrix;
 		
@@ -186,7 +188,7 @@ public class SynthControllerPane {
 	// -------- test --------
 	public static void main(String[] args) throws Exception {
 		
-		SynthControllerPane scp = new SynthControllerPane(true);
+		SynthControllerPane scp = new SynthControllerPane(true, null);
 		JFrame f = new JFrame("test");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setContentPane(scp.getSimulatorPane());
