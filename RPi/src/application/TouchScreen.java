@@ -18,14 +18,19 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 	private static final long serialVersionUID = 1L;
 	private TouchScreenView view;
 	private Timer animationTimer;
-	private static final int ANIMATION_TIMER = 20; // ms (a tester sur RPi, attention Ã  ne pas consommer trop de ressources)
+	private static final int ANIMATION_TIMER = 20; // ms (a tester sur RPi, attention à ne pas consommer trop de ressources)
+	
+
 		
-	public TouchScreen() {
+	public TouchScreen(TouchScreenView view) {
 		
 		super();
 		setBackground(Color.black);		
 		animationTimer = new Timer(ANIMATION_TIMER , this);
-		setView(new DefaultView());
+		view = new FilterVal();
+		setView(view);
+
+		
 	}
 	
 	public void setView(TouchScreenView view) {
@@ -33,6 +38,7 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 		this.view = view;
 		if (view.isAnimated()) animationTimer.start();
 		else animationTimer.stop();
+		
 		
 	}
 
@@ -79,11 +85,11 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 		JFrame f = new JFrame("Themis");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		f.setContentPane(new TouchScreen());        
-		f.setSize(400, 400);		
-		f.setUndecorated(true);
+		f.setContentPane(new TouchScreen(new DefaultView()));        
+		f.setSize(800, 480);		
 		f.setLocation(0,0);
-		f.setVisible(true);		
+		//f.setUndecorated(true);
+		f.setVisible(true);
 	}
 
 

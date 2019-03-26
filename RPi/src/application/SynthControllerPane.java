@@ -46,13 +46,13 @@ public class SynthControllerPane {
 		}
 		this.controlFactory1 = new ControlFactory(mcpDevice1);
 		this.controlFactory2 = new ControlFactory(mcpDevice2);
-		this.viewFactory = new ViewFactory(is31Device, spiTransmitter);
+		this.viewFactory = new ViewFactory(is31Device);
 		cArray = new Control[columnCount][5];
 		vArray = new View[columnCount][5];
 
 		Vco3340 vco3340 = new Vco3340();
 		Vco13700 vco13700 = new Vco13700();
-		spiTransmitter.initParameterIdHashMap(vco3340, vco13700);
+		//spiTransmitter.initParameterIdHashMap(vco3340, vco13700);
 		MCP23017.Port mcpPort;
 		IS31FL3731.Matrix is31Matrix;
 		

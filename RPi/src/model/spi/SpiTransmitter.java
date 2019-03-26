@@ -52,6 +52,11 @@ public class SpiTransmitter implements SynthParameterEditListener {
 		
 	}
 	
+	/**
+	 * Init the MIDI parameter ID table (used by SPI transmitter when writing to the STM32)
+	 * @param vco3340
+	 * @param vco13700
+	 */
 	public void initParameterIdHashMap(Vco3340 vco3340, Vco13700 vco13700){
 		
 		int i=0;
