@@ -1,15 +1,13 @@
 package model.spi;
 
 import java.io.IOException;
-
+import java.util.*;
 import javax.sound.midi.ShortMessage;
 
 import com.pi4j.io.spi.*;
 
-import model.EnumParameter;
-import model.MIDIParameter;
-import model.event.SynthParameterEditEvent;
-import model.event.SynthParameterEditListener;
+import model.event.*;
+import model.*;
 
 /**
  * This class acts as a fast MIDI over SPI transmitter to any listening device, including the STM32.
@@ -19,6 +17,8 @@ import model.event.SynthParameterEditListener;
 public class SpiTransmitter implements SynthParameterEditListener {
 
 	private SpiDevice spiDevice;
+	private HashMap<SynthParameter, Integer> parameterIdHashMap = new HashMap<SynthParameter, Integer>();
+	
 	
 	/**
 	 * Initialize the SPI bus with the correct speed and parameter, using Pi4J library.
@@ -28,9 +28,8 @@ public class SpiTransmitter implements SynthParameterEditListener {
 		super();
 		spiDevice=SpiFactory.getInstance(SpiChannel.CS0, 500000);
 		System.out.println("Opening SPI bus");
-		
 	}
-	
+		
 	/**
 	 * transmit the given MIDI message over the SPI bus
 	 * @param sm
@@ -52,47 +51,67 @@ public class SpiTransmitter implements SynthParameterEditListener {
 		spiDevice.write(status, data1, data2);
 		
 	}
+	
+	public void initParameterIdHashMap(Vco3340 vco3340, Vco13700 vco13700){
+		
+		int i=0;
+		parameterIdHashMap.put(vco3340.getDetuneParameter(), i++);
+		parameterIdHashMap.put(vco3340.getOctaveParameter(), i++);
+		parameterIdHashMap.put(vco3340.getSyncFrom13700Parameter(), i++);
+		parameterIdHashMap.put(vco3340.getWaveShapeParameter(), i++);
+		System.out.println("initParameterIdHashMap ok \n");
+		
+	}
+	
 
 	@Override
 	public void synthParameterEdited(SynthParameterEditEvent e) {
 		
 		try {
 			Object o =e.getSource();
-			int parameterId=0;
-			int value = 0x00;
+			//System.out.println("SynthParameterEditEvent's source is a " + o);
 			
-			if (o instanceof Boolean){
-				boolean b = (Boolean)o;
-				if (b) value = 0x127;
-				else value = 0x0;
+			if (o instanceof BooleanParameter){
+				BooleanParameter p = (BooleanParameter)o;
+				int value = p.getValueAsMIDICode();
+				int parameterId = parameterIdHashMap.get(p);
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
+				System.out.println("send BooleanParameter : msg="+ShortMessage.CONTROL_CHANGE+" - " + parameterId + " - " + value);
 				//send minimal value (o) if false and maximal value (127) if true
 			}
-			else if (o instanceof Double) {
-				MIDIParameter param = (MIDIParameter)o;
-				value = (int)(param.getValueAsMIDICode());
+			else if (o instanceof MIDIParameter) {
+				MIDIParameter p = (MIDIParameter)o;
+				int value = p.getValueAsMIDICode();
+				int parameterId = parameterIdHashMap.get(p);
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
+				System.out.println("send MIDIParameter : msg="+ShortMessage.CONTROL_CHANGE+" - " + parameterId + " - " + value);
+				//getValueAsMIDICode return a number between 0 and 127 
 			}
-			else if (o instanceof Enum) {
-				EnumParameter enu = (EnumParameter)o;
-				value = enu.getOrdinal();
+			else if (o instanceof EnumParameter) {
+				EnumParameter p = (EnumParameter)o;
+				int value = p.getValueAsMIDICode();
+				int parameterId = parameterIdHashMap.get(p);
 				ShortMessage sm = new ShortMessage(ShortMessage.CONTROL_CHANGE, parameterId, value);
 				transmitMidiMessage(sm);
-				//send the position of the enum in the enum table
+				System.out.println("send EnumParameter : msg="+ShortMessage.CONTROL_CHANGE+" - " + parameterId + " - " + value);
+				//send the position of the enum in the enum table	
 			}
+			else {System.out.println("nothing sent \n");}
 			
 		} catch (Exception imde){
 			imde.printStackTrace();
+			System.out.println("really nothing send \n");
 		}
+		
 	}
-
+	
 
 	public static void main(String[] args) throws Exception {
 		SpiTransmitter st = new SpiTransmitter();
-		int note = 80;
-		int velocity = 100;
+		int note =36;
+		int velocity = 126;
 		ShortMessage smOn = new ShortMessage(ShortMessage.NOTE_ON, note, velocity);
 		ShortMessage smOff = new ShortMessage(ShortMessage.NOTE_OFF, note, velocity);
 		//while (true) {
