@@ -34,7 +34,7 @@ public class SynthControllerPane {
 	 * Creates the controller pane. This class is supposed to be a singleton. 
 	 * @param isSimulator if true, initializes a simulator Swing-based UI
 	 */
-	public SynthControllerPane(boolean isSimulator, SpiTransmitter spiTransmitter) throws IOException, UnsupportedBusNumberException {
+	public SynthControllerPane(boolean isSimulator, SpiTransmitter spiTransmitter, Models models) throws IOException, UnsupportedBusNumberException {
 		
 		MCP23017 mcpDevice1=null;
 		MCP23017 mcpDevice2=null;
@@ -50,9 +50,9 @@ public class SynthControllerPane {
 		cArray = new Control[columnCount][5];
 		vArray = new View[columnCount][5];
 
-		Vco3340 vco3340 = new Vco3340();
-		Vco13700 vco13700 = new Vco13700();
-		//spiTransmitter.initParameterIdHashMap(vco3340, vco13700);
+		
+		if (spiTransmitter != null) spiTransmitter.initParameterIdHashMap(models.vco3340, models.vco13700);
+		
 		MCP23017.Port mcpPort;
 		IS31FL3731.Matrix is31Matrix;
 		
@@ -61,42 +61,42 @@ public class SynthControllerPane {
 		is31Matrix = IS31FL3731.Matrix.A;
 		mcpPort = MCP23017.Port.A;
 		// encoder:
-		cArray[0][0] = controlFactory1.createControl(vco3340.getDetuneParameter(), mcpPort, MCP23017.Pin.P0, MCP23017.Pin.P1);
-		vArray[0][0] = viewFactory.createView(vco3340.getDetuneParameter(), is31Matrix, 0);
+		cArray[0][0] = controlFactory1.createControl(models.vco3340.getDetuneParameter(), mcpPort, MCP23017.Pin.P0, MCP23017.Pin.P1);
+		vArray[0][0] = viewFactory.createView(models.vco3340.getDetuneParameter(), is31Matrix, 0);
 		
 		// push:
-		cArray[0][1] = controlFactory1.createControl(vco3340.getOctaveParameter(), mcpPort, MCP23017.Pin.P2);
-		vArray[0][1] = viewFactory.createView(vco3340.getOctaveParameter(), is31Matrix, 6, 0);
+		cArray[0][1] = controlFactory1.createControl(models.vco3340.getOctaveParameter(), mcpPort, MCP23017.Pin.P2);
+		vArray[0][1] = viewFactory.createView(models.vco3340.getOctaveParameter(), is31Matrix, 6, 0);
 		
 		
 		// encoder:
-		cArray[0][2] = controlFactory1.createControl(vco3340.getWaveShapeParameter(), mcpPort, MCP23017.Pin.P3, MCP23017.Pin.P4);
-		vArray[0][2] = viewFactory.createView(vco3340.getWaveShapeParameter(), is31Matrix, 1);
+		cArray[0][2] = controlFactory1.createControl(models.vco3340.getWaveShapeParameter(), mcpPort, MCP23017.Pin.P3, MCP23017.Pin.P4);
+		vArray[0][2] = viewFactory.createView(models.vco3340.getWaveShapeParameter(), is31Matrix, 1);
 		
 		// push:
-		cArray[0][3] = controlFactory1.createControl(vco3340.getSyncFrom13700Parameter(), mcpPort, MCP23017.Pin.P5);
-		vArray[0][3] = viewFactory.createView(vco3340.getSyncFrom13700Parameter(), is31Matrix, 6, 4);
+		cArray[0][3] = controlFactory1.createControl(models.vco3340.getSyncFrom13700Parameter(), mcpPort, MCP23017.Pin.P5);
+		vArray[0][3] = viewFactory.createView(models.vco3340.getSyncFrom13700Parameter(), is31Matrix, 6, 4);
 		
 		// encoder :
-		cArray[0][4] = controlFactory1.createControl(vco3340.getDutyParameter(), mcpPort, MCP23017.Pin.P6, MCP23017.Pin.P7);
-		vArray[0][4] = viewFactory.createView(vco3340.getDutyParameter(), is31Matrix, 2);
+		cArray[0][4] = controlFactory1.createControl(models.vco3340.getDutyParameter(), mcpPort, MCP23017.Pin.P6, MCP23017.Pin.P7);
+		vArray[0][4] = viewFactory.createView(models.vco3340.getDutyParameter(), is31Matrix, 2);
 
 		
 		// ================================= COLUMN #1: 13700 =================================
 		is31Matrix = IS31FL3731.Matrix.A;
 		mcpPort = MCP23017.Port.B;
 		// encoder:
-		cArray[1][0] = controlFactory1.createControl(vco13700.getDetuneParameter(), mcpPort, MCP23017.Pin.P0, MCP23017.Pin.P1);
-		vArray[1][0] = viewFactory.createView(vco13700.getDetuneParameter(), is31Matrix, 3);
+		cArray[1][0] = controlFactory1.createControl(models.vco13700.getDetuneParameter(), mcpPort, MCP23017.Pin.P0, MCP23017.Pin.P1);
+		vArray[1][0] = viewFactory.createView(models.vco13700.getDetuneParameter(), is31Matrix, 3);
 		
 		// push:
-		cArray[1][1] = controlFactory1.createControl(vco13700.getOctaveParameter(), mcpPort, MCP23017.Pin.P2);
-		vArray[1][1] = viewFactory.createView(vco13700.getOctaveParameter(), is31Matrix, 7, 0);
+		cArray[1][1] = controlFactory1.createControl(models.vco13700.getOctaveParameter(), mcpPort, MCP23017.Pin.P2);
+		vArray[1][1] = viewFactory.createView(models.vco13700.getOctaveParameter(), is31Matrix, 7, 0);
 		
 		
 		// encoder:
-		cArray[1][2] = controlFactory1.createControl(vco13700.getWaveShapeParameter(), mcpPort, MCP23017.Pin.P3, MCP23017.Pin.P4);
-		vArray[1][2] = viewFactory.createView(vco13700.getWaveShapeParameter(), is31Matrix, 4);
+		cArray[1][2] = controlFactory1.createControl(models.vco13700.getWaveShapeParameter(), mcpPort, MCP23017.Pin.P3, MCP23017.Pin.P4);
+		vArray[1][2] = viewFactory.createView(models.vco13700.getWaveShapeParameter(), is31Matrix, 4);
 		
 		// push:
 		cArray[1][3] = controlFactory1.createControl(null, mcpPort, MCP23017.Pin.P5);
@@ -188,7 +188,7 @@ public class SynthControllerPane {
 	// -------- test --------
 	public static void main(String[] args) throws Exception {
 		
-		SynthControllerPane scp = new SynthControllerPane(true, null);
+		SynthControllerPane scp = new SynthControllerPane(true, null,null);
 		JFrame f = new JFrame("test");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setContentPane(scp.getSimulatorPane());
