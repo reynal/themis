@@ -71,8 +71,24 @@ public class ADSREnveloppe extends AbstractModel {
 		this.releaseMsParameter.setValueAsMIDICode((int)(releaseMs/RELEASE_MIDI_TO_MS));
 	}
 
+	
 
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
+	public MIDIParameter getAttackMsParameter(){
+		return attackMsParameter;
+	}
+
+	public MIDIParameter getDecayMsParameter(){
+		return decayMsParameter;
+	}
+	
+	public MIDIParameter getSustainLevelParameter(){
+		return sustainLevelParameter;
+	}
+	
+	public MIDIParameter getReleaseMsParameter(){
+		return releaseMsParameter;
+	}
 	
 }

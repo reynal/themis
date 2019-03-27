@@ -51,7 +51,7 @@ public class SynthControllerPane {
 		vArray = new View[columnCount][5];
 
 		
-		if (spiTransmitter != null) spiTransmitter.initParameterIdHashMap(models.vco3340, models.vco13700);
+		if (spiTransmitter != null) spiTransmitter.initParameterIdHashMap(models);
 		
 		MCP23017.Port mcpPort;
 		IS31FL3731.Matrix is31Matrix;

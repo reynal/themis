@@ -11,7 +11,7 @@ public class Vco13700 extends AbstractModel {
 
 	private MIDIParameter detuneParameter;
 	private EnumParameter<Octave> octaveParameter;	
-	private EnumParameter<WaveShape> waveShapeParameter;
+	private MIDIParameter waveShapeParameter;
 	
 	public static final String DETUNE = "VCO13700 Detune";
 	public static final String OCTAVE = "VCO13700 Octave";
@@ -21,7 +21,7 @@ public class Vco13700 extends AbstractModel {
 		super();
 		parameterList.add(detuneParameter = new MIDIParameter("VCO13700 Detune"));
 		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, "VCO13700 Octave"));
-		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, "VCO13700 WaveShape"));
+		parameterList.add(waveShapeParameter = new MIDIParameter("VCO13700 WaveShape"));
 		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
 	}
 		
@@ -33,12 +33,12 @@ public class Vco13700 extends AbstractModel {
 
 	// ---- value getters and setters --- (write operating may fire change events)
 	
-	public WaveShape getWaveShape() {
-		return waveShapeParameter.getValue();
+	public int getWaveShape() {
+		return waveShapeParameter.getValueAsMIDICode();
 	}
 	
-	public void setWaveShape(WaveShape waveshape) {
-		this.waveShapeParameter.setValue(waveshape);
+	public void setWaveShape(int waveshape) {
+		waveShapeParameter.setValue(waveshape);
 	}
 	
 	public Octave getOctave() { 
@@ -70,7 +70,7 @@ public class Vco13700 extends AbstractModel {
 		return octaveParameter;
 	}	
 		
-	public EnumParameter<WaveShape> getWaveShapeParameter() {
+	public MIDIParameter getWaveShapeParameter() {
 		return waveShapeParameter;
 	}
 

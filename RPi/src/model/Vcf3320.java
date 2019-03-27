@@ -8,7 +8,7 @@ package model;
  */
 public class Vcf3320 extends AbstractModel {
 
-	private MIDIParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter;
+	private MIDIParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter, velocitySensitivityParameter;
 	private EnumParameter<FilterOrder> filterOrderParameter;  
 	private ADSREnveloppe adsrEnveloppe;
 	
@@ -115,6 +115,13 @@ public class Vcf3320 extends AbstractModel {
 	 */
 	public MIDIParameter getKbdTrackingParameter() {
 		return kbdTrackingParameter;
+	}
+
+	/**
+	 * @return the velocitySensitivityParameter
+	 */
+	public MIDIParameter getVelocitySensitivityParameter() {
+		return velocitySensitivityParameter;
 	}
 
 	/**
