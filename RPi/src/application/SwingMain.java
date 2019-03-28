@@ -41,23 +41,71 @@ public class SwingMain extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Models models = new Models();
 		initTouchScreenViews(models);
-		if (Main.SIMULATOR) setContentPane(createSimulator(spiTransmitter, models));
+		initFrames(spiTransmitter,models);
+		
+		/*if (Main.SIMULATOR) setContentPane(createSimulator(spiTransmitter, models));
 		else {
 			SynthControllerPane scp = new SynthControllerPane(false, spiTransmitter,models);
 			setContentPane(createTouchScreenPane());        
-		}
+		}*/
 		
+			
 		
-		pack();		
-		setLocation(0,0);
-		setResizable(false);
 		System.out.println("Starting Swing Themis application");
-		setVisible(true);
 		
 	}
 	
 	
 	
+	private void initFrames(SpiTransmitter spiTransmitter, Models models) throws IOException, UnsupportedBusNumberException {
+		
+		JFrame TouchScreenFrame = new JFrame();
+		JFrame PadsFrame = new JFrame();
+		JFrame SynthControllerPaneFrame = new JFrame();
+		
+		TouchScreenFrame.setLayout(new GridLayout(2,1,10,10));
+		TouchScreenFrame.setBackground(Color.black); // #222
+		SynthControllerPaneFrame.setLayout(new GridLayout(2,1,10,10));
+		SynthControllerPaneFrame.setBackground(Color.black); // #222
+		
+		JPanel Pane = new JPanel();
+		Pane.setLayout(new GridLayout(1,2,10,10));
+	    Pane.add(createTouchScreenPane());
+	    TouchScreenFrame.add(Pane);
+	    
+	    JPanel Pane2 = new JPanel();
+		Pane2.setLayout(new GridLayout(1,2,10,10));
+	    Pane2.add(createPadsPane());
+	    PadsFrame.add(Pane2);
+	    
+	    JPanel Pane3 = new JPanel();
+	    Pane3.setLayout(new GridLayout(1,2,10,10));
+	    Pane3.setBorder(new EmptyBorder(10,10,10,10));
+	    Pane3.add(createPadsPane());
+	    Pane3.add(createEncodersPane(spiTransmitter, models));
+	    
+	    TouchScreenFrame.setContentPane(createTouchScreenPane());
+	    TouchScreenFrame.setJMenuBar(createMenuBar());
+		PadsFrame.setContentPane(createPadsPane());
+		SynthControllerPaneFrame.setContentPane(createEncodersPane(spiTransmitter,models));
+	    
+	    TouchScreenFrame.setSize(new Dimension(800,480));
+	    PadsFrame.setSize(new Dimension(800,480));
+	    SynthControllerPaneFrame.setSize(new Dimension(800,480));
+	    
+	    TouchScreenFrame.setLocation(0,0);
+	    PadsFrame.setLocation(800,0);
+	    SynthControllerPaneFrame.setLocation(0,480);
+	    
+		TouchScreenFrame.setVisible(true);
+		PadsFrame.setVisible(true);
+		SynthControllerPaneFrame.setVisible(true);
+		pack();
+		
+	}
+
+
+
 	/**
 	 * Simulator comprised of control pane, pads and touchscreen.
 	 * @throws UnsupportedBusNumberException 
@@ -73,10 +121,10 @@ public class SwingMain extends JFrame {
 		JPanel northPane = new JPanel();
 		northPane.setLayout(new GridLayout(1,2,10,10));
 	    northPane.add(createTouchScreenPane());
-	    northPane.add(createPads());
+	    northPane.add(createPadsPane());
 	    p.add(northPane);
 	    
-	    p.add(createEncoders(spiTransmitter, models));
+	    p.add(createEncodersPane(spiTransmitter, models));
 	    
 	    p.setPreferredSize(new Dimension(1600,910));
 	    
@@ -100,10 +148,8 @@ public class SwingMain extends JFrame {
 		vco3340View = new VCO3340(models.vco3340);
 		vco13700View = new VCO13700(models.vco13700);
 		vcf3320View = new VCF3320(models.vcf3320);
+		vcaView = new EnvAmp(models.vca);
 		
-		
-		// todo etc
-
 	}
 	
 	/**
@@ -111,7 +157,7 @@ public class SwingMain extends JFrame {
 	 * @throws UnsupportedBusNumberException 
 	 * @throws IOException 
 	 */
-	private JPanel createEncoders(SpiTransmitter spiTransmitter, Models models) throws IOException, UnsupportedBusNumberException{
+	private JPanel createEncodersPane(SpiTransmitter spiTransmitter, Models models) throws IOException, UnsupportedBusNumberException{
 
 		SynthControllerPane scp = new SynthControllerPane(true, spiTransmitter, models);
 		return scp.getSimulatorPane();
@@ -155,7 +201,7 @@ public class SwingMain extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				touchScreen.setView(vcaView);
+				//touchScreen.setView(vcaView);
 				touchScreen.repaint();
 			}
 		});
@@ -175,7 +221,7 @@ public class SwingMain extends JFrame {
 	/**
 	 * Helper method for createSimulator()
 	 */
-	private JPanel createPads(){
+	private JPanel createPadsPane(){
 		
 		JPanel p = createDecoratedPanel("PADS");
 		p.setLayout(new GridLayout(4,8));
