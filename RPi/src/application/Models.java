@@ -9,10 +9,10 @@ import model.*;
  */
 public class Models {
 	
-	private Vco3340 vco3340;
-	private Vco13700 vco13700;
-	private Vca vca;
-	private Vcf3320 vcf;
+	public static Vco3340 vco3340;
+	public static Vco13700 vco13700;
+	public static Vca vca;
+	public static Vcf3320 vcf3320;
 	
 	Models(){
 		vco3340 = new Vco3340();

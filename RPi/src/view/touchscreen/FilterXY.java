@@ -6,7 +6,7 @@ import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ImageObserver;
 
-public class FilterXY extends Filter{
+public class FilterXY{
 
 	private Image image;
 	private double animTheta;
@@ -15,7 +15,6 @@ public class FilterXY extends Filter{
 		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/Filter Mode 2.png");
 	}
 
-	@Override
 	public void render(Graphics2D g2, double scaleX, double scaleY, ImageObserver io) {
 
 		// display logo:
@@ -24,8 +23,6 @@ public class FilterXY extends Filter{
 		g2.drawImage(image, at, io);
 	}
 
-
-	@Override
 	public boolean isAnimated() {
 		return true;
 	}

@@ -27,9 +27,9 @@ public class SwingMain extends JFrame {
 	private JMenuItem menuVCA = new JMenuItem("VCA");
 	private JMenuItem menuMixer = new JMenuItem("Mixer");
 
-	private VCO vco3340View;
-	private VCO vco13700View;
-	private FilterVal vcfView;
+	private VCO3340 vco3340View;
+	private VCO13700 vco13700View;
+	private VCF3320 vcf3320View;
 	private EnvAmp vcaView;
 
 	/**
@@ -97,8 +97,9 @@ public class SwingMain extends JFrame {
 	}
 	
 	public void initTouchScreenViews(Models models) {
-		vco3340View = new VCO(models.vco3340);
-		//vcoView13700 = new VCO(models.vco13700);
+		vco3340View = new VCO3340(models.vco3340);
+		vco13700View = new VCO13700(models.vco13700);
+		vcf3320View = new VCF3320(models.vcf3320);
 		
 		
 		// todo etc
@@ -138,21 +139,24 @@ public class SwingMain extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				//touchScreen.setView(vco13700View);
+				touchScreen.setView(vco13700View);
+				touchScreen.repaint();
 			}
 		});
 		menuVCF.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				//touchScreen.setView(vcfView);
+				touchScreen.setView(vcf3320View);
+				touchScreen.repaint();
 			}
 		});
 		menuVCA.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				//touchScreen.setView(vcaView);
+				touchScreen.setView(vcaView);
+				touchScreen.repaint();
 			}
 		});
 		menuMixer.addActionListener(new ActionListener() {
@@ -164,6 +168,7 @@ public class SwingMain extends JFrame {
 		});
 		return menuBar;
 	}
+	
 	
 
 	
