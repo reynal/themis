@@ -9,14 +9,14 @@ import model.Vco3340;
 import model.event.SynthParameterEditEvent;
 import model.event.SynthParameterEditListener;
 
-public class VCO3340 implements TouchScreenView {
+public class Vco3340View implements TouchScreenView {
 	
 	private java.awt.Image imageVCO;
 	private Vco3340 model;
 	
-	public VCO3340(Vco3340 model){
+	public Vco3340View(Vco3340 model){
 		this.model = model;
-		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/VCO Mode.png");
+		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/3340.png");
 		model.getDetuneParameter().addSynthParameterEditListener(e -> updateDetuneParameterView());
 	}
 	

@@ -6,7 +6,7 @@ import javax.sound.midi.ShortMessage;
 
 public class Main {
 
-	public static final boolean RUN_ON_RASPBERRY = false; // enables SPI
+	static final boolean RUN_ON_RASPBERRY = false; // enables SPI
 	public static final boolean ACTIVATE_MIDI = true;
 	public static final boolean DEBUG_MIDI = false;
 	public static final boolean SIMULATOR = true; // real themis if false
@@ -27,7 +27,7 @@ public class Main {
 		if (DEBUG_MIDI) new DumpReceiver(System.out);
 
 		if (JAVAFX) javafx.application.Application.launch(JavaFXMain.class,args);
-		else new SwingMain(spiTransmitter); 
+		else new SwingMain(SIMULATOR,spiTransmitter); 
 	}
 		
 }

@@ -87,7 +87,7 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 		f.setContentPane(new TouchScreen());        
 		f.setSize(800, 480);		
 		f.setLocation(0,0);
-		//f.setUndecorated(true);
+		f.setUndecorated(true);
 		f.setVisible(true);
 	}
 

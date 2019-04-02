@@ -20,7 +20,7 @@ public class DefaultView implements TouchScreenView {
 	//private double animTheta;
 	
 	public DefaultView() {
-		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/logo.png");
+		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/LoaderLogo.png");
 		textArea1 = new JTextArea();
 		textArea1.setDragEnabled(true);
 		textArea1.setText("texte 1");

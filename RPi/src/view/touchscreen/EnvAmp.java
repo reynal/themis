@@ -10,10 +10,10 @@ public class EnvAmp{
 
 	private Image image;
 	private double animTheta;
-	private Vca model;
 	
-	public EnvAmp(Vca model){
-		this.model = model;
+	
+	public EnvAmp(){
+		
 		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/Enveloppe Mode 1.png");
 	}
 
