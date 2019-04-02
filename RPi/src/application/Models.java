@@ -18,7 +18,7 @@ public class Models {
 		vco3340 = new Vco3340();
 		vco13700 = new Vco13700();
 		vca = new Vca();
-		vcf = new Vcf3320();
+		vcf3320 = new Vcf3320();
 	}
 
 	public Vco3340 getVco3340() {
@@ -34,7 +34,7 @@ public class Models {
 	}
 
 	public Vcf3320 getVcf() {
-		return vcf;
+		return vcf3320;
 	}
 	
 	
