@@ -1,7 +1,9 @@
 package device;
 
-import java.awt.Point;
-import java.io.IOException;
+import java.awt.*;
+import java.io.*;
+import javax.swing.*;
+
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
@@ -605,16 +607,102 @@ public class IS31FL3731 {
 	
 	// -------------- test methods --------------
 	
-	//public static void main(String[] args) {
+	public static void main(String[] args) {
 		
-	//	testFunctionRegister();
-	//}
+		//testFunctionRegister();
+		new TestDevice();
+	}
 
 	// testing function register
-	private static void testFunctionRegister() {
+	private static class TestDevice extends JFrame {
 		
+		IS31FL3731 device;
+		int currentRow, currentCol, currentPwm;
+		Matrix currentMatrix;
 		
+		JSpinner jsLine, jsCol, jsMatrix;
+		JSlider pwmSlider;
+		JButton butOpen, butSend;
 		
+		TestDevice(){
+		
+			super("test du IS31FL3731 et de la carte du frontpane");
+			super.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+			JPanel pane = new JPanel();
+			pane.setLayout(new GridLayout(5,2));
+
+			pane.add(new JLabel("matrix :"));		
+			jsMatrix = new JSpinner();
+			pane.add(jsMatrix);
+			jsMatrix.addChangeListener(e -> selectMatrix());
+
+			pane.add(new JLabel("line :"));
+			jsLine = new JSpinner();
+			pane.add(jsLine);
+			jsLine.addChangeListener(e -> selectLine());
+		
+			pane.add(new JLabel("col :"));		
+			jsCol = new JSpinner();
+			pane.add(jsCol);
+			jsCol.addChangeListener(e -> selectCol());
+		
+			pane.add(new JLabel("pwm :"));		
+			pwmSlider = new JSlider(0, 255);
+			pwmSlider.setPaintTicks(true);
+			pwmSlider.setPaintLabels(true);
+			pane.add(pwmSlider);
+			pwmSlider.addChangeListener(e -> selectPwm());
+		
+			butOpen = new JButton("open device");
+			pane.add(butOpen);
+			butOpen.addActionListener(e -> openDevice());
+		
+			butSend = new JButton("send to device");
+			pane.add(butSend);
+			butSend.addActionListener(e -> sendToDevice());
+
+			setContentPane(pane);
+			//pack();
+			setSize(800,300);
+			setVisible(true);
+		
+		}
+
+		private void sendToDevice() {
+			System.out.println("Sending data to device : row=" + currentRow + ", col=" + currentCol + ", matrix="+currentMatrix + ", pwm=" + currentPwm);
+		}
+
+		private void selectPwm() {
+			currentPwm = (Integer)pwmSlider.getValue();
+			if (currentPwm > 255) currentPwm = 255;
+			else if (currentCol < 0) currentPwm = 0;
+		}
+
+		private void selectCol() {
+			currentCol = (Integer)jsCol.getValue();
+			if (currentCol > 7) currentCol = 7;
+			else if (currentCol < 0) currentCol = 0;
+		}
+
+		private void selectLine() {
+			currentRow = (Integer)jsLine.getValue();
+			if (currentRow > 8) currentRow = 8;
+			else if (currentRow < 0) currentRow = 0;
+		}
+
+		private void selectMatrix() {
+			currentMatrix = (Integer)jsMatrix.getValue() == 0 ? Matrix.A : Matrix.B;
+		}
+
+		private void openDevice() {
+			try {
+				device = new IS31FL3731();
+			} catch (IOException | UnsupportedBusNumberException e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
+		}
 	}
 	
 

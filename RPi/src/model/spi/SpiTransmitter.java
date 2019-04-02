@@ -61,12 +61,39 @@ public class SpiTransmitter implements SynthParameterEditListener {
 	public void initParameterIdHashMap(Models models){
 		
 		int i=0;
-		parameterIdHashMap.put(Models.vco3340.getDetuneParameter(), i++);
-		parameterIdHashMap.put(Models.vco3340.getOctaveParameter(), i++);
-		parameterIdHashMap.put(Models.vco3340.getSyncFrom13700Parameter(), i++);
-		parameterIdHashMap.put(Models.vco3340.getWaveShapeParameter(), i++);
-		System.out.println("initParameterIdHashMap ok \n");
+		// 3340
+		parameterIdHashMap.put(models.getVco3340().getDetuneParameter(), i++);
+		parameterIdHashMap.put(models.getVco3340().getOctaveParameter(), i++);
+		parameterIdHashMap.put(models.getVco3340().getSyncFrom13700Parameter(), i++);
+		parameterIdHashMap.put(models.getVco3340().getWaveShapeParameter(), i++);
+		parameterIdHashMap.put(models.getVco3340().getDutyParameter(), i++);
+
+		// 13700
+		parameterIdHashMap.put(models.getVco13700().getDetuneParameter(), i++);
+		parameterIdHashMap.put(models.getVco13700().getOctaveParameter(), i++);
+		parameterIdHashMap.put(models.getVco13700().getWaveShapeParameter(), i++);
+
+		// 3320 vcf
+		parameterIdHashMap.put(models.getVcf().getCutoffParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getResonanceParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getFilterOrderParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getKbdTrackingParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getEgDepthParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getVelocitySensitivityParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getAdsrEnveloppeParameter().getAttackMsParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getAdsrEnveloppeParameter().getDecayMsParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getAdsrEnveloppeParameter().getSustainLevelParameter(), i++);
+		parameterIdHashMap.put(models.getVcf().getAdsrEnveloppeParameter().getReleaseMsParameter(), i++);
+
+		// VCA
+		parameterIdHashMap.put(models.getVca().getEnveloppeGeneratorDepthParameter(), i++);
+		parameterIdHashMap.put(models.getVca().getVelocityTrackingParameter(), i++);
+		parameterIdHashMap.put(models.getVca().getAdsrEnveloppe().getAttackMsParameter(), i++);
+		parameterIdHashMap.put(models.getVca().getAdsrEnveloppe().getDecayMsParameter(), i++);
+		parameterIdHashMap.put(models.getVca().getAdsrEnveloppe().getSustainLevelParameter(), i++);
+		parameterIdHashMap.put(models.getVca().getAdsrEnveloppe().getReleaseMsParameter(), i++);
 		
+		System.out.println("initParameterIdHashMap ok \n");
 	}
 	
 
