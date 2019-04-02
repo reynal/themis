@@ -17,6 +17,24 @@ public class Vcf3320View implements TouchScreenView{
 		this.model = model;
 		imageVCF = Toolkit.getDefaultToolkit().getImage("src/resources/img/Filter Mode 1.png");
 		model.getCutoffParameter().addSynthParameterEditListener(e -> updateCutoffParameterView());
+		model.getResonanceParameter().addSynthParameterEditListener(e -> updateResonanceParameterView());
+		model.getKbdTrackingParameter().addSynthParameterEditListener(e -> updateKbdTrackingParameterView());
+		model.getEgDepthParameter().addSynthParameterEditListener(e -> updateEgDepthParameterView());
+	}
+
+	private Object updateEgDepthParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object updateKbdTrackingParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object updateResonanceParameterView() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private Object updateCutoffParameterView() {

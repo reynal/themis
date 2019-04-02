@@ -24,8 +24,15 @@ public class EnveloppeView implements TouchScreenView{
 		this.model = model;
 		imageEnveloppe = Toolkit.getDefaultToolkit().getImage("src/resources/img/Enveloppe Mode.png");
 		model.getVelocityTrackingParameter().addSynthParameterEditListener(e -> updateVelocityTrackingParameterView());
+		model.getEnveloppeGeneratorDepthParameter().addSynthParameterEditListener(e -> updateEnveloppeGeneratorDepthParameterView());
+		
 	}
 	
+	private Object updateEnveloppeGeneratorDepthParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private Object updateVelocityTrackingParameterView() {
 		
 		return null;

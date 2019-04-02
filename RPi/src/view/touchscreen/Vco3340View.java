@@ -18,9 +18,26 @@ public class Vco3340View implements TouchScreenView {
 		this.model = model;
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/3340.png");
 		model.getDetuneParameter().addSynthParameterEditListener(e -> updateDetuneParameterView());
+		model.getOctaveParameter().addSynthParameterEditListener(e -> updateOctaveParameterView());
+		model.getDutyParameter().addSynthParameterEditListener(e -> updateDutyParameterView());
+		model.getSyncFrom13700Parameter().addSynthParameterEditListener(e -> updateSyncFrom13700ParameterView());
 	}
 	
+	private Object updateSyncFrom13700ParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object updateDutyParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void updateDetuneParameterView() {
+		// TODO Auto-generated method stub
+	}
+	
+	private void updateOctaveParameterView() {
 		// TODO Auto-generated method stub
 	}
 
