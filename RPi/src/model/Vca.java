@@ -9,7 +9,7 @@ package model;
 
 public class Vca extends AbstractModel {
 	
-	private MIDIParameter enveloppeGeneratorDepthParameter,velocityTrackingParameter;
+	private MIDIParameter enveloppeGeneratorDepthParameter,velocityTrackingParameter, velocitySensitivityParameter;
 	private ADSREnveloppe adsrEnveloppe;
 	
 	// list of label constant for use by clients:
@@ -62,5 +62,6 @@ public class Vca extends AbstractModel {
 	public ADSREnveloppe getAdsrEnveloppe() {
 		return adsrEnveloppe;
 	}
+
 	
 }

@@ -20,4 +20,22 @@ public class Models {
 		vca = new Vca();
 		vcf3320 = new Vcf3320();
 	}
+
+	public Vco3340 getVco3340() {
+		return vco3340;
+	}
+
+	public Vco13700 getVco13700() {
+		return vco13700;
+	}
+
+	public Vca getVca() {
+		return vca;
+	}
+
+	public Vcf3320 getVcf() {
+		return vcf3320;
+	}
+	
+	
 }
