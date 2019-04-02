@@ -4,16 +4,19 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-public class EnvAmp extends EnveloppeView{
+import model.Vca;
+
+public class EnvAmp{
 
 	private Image image;
 	private double animTheta;
+	private Vca model;
 	
-	public EnvAmp() {
+	public EnvAmp(Vca model){
+		this.model = model;
 		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/Enveloppe Mode 1.png");
 	}
 
-	@Override
 	public void render(Graphics2D g2, double scaleX, double scaleY, ImageObserver io) {
 
 		// display logo:
@@ -24,7 +27,6 @@ public class EnvAmp extends EnveloppeView{
 	}
 
 
-	@Override
 	public boolean isAnimated() {
 		return true;
 	}

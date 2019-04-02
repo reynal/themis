@@ -10,7 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.image.ImageObserver;
 
-public class FilterVal extends Filter{
+public class FilterVal{
 
 	private Image image;
 	private double animTheta;
@@ -19,7 +19,6 @@ public class FilterVal extends Filter{
 		image = Toolkit.getDefaultToolkit().getImage("src/resources/img/Filter Mode 1.png");
 	}
 
-	@Override
 	public void render(Graphics2D g2, double scaleX, double scaleY, ImageObserver io) {
 
 		// display logo:
@@ -29,8 +28,6 @@ public class FilterVal extends Filter{
 
 	}
 
-
-	@Override
 	public boolean isAnimated() {
 		return true;
 	}

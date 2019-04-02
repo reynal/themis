@@ -6,6 +6,7 @@ import javax.sound.midi.ShortMessage;
 
 import com.pi4j.io.spi.*;
 
+import application.Models;
 import model.event.*;
 import model.*;
 
@@ -57,13 +58,13 @@ public class SpiTransmitter implements SynthParameterEditListener {
 	 * @param vco3340
 	 * @param vco13700
 	 */
-	public void initParameterIdHashMap(Vco3340 vco3340, Vco13700 vco13700){
+	public void initParameterIdHashMap(Models models){
 		
 		int i=0;
-		parameterIdHashMap.put(vco3340.getDetuneParameter(), i++);
-		parameterIdHashMap.put(vco3340.getOctaveParameter(), i++);
-		parameterIdHashMap.put(vco3340.getSyncFrom13700Parameter(), i++);
-		parameterIdHashMap.put(vco3340.getWaveShapeParameter(), i++);
+		parameterIdHashMap.put(Models.vco3340.getDetuneParameter(), i++);
+		parameterIdHashMap.put(Models.vco3340.getOctaveParameter(), i++);
+		parameterIdHashMap.put(Models.vco3340.getSyncFrom13700Parameter(), i++);
+		parameterIdHashMap.put(Models.vco3340.getWaveShapeParameter(), i++);
 		System.out.println("initParameterIdHashMap ok \n");
 		
 	}
@@ -129,5 +130,6 @@ public class SpiTransmitter implements SynthParameterEditListener {
 			Thread.sleep(1000);
 		//}
 	}
+
 	
 }

@@ -64,7 +64,7 @@ public class SynthControllerPane {
 		cArray[0][0] = controlFactory1.createControl(models.vco3340.getDetuneParameter(), mcpPort, MCP23017.Pin.P0, MCP23017.Pin.P1);
 		vArray[0][0] = viewFactory.createView(models.vco3340.getDetuneParameter(), is31Matrix, 0);
 		
-		// push:
+		// push:.
 		cArray[0][1] = controlFactory1.createControl(models.vco3340.getOctaveParameter(), mcpPort, MCP23017.Pin.P2);
 		vArray[0][1] = viewFactory.createView(models.vco3340.getOctaveParameter(), is31Matrix, 6, 0);
 		
