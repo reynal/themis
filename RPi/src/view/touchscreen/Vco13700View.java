@@ -5,21 +5,34 @@ import java.awt.geom.*;
 import java.awt.image.*;
 
 import model.SynthParameter;
+import model.Vco13700;
 import model.Vco3340;
 import model.event.SynthParameterEditEvent;
 import model.event.SynthParameterEditListener;
 
-public class VCO3340 implements TouchScreenView {
+public class Vco13700View implements TouchScreenView {
 	
 	private java.awt.Image imageVCO;
-	private Vco3340 model;
+	private Vco13700 model;
 	
-	public VCO3340(Vco3340 model){
+	public Vco13700View(Vco13700 model){
 		this.model = model;
-		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/VCO Mode.png");
+		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/13700.png");
 		model.getDetuneParameter().addSynthParameterEditListener(e -> updateDetuneParameterView());
+		model.getOctaveParameter().addSynthParameterEditListener(e -> updateOctaveParameterView());
+		model.getWaveShapeParameter().addSynthParameterEditListener(e -> updateWaveShapeParameterView());
 	}
 	
+	private Object updateWaveShapeParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private Object updateOctaveParameterView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void updateDetuneParameterView() {
 		// TODO Auto-generated method stub
 	}
@@ -39,3 +52,4 @@ public class VCO3340 implements TouchScreenView {
 	}
 
 }
+

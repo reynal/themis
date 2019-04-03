@@ -37,5 +37,4 @@ public class Models {
 		return vcf3320;
 	}
 	
-	
 }

@@ -25,32 +25,32 @@ public class SwingMain extends JFrame {
 	private JMenuItem menu13700 = new JMenuItem("13700");
 	private JMenuItem menuVCF = new JMenuItem("VCF");
 	private JMenuItem menuVCA = new JMenuItem("VCA");
-	private JMenuItem menuMixer = new JMenuItem("Mixer");
+	private JMenuItem menuEncoders = new JMenuItem("Encoders");
+	private JMenuItem menuEncoders2 = new JMenuItem("Encoders 2");
 
-	private VCO3340 vco3340View;
-	private VCO13700 vco13700View;
-	private VCF3320 vcf3320View;
-	private EnvAmp vcaView;
+	private Vco3340View vco3340View;
+	private Vco13700View vco13700View;
+	private Vcf3320View vcf3320View;
+	private EnveloppeView vcaView;
+	private EncodersView encView;
+	private Encoders2View enc2View;
 
 	/**
 	 * 
 	 */
-	public SwingMain(SpiTransmitter spiTransmitter) throws HeadlessException, IOException, UnsupportedBusNumberException {
+	public SwingMain(Boolean simulator, SpiTransmitter spiTransmitter) throws HeadlessException, IOException, UnsupportedBusNumberException {
 		
 		super("Themis");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Models models = new Models();
 		initTouchScreenViews(models);
-		initFrames(spiTransmitter,models);
-		
+		if (simulator==true) {initFrames(spiTransmitter,models);}
+		else {initTouchScreenFrame();}
 		/*if (Main.SIMULATOR) setContentPane(createSimulator(spiTransmitter, models));
 		else {
 			SynthControllerPane scp = new SynthControllerPane(false, spiTransmitter,models);
 			setContentPane(createTouchScreenPane());        
 		}*/
-		
-			
-		
 		System.out.println("Starting Swing Themis application");
 		
 	}
@@ -104,13 +104,30 @@ public class SwingMain extends JFrame {
 		
 	}
 
+	private void initTouchScreenFrame() {
+		
+		JFrame TouchScreenFrame = new JFrame();
+		TouchScreenFrame.setLayout(new GridLayout());
+		TouchScreenFrame.setBackground(Color.black); // #222
+		/*JPanel Pane = new JPanel();
+		Pane.setLayout(new GridLayout(1,2,10,10));
+	    Pane.add(createTouchScreenPane());*/
+	    TouchScreenFrame.add(createTouchScreenPane());
+
+	    TouchScreenFrame.setJMenuBar(createMenuBar());
+	    TouchScreenFrame.setSize(new Dimension(800,480));
+	    TouchScreenFrame.setLocation(0,0);
+		TouchScreenFrame.setUndecorated(true);
+	    TouchScreenFrame.setVisible(true);
+	    pack();
+	}
 
 
 	/**
 	 * Simulator comprised of control pane, pads and touchscreen.
 	 * @throws UnsupportedBusNumberException 
 	 * @throws IOException 
-	 */
+	 *//*
 	private JPanel createSimulator(SpiTransmitter spiTransmitter, Models models) throws IOException, UnsupportedBusNumberException{
 
 		JPanel p = new JPanel();
@@ -130,7 +147,8 @@ public class SwingMain extends JFrame {
 	    
 	    return p;
 		
-	}
+	}*/
+	
 	
 	/**
 	 * Helper method for createSimulator()
@@ -145,10 +163,12 @@ public class SwingMain extends JFrame {
 	}
 	
 	public void initTouchScreenViews(Models models) {
-		vco3340View = new VCO3340(models.vco3340);
-		vco13700View = new VCO13700(models.vco13700);
-		vcf3320View = new VCF3320(models.vcf3320);
-		vcaView = new EnvAmp(models.vca);
+		vco3340View = new Vco3340View(Models.vco3340);
+		vco13700View = new Vco13700View(Models.vco13700);
+		vcf3320View = new Vcf3320View(Models.vcf3320);
+		vcaView = new EnveloppeView(Models.vca);
+		encView = new EncodersView();
+		enc2View = new Encoders2View();
 		
 	}
 	
@@ -167,11 +187,27 @@ public class SwingMain extends JFrame {
 	private JMenuBar createMenuBar() {
 
 		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBorderPainted(false);
+		menuBar.setBackground(Color.BLACK);
+		menu3340.setBackground(Color.BLACK);
+		menu3340.setForeground(Color.LIGHT_GRAY);
+		menu13700.setBackground(Color.BLACK);
+		menu13700.setForeground(Color.LIGHT_GRAY);
+		menuVCF.setBackground(Color.BLACK);
+		menuVCF.setForeground(Color.LIGHT_GRAY);
+		menuVCA.setBackground(Color.BLACK);
+		menuVCA.setForeground(Color.LIGHT_GRAY);
+		menuEncoders.setBackground(Color.BLACK);
+		menuEncoders.setForeground(Color.LIGHT_GRAY);
+		menuEncoders2.setBackground(Color.BLACK);
+		menuEncoders2.setForeground(Color.LIGHT_GRAY);
+		
 		menuBar.add(menu3340);
 		menuBar.add(menu13700);
 		menuBar.add(menuVCF);
 		menuBar.add(menuVCA);
-		menuBar.add(menuMixer);
+		menuBar.add(menuEncoders);
+		menuBar.add(menuEncoders2);
 		
 		menu3340.addActionListener(new ActionListener() {
 			@Override
@@ -201,15 +237,24 @@ public class SwingMain extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				//touchScreen.setView(vcaView);
+				touchScreen.setView(vcaView);
 				touchScreen.repaint();
 			}
 		});
-		menuMixer.addActionListener(new ActionListener() {
+		menuEncoders.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Selected: " + e.getActionCommand());
-				//touchScreen.setView(mixerView);
+				touchScreen.setView(encView);
+				touchScreen.repaint();
+			}
+		});
+		menuEncoders2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Selected: " + e.getActionCommand());
+				touchScreen.setView(enc2View);
+				touchScreen.repaint();
 			}
 		});
 		return menuBar;
