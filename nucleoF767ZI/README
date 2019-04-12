@@ -1,2 +1,0 @@
-This folder contains all the necessary STM32 code for the prototype DAC board. 
-It can generate basic ADSR enveloppes for VCF and VCA, calibrate VCO's and generate high quality digital waveforms.
