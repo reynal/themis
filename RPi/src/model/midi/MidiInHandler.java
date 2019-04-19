@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.sound.midi.*;
 
-import javafx.scene.control.Label;
 import model.spi.SpiTransmitter;
 
 

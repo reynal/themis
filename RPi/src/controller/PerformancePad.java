@@ -1,7 +1,7 @@
 package controller;
 
 import controller.component.PushButton;
-import javafx.scene.Node;
+//import javafx.scene.Node;
 
 /**
  * 
@@ -27,10 +27,10 @@ public class PerformancePad {
 	 * 
 	 * @return
 	 */
-	public Node getView() {
+	/*public Node getView() {
 		
 		return null;
-	}
+	}*/
 	
 	/**
 	 * 

@@ -8,11 +8,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 
-import javafx.scene.Group;
+/*import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Color;*/
+
 import model.Vca;
 
 public class EnveloppeView implements TouchScreenView{
