@@ -68,15 +68,16 @@ typedef enum {
 
 /* tunable MIDI CC parameters ; parameters are numbered from 0 in the order they are given in the enum */
 typedef enum {
-	DETUNE_3340, // N/A
+	UNUSED_CC,
 	OCTAVE_3340, // 0 1 2 3
-	SYNC_3340, // 0 ou 127
 	WAVE_3340,  // 0 1 2
 	PWM_3340,// 0-127
 	LEVEL_3340, // 0-127 mixer 1
 
-	DETUNE_13700, // N/A
+	SYNC_3340, // 0 ou 127
+
 	OCTAVE_13700, // 0 1 2 3
+	DETUNE_13700, // 0-127
 	WAVE_13700, // 0-127 entre sq et tri (mixer 2 mixer 3)
 	LEVEL_13700, // 0-127 mixer 1
 
@@ -91,7 +92,6 @@ typedef enum {
 	VCF_SUSTAIN,
 	VCF_RELEASE,
 
-	VCA_EG,
 	VCA_VELOCITY_SENSITIVITY,
 	VCA_ATTACK,
 	VCA_DECAY,
@@ -107,7 +107,6 @@ void dac4822ABWrite(int word12bits, int chip, int channelAB);
 void dacSelect(int chipNumber);
 void dacWrite(int word12bits, Dac targetDac);
 void initSynthParams();
-void muteAllDACs();
 void dacVcaWrite(double amp);
 void dacVcfCutoffWrite(double cutoff);
 void updateVCAEnveloppeStateMachine();
@@ -121,5 +120,7 @@ void setSynthParam(uint8_t id, uint8_t value);
 void setMidiCCParam(MidiCCParam param, uint8_t value);
 void playDrumMachine(uint8_t data1, uint8_t data2);
 void updateDrumMachine();
+void testDacSelect();
+void testDacWriteSPI();
 
 #endif /* DAC_BOARD_H_ */

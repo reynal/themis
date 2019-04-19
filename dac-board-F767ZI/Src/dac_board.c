@@ -134,6 +134,138 @@ StateMachineVcf stateMachineVcf = {
 };
 GlobalSynthParams globalParams = { .vcfCutoff = DEF_CUTOFF, .vcfResonance=DEF_RESONANCE };
 
+MidiCCParam midiccCodeToParams[128] = {
+		UNUSED_CC, 		// 0
+		UNUSED_CC, 		// 1
+		UNUSED_CC, 		// 2
+		UNUSED_CC, 		// 3
+		UNUSED_CC, 		// 4
+		UNUSED_CC, 		// 5
+		UNUSED_CC, 		// 6
+		UNUSED_CC, 		// 7
+		UNUSED_CC, 		// 8
+		WAVE_3340, 		// 9
+		DETUNE_13700, 	// 10
+		WAVE_13700, 	// 11
+		UNUSED_CC, 		// 12
+		UNUSED_CC, 		// 13
+		PWM_3340, 		// 14
+		LEVEL_3340, 	// 15
+		LEVEL_13700,	// 16
+		UNUSED_CC, 		// 17
+		UNUSED_CC, 		// 18
+		VCF_CUTOFF, 	// 19 (MSB)
+		UNUSED_CC, 		// 20
+		VCF_RESONANCE,	// 21
+		VCF_KBDTRACKING,// 22
+		VCF_ATTACK,		// 23
+		VCF_DECAY,		// 24
+		VCF_SUSTAIN,	// 25
+		VCF_RELEASE,	// 26
+		VCF_EG,			// 27
+		VCA_ATTACK,		// 28
+		VCA_DECAY,		// 29
+		VCA_SUSTAIN,	// 30
+		VCA_RELEASE,	// 31
+		UNUSED_CC, 		// 32
+		UNUSED_CC, 		// 33
+		UNUSED_CC, 		// 34
+		UNUSED_CC, 		// 35
+		UNUSED_CC, 		// 36
+		UNUSED_CC, 		// 37
+		UNUSED_CC, 		// 38
+		UNUSED_CC, 		// 39
+		UNUSED_CC, 		// 40
+		UNUSED_CC, 		// 41
+		UNUSED_CC, 		// 42
+		UNUSED_CC, 		// 43
+		UNUSED_CC, 		// 44
+		UNUSED_CC, 		// 45
+		UNUSED_CC, 		// 46
+		UNUSED_CC, 		// 47
+		UNUSED_CC, 		// 48
+		UNUSED_CC, 		// 49
+		UNUSED_CC, 		// 50
+		UNUSED_CC, 		// 51 (cut off LSB)
+		UNUSED_CC, 		// 52
+		UNUSED_CC, 		// 53
+		UNUSED_CC, 		// 54
+		UNUSED_CC, 		// 55
+		UNUSED_CC, 		// 56
+		UNUSED_CC, 		// 57
+		UNUSED_CC, 		// 58
+		UNUSED_CC, 		// 59
+		UNUSED_CC, 		// 60
+		UNUSED_CC, 		// 61
+		UNUSED_CC, 		// 62
+		UNUSED_CC, 		// 63
+		UNUSED_CC, 		// 64
+		UNUSED_CC, 		// 65
+		UNUSED_CC, 		// 66
+		UNUSED_CC, 		// 67
+		UNUSED_CC, 		// 68
+		UNUSED_CC, 		// 69
+		UNUSED_CC, 		// 70
+		UNUSED_CC, 		// 71
+		UNUSED_CC, 		// 72
+		UNUSED_CC, 		// 73
+		OCTAVE_3340, 	// 74
+		OCTAVE_13700, 		// 75
+		UNUSED_CC, 		// 76
+		SYNC_3340, 		// 77
+		UNUSED_CC, 		// 78
+		UNUSED_CC, 		// 79
+		UNUSED_CC, 		// 80
+		UNUSED_CC, 		// 81
+		UNUSED_CC, 		// 82
+		UNUSED_CC, 		// 83
+		UNUSED_CC, 		// 84
+		UNUSED_CC, 		// 85
+		UNUSED_CC, 		// 86
+		UNUSED_CC, 		// 87
+		UNUSED_CC, 		// 88
+		UNUSED_CC, 		// 89
+		UNUSED_CC, 		// 90
+		UNUSED_CC, 		// 91
+		UNUSED_CC, 		// 92
+		UNUSED_CC, 		// 93
+		UNUSED_CC, 		// 94
+		UNUSED_CC, 		// 95
+		UNUSED_CC, 		// 96
+		UNUSED_CC, 		// 97
+		UNUSED_CC, 		// 98
+		UNUSED_CC, 		// 99
+		UNUSED_CC, 		// 100
+		UNUSED_CC, 		// 101
+		UNUSED_CC, 		// 102
+		UNUSED_CC, 		// 103
+		VCA_VELOCITY_SENSITIVITY, // 104
+		UNUSED_CC, 		// 105
+		UNUSED_CC, 		// 106
+		UNUSED_CC, 		// 107
+		UNUSED_CC, 		// 108
+		VCF_ORDER, 		// 109
+		VCF_VELOCITY_SENSITIVITY, // 110
+		UNUSED_CC, 		// 111
+		UNUSED_CC, 		// 112
+		UNUSED_CC, 		// 113
+		UNUSED_CC, 		// 114
+		UNUSED_CC, 		// 115
+		UNUSED_CC, 		// 116
+		UNUSED_CC, 		// 117
+		UNUSED_CC, 		// 118
+		UNUSED_CC, 		// 119
+		UNUSED_CC, 		// 120
+		UNUSED_CC, 		// 121
+		UNUSED_CC, 		// 122
+		UNUSED_CC, 		// 123
+		UNUSED_CC, 		// 124
+		UNUSED_CC, 		// 125
+		UNUSED_CC, 		// 126
+		UNUSED_CC 		// 127
+};
+
+
 // ------------- vco's ---------------------
 VcoParameters vco13700 = { .detune=0.0, .octave=0};
 VcoParameters vco3340 = { .detune=0.0, .octave=0};
@@ -145,8 +277,6 @@ DrumTriggers drumTriggers = { .bassdrumCounter=0, .rimshotCounter=0, .snareCount
 MidiNote midiNote = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
 // midi_receiver_state_t midi_receiver_state; // midi state-machine state
 // uint8_t midi_byte1, midi_byte2, midi_byte3; // tmp vars for midi state-machine
-//int octave_mul_3340; // TODO SR include into structure
-//int octave_mul_13700; // TODO SR include into structure
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef* htimEnveloppes;
@@ -179,6 +309,10 @@ int midiToVCO13700CV[128] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-11
 		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 108-119
 		 0, 0, 0, 0, 0, 0, 0, 0};
 
+
+// --------------------------------------------------------------------------------------------------
+//                                     low-level hardware code
+// --------------------------------------------------------------------------------------------------
 
 
 /**
@@ -366,18 +500,6 @@ void dacWrite(int word12bits, Dac targetDac){
 }
 
 
-
-/**
- * Write default values to all DACs (to be done before starting htim1)
- * This ensures that the synthesizer is in the right state when starting
- */
-void muteAllDACs(){
-	dacVcaWrite(0.0); // makes sure we don't hear anything
-	HAL_Delay(1); // wait 1ms for transfer to complete (could be lower but HAL_Delay can't go below)
-	dacVcfCutoffWrite(0.0); // makes sure filter is off
-	HAL_Delay(1);
-}
-
 /**
  *  write the given amplitude to the VCA control voltage through the appropriate DAC
  *  @param amplitude must be b/w 0 and 1
@@ -407,6 +529,48 @@ void dacVcfCutoffWrite(double cutoff){
 }
 
 
+// --------------------------------------------------------------------------------------------------
+//                                     hardware test code
+// --------------------------------------------------------------------------------------------------
+
+// test if LS138 decoding works properly (check signals with oscilloscope and LS138 unplugged from support)
+void testDacSelect(){
+
+	int dac;
+	while(1){
+		for(dac=0; dac < 8; dac++){
+			dacSelect(dac);
+			HAL_Delay(1);
+		}
+		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+	}
+}
+
+// test if SPI5 (DAC's) works properly (check signals with oscilloscope and LS138 now plugged in support)
+void testDacWriteSPI(){
+
+	int word12bits;
+	int dac;
+	while(1){
+		//dac4822ABWrite(word12bits, 3, MCP4822_CHANNEL_B);
+		//dacWrite(word12bits, DAC_VCO_3340_FREQ);
+		//dacWrite(word12bits, DAC_VCO_13700);
+		for(word12bits=0; word12bits < 4096; word12bits+=16){
+			//for(dac=0; dac < 8; dac++){
+				//dacWrite(word12bits, DAC_VCO_3340_FREQ);
+				dac4822ABWrite(word12bits, dac, MCP4822_CHANNEL_A);
+				HAL_Delay(1);
+				dac4822ABWrite(word12bits, dac, MCP4822_CHANNEL_B);
+				HAL_Delay(1);
+			//}
+		}
+		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+	}
+}
+
+// --------------------------------------------------------------------------------------------------
+//                                     HAL interrupt handlers
+// --------------------------------------------------------------------------------------------------
 
 /**
  * Callback implementation for the SPI peripheral "end of transfer" interruption
@@ -523,8 +687,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	}
 }
 
+// --------------------------------------------------------------------------------------------------
+//                                     ADSR, drums and MIDI code
+// --------------------------------------------------------------------------------------------------
+
+
 /**
- * Initialize additionnal parameters and all DAC values
+ * Initialize synth parameters and DAC values
  */
 void initSynthParams(){
 
@@ -532,10 +701,13 @@ void initSynthParams(){
 	//int i;
 	//for (i=0; i<WAVE_TABLE_LEN; i++) waveTable[i] = 1000 * (1.0 + sin(0.0628 * i));
 
-	muteAllDACs();
+	dacVcaWrite(0.0); // makes sure we don't hear anything
+	HAL_Delay(1); // wait 1ms for transfer to complete (could be lower but HAL_Delay can't go below)
+	dacVcfCutoffWrite(0.0); // makes sure filter is off
+	HAL_Delay(1);
 
 	dacWrite((int)(2000), DAC_VCO_3340_FREQ);
-	HAL_Delay(1); // wait 1ms for transfer to complete (could be lower but HAL_Delay can't go below)
+	HAL_Delay(1);
 	dacWrite((int)(4095.0 * 2.0 * DEF_VCO_3340_PWM_DUTY), DAC_VCO_3340_PWM_DUTY);
 	HAL_Delay(1);
 	setMidiCCParam(WAVE_3340, 0);
@@ -799,9 +971,6 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 		vco13700.detune = value;
 	break;
 
-	case DETUNE_3340 :
-		vco3340.detune = value;
-	break;
 
 	case LEVEL_13700 :
 		// TODO : Voir comment implementer vis-a-vis des mixers
@@ -817,10 +986,6 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 	break;
 
 	case VCF_KBDTRACKING :
-		//TBA
-	break;
-
-	case VCA_EG :
 		//TBA
 	break;
 

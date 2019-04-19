@@ -10,15 +10,16 @@
  * - C-1 	~8.18Hz		#0
  * - A-1		13.75Hz		#9
  * - A0 		27.5Hz		#21
- * - A1 		55Hz			#33
- * - A2 		110Hz		#45
+ * - E1			~41.2Hz		#28		(bass guitar 1st string)
+ * - A1 		55Hz		#33		(bass guitar 2nd string)
+ * - A2 		110Hz		#45		(guitar 2nd string)
  * - A3 		220Hz		#57
  * - C4 		~261.62Hz 	#60 		(middle C)
  * - A4 		440Hz 		#69		ref diapason
- * -	 A5		880Hz		#81
- * - A6		1760Hz		#93
- * - A7		3520Hz		#105
- * - A8		7040Hz		#117
+ * - A5			880Hz		#81
+ * - A6			1760Hz		#93
+ * - A7			3520Hz		#105
+ * - A8			7040Hz		#117
  * - G9 		~12543Hz		#127
  *
  * VCO 3340 is able to produce a 17Hz a the lowest note though it can hardly heard (CV at 0mV).
@@ -27,10 +28,11 @@
  * 	VCO13700 ... ??? TODO @Nathan
  *
  *
+ *	Optimal freq range is
  */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
-//#include "tim.h"
+#include "main.h"
 #include "vco_calibration.h"
 #include "dac_board.h"
 

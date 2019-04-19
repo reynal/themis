@@ -132,7 +132,7 @@ typedef struct {
 	int hightomCounter;
 } DrumTriggers;
 
-#define 	BASS_DRUM_NOTE 36
+#define BASS_DRUM_NOTE 36
 #define RIMSHOT_NOTE 37
 #define SNARE_NOTE 38
 #define LOWTOM_NOTE 41
