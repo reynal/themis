@@ -2,7 +2,7 @@
  * vco_calibration.h
  *
  *  Created on: Jan 31, 2019
- *      Author: Morgan
+ *      Author: Morgan / Reynal
  */
 
 #ifndef __VCO_calibration_H
@@ -13,7 +13,7 @@
  */
 typedef enum {
 	CALIB_COMPLETED, // 0
-	CALIB_VCO_3340,    // 1, CEM3340 VCO
+	CALIB_VCO_3340,  // 1, CEM3340 VCO
 	CALIB_VCO_13700  // 2, LM13700 VCO
 } vcoCalib_t;
 
