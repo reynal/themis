@@ -104,7 +104,7 @@ public class MainFrame {
 		portCB = new JComboBox<String>();
 		for (SerialPort port : SerialPort.getCommPorts()) {
 			portCB.addItem(port.getSystemPortName());
-			if (currentPort == null && port.getSystemPortName().contains("usbserial")) currentPort = port;
+			if (currentPort == null && port.getSystemPortName().contains("usb")) currentPort = port;
 		}
 		if (currentPort != null) portCB.setSelectedItem(currentPort.getSystemPortName());
 		portCB.addActionListener(e -> currentPort = SerialPort.getCommPort((String)portCB.getSelectedItem()));
