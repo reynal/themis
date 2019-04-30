@@ -152,7 +152,12 @@ public class MainFrame {
 
 		currentPort.setBaudRate(currentBaudRate);
 		boolean success = currentPort.openPort();
-		printStatus("Opening " + currentPort.getSystemPortName() + " : " + (success ? "ok" : "failed"));
+		printStatus("Opening " + currentPort.getSystemPortName() 
+				+ " at " + currentPort.getBaudRate() + " bauds, " 
+				+ (currentPort.getParity()==SerialPort.NO_PARITY ? "No parity " : "Parity ")
+				+ currentPort.getNumDataBits() + " databits, "
+				+ currentPort.getNumStopBits() + " stopbits, "
+				+ " : " + (success ? "ok" : "failed"));
 		if (!success)
 			return false;
 
