@@ -7,28 +7,28 @@
  *
  * Features:
  * - the lowest note on the piano is a 27.5Hz A.
- * - C-1 	~8.18Hz		#0
+ * - C-1 		~8.18Hz		#0
  * - A-1		13.75Hz		#9
  * - A0 		27.5Hz		#21
  * - E1			~41.2Hz		#28		(bass guitar 1st string)
  * - A1 		55Hz		#33		(bass guitar 2nd string)
  * - A2 		110Hz		#45		(guitar 2nd string)
  * - A3 		220Hz		#57
- * - C4 		~261.62Hz 	#60 		(middle C)
+ * - C4 		~261.62Hz 	#60 	(middle C)
  * - A4 		440Hz 		#69		ref diapason
  * - A5			880Hz		#81
  * - A6			1760Hz		#93
  * - A7			3520Hz		#105
  * - A8			7040Hz		#117
- * - G9 		~12543Hz		#127
+ * - G9 		~12543Hz	#127
  *
  * VCO 3340 is able to produce a 17Hz a the lowest note though it can hardly heard (CV at 0mV).
  * The highest note is close to 1kHz (TODO: check exactly) (= 1562mV on the CV input, i.e, 3200 on the dac with gain=2)
  *
- * 	VCO13700 ... ??? TODO @Nathan
+ * VCO13700 ... ??? TODO @Nathan
  *
  *
- *	Optimal freq range is
+ *Optimal freq range is
  */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f7xx_hal.h"
@@ -40,24 +40,26 @@
 extern TIM_HandleTypeDef* htimCalib;
 //char VCOnumberGeneral = 0;
 int calibrationVcoCV; // VCO Control Voltage, i.e., DAC output !
-int calibrationVcoCyclesCount = -1; // we compute the vco frequency over many signal cycles and we need to count'em
+int calibrationVcoCyclesCount = -1; // we compute the vco frequency over many signal cycles and we need to count them
 int calibrationCaptureValue = 0; // stores the Capture register value
 //int voltageToPeriod[4096] = { 0 };
 double voltageToFreq[4096] = { 0. }; // debugging only
 
-double midiToFreqArray[128] = { 8.662, 9.177, 9.723, 10.301, 10.913, 11.562, 12.250, 12.978, 13.750, 14.568, 15.434, 16.352,  // #0
+double midiToFreqArray[128] =
+		{ 8.662, 9.177, 9.723, 10.301, 10.913, 11.562, 12.250, 12.978, 13.750, 14.568, 15.434, 16.352,  // #0
 		17.324, 18.354, 19.445, 20.602, 21.827, 23.125, 24.500, 25.957, 27.500, 29.135, 30.868, 32.703,  // #1
 		34.648, 36.708, 38.891, 41.203, 43.654, 46.249, 48.999, 51.913, 55.000, 58.270, 61.735, 65.406,  // #2
 		69.296, 73.416, 77.782, 82.407, 87.307, 92.499, 97.999, 103.826, 110.000, 116.541, 123.471, 130.813,  // #3
 		138.591, 146.832, 155.563, 164.814, 174.614, 184.997, 195.998, 207.652, 220.000, 233.082, 246.942, 261.626,  // #4
 		277.183, 293.665, 311.127, 329.628, 349.228, 369.994, 391.995, 415.305, 440.000, 466.164, 493.883, 523.251,  // #5
 		554.365, 587.330, 622.254, 659.255, 698.456, 739.989, 783.991, 830.609, 880.000, 932.328, 987.767, 1046.502,  // #6
-		1108.731, 1174.659, 1244.508, 1318.510, 1396.913, 1479.978, 1567.982, 1661.219, 1760.000, 1864.655, 1975.533, 2093.005, // #7
+		1108.731, 1174.659, 1244.508, 1318.510, 1396.913, 1479.978, 1567.982, 1661.219, 1760.000, 1864.655, 1975.533, 2093.005,  // #7
 		2217.461, 2349.318, 2489.016, 2637.020, 2793.826, 2959.955, 3135.963, 3322.438, 3520.000, 3729.310, 3951.066, 4186.009,  // #8
 		4434.922, 4698.636, 4978.032, 5274.041, 5587.652, 5919.911, 6271.927, 6644.875, 7040.000, 7458.620, 7902.133, 8372.018,  // #9
-		8869.844, 9397.273, 9956.063, 10548.082, 11175.303, 11839.822, 12543.854}; // #10
+		8869.844, 9397.273, 9956.063, 10548.082, 11175.303, 11839.822, 12543.854};  // #10
+// frequency associated to MIDI note number
 
-vcoCalib_t calibrationCurrentVco;
+vcoCalib_t calibrationCurrentVco; // permit to know the status of the calibration operation
 
 int maxVcoCV = 4096; // permitted CV range for each VCO
 int minVcoCV = 0;
@@ -69,6 +71,9 @@ int tmpmidiToVCO3340CV[128] = { 0 };
 
 /**
  * Launch the calibration process
+ * 
+ * First, we start the calibration process with VCO 3340.
+ * So, we set the configuration of the device and we launch the calibration process.
  */
 void launchVcoCalibration(){
 
@@ -112,7 +117,7 @@ void initMidiToFreqArray(){
 }
 
 /**
- * interrupt callback that gets triggered whenever ... TODO
+ * interrupt callback that gets triggered whenever a rising edge is detected on the current VCO calibration pin
  */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim){
   //if(htim->Instance == TIM2){ // plus rapide de faire le test htim==htimCalib
@@ -129,9 +134,15 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim){
 
 /**
  * Called by HAL_TIM_IC_CaptureCallback.
+ * 
+ * This function operates the frequency associated at each CV.
+ * First, the current channel is selected according to the current VCO calibration
+ * Then, the counter is reset
+ * At each rising edge, the function estimates the periode of the signal with the counter and then operates the associated frequency
  */
 void calibrateVcoCallbackShort() {
 
+	// Selection of the current channel to use
 	switch (calibrationCurrentVco) {
 	case CALIB_VCO_3340: // ch 1
 		calibrationCaptureValue =__HAL_TIM_GetCompare(htimCalib, TIM_CHANNEL_CALIB_VCO3340);
@@ -268,6 +279,10 @@ void calibrateVcoCallbackLong() {
 }
 
 /**
+ * Associate the index of the element from array voltageToFreq
+ * which frequency is the nearest superior of the associated frequency in tempered range
+ * to the CV of the current MIDI note
+ * 
  * @param midiToVCO13700CV or midiToVCO3340CV
  */
 void fillMidiToCVArray(int* midiToVcoCV){
@@ -282,9 +297,4 @@ void fillMidiToCVArray(int* midiToVcoCV){
 		}
 		midiToVcoCV[midiNote] = dacLevel;
 	}
-
-
-
 }
-
-
