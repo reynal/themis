@@ -7,6 +7,8 @@ import javax.swing.*;
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
+import java.util.Scanner;
+import java.util.logging.*;
 
 /**
  * The IS31FL3731 is a device (also available as an Adafruit module, see https://www.adafruit.com/product/2946) 
@@ -44,7 +46,21 @@ public class IS31FL3731 {
 	/* write to this register to select current frame register (or the Function Register, aka Page 9, which sets general parameters) */
 	private static final int COMMAND_REGISTER = 0xFD; 
 	private static final int FUNCTION_REGISTER = 0x0B;
-	protected I2CDevice i2cDevice; 
+	protected I2CDevice i2cDevice;
+	private final static Logger LOGGER = Logger.getLogger(IS31FL3731.class.getName());
+	public static final int MIN_PWM = 0;
+	public static final int MAX_PWM = 255;
+	
+	public static final int[] GAMMA_CORRECTION_32 = { // dataseeht page 17
+			0, 1, 2, 4, 6, 10, 13, 18,
+			22, 28, 33, 39, 46, 53, 61, 69,
+			78, 86, 96, 106, 116, 126, 138, 149,
+			161, 173, 186, 199, 212, 226, 240, 255
+	};
+	
+	public static final int[] GAMMA_CORRECTION_16 = {0, 2, 4, 6, 10, 13, 18, 22, 28, 33, 46, 61, 86, 116, 161, 199, 255};
+
+	// TODO : store led coordinates being used by View's (aka register led / unregister led)
 	
 	// -------------- constructors --------------
 	
@@ -55,29 +71,43 @@ public class IS31FL3731 {
 	 */
 	public IS31FL3731() throws IOException, UnsupportedBusNumberException  {
 		
+		LOGGER.setLevel(Level.INFO);
+		
 		// - init I2C bus, create device using given address
 		i2cDevice = I2CFactory.getInstance(I2CBus.BUS_1).getDevice(DeviceAddress.AD_GND.getValue());
+		LOGGER.info("I2C Bus ok");
 		
 		// - select function register
 		selectFunctionRegister();
 		
 		// - write appropriate parameter values to function register
-		setDisplayMode(DisplayMode.PICTURE_MODE, 0);
-		setDisplayedFrame(0);
-		setAutoPlayLoopingParameters(1, 1);
-		setAutoPlayFrameDelayTime(23);
-		setDisplayOptions(false, false, 0);
-		setAudioSynchronization(false);
-		setBreathControl(false, 0, 0, 0);
-		setShutdown(true);
-		setAutoGainControl(false, false, 0);
-		setAudioSampleRate(14);
+		// default setDisplayMode(DisplayMode.PICTURE_MODE, 0);
+		// default setDisplayedFrame(0);
+		// default setAutoPlayLoopingParameters(1, 1);
+		// default setAutoPlayFrameDelayTime(23);
+		// default setDisplayOptions(false, false, 0);
+		// default setAudioSynchronization(false);
+		// default setBreathControl(false, 0, 0, 0);
+		setShutdown(false); // get out of shutdown mode
+		// default setAutoGainControl(false, false, 0);
+		// default setAudioSampleRate(14);
 		
 		// - then selects default frame 1
 		
 		selectFrameRegister(0);
 		
-		
+		// switch all LEDs off and set all pwm to 0
+		LOGGER.info("Init LED state...");
+		for (int row=0; row<9; row++) {
+			// all LEDs off:
+			switchLEDRow(row, Matrix.A, 0x00); 
+			switchLEDRow(row, Matrix.B, 0x00); 
+			for (int col=0; col<8; col++) {
+				setLEDpwm(new LEDCoordinate(row, col, Matrix.A), 0);
+				setLEDpwm(new LEDCoordinate(row, col, Matrix.B), 0);
+			}
+		}
+		LOGGER.info("LED state init'd");
 	}
 	
 	
@@ -209,11 +239,13 @@ public class IS31FL3731 {
 	
 	/**
 	 * Shutdown register.
-	 * @param normal if true, sets the device to normal mode, otherwise shut it down (reduces energy)
+	 * @param enable if true, shut it down (reduces energy) otherwise (if false) sets the device to normal mode
 	 */
-	public void setShutdown(boolean normal) throws IOException {
+	public void setShutdown(boolean state) throws IOException {
 		
-		if (normal == false) {
+		LOGGER.info(state ? "Entering sw shutdown" : "Exiting sw shutdown");
+		
+		if (state == true) {
 			configure(FunctionRegister.SHUTDOWN, 0x0);
 		}
 		else {
@@ -323,6 +355,34 @@ public class IS31FL3731 {
 		
 		int reg = ledCoordinate.getPWMRegisterAdress();
 		i2cDevice.write(reg, (byte)(pwm & 0xFF));
+	}
+	
+	/**
+	 * Sets the intensity of the given LED after applying a 32-step gamma correction
+	 * @param ledCoordinate
+	 * @param pwmGammaCorrected32 0 to 31
+	 * @throws IOException
+	 */
+	public void setLEDpwmGammaCorrected32(LEDCoordinate ledCoordinate, int pwmGammaCorrected32) throws IOException {
+		
+		if (pwmGammaCorrected32 > 31) pwmGammaCorrected32=31;
+		else if (pwmGammaCorrected32<0) pwmGammaCorrected32=0;
+		
+		setLEDpwm(ledCoordinate, GAMMA_CORRECTION_32[pwmGammaCorrected32]);
+	}
+	
+	/**
+	 * Sets the intensity of the given LED after applying a 16-step gamma correction
+	 * @param ledCoordinate
+	 * @param pwmGammaCorrected16 0 to 15
+	 * @throws IOException
+	 */
+	public void setLEDpwmGammaCorrected16(LEDCoordinate ledCoordinate, int pwmGammaCorrected16) throws IOException {
+		
+		if (pwmGammaCorrected16 > 15) pwmGammaCorrected16=15;
+		else if (pwmGammaCorrected16<0) pwmGammaCorrected16=0;
+		
+		setLEDpwm(ledCoordinate, GAMMA_CORRECTION_16[pwmGammaCorrected16]);
 	}
 
 
@@ -607,10 +667,64 @@ public class IS31FL3731 {
 	
 	// -------------- test methods --------------
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, UnsupportedBusNumberException, InterruptedException {
 		
 		//testFunctionRegister();
-		new TestDevice();
+		//new TestDevice();
+		//testBasicHeadless();
+		testCalib();
+	}
+	
+	private static void testCalib() throws IOException, UnsupportedBusNumberException, InterruptedException {
+		
+		Scanner in = new Scanner(System.in);
+		LEDCoordinate ledCoord = new LEDCoordinate(0, 0, Matrix.B);
+		LEDCoordinate ledCoord2 = new LEDCoordinate(0, 2, Matrix.B);
+		
+		IS31FL3731 device = new IS31FL3731();
+		device.switchLED(ledCoord, true);
+		device.switchLED(ledCoord2, true);
+		device.setLEDpwm(ledCoord, 200);
+		
+		/*while (true) {
+			int pwm = in.nextInt();
+			device.setLEDpwm(ledCoord, pwm);			
+		}*/
+		int pwm=255;
+		while (true) {
+		for (int i = 0; i<16; i++) {
+			in.nextLine();
+			device.setLEDpwmGammaCorrected16(ledCoord, i);
+			device.setLEDpwm(ledCoord2, pwm);
+			pwm=255-pwm;
+			System.out.println(i);
+			//Thread.sleep(400);
+		}
+		}
+	}
+	
+	
+	private static void testBasicHeadless() throws IOException, UnsupportedBusNumberException, InterruptedException {
+		
+		IS31FL3731 device = new IS31FL3731();
+		
+		
+		Matrix m = Matrix.B;
+		for (int row=0; row<8; row++) {
+			device.switchLEDRow(row, m, 0xFF);
+			for (int col=0; col<8; col++) {
+				for (int pwm=0; pwm < 256; pwm+=16) {
+					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
+					System.out.print(".");
+					Thread.sleep(20);
+				}
+				for (int pwm=240; pwm >= 0; pwm-=16) {
+					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
+					System.out.print(".");
+					Thread.sleep(20);
+				}
+			}
+		}
 	}
 
 	// testing function register
@@ -699,6 +813,7 @@ public class IS31FL3731 {
 			try {
 				device = new IS31FL3731();
 			} catch (IOException | UnsupportedBusNumberException e) {
+				LOGGER.severe("Error instanciating IS31FL3731 device");
 				e.printStackTrace();
 				System.exit(0);
 			}

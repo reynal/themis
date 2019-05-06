@@ -1,10 +1,9 @@
 package device;
 
-import java.io.IOException;
-import java.util.EventListener;
-import java.util.EventObject;
+import java.io.*;
+import java.util.*;
 
-import javax.swing.event.EventListenerList;
+import javax.swing.event.*;
 
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.*;
@@ -17,7 +16,7 @@ import static device.MCP23017.Register.*;
 /**
  * A class that represents the MCP23017 GPIO expander.
  *
- * GPB0	1	MCP23017		28	GPA7
+ * GPB0	1	MCP23017	28	GPA7
  * GPB1	2				27	GPA6
  * GPB2	3				26	GPA5
  * GPB3	4				25	GPA4
@@ -27,23 +26,29 @@ import static device.MCP23017.Register.*;
  * GPB7	8				21	GPA0
  * Vdd	9				20	INTA
  * Vss	10				19	INTB
- * NC	11				18	/RESET
+ * NC	11				18	/RESET (default: connected to RPi Pin 37 = GPIO.25)
  * SCK	12				17	A2
  * SDA	13				16	A1
  * NC	14				15	A0
+ *
  * 
  * @author sydxrey
  *
  */
-public class MCP23017 implements GpioPinListenerDigital {
+public class MCP23017  {
 
 	// -------------- fields --------------
 	
 	private I2CDevice i2cDevice; 
 	private I2CBus i2cBus;
+	private GpioPinDigitalOutput mcp23017RstPin;
 	
 	/** a list of event listeners for this device */
 	protected EventListenerList listenerList;
+	
+	// TODO move elsewhere:
+	private final static com.pi4j.io.gpio.Pin DEFAULT_RST_PIN = RaspiPin.GPIO_25; // pin 37 
+	private final static com.pi4j.io.gpio.Pin DEFAULT_INT_PIN = RaspiPin.GPIO_04; // pin 16
 	
 	// -------------- constructors --------------
 	
@@ -122,14 +127,14 @@ public class MCP23017 implements GpioPinListenerDigital {
 	 * @param port
 	 * @param pin
 	 */
-	public void setOutput(Port port, Pin... pins) throws IOException {
+	public void setOutput(Pin pin) throws IOException {
 		Register reg;
-		switch (port) {
+		switch (pin.getPort()) {
 			case A : reg = Register.IODIRA; break;
 			case B : reg = Register.IODIRB; break;
 			default : return;
 		}
-		int mask = Pin.andMask(pins); // resets every output bit in initial 0xFF
+		int mask = Pin.andMask(pin); // resets every output bit in initial 0xFF
 		mask &= i2cDevice.read(reg.getAddress());
 		mask &= 0xFF;
 		i2cDevice.write(reg.getAddress(), (byte)mask); 		
@@ -153,14 +158,14 @@ public class MCP23017 implements GpioPinListenerDigital {
 	 * @param port
 	 * @param pin
 	 */
-	public void setInput(Port port, Pin... pins) throws IOException {
+	public void setInput(Pin pin) throws IOException {
 		Register reg;
-		switch (port) {
+		switch (pin.getPort()) {
 			case A : reg = Register.IODIRA; break;
 			case B : reg = Register.IODIRB; break;
 			default : return;
 		}
-		int mask = Pin.orMask(pins); // sets every input bit in initial 0x00
+		int mask = Pin.orMask(pin); // sets every input bit in initial 0x00
 		mask |= i2cDevice.read(reg.getAddress());
 		mask &= 0xFF;
 		i2cDevice.write(reg.getAddress(), (byte)mask); 		
@@ -188,11 +193,11 @@ public class MCP23017 implements GpioPinListenerDigital {
 	public void setInterruptOnChange(Port port, byte mask) throws IOException {
 		
 		switch (port) {
-			case A : i2cDevice.write(GPINTENA.getAddress(), mask); break;
-			case B : i2cDevice.write(GPINTENB.getAddress(), mask); break;
+			case A : i2cDevice.write(INTENA.getAddress(), mask); break;
+			case B : i2cDevice.write(INTENB.getAddress(), mask); break;
 		}
 		// clear interrupts:
-		readInterruptCapturedRegister(MCP23017.Port.A);
+		clearInterrupts(MCP23017.Port.A);
 	}
 
 	/**
@@ -206,12 +211,29 @@ public class MCP23017 implements GpioPinListenerDigital {
 		if (enableInterrupt) mask = (byte)0xFF;
 		else mask = (byte)0x00;
 		switch (port) {
-			case A : i2cDevice.write(GPINTENA.getAddress(), mask); break;
-			case B : i2cDevice.write(GPINTENB.getAddress(), mask); break;
+			case A : i2cDevice.write(INTENA.getAddress(), mask); break;
+			case B : i2cDevice.write(INTENB.getAddress(), mask); break;
 		}
 		// clear interrupts:
-		readInterruptCapturedRegister(MCP23017.Port.A);
+		clearInterrupts(MCP23017.Port.A);
 	}
+	
+	/**
+	 * enables the "interrupt-on-change" (GPINTEN) behavior for the given pin
+	 * @param pin
+	 */
+	public void enableInterruptOnChange(Pin pin) throws IOException {
+		Register reg;
+		switch (pin.getPort()) {
+			case A : reg = Register.INTENA; break;
+			case B : reg = Register.INTENB; break;
+			default : return;
+		}
+		int mask = pin.getMask(); 
+		mask |= i2cDevice.read(reg.getAddress());
+		mask &= 0xFF;
+		i2cDevice.write(reg.getAddress(), (byte)mask); 		
+	}	
 	
 	/**
 	 * set the default value register (DEFVAL) to be compared to the 8 inputs of the given port when "interrupt-on-change" behavior is enabled 
@@ -251,6 +273,23 @@ public class MCP23017 implements GpioPinListenerDigital {
 			case B : i2cDevice.write(GPPUB.getAddress(), mask); break;
 		}
 	}
+	
+	/**
+	 * enables a 100k pull-up resistor for the given pin
+	 * @param pin
+	 */
+	public void enablePullupResistor(Pin pin) throws IOException {
+		Register reg;
+		switch (pin.getPort()) {
+			case A : reg = Register.GPPUA; break;
+			case B : reg = Register.GPPUB; break;
+			default : return;
+		}
+		int mask = pin.getMask(); 
+		mask |= i2cDevice.read(reg.getAddress());
+		mask &= 0xFF;
+		i2cDevice.write(reg.getAddress(), (byte)mask); 		
+	}	
 	
 	/**
 	 * activate pullup resistors for all pins of the given port
@@ -296,10 +335,14 @@ public class MCP23017 implements GpioPinListenerDigital {
 	}
 	
 	/**
-	 * clear interrupt flag register
+	 * clear interrupt flag register by reading the ??? register (see datasheet p 23)
+	 * TODO : add some timeout feature
 	 */
 	public void clearInterrupts(Port port) throws IOException {
-		while(readInterruptFlagRegister(port) != 0) readInterruptCapturedRegister(port);			
+		while(readInterruptFlagRegister(port) != 0) {
+			readInterruptCapturedRegister(port);
+			//System.out.println("Clearing interrupts on port " + port);
+		}
 	}
 	
 	/** The INT pins are internally connected */
@@ -341,34 +384,34 @@ public class MCP23017 implements GpioPinListenerDigital {
 	/**
 	 * Write the given value (false=LOW or true=HIGH) to the given pin
 	 */
-	public void write(Port port, Pin pin, boolean value) throws IOException{
+	public void write(Pin pin, boolean value) throws IOException{
 
 	  int bit  = pin.getMask();
-	  int old = read(port);
+	  int old = read(pin.getPort());
 	  if (value == false)
 	    old &= (~bit) ;
 	  else
 	    old |=   bit ;
 	  old &= 0xFF; // filters out LSBs
-	  write(port, (byte)old);
+	  write(pin.getPort(), (byte)old);
 	}
 	
 	/**
 	 * Toggle the value (false=LOW or true=HIGH) of the given pin
 	 */
-	public void toggle(Port port, Pin pin) throws IOException{
+	public void toggle(Pin pin) throws IOException{
 
-	  boolean old = read(port, pin);
-	  write(port, pin, !old);
+	  boolean old = read(pin);
+	  write(pin, !old);
 	  
 	}	
 	
 	/**
-	 * Read the value of the given pin for the given port
+	 * Read the value of the given pin
 	 */
-	public boolean read(Port port, Pin pin) throws IOException{
+	public boolean read(Pin pin) throws IOException{
 
-	  return (read(port) & pin.getMask()) != 0;
+	  return (read(pin.getPort()) & pin.getMask()) != 0;
 	}
 	
 	/**
@@ -388,6 +431,35 @@ public class MCP23017 implements GpioPinListenerDigital {
 		}
 
 	}
+
+	/**
+	 * display the value of most useful registers for port A
+	 */
+	public void printRegistersBriefA() {
+		
+		try {
+			System.out.printf("\n\t" + INTFA +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTFA.getAddress())));
+			System.out.printf("\t" + GPIOA +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(GPIOA.getAddress())));
+			System.out.printf("\t" + INTCAPA +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTCAPA.getAddress())));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * display the value of most useful registers for port A
+	 */
+	public void printRegistersBriefB() {
+		
+		try {
+			System.out.printf("\n\t" + INTFB +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTFB.getAddress())));
+			System.out.printf("\t" + GPIOB +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(GPIOB.getAddress())));
+			System.out.printf("\t" + INTCAPB +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTCAPB.getAddress())));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}	
 	
 	/**
 	 * Registers the given Raspberry Pi as being the input pin connected to the INTA pin of this MCP23017 device, so that 
@@ -401,43 +473,40 @@ public class MCP23017 implements GpioPinListenerDigital {
 		final GpioPinDigitalInput mcp23017IntPin = GpioFactory.getInstance().provisionDigitalInputPin(intPin, PinPullResistance.PULL_UP);
 
 		// create and register gpio pin listener
-		mcp23017IntPin.addListener(this);
+		mcp23017IntPin.addListener(new MyGpioPinListenerDigital());
 		
 	}
 		
 	/**
-	 * Callback when either the INTA or INTB pin of this MCP23017 device has been asserted (=FALLING transition), 
-	 * which in turns means that at least one of the pins of the device (port A or B) has changed
+	 * Registers the given Raspberry Pi as being the output pin connected to the RST pin of this MCP23017 device, so that 
+	 * the RPi can reset the device
+	 * @param rstPin
 	 */
-	@Override
-	public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-
-		//System.out.println(event + " ; edge=" + event.getEdge());
-		if (event.getEdge() == PinEdge.RISING) return; // INT clear!
+	public void registerRpiPinForReset(com.pi4j.io.gpio.Pin rstPin) {
+		 
+		mcp23017RstPin = GpioFactory.getInstance().provisionDigitalOutputPin(rstPin);
+		mcp23017RstPin.high();
 		
-		try {
-			Port port = Port.A;
-			int intfRegister = readInterruptFlagRegister(Port.A); // also clears interrupt
-			int captureRegister = readInterruptCapturedRegister(Port.A); // valeurs capturées sur le Port A au moment de l'interruption
-			clearInterrupts(Port.A);
-			if (intfRegister==0) { // it's not on Port.A
-				intfRegister = readInterruptFlagRegister(Port.B); 
-				captureRegister = readInterruptCapturedRegister(Port.B);
-				clearInterrupts(Port.B);
-				port = Port.B;
-				/*if (intfRegister ==0) throw new IOException("there's a bug?");
-				else System.out.println("MCP23017 int on port B");*/
-			}		
-			//else System.out.println("MCP23017 int on port A");
-			Pin pin = Pin.getPinFromMask((byte)intfRegister);
-			if (pin == null) return; // means no PIN found! (happens when encoder turn very quickly, but why???)
-			PinState lvl =  (captureRegister & pin.getMask()) != 0 ? PinState.HIGH : PinState.LOW;
-			fireInterruptEvent(port, pin, lvl);
-			System.out.println("Int-event: port="+port + " pin="+pin+" level="+lvl);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 		
 	}
+	
+	/**
+	 * Reset this device provided a RPi pin connected to the RST pin of this device was previously registered
+	 */
+	public void reset() {
+		
+		if (mcp23017RstPin != null) {
+			mcp23017RstPin.low();
+			try {
+				Thread.sleep(1); // 1ms
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			mcp23017RstPin.high();
+		}
+		else System.err.println("[ERROR] No RPi pin registered for PCM23017 RST");
+		
+	}
+
 	
 	// -------------- private or package methods --------------
 
@@ -456,23 +525,39 @@ public class MCP23017 implements GpioPinListenerDigital {
 	}
 	
 	/**
-	 * An enumeration of pin masks (valid for both ports) for configuring registers
+	 * An enumeration of pin masks for configuring registers
 	 */
 	public static enum Pin {
 		
-		P0(0x01),
-		P1(0x02),
-		P2(0x04),
-		P3(0x08),
-		P4(0x10),
-		P5(0x20),
-		P6(0x40),
-		P7(0x80);
+		// port A
+		P0A(0x01, Port.A),
+		P1A(0x02, Port.A),
+		P2A(0x04, Port.A),
+		P3A(0x08, Port.A),
+		P4A(0x10, Port.A),
+		P5A(0x20, Port.A),
+		P6A(0x40, Port.A),
+		P7A(0x80, Port.A),
+		// port B
+		P0B(0x01, Port.B),
+		P1B(0x02, Port.B),
+		P2B(0x04, Port.B),
+		P3B(0x08, Port.B),
+		P4B(0x10, Port.B),
+		P5B(0x20, Port.B),
+		P6B(0x40, Port.B),
+		P7B(0x80, Port.B);
 		
 		private int mask; 
+		private Port port;
 		
-		Pin(int mask){
+		Pin(int mask, Port port){
 			this.mask = mask;
+			this.port = port;
+		}
+		
+		public Port getPort() {
+			return port;
 		}
 		
 		public byte getMask() {
@@ -498,11 +583,12 @@ public class MCP23017 implements GpioPinListenerDigital {
 			return (byte)m;
 		}
 		
-		// return the lowest Pin that matches the given mask
-		public static Pin getPinFromMask(byte mask) {
+		// return all the Pins that matche the given mask
+		public static List<Pin> getPinListFromMask(byte mask, Port port) {
+			ArrayList<Pin> list = new ArrayList<Pin>();
 			for (Pin pin : Pin.values())
-				if ((pin.getMask() & mask) != 0) return pin;
-			return null;
+				if ((pin.getMask() & mask) != 0 && pin.getPort()==port) list.add(pin);
+			return list;
 			
 		}
 	}
@@ -544,7 +630,7 @@ public class MCP23017 implements GpioPinListenerDigital {
 		/**  */
 		IODIRA(0x00),
 		IPOLA(0x02),
-		GPINTENA(0x04),
+		INTENA(0x04),
 		DEFVALA(0x06),
 		INTCONA(0x08),
 		IOCON(0x0A),
@@ -555,7 +641,7 @@ public class MCP23017 implements GpioPinListenerDigital {
 		OLATA(0x14),
 		IODIRB(0x01),
 		IPOLB(0x03),
-		GPINTENB(0x05),
+		INTENB(0x05),
 		DEFVALB(0x07),
 		INTCONB(0x09),
 		// IOCON(0x0B), same as 0x0A
@@ -649,20 +735,18 @@ public class MCP23017 implements GpioPinListenerDigital {
 	public class InterruptEvent extends EventObject {
 		
 		private static final long serialVersionUID = 1L;
-		private Port port;
 		private Pin pin;
 		private PinState level;
 		
-		public InterruptEvent(Port port, Pin pin, PinState level) {
+		public InterruptEvent(Pin pin, PinState level) {
 			super(MCP23017.this);
-			this.port = port;
 			this.pin = pin;
 			this.level = level;
 		}
 		
 		/** @return the port on which the change that triggered the interrupt occured */
 		public Port getPort() {
-			return port;
+			return pin.getPort();
 		}
 		
 		/** @return the pin on which the change that triggered the interrupt occured */
@@ -676,9 +760,42 @@ public class MCP23017 implements GpioPinListenerDigital {
 
 		@Override
 		public String toString() {
-			return super.toString() + " port="+port + " pin="+pin+" level="+level;
+			return super.toString() + " pin="+pin+" level="+level;
 		}
 	
+	}
+	
+	private class MyGpioPinListenerDigital implements GpioPinListenerDigital {
+
+		/**
+		 * Callback when either the INTA or INTB pin of this MCP23017 device has been asserted (=FALLING transition), 
+		 * which in turns means that at least one of the pins of the device (port A or B) has changed
+		 */
+		@Override
+		public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+
+			if (event.getEdge() == PinEdge.RISING) return; // MCP23017's INT clear!
+			//printRegistersBriefA();
+			//printRegistersBriefB();
+			
+			try {
+				for (Port port: Port.values()) {
+					int intfRegister = readInterruptFlagRegister(port);
+					if (intfRegister == 0) continue; // next port
+					int captureRegister = readInterruptCapturedRegister(port);
+					//System.out.printf("\n------------------------- Port %s -------------------------\n FLAGS: %02X \t CAPTURE: %02X\n", port.toString(), intfRegister, captureRegister);
+					System.out.printf("\n------------------------- Port %s -------------------------\n FLAGS: %8s \t CAPTURE: %8s\n", port.toString(), Integer.toBinaryString(intfRegister), Integer.toBinaryString(captureRegister));
+					clearInterrupts(port);
+					for (Pin pin : Pin.getPinListFromMask((byte)intfRegister, port)) {
+						PinState lvl =  (captureRegister & pin.getMask()) != 0 ? PinState.HIGH : PinState.LOW;
+						fireInterruptEvent(pin, lvl);
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 		
+		}		
+		
 	}
 	
 	/**
@@ -703,7 +820,7 @@ public class MCP23017 implements GpioPinListenerDigital {
 	 * is lazily created using the parameters passed into
 	 * the fire method.
 	 */
-	 protected void fireInterruptEvent(Port port, Pin pin, com.pi4j.io.gpio.PinState level) {
+	 protected void fireInterruptEvent(Pin pin, com.pi4j.io.gpio.PinState level) {
 		 
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
@@ -714,7 +831,7 @@ public class MCP23017 implements GpioPinListenerDigital {
 	     for (int i = listeners.length-2; i>=0; i-=2) {
 	         if (listeners[i]==InterruptListener.class) {
 	             // Lazily create the event:
-	             if (e == null) e = new InterruptEvent(port, pin, level);
+	             if (e == null) e = new InterruptEvent(pin, level);
 	             ((InterruptListener)listeners[i+1]).interruptOccured(e); 
 	         }
 	     }
@@ -727,55 +844,38 @@ public class MCP23017 implements GpioPinListenerDigital {
 	public static void main(String[] args) throws Exception  {
 
 
-		//for (int i : I2CFactory.getBusIds()) System.out.println(i);
+		//for (int i : I2CFactory.getBusIds()) System.gpout.println(i);
 
 		MCP23017 device = new MCP23017();
 
-		if (args.length == 0) {
-			device.printRegisters();
-			device.close();
-			System.exit(0);
-		}
-
+		device.registerRpiPinForReset(RaspiPin.GPIO_25);
+		device.reset();
+		device.printRegisters();
 		
-		device.setInput(MCP23017.Port.A);
-		device.setPullupResistors(MCP23017.Port.A, true);
+		device.enableIntPinsMirror();
+		device.setInput(Port.A);
+		device.setInput(Port.B);
+		device.setPullupResistors(Port.A, true);
+		device.setPullupResistors(Port.B, true);
 		device.setInterruptOnChange(Port.A, true);
-		device.registerRpiPinForInterrupt(RaspiPin.GPIO_27);
-		device.addInterruptListener(e -> System.out.println("mylistener -> " + e));
-				
+		device.setInterruptOnChange(Port.B, true);
+		device.registerRpiPinForInterrupt(RaspiPin.GPIO_04);
+		device.addInterruptListener(e -> System.out.println(e));
+		device.clearInterrupts(Port.A);
+		device.clearInterrupts(Port.B);
 		device.printRegisters();
 
-		//System.out.println("IODIRA_REGISTER="+device.read(IODIRA_REGISTER));
-
-		//device.write(IODIRB_REGISTER, (byte) 0x00);
-
-		//System.out.println("IOCON REG="+device.read(IOCON_REGISTER)); 
-
-
-		//device.write(GPPUA_REGISTER, (byte)0xFF); // Port A pull up enabled (le bouton doit connecter le port a la masse)
-		//System.out.println("GPPUA_REGISTER="+device.read(GPPUA_REGISTER)); 
-
-		//device.write(GPINTENA_REGISTER,	0xFF); // Port A : enables GPIO input pin for interrupt-on-change
-		//System.out.println("MCP23017: port A en input + pull-up + interrupt enabled (encoders sur 0/1 + 2/3 + 4/5 + 6/7)\n");
-
-		//System.out.println("GPIOA REG=" + device.read(GPIOA_REGISTER)); 
-
-		//device.write(MCP23017.Port.A, (byte)0xFF);
-
-
-		int counter=0; 
-		while(counter<10){
-				//device.toggle(Port.A, Pin.P7);
-				System.out.println(counter++);
-				Thread.sleep(1000);
+		int i=0;
+		while ((i++)<100) {
+			//System.out.printf("INTFA: %02X \t GPIOA: %02X\n", device.readInterruptFlagRegister(Port.A), device.read(Port.A)); //, device.read(Port.B));
+			//System.out.printf("A: %02X \t B: %02X\n", device.read(Port.A), device.read(Port.B));
+			//System.out.print(i+" ");
+			System.out.print(".");
+			//device.printRegistersBriefA();
+			//device.printRegistersBriefB();
+			Thread.sleep(1000);
 		}
-			 
+		System.out.println("closing device");
 		device.close();
-
-
-
 	}
-	
-	
 }

@@ -103,6 +103,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 	@Override
 	public void setValueAsMIDICode(int v) {
 		value = v/127.0 * (max-min) + min;		
+		fireSynthParameterEditEvent();
 	}
 
 	

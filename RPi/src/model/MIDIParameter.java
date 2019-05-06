@@ -64,7 +64,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 	@Override
 	public void setValueAsMIDICode(int v) {
 		value = v;
-		
+		fireSynthParameterEditEvent();
 	}
 	
 	// -------------------------------

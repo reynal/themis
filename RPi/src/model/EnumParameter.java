@@ -97,7 +97,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 	public void setValueAsMIDICode(int v) {
 		v = v % getSize();
 		value = clazz.getEnumConstants()[v];
-		
+		fireSynthParameterEditEvent();
 	}
 	
 	// ------------------ test ------

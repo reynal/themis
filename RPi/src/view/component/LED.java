@@ -1,7 +1,14 @@
 package view.component;
 
 import java.awt.*;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.*;
+
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
+
 import device.IS31FL3731;
 import model.*;
 import model.event.*;
@@ -23,6 +30,7 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	public final int LED_COUNT = 8;
 	private JLabel lblForUISimulator;
 	private IS31FL3731.LEDCoordinate ledCoordinate;
+	private final static Logger LOGGER = Logger.getLogger(LED.class.getName());
 
 	// ------------- CONSTRUCTORS ---------------
 
@@ -30,11 +38,17 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	 * Creates a view associated based on the given led
 	 * @param is31fl3731 hardware device this view is based upon
 	 * @param ledCoordinate coordinate of the led in the IS31FL3731 matrix coordinate system 
+	 * @throws IOException 
 	 */
-	public LED(IS31FL3731 is31fl3731, IS31FL3731.LEDCoordinate ledCoordinate) {
+	public LED(IS31FL3731 is31fl3731, IS31FL3731.LEDCoordinate ledCoordinate) throws IOException {
 
 		super(is31fl3731);
+		LOGGER.setLevel(Level.INFO);		
 		this.ledCoordinate = ledCoordinate;
+		// make sure LED is on but not lit
+		is31fl3731.switchLED(ledCoordinate, true);
+		is31fl3731.setLEDpwm(ledCoordinate, 0);
+		LOGGER.info("LED init ok");
 	}
 
 
@@ -42,9 +56,13 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	 * Switch this LED on or off (i.e. no PWM)
 	 */
 	public void setValue(boolean v) {
-
+		
 		if (is31fl3731 != null) {
-			// TODO (lucien)
+			try {
+				is31fl3731.setLEDpwm(ledCoordinate, v ? IS31FL3731.MAX_PWM : IS31FL3731.MIN_PWM);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (lblForUISimulator != null) 
@@ -60,7 +78,11 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 		midiValue &= 0x7F; // make sure it's 7 bit wide
 
 		if (is31fl3731 != null) {
-			// TODO (lucien)
+			try {
+				is31fl3731.setLEDpwm(ledCoordinate, 2 * midiValue);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if (lblForUISimulator != null) 
@@ -81,25 +103,6 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 		else setValue(source.getValueAsMIDICode());
 	}	
 
-
-	// Binary way to turn on LEDs
-	/*
-	private void updateBargraphBinary(int row, int val, int col) throws IOException, InterruptedException, UnsupportedBusNumberException {
-
-		val = val | 7;
-		if (col == 1) {
-			val = val + this.LED_MAX_VALUE;
-		}
-		int i;
-		for (i = this.LED_MIN_VALUE; i < val; i++) {
-			//is31fl3731.switchLED(row, i, HIGH); TODO lucien
-			Thread.sleep(50);
-		}
-		for (i = val; i < this.LED_MAX_VALUE; i++) {
-			// is31fl3731.switchLED(row, i, LOW); TODO lucien
-			Thread.sleep(50);
-		}
-	}*/
 
 	// --------------------- UI ----------------------
 
@@ -128,11 +131,36 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	public static void main(String args[]) throws Exception {
 
 		//test1();
-		test2();
+		//test2();
+		testHeadless();
 	}
 
-	// basic test
-	private static void test1() {
+	// basic headless test
+	private static void testHeadless() throws IOException, UnsupportedBusNumberException, InterruptedException {
+		
+		IS31FL3731 is31fl3731 = new IS31FL3731();
+		LED led = new LED(is31fl3731, new IS31FL3731.LEDCoordinate(0,0, IS31FL3731.Matrix.B));
+		
+		// testing on/off behavior: (aka BooleanParameter)
+		for (int i=0; i<10; i++) {
+			led.setValue(false);
+			Thread.sleep(100);
+			led.setValue(true);
+			Thread.sleep(100);
+		}
+		
+		// testing
+		for (int i=0; i<128; i++) {
+			led.setValue(i);
+			System.out.print(".");
+			Thread.sleep(100);
+		}
+		led.setValue(0);
+	}
+	
+	
+	// basic test for UI simulator
+	private static void test1() throws IOException {
 
 		LED led = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
 		JFrame f = new JFrame("LED test");
@@ -151,7 +179,7 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	}
 
 	// test with Vco3340 model
-	private static void test2() {
+	private static void test2() throws IOException {
 
 		Vco3340 vco3340 = new Vco3340();		
 		LED led1 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));

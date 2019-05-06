@@ -2,7 +2,13 @@ package view.component;
 
 import java.awt.*;
 import java.io.*;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.*;
+
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 
 import device.*;
 import model.*;
@@ -23,71 +29,96 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 
 	// --------------------- fields ---------------------
 
-	public final int LED_COUNT = 8;
-	private IS31FL3731.LEDCoordinate[] ledArray; // array of every led comprised in this BarGraph
-	int colStart, colEnd;
+	private IS31FL3731.LEDCoordinate[] ledArray; // array containing every LED that makes up this BarGraph
 	private JLabel lblForUISimulator;
+	private final static Logger LOGGER = Logger.getLogger(BarGraph.class.getName());
+	static { LOGGER.setLevel(Level.INFO); }
+
 
 	// ------------- CONSTRUCTORS ---------------
 
 	/**
-	 * Creates a BarGraph based on the given LEDs
+	 * Creates a BarGraph based on LEDs
 	 * @param is31fl3731 the hardware device (or null if only the simulator mode is needed)
-	 * @param matrix either A or B, see IS31FL3731 datasheet
-	 * @param row from 0 to 9, see device datasheet
-	 * @param colStart the first column hosting a led, b/w 0 and 7
-	 * @param colEnd the last column hosting a led, b/w 0 and 7
+	 * @param ledArray an array of LEDs (array is copied so that original may be modified with no consequence)
 	 */
-	public BarGraph(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix, int row, int colStart, int colEnd) throws IOException {
+	public BarGraph(IS31FL3731 is31fl3731, IS31FL3731.LEDCoordinate[] ledArray) throws IOException {
+
+		super(is31fl3731);
+		this.ledArray = new IS31FL3731.LEDCoordinate[ledArray.length];
+		System.arraycopy(ledArray, 0, this.ledArray, 0, ledArray.length);		
+		initIS31FL3731();
+	}
+		
+	/**
+	 * Creates a BarGraph based on a full row of LEDs of the IS31FL3731 device
+	 * @param is31fl3731 the hardware device (or null if only the simulator mode is needed)
+	 * @param row row index from 0 to 8
+	 * @param matrix A or B
+	 */
+	public BarGraph(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix, int row) throws IOException {
 
 		super(is31fl3731);
 		
-		// check params against device constraints:
-		if (colStart < 0 || colStart >= LED_COUNT || colStart > colEnd || colEnd < 0 || colEnd >= LED_COUNT)
-			throw new IllegalArgumentException("Illegal interval values for colStart and colEnd:" + colStart + " -> " + colEnd);
-		if (colStart == colEnd) // make sure we've at least two leds
-			throw new IllegalArgumentException("colStart = colEnd ! Use class LED instead in this case");
-		
-		this.colStart = colStart;
-		this.colEnd = colEnd;		
-		ledArray = new IS31FL3731.LEDCoordinate[colEnd-colStart+1];
-		for (int col=colStart; col<=colEnd; col++) {
-			ledArray[col-colStart] =  new IS31FL3731.LEDCoordinate(row, col, matrix);
-		}
-		if (is31fl3731 != null) is31fl3731.switchLEDRow(row, matrix, 0xFF); // switch on all LEDs for this row
+		this.ledArray = new IS31FL3731.LEDCoordinate[8];
+		for (int col = 0; col < this.ledArray.length; col++) this.ledArray[col] = new IS31FL3731.LEDCoordinate(row, col, matrix);
+		initIS31FL3731();
+	}
 
+	/**
+	 * Creates a BarGraph based on a partial row of LEDs of the IS31FL3731 device
+	 * @param is31fl3731 the hardware device (or null if only the simulator mode is needed)
+	 * @param row row index from 0 to 8
+	 * @param matrix A or B
+	 * @param colStart column index of first LED
+	 * @param ledCount number of leds
+	 */
+	public BarGraph(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix, int row, int colStart, int ledCount) throws IOException {
+
+		super(is31fl3731);
+		
+		this.ledArray = new IS31FL3731.LEDCoordinate[ledCount];
+		for (int i = 0; i < this.ledArray.length; i++) this.ledArray[i] = new IS31FL3731.LEDCoordinate(row, colStart+i, matrix);
+		initIS31FL3731();
 	}
 	
-	/**
-	 * Creates a BarGraph based on an entire row of the given matrix. Aka BarGraph.
-	 */
-	public BarGraph(IS31FL3731 is31fl3731, IS31FL3731.Matrix matrix, int row) throws IOException {
+	
+	private void initIS31FL3731() throws IOException {
 		
-		this(is31fl3731, matrix, row, 0, 7);
-		
+		if (is31fl3731 != null) {
+			for (IS31FL3731.LEDCoordinate ledCoordinate : ledArray) {
+				is31fl3731.switchLED(ledCoordinate, true); // switch on all LEDs for this bargraph
+				is31fl3731.setLEDpwm(ledCoordinate, 0); // but keep 'em at 0%
+			}
+		}
 	}
 	
 	/**
 	 * @return the number of LEDs in the group
 	 */
 	public int getLEDCount() {
-		return colEnd - colStart + 1;
+		return this.ledArray.length;
 	}
 
 	/**
-	 * For primary use by EnumParameter: switch on led number "i" (and only that one)
+	 * Primarily for use by EnumParameter: switch on led number "i" (and only that one)
 	 * @param led led number, from 0 to LED count - 1
 	 */
 	public void switchLed(int led) {
 
 		// check argument:
-		if (led > colEnd - colStart) led = colEnd - colStart;
+		if (led >= getLEDCount()) led = getLEDCount()-1;
 		else if (led<0) led=0;
 		
 		// hardware:
 		if (is31fl3731 != null) {
-			// TODO (lucien)
-			// switch led number (colStart + i)
+			try {
+				for (IS31FL3731.LEDCoordinate ledCoordinate : ledArray) is31fl3731.setLEDpwm(ledCoordinate, 0);
+				is31fl3731.setLEDpwm(ledArray[led], IS31FL3731.MAX_PWM); // TODO : animate!
+			} catch (IOException e) {
+				LOGGER.severe("Hardware error");
+				e.printStackTrace();
+			}
 		}
 
 		// simulator:
@@ -105,25 +136,18 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 
 		if (is31fl3731 != null) {
 			
-			// TODO @lucien so far your code is based on 8 leds => should be versatile enough to work with any number of leds!
-
 			midiValue &= MIDI_MAX_VALUE; // make sure it's b/w 0 and 127
-			int fullLeds = (midiValue+1) >> 4; // number of leds at 100% (always .le. than 8)
-			if (fullLeds > getLEDCount()) fullLeds = getLEDCount();
+			int fullLeds = (midiValue+1) * getLEDCount() / (MIDI_MAX_VALUE+1); // number of leds at 100% 			
 
-			// following display code is inspired from Lucien's initial code but would need extensive testing 
-			// to check if this kind of display is really efficient in actual concert situation
 
-			// first we light up the first leds at 100% 
-			for (int led=0; led < fullLeds; led++)
-				is31fl3731.setLEDpwm(ledArray[led], 255);
-
-			// then the remaining leds are lit up according to exp(-n/N)
-			double pwm = 255;
-			double a = Math.exp(-10.0/(midiValue+0.1)); // directly depends on val
-			for (int led=fullLeds; led < getLEDCount(); led++){
-				pwm *= a;
-				is31fl3731.setLEDpwm(ledArray[led], (byte)pwm);
+			// first we light up the first leds at 100%
+			for (int led=0; led < getLEDCount(); led++) {
+				if (led < fullLeds) 
+					is31fl3731.setLEDpwm(ledArray[led], IS31FL3731.MAX_PWM);
+				else  if (led == fullLeds)
+					is31fl3731.setLEDpwmGammaCorrected16(ledArray[led], (midiValue + 1) % ((MIDI_MAX_VALUE+1) / getLEDCount()));
+				else
+					is31fl3731.setLEDpwm(ledArray[led], IS31FL3731.MIN_PWM);
 			}
 		}
 		
@@ -190,7 +214,28 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 
 		//test1();
 		test2();		
+		//testHeadless();
 	}			
+	
+	// basic headless test
+	private static void testHeadless() throws IOException, UnsupportedBusNumberException, InterruptedException {
+		
+		Scanner in = new Scanner(System.in);
+		
+		IS31FL3731 is31fl3731 = new IS31FL3731();
+		BarGraph bg = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0);
+		
+		// test switchLed()
+		//bg.switchLed(3);
+		while(true) {
+		for (int i=0; i<128; i++) {
+			bg.setValue(i);
+			System.out.println(i);
+			//in.nextLine();
+			Thread.sleep(50);
+		}
+		}
+	}
 	
 	// basic test
 	private static void test1() throws IOException {
@@ -222,14 +267,16 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 	}	
 
 	// test with Vco3340 model
-	private static void test2() throws IOException {
+	private static void test2() throws IOException, UnsupportedBusNumberException {
+		
+		IS31FL3731 is31fl3731 = new IS31FL3731();
 
 		Vco3340 vco3340 = new Vco3340();		
 		
-		BarGraph bar1 = new BarGraph(null, IS31FL3731.Matrix.A, 0);
-		vco3340.getDetuneParameter().addSynthParameterEditListener(bar1);
+		BarGraph bar1 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0); // row=0
+		vco3340.getDutyParameter().addSynthParameterEditListener(bar1);
 		
-		BarGraph bar2 = new BarGraph(null, IS31FL3731.Matrix.A, 0, 4, 7);
+		BarGraph bar2 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 6, 0, 4); // row=6 lower
 		vco3340.getOctaveParameter().addSynthParameterEditListener(bar2);
 
 		JFrame f = new JFrame("BarGraph test");
@@ -239,9 +286,9 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		
 		f.add(new JLabel("Duty cycle:"));
 		JSlider s;
-		f.add(s=new JSlider(-64, 63));
+		f.add(s=new JSlider(0, 127));
 		f.add(bar1.getUIForSimulator());
-		s.addChangeListener(e -> vco3340.setDetune(((JSlider)e.getSource()).getValue()));
+		s.addChangeListener(e -> vco3340.getDutyParameter().setValueAsMIDICode(((JSlider)e.getSource()).getValue()));
 		
 		f.add(new JLabel("Octave:"));
 		f.add(s=new JSlider(0, 3));

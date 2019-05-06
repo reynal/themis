@@ -57,7 +57,7 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 	public void setValueAsMIDICode(int v) {
 		if (v < 64) value = false;
 		else value = true;
-		
+		fireSynthParameterEditEvent();
 	}
 
 }
