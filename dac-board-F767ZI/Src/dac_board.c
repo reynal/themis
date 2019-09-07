@@ -74,6 +74,7 @@
 #include "adsr.h"
 //#include "stdlib.h
 #include "vco_calibration.h"
+#include "main.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -550,19 +551,19 @@ void testDacSelect(){
 void testDacWriteSPI(){
 
 	int word12bits;
-	int dac;
+	int dac=0;
 	while(1){
 		//dac4822ABWrite(word12bits, 3, MCP4822_CHANNEL_B);
 		//dacWrite(word12bits, DAC_VCO_3340_FREQ);
 		//dacWrite(word12bits, DAC_VCO_13700);
 		for(word12bits=0; word12bits < 4096; word12bits+=16){
-			//for(dac=0; dac < 8; dac++){
+			for(dac=0; dac < 8; dac++){
 				//dacWrite(word12bits, DAC_VCO_3340_FREQ);
 				dac4822ABWrite(word12bits, dac, MCP4822_CHANNEL_A);
 				HAL_Delay(1);
 				dac4822ABWrite(word12bits, dac, MCP4822_CHANNEL_B);
 				HAL_Delay(1);
-			//}
+			}
 		}
 		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
 	}

@@ -127,8 +127,8 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 #define LS138_A2_Pin GPIO_PIN_11
 #define LS138_A2_GPIO_Port GPIOC
-#define TRI_3340D0_Pin GPIO_PIN_0
-#define TRI_3340D0_GPIO_Port GPIOD
+#define SAW_3340_Pin GPIO_PIN_0
+#define SAW_3340_GPIO_Port GPIOD
 #define DRUM_SNARE_Pin GPIO_PIN_1
 #define DRUM_SNARE_GPIO_Port GPIOD
 #define SYNC_3340_Pin GPIO_PIN_2

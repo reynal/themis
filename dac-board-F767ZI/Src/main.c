@@ -27,6 +27,7 @@
 #include "midi.h"
 #include "adsr.h"
 #include "vco_calibration.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -67,6 +68,14 @@ SPI_HandleTypeDef* hspiMidi;
 TIM_HandleTypeDef* htimEnveloppes;
 TIM_HandleTypeDef* htimCalib;
 
+UART_HandleTypeDef* huartMidi;
+UART_HandleTypeDef* huartSTlink;
+
+uint8_t txUartSTlinkBuff[10] = {65,66,67,68,69,70,71,72,73,'\n'};
+uint8_t rxUartSTlinkBuff[1];
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -82,8 +91,6 @@ static void MX_UART5_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-void testDacSelect(void);
-void testDacWriteSPI(void);
 
 /* USER CODE END PFP */
 
@@ -105,6 +112,9 @@ int main(void)
 	hspiMidi = &hspi3;
 	htimEnveloppes = &htim1;
 	htimCalib = &htim2;
+	huartMidi = &huart5;  // 31250 bauds
+	huartSTlink = &huart3; // 115200 bauds
+
 
   /* USER CODE END 1 */
 
@@ -157,6 +167,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+  int i=0;
+
   while (1){
 
     /* USER CODE END WHILE */
@@ -165,10 +177,16 @@ int main(void)
 
 
 	  //testDacSelect();
-	  testDacWriteSPI();
+	  //testDacWriteSPI();
 
-	  //HAL_Delay(200); // 200ms
-	  //HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+	  HAL_Delay(500); // 200ms
+	  HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+
+
+	  //HAL_UART_Transmit(huartSTlink, txUartSTlinkBuff, 10, 100);
+	  printf("hello : %d\n", i++);
+
+	  //HAL_GPIO_TogglePin(VCF_4THORDER_GPIO_Port, VCF_4THORDER_Pin);
 
 	  //setMidiCCParam(VCF_ORDER, value);
 
@@ -180,6 +198,7 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
+
 
 /**
   * @brief System Clock Configuration
@@ -197,10 +216,11 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 216;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
@@ -230,9 +250,9 @@ void SystemClock_Config(void)
   }
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART3|RCC_PERIPHCLK_UART5
                               |RCC_PERIPHCLK_I2C1;
-  PeriphClkInitStruct.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.Uart5ClockSelection = RCC_UART5CLKSOURCE_PCLK1;
-  PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+  PeriphClkInitStruct.Usart3ClockSelection = RCC_USART3CLKSOURCE_HSI;
+  PeriphClkInitStruct.Uart5ClockSelection = RCC_UART5CLKSOURCE_HSI;
+  PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -276,7 +296,7 @@ static void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x20404768;
+  hi2c1.Init.Timing = 0x00303D5B;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -510,7 +530,7 @@ static void MX_UART5_Init(void)
 
   /* USER CODE END UART5_Init 1 */
   huart5.Instance = UART5;
-  huart5.Init.BaudRate = 115200;
+  huart5.Init.BaudRate = 31250;
   huart5.Init.WordLength = UART_WORDLENGTH_8B;
   huart5.Init.StopBits = UART_STOPBITS_1;
   huart5.Init.Parity = UART_PARITY_NONE;
@@ -545,7 +565,7 @@ static void MX_USART3_UART_Init(void)
 
   /* USER CODE END USART3_Init 1 */
   huart3.Instance = USART3;
-  huart3.Init.BaudRate = 31250;
+  huart3.Init.BaudRate = 115200;
   huart3.Init.WordLength = UART_WORDLENGTH_8B;
   huart3.Init.StopBits = UART_STOPBITS_1;
   huart3.Init.Parity = UART_PARITY_NONE;
@@ -600,7 +620,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, LS138_A0_Pin|LS138_A1_Pin|LS138_A2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, TRI_3340D0_Pin|DRUM_SNARE_Pin|SYNC_3340_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, SAW_3340_Pin|DRUM_SNARE_Pin|SYNC_3340_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : VCF_4THORDER_Pin VCF_2NDORDER_Pin DRUM_KICK_Pin TRI_3340_Pin 
                            PULSE_3340_Pin */
@@ -702,8 +722,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USB_VBUS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TRI_3340D0_Pin DRUM_SNARE_Pin SYNC_3340_Pin */
-  GPIO_InitStruct.Pin = TRI_3340D0_Pin|DRUM_SNARE_Pin|SYNC_3340_Pin;
+  /*Configure GPIO pins : SAW_3340_Pin DRUM_SNARE_Pin SYNC_3340_Pin */
+  GPIO_InitStruct.Pin = SAW_3340_Pin|DRUM_SNARE_Pin|SYNC_3340_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -727,6 +747,14 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+// our own implementation of putchar used by printf, so that printf is forwarded to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the host station)
+int __io_putchar(int ch){
+
+	HAL_UART_Transmit(huartSTlink, (uint8_t *)&ch, 1, 0xFFFF); // beware blocking call!
+	return ch;
+}
+
 
 /* USER CODE END 4 */
 
