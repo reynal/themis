@@ -98,7 +98,8 @@ typedef enum {
 	VCA_SUSTAIN,
 	VCA_RELEASE,
 
-	// Ajouter autres param�tres � la suite et modifier adsr_param_setter()
+	CALIBRATE // send a non zero data to trigger a recalibration
+
 } MidiCCParam;
 
 /* Private function prototypes -----------------------------------------------*/

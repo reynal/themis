@@ -26,7 +26,7 @@
  *
  *
  * ----------------- 3320 vcf ----------------
- * V3320 : 60mV/decade => de 20Hz à 2kHz = 120mV ; we have a 0.1 attenuator between the DAC and the V3320 CV input => 1.2V.
+ * V3320 : 60mV/decade => from 20Hz to 2kHz = 120mV ; we have a 0.1 attenuator between the DAC and the V3320 CV input => 1.2V.
  *         Hence with 2V range at the DAC output, we can sweep frequency over a bit more than 3 decades!
  *         Finally, since there's an exp converter inside the 3320, kbd_tracking reduces to simply translating the input voltage!
  *
@@ -59,12 +59,6 @@
  *
  *   Note : tmp_velocity_mul_factor is defined like for the VCA env.
  *
- *
- * TASK LIST :
- * - enveloppes lineaires : DONE
- * - cabler le bus SPI3
- * - cabler le MIDI UART pour le debugage du MIDI
- * - calibrage : DONE (last item : faire un tableau propre et la rentrer le tableau de calib a la main)
  */
 
 #include "stm32f7xx_hal.h"
@@ -75,6 +69,7 @@
 //#include "stdlib.h
 #include "vco_calibration.h"
 #include "main.h"
+#include "stdio.h"
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -90,7 +85,7 @@ uint16_t waveTable[WAVE_TABLE_LEN];
 // ------------- for debugging purpose ---------
 int blueButtonFlag = 1; //
 int testCounter=0; // pour int EXTI
-int demoMode=1; // active if 1
+int demoMode=0; // active if 1
 int demoCounter=0; // time counter
 #define DEMO_NOTES_LEN 4
 int demoNotes[] = {36, 48, 36, 48}; // de 36 a 71
@@ -101,14 +96,14 @@ int demoNoteCounter = 0;
 int adsrInterruptCounter=0;
 
 AdsrParams vcaAdsr = {
-		.attackTimeMs = DEF_ATTACK_TIME,
-		.decayTimeMs = DEF_DECAY_TIME,
-		.releaseTimeMs = DEF_RELEASE_TIME,
-		.sustainLevel = DEF_SUSTAIN_LVL
+		.attackTimeMs = MAX_ATTACK_TIME_VCA * DEF_MIDICC_ATTACK_TIME_VCA / 127.0,
+		.decayTimeMs = MAX_DECAY_TIME_VCA * DEF_MIDICC_DECAY_TIME_VCA / 127.0,
+		.releaseTimeMs = MAX_RELEASE_TIME_VCA * DEF_MIDICC_RELEASE_TIME_VCA / 127.0,
+		.sustainLevel = MAX_SUSTAIN_LVL_VCA * DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0,
 };
 StateMachineVca stateMachineVca = {
 		//.t = 0,
-		.velocitySensitivity = DEF_VELOCITY_SENSITIVITY_VCA,
+		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCA / 127.0,
 		//.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_ATTACK_TIME),
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_DECAY_TIME),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_RELEASE_TIME),
@@ -116,25 +111,29 @@ StateMachineVca stateMachineVca = {
 		.adsrParam = &vcaAdsr
 };
 AdsrParams vcfAdsr = {
-		.attackTimeMs = DEF_ATTACK_TIME_VCF,
-		.decayTimeMs = DEF_DECAY_TIME_VCF,
-		.releaseTimeMs = DEF_RELEASE_TIME_VCF,
-		.sustainLevel = DEF_SUSTAIN_LVL_VCF
+		.attackTimeMs = MAX_ATTACK_TIME_VCF * DEF_MIDICC_ATTACK_TIME_VCF / 127.0,
+		.decayTimeMs = MAX_DECAY_TIME_VCF * DEF_MIDICC_DECAY_TIME_VCF / 127.0,
+		.releaseTimeMs = MAX_RELEASE_TIME_VCF * DEF_MIDICC_RELEASE_TIME_VCF / 127.0,
+		.sustainLevel = MAX_SUSTAIN_LVL_VCF * DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0,
 };
 StateMachineVcf stateMachineVcf = {
 		.t = 0,
 		.tMax=0,
-		.velocitySensitivity = DEF_VELOCITY_SENSITIVITY_VCF,
-		.kbdTracking = DEF_KBD_TRACKING,
-		.envAmount = DEF_ENV_AMOUNT,
+		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCF / 127.0,
+		.kbdTracking = MAX_KBD_TRACKING_VCF * DEF_MIDICC_KBD_TRACKING_VCF / 127.0,
+		.envAmount = MAX_ENV_AMOUNT_VCF * DEF_MIDICC_ENV_AMOUNT_VCF / 127.0,
 		//.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.attackTimeMs),
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.decayTimeMs),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.releaseTimeMs),
 		.machineState=IDLE,
 		.adsrParam = &vcfAdsr
 };
-GlobalSynthParams globalParams = { .vcfCutoff = DEF_CUTOFF, .vcfResonance=DEF_RESONANCE };
+GlobalSynthParams globalParams = {
+		.vcfCutoff = MAX_CUTOFF * DEF_MIDICC_CUTOFF / 127.0,
+		.vcfResonance=MAX_RESONANCE * DEF_MIDICC_RESONANCE / 127.0
+};
 
+// converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam
 MidiCCParam midiccCodeToParams[128] = {
 		UNUSED_CC, 		// 0
 		UNUSED_CC, 		// 1
@@ -263,7 +262,7 @@ MidiCCParam midiccCodeToParams[128] = {
 		UNUSED_CC, 		// 124
 		UNUSED_CC, 		// 125
 		UNUSED_CC, 		// 126
-		UNUSED_CC 		// 127
+		CALIBRATE, 		// 127
 };
 
 
@@ -280,22 +279,26 @@ MidiNote midiNote = { .note = 60, .velocity = 100}; // saves the note inside the
 // uint8_t midi_byte1, midi_byte2, midi_byte3; // tmp vars for midi state-machine
 
 /* External variables --------------------------------------------------------*/
-extern TIM_HandleTypeDef* htimEnveloppes;
-extern SPI_HandleTypeDef* hspiDacs;
-// extern SPI_HandleTypeDef* hspiMidi;
-//extern int* midiToVCO13700CV;
-//extern int* midiToVCO3340CV;
-int midiToVCO3340CV[128] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-11
+
+extern UART_HandleTypeDef *huartSTlink;
+extern uint8_t rxUartSTlinkBuff[3];
+extern TIM_HandleTypeDef *htimEnveloppes, *htimCalib;
+extern SPI_HandleTypeDef *hspiDacs;
+
+// an array that maps a MIDI note to a DAC value for the VCO DAC (from 0 to 4095): e.g. note 36 maps to 442
+// this array is normally filled by the calibration process!
+int midiToVCO3340CV[128] = {
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-11
 		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 12-23
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 24-35
-		 442, 483, 525, 570, 612, 657, 701, 745, 787, 833, 874, 918, // 36-47
-		 961, 1003, 1048, 1091, 1134, 1179, 1222, 1265, 1311, 1357, 1396, 1441, // 48-59
-		 1486, 1530, 1575, 1613, 1658, 1703, 1746, 1792, 1838, 1881, 1917, 1963, // 60-71
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 72-83
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 84-95
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 96-107
-		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 108-119
-		 0, 0, 0, 0, 0, 0, 0, 0};
+		 0, 6, 64, 119, 176, 232, 288, 344, 399, 455, 508, 565,	 // 24-35
+		 621, 678, 735, 791, 848, 903, 960, 1014, 1072, 1127, 1184, 1240,	// 36-47
+		 1297, 1355, 1410, 1468, 1523, 1580, 1636, 1692, 1748, 1805, 1861, 1917, // 48-59
+		 1975, 2030, 2087, 2143, 2199, 2255, 2312, 2368, 2426, 2483, 2539, 2594, // 60-71
+		 2650, 2707, 2762, 2819, 2875, 2933, 2988, 3045, 3101, 3157, 3213, 3269, // 72-83
+		 3327, 3382, 3440, 3496, 3551, 3607, 3662, 3719, 3774, 3832, 3888, 3945, // 84-95
+		 4001, 4057, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, // 96-107
+		 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095, // 108-119
+		 4095, 4095, 4095, 4095, 4095, 4095, 4095, 4095};
 
 
 int midiToVCO13700CV[128] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0-11
@@ -458,26 +461,26 @@ void dacWrite(int word12bits, Dac targetDac){
 			break;
 
 		case DAC_VCO_3340_PWM_DUTY :
-			dac4822ABWrite(word12bits, 3, MCP4822_CHANNEL_B);
+			dac4822ABWrite(word12bits, 3, MCP4822_CHANNEL_B_GAIN2);
 			break;
 
 		case DAC_V2140D_SH_LVL:
-		case DAC_V2140D_IN7 :
+		case DAC_V2140D_IN7 : // GAIN3_B sur schema EAGLE
 			dac4822ABWrite(word12bits, 4, MCP4822_CHANNEL_A);
 			break;
 
 		case DAC_V2140D_VCA :
-		case DAC_V2140D_IN8:
+		case DAC_V2140D_IN8:  // GAIN4_B sur schema EAGLE
 			dac4822ABWrite(word12bits, 4, MCP4822_CHANNEL_B);
 			break;
 
 		case DAC_V2140D_FM_LVL:
-		case DAC_V2140D_IN5 :
+		case DAC_V2140D_IN5 : // GAIN1_B sur schema EAGLE
 			dac4822ABWrite(word12bits, 5, MCP4822_CHANNEL_A);
 			break;
 
 		case DAC_V2140D_RINGMOD_LVL:
-		case DAC_V2140D_IN6 :
+		case DAC_V2140D_IN6 : // GAIN2_B sur schema EAGLE
 			dac4822ABWrite(word12bits, 5, MCP4822_CHANNEL_B);
 			break;
 
@@ -552,6 +555,7 @@ void testDacWriteSPI(){
 
 	int word12bits;
 	int dac=0;
+	int i=0;
 	while(1){
 		//dac4822ABWrite(word12bits, 3, MCP4822_CHANNEL_B);
 		//dacWrite(word12bits, DAC_VCO_3340_FREQ);
@@ -564,8 +568,10 @@ void testDacWriteSPI(){
 				dac4822ABWrite(word12bits, dac, MCP4822_CHANNEL_B);
 				HAL_Delay(1);
 			}
+
 		}
 		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+		printf("DAC test %d\n", i++);
 	}
 }
 
@@ -598,7 +604,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 
 	if (htim == htimEnveloppes){ // on check que c'est le bon TIMER
 
-		HAL_GPIO_WritePin(GPIOB, LD3_Pin, demoMode == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		//HAL_GPIO_WritePin(GPIOB, LD3_Pin, demoMode == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
 
 		//HAL_GPIO_TogglePin(GPIOB, LD3_Pin);
@@ -614,16 +620,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		// white noise for the drum machine :
 		/* debug 2/4/19 int noise = (int)(4096.0 * rand() / RAND_MAX);
 		dacWrite(noise, DAC_NOISE);*/
-		updateDrumMachine();
-
-
+		// syd 8/9/19 updateDrumMachine();
 
 		// once every ADSR_TIMER_PERIOD, compute then write all ADSR enveloppes + VCO CV's,
 		// yet see trick above in this function documentation
 		adsrInterruptCounter++;
 		if (adsrInterruptCounter == ADSR_TIMER_PERIOD_FACTOR) {
 			adsrInterruptCounter = 0;
-			if (demoMode==1) playDemo();
+			//if (demoMode==1) playDemo();
 		}
 
 		// ALWAYS update VCO *before* VCA so that we won't hear the note jump
@@ -653,9 +657,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 			// todo : mixers, etc
 		}
 	}
+	//else if (htim == htimCalib) HAL_GPIO_TogglePin(SAW_3340_GPIO_Port, SAW_3340_Pin);
 }
 
-// called every time level changes on pin GPIO_Pin
+/**
+ *  Called every time level changes on pin GPIO_Pin
+ *  We "listen" to two pins:
+ *  - CE_RPi_Pin: this pin is connected to the CE ("chip enable") signal of the Raspberry Pi ; this signal
+ *  			gets low every time data is to be transmitted by the Raspberry Pi to the STM32 through the SPI3 bus
+ *  - USER_Btn_Pin: this pin is connected to the blue button on the STM32 board; can be used for any kind of debugging purpose
+ */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 	// RPi as note trigger
@@ -673,7 +684,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 	  blueButtonFlag = !blueButtonFlag;
 		//blueButtonFlag = HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin);
-	  demoMode = blueButtonFlag;
+	  //demoMode = blueButtonFlag;
 	  //HAL_GPIO_WritePin(GPIOB, LD3_Pin, demoMode == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
 	  /*if (blueButtonFlag == 1){ // note ON
@@ -687,6 +698,21 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	  }*/
 	}
 }
+
+/**
+ * Callback for the UART peripheral receive data process
+ * Called when a given amount of data has been received on given UART port
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+
+	//__NOP();//test if we reach this position
+	//printf("Received: %s\n", rxUartSTlinkBuff);
+	processIncomingMidiMessage(rxUartSTlinkBuff[0],rxUartSTlinkBuff[1],rxUartSTlinkBuff[2]);
+	HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
+}
+
+
+
 
 // --------------------------------------------------------------------------------------------------
 //                                     ADSR, drums and MIDI code
@@ -707,9 +733,9 @@ void initSynthParams(){
 	dacVcfCutoffWrite(0.0); // makes sure filter is off
 	HAL_Delay(1);
 
-	dacWrite((int)(2000), DAC_VCO_3340_FREQ);
+	dacWrite(2428, DAC_VCO_3340_FREQ); // outputs A4 @ 440Hz
 	HAL_Delay(1);
-	dacWrite((int)(4095.0 * 2.0 * DEF_VCO_3340_PWM_DUTY), DAC_VCO_3340_PWM_DUTY);
+	setMidiCCParam(PWM_3340, DEF_MIDICC_VCO3340_PWM_DUTY);
 	HAL_Delay(1);
 	setMidiCCParam(WAVE_3340, 0);
 	setMidiCCParam(SYNC_3340, 0);
@@ -815,7 +841,7 @@ void updateVCFEnveloppeStateMachine(){
 void midiNoteOnHandler(){
 
 	// switch on LED so that we can monitor enveloppe level TODO : pwm !
-	HAL_GPIO_WritePin(GPIOB, LD2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_SET);
 
 	// ---------- VCA dyn parameters -----------
 	stateMachineVca.amplitude=0.0;
@@ -829,7 +855,7 @@ void midiNoteOnHandler(){
 	stateMachineVcf.tMax = vcfAdsr.attackTimeMs / (ADSR_TIMER_PERIOD_MS);
 	stateMachineVcf.tmpTargetLevel = stateMachineVcf.envAmount * velocityMulFactor ;
 	stateMachineVcf.tmpDelta = (stateMachineVcf.tmpTargetLevel-globalParams.vcfCutoff) / stateMachineVcf.tMax; // prepare dx for the A phase of x(t)
-	stateMachineVcf.tmpKbdtrackingShiftFactor = (midiNote.note - 64)/64.0 * stateMachineVcf.kbdTracking * MAX_KBD_TRACKING;
+	stateMachineVcf.tmpKbdtrackingShiftFactor = (midiNote.note - 64)/64.0 * stateMachineVcf.kbdTracking * MAX_KBD_TRACKING_VCF;
 	stateMachineVcf.cutoffFrequency = globalParams.vcfCutoff; // starts at global cutoff value
 
 
@@ -846,7 +872,7 @@ void midiNoteOnHandler(){
  */
 void midiNoteOffHandler(){
 
-	HAL_GPIO_WritePin(GPIOB, LD2_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_RESET);
 
 	stateMachineVca.tmpTargetLevel = 0.0;
 	stateMachineVca.tmpDelta = - ADSR_TIMER_PERIOD_MS * stateMachineVca.amplitude / vcaAdsr.releaseTimeMs; // prepare dx for the R phase of x(t)
@@ -863,73 +889,75 @@ void midiNoteOffHandler(){
 
 
 /**
- * Updates the appropriate parameter of the ADSR enveloppec
+ * Updates the appropriate parameter of the ADSR enveloppe
  * @param value b/w 0 and 127
  */
 void setMidiCCParam(MidiCCParam param, uint8_t value){
 
+
 	switch (param){
+
 	case VCA_ATTACK:
-		vcaAdsr.attackTimeMs = ((value+1)/127.) * MAX_ATTACK_TIME;;
+		vcaAdsr.attackTimeMs = ((value+1)/127.) * MAX_ATTACK_TIME_VCA;
 		//stateMachineVca.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/vcaAdsr.attackTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCA_DECAY:
-		vcaAdsr.decayTimeMs = ((value+1)/127.) * MAX_DECAY_TIME;
+		vcaAdsr.decayTimeMs = ((value+1)/127.) * MAX_DECAY_TIME_VCA;
 		//stateMachineVca.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/vcaAdsr.decayTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCA_SUSTAIN:
-		vcaAdsr.sustainLevel = (value/127.) * MAX_SUSTAIN_LVL;
+		vcaAdsr.sustainLevel = (value/127.) * MAX_SUSTAIN_LVL_VCA;
 		break;
 
 	case VCA_RELEASE:
-		vcaAdsr.releaseTimeMs = ((value+1)/127.) * MAX_RELEASE_TIME;
+		vcaAdsr.releaseTimeMs = ((value+1)/127.) * MAX_RELEASE_TIME_VCA;
 		//stateMachineVca.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/vcaAdsr.releaseTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCF_ATTACK:
-		vcfAdsr.attackTimeMs = ((value+1)/127.) * MAX_ATTACK_TIME;
+		vcfAdsr.attackTimeMs = ((value+1)/127.) * MAX_ATTACK_TIME_VCF;
 		//stateMachineVcf.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.attackTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCF_DECAY:
-		vcfAdsr.decayTimeMs = ((value+1)/127.) * MAX_DECAY_TIME;
+		vcfAdsr.decayTimeMs = ((value+1)/127.) * MAX_DECAY_TIME_VCF;
 		//stateMachineVcf.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.decayTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCF_SUSTAIN:
-		vcfAdsr.sustainLevel = (value/127.) * MAX_SUSTAIN_LVL;
+		vcfAdsr.sustainLevel = (value/127.) * MAX_SUSTAIN_LVL_VCF;
 		break;
 
 	case VCF_RELEASE:
-		vcfAdsr.releaseTimeMs = ((value+1)/127.) * MAX_RELEASE_TIME;;
+		vcfAdsr.releaseTimeMs = ((value+1)/127.) * MAX_RELEASE_TIME_VCF;
 		//stateMachineVcf.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.releaseTimeMs); @deprecated exponential enveloppes
 		break;
 
 	case VCA_VELOCITY_SENSITIVITY:
-		stateMachineVca.velocitySensitivity = (value/127.) * MAX_VC_SENSI;
+		stateMachineVca.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value/127.;
 		break;
 
 	case VCF_VELOCITY_SENSITIVITY:
-		stateMachineVcf.velocitySensitivity = (value/127.) * MAX_VC_SENSI;
+		stateMachineVcf.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value/127.;
 		break;
 
 	case VCF_RESONANCE:
-		dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_VCF_RES);
+		dacWrite((int) MAX_RESONANCE * (value/127.), DAC_VCF_RES);
 		break;
 
 	case VCF_CUTOFF:
-		dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_VCF_CUTOFF);
+		dacWrite((int) MAX_CUTOFF * (value/127.), DAC_VCF_CUTOFF);
 		break;
 
 	case PWM_3340:
-		dacWrite((int) 4095 * (value/127.), DAC_VCO_3340_PWM_DUTY);
-	break;
+		dacWrite((int) (MAX_VCO3340_PWM_DUTY * value/127.), DAC_VCO_3340_PWM_DUTY);
+		break;
 
 	case SYNC_3340:
 		HAL_GPIO_WritePin(SYNC_3340_GPIO_Port, SYNC_3340_Pin, value==127 ? GPIO_PIN_SET:GPIO_PIN_RESET);
-	break;
+		break;
 
 	case VCF_ORDER :
 		if (value == 0){ // 2nd order
@@ -940,7 +968,7 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 			HAL_GPIO_WritePin(VCF_2NDORDER_GPIO_Port, VCF_2NDORDER_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(VCF_4THORDER_GPIO_Port, VCF_4THORDER_Pin, GPIO_PIN_SET);
 		}
-	break;
+		break;
 
 	case WAVE_3340 :
 		if (value == 0){ // pulse
@@ -958,41 +986,48 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 			HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_SET);
 		}
-	break;
+		break;
 
 	case OCTAVE_3340 :
 		vco3340.octave = value;
-	break;
+		break;
 
 	case LEVEL_3340 :
-		dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_V2140D_IN1);
-	break;
+		dacWrite((int) (MAX_VCO3340_LEVEL * value/127.), DAC_V2140D_3340_LVL);
+		break;
 
 	case DETUNE_13700 :
 		vco13700.detune = value;
-	break;
+		break;
 
 
 	case LEVEL_13700 :
 		// TODO : Voir comment implementer vis-a-vis des mixers
-	break;
+		break;
 
 	case OCTAVE_13700 :
 		vco13700.octave = value;
-	break;
+		break;
 
 	case WAVE_13700 :
-		dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_V2140D_IN2);
-		dacWrite((int) 4095 * (1 - value/127.) * MAX_MIXER, DAC_V2140D_IN3);
-	break;
+		//TODO : dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_V2140D_IN2);
+		//TODO : dacWrite((int) 4095 * (1 - value/127.) * MAX_MIXER, DAC_V2140D_IN3);
+		break;
 
 	case VCF_KBDTRACKING :
-		//TBA
-	break;
+		//TODO
+		break;
 
 	case VCF_EG :
-		//TBA
-	break;
+		//TODO
+		break;
+
+	case CALIBRATE :
+		runVcoCalibration();
+		break;
+
+	case UNUSED_CC:
+		break;
 	}
 }
 
@@ -1008,7 +1043,7 @@ void processIncomingMidiMessage(uint8_t statusChannel, uint8_t data1, uint8_t da
 	switch (status){
 	case NOTE_ON :
 		if (channel == DRUM_CHANNEL){
-			playDrumMachine(data1, data2);
+			// syd 8/9/19 playDrumMachine(data1, data2);
 		}
 		else {
 			midiNote.note = data1;
@@ -1022,7 +1057,7 @@ void processIncomingMidiMessage(uint8_t statusChannel, uint8_t data1, uint8_t da
 		break;
 
 	case CONTROL_CHANGE:
-		setMidiCCParam(data1, data2);
+		setMidiCCParam(midiccCodeToParams[data1], data2);
 		break;
 	}
 }
@@ -1084,12 +1119,12 @@ void updateDrumMachine(){
 	}
 }
 
-/* play a demo by manuall creating midi messages ; normally gets called every ms from the timer handler */
+/* play a demo by manually creating midi messages ; normally gets called every ms from the timer handler */
 void playDemo(){
 
 	if (demoCounter == 0) {
 		processIncomingMidiMessage(NOTE_ON, demoNotes[demoNoteCounter++], 50); // creates a NOTE ON event
-		playDrumMachine(BASS_DRUM_NOTE, 0);
+		//playDrumMachine(BASS_DRUM_NOTE, 0);
 
 	}
 	else if (demoCounter == 200) {

@@ -1,6 +1,8 @@
 /*
  * midi.h
  *
+ * Collection of enums and struct dedicated to incoming MIDI messages
+ *
  *  Created on: Oct 1, 2018
  *      Author: S. Reynal
  */
@@ -8,8 +10,14 @@
 #ifndef MIDI_H_
 #define MIDI_H_
 
+#define MAX_MIDI_VALUE 127.0
 
-// la note actuellement jouée, entre 0 et 127 (norme MIDI) -- ou de la dernière note jouée si elle est "off", et sa vélocité
+#define MIDICC_VALUE_OFF 0
+#define MIDICC_VALUE_ON 1
+
+/**
+ *  a struct for incoming midi messages of type NoteOn/Off
+ */
 typedef struct {
   int note; // 0-127
   int velocity; // 0-127
@@ -31,6 +39,7 @@ typedef enum {
 #define NOTE_OFF 		0x80
 #define CONTROL_CHANGE 	0xB0
 #define PITCH_BEND		0xE0
+
 
 
 #endif /* MIDI_H_ */

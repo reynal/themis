@@ -1,7 +1,7 @@
 /*
  * adsr.h
  *
- * defines and structs for ADSR enveloppes
+ * defines and structs for ADSR enveloppes and related parameters (PWM, cutoff, resonance, etc)
  *
  *  Created on: Jan 30, 2019
  *      Author: reynal
@@ -12,36 +12,64 @@
 #ifndef ADSR_H_
 #define ADSR_H_
 
-// defines for ADSR enveloppes default values (times are in ms)
-#define DEF_ATTACK_TIME 10
-#define DEF_DECAY_TIME 400
-#define DEF_RELEASE_TIME 200
+/**
+ *  following is a list of default MIDI CC values (from 0 to 127)
+ *  and the associated maximum values:
+ *  - from 0 to 4095 for DAC voltages (e.g., mixer control, PWM duty, etc)
+ *  - from 0 to the maximum physical value for others (e.g., ADSR envelopes)
+ *  The actual default DAC value is thus given by, e.g., for the VCA envelope attack time,
+ *
+ *       DEF_MIDICC_ATTACK_TIME_VCA * MAX_ATTACK_TIME_VCA / 127.0
+ *
+ *  and for, e.g. the PWM duty cycle (DAC #2):
+ *
+ *  	DEF_MIDICC_VCO3340_PWM_DUTY * MAX_VCO3340_PWM_DUTY
+ */
+// VCA ADSR (times in ms)
+#define DEF_MIDICC_ATTACK_TIME_VCA 8
+#define MAX_ATTACK_TIME_VCA 1000
+#define DEF_MIDICC_DECAY_TIME_VCA 8
+#define MAX_DECAY_TIME_VCA 1000
+#define DEF_MIDICC_RELEASE_TIME_VCA 16
+#define MAX_RELEASE_TIME_VCA 5000
+#define DEF_MIDICC_SUSTAIN_LVL_VCA 64
+#define MAX_SUSTAIN_LVL_VCA 1
+// VCF ADSR (times in ms)
+#define DEF_MIDICC_ATTACK_TIME_VCF 64
+#define MAX_ATTACK_TIME_VCF 1000
+#define DEF_MIDICC_DECAY_TIME_VCF 16
+#define MAX_DECAY_TIME_VCF 1000
+#define DEF_MIDICC_RELEASE_TIME_VCF 8
+#define MAX_RELEASE_TIME_VCF 5000
+#define DEF_MIDICC_SUSTAIN_LVL_VCF 64
+#define MAX_SUSTAIN_LVL_VCF 1
+// Filter
+#define DEF_MIDICC_CUTOFF 100
+#define MAX_CUTOFF 4095
+#define DEF_MIDICC_RESONANCE 0
+#define MAX_RESONANCE 4095
+#define DEF_MIDICC_KBD_TRACKING_VCF 3
+#define MAX_KBD_TRACKING_VCF 1 // maximum permitted voltage shift in percents
+#define DEF_MIDICC_ENV_AMOUNT_VCF 105
+#define MAX_ENV_AMOUNT_VCF 1
+// Velocity
+#define DEF_MIDICC_VELOCITY_SENSITIVITY_VCA 13
+#define DEF_MIDICC_VELOCITY_SENSITIVITY_VCF 13
+#define MAX_VELOCITY_SENSITIVITY 1
+// VCO3340
+#define DEF_MIDICC_VCO3340_PWM_DUTY 127
+#define MAX_VCO3340_PWM_DUTY 2450
+#define DEF_MIDICC_VCO3340_LEVEL 100
+#define MAX_VCO3340_LEVEL 4095
+// VCO13700
+#define DEF_MIDICC_VCO13700_LEVEL 100
+#define DEF_MIDICC_VCO13700_WAVE 64
 
-#define DEF_ATTACK_TIME_VCF 500
-#define DEF_DECAY_TIME_VCF 200
-#define DEF_RELEASE_TIME_VCF 200
-
-#define MAX_ATTACK_TIME 1000
-#define MAX_DECAY_TIME 1000
-#define MAX_RELEASE_TIME 5000
-#define MAX_SUSTAIN_LVL 1
-
-#define MAX_VC_SENSI 1
-#define MAX_MIXER 1
-// sets the maximum permitted voltage shift in % :
-#define MAX_KBD_TRACKING 0.3
 
 
-#define DEF_SUSTAIN_LVL 0.5
-#define DEF_SUSTAIN_LVL_VCF 0.5
-#define DEF_VELOCITY_SENSITIVITY_VCA 0.1
-#define DEF_VELOCITY_SENSITIVITY_VCF 0.0
-#define DEF_KBD_TRACKING 0.0
-#define DEF_ENV_AMOUNT 0.9
-#define DEF_CUTOFF 0.8
-#define DEF_RESONANCE 0.0
 
-#define DEF_VCO_3340_PWM_DUTY 0.5
+
+
 
 
 /*
@@ -123,7 +151,9 @@ typedef struct {
 	int octave; // can be positive or negative
 } VcoParameters;
 
-/* struct for drums */
+/**
+ *  struct for drums
+ */
 typedef struct {
 	int bassdrumCounter;
 	int rimshotCounter;

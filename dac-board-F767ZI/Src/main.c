@@ -62,6 +62,11 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 
+// the following variables are actually just kind of aliases for handles just above
+// the point is that our code should only use, e.g., hspiDacs instead of hspi3
+// so that any change of SPI bus numbering in the future will not affect our code
+// except for the initialization line hspiDacs=&hspi3 of course
+
 SPI_HandleTypeDef* hspiDacs;
 SPI_HandleTypeDef* hspiMidi;
 
@@ -71,9 +76,7 @@ TIM_HandleTypeDef* htimCalib;
 UART_HandleTypeDef* huartMidi;
 UART_HandleTypeDef* huartSTlink;
 
-uint8_t txUartSTlinkBuff[10] = {65,66,67,68,69,70,71,72,73,'\n'};
-uint8_t rxUartSTlinkBuff[1];
-
+uint8_t rxUartSTlinkBuff[3];
 
 
 /* USER CODE END PV */
@@ -107,7 +110,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-	// make alias for easier code reading and future changes:
+	// make alias to ease code reading and future changes:
 	hspiDacs = &hspi5;
 	hspiMidi = &hspi3;
 	htimEnveloppes = &htim1;
@@ -146,21 +149,16 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  //initSynthParams(); // be sure to do this BEFORE starting htim1!
+  initSynthParams(); // be sure to do this BEFORE starting htimEnveloppes!
 
   // === VCO Calibration mode===
-  //launchVcoCalibration(); // busy loop until calibration is over
+  //runVcoCalibration(); // busy loop until calibration is over
 
 
   // === Normal mode ===
-  // DEBUG reynal :
-  //dacWrite(2000, DAC_VCO_3340_FREQ);
-  //HAL_Delay(1);
-  //dacWrite(2000, DAC_VCO_13700);
-  //HAL_Delay(1);
 
-  // debug
-  //HAL_TIM_Base_Start_IT(&htim1); // TIM1 is responsible for updating ADSR enveloppes
+  HAL_TIM_Base_Start_IT(htimEnveloppes); // start timer responsible for updating ADSR enveloppes
+  HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
 
   /* USER CODE END 2 */
 
@@ -175,7 +173,6 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-
 	  //testDacSelect();
 	  //testDacWriteSPI();
 
@@ -184,7 +181,10 @@ int main(void)
 
 
 	  //HAL_UART_Transmit(huartSTlink, txUartSTlinkBuff, 10, 100);
-	  printf("hello : %d\n", i++);
+	  printf("%d\n", i);
+	  //setMidiCCParam(PWM_3340, i);
+	  i++;
+	  //if (i >= 20) i=1;
 
 	  //HAL_GPIO_TogglePin(VCF_4THORDER_GPIO_Port, VCF_4THORDER_Pin);
 
@@ -198,7 +198,6 @@ int main(void)
   }
   /* USER CODE END 3 */
 }
-
 
 /**
   * @brief System Clock Configuration
@@ -216,11 +215,12 @@ void SystemClock_Config(void)
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
   /** Initializes the CPU, AHB and APB busses clocks 
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 216;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
@@ -472,7 +472,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 16;
+  htim2.Init.Prescaler = 15;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 1000000000;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -748,12 +748,15 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-// our own implementation of putchar used by printf, so that printf is forwarded to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the host station)
+// our own implementation of putchar used by printf, so that printf is forwarded
+// to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the PC or Mac host station)
 int __io_putchar(int ch){
 
 	HAL_UART_Transmit(huartSTlink, (uint8_t *)&ch, 1, 0xFFFF); // beware blocking call!
+	// it's possible to use non-blocking with function HAL_UART_Transmit_IT(...), see HAL documentation
 	return ch;
 }
+
 
 
 /* USER CODE END 4 */
@@ -766,6 +769,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
+	printf("HAL Error !\n");
   while(1) 
   {
   }
@@ -783,8 +787,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 { 
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-    ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  printf("Wrong parameters value: file %s on line %d\r\n", file, line);
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

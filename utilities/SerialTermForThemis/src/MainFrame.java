@@ -9,15 +9,15 @@ import com.fazecast.jSerialComm.*; // cf jSerialComm-1.3.11.jar
 
 
 /**
- * 
+ *
  * @author sydxrey
  *
  */
 public class MainFrame {
-	
+
 	private static final long serialVersionUID = 1L;
 
-	private SerialPort currentPort; 
+	private SerialPort currentPort;
 	private int currentBaudRate = DEFAULT_BAUD_RATE;
 	public static final int DEFAULT_BAUD_RATE = 9600;
 	public static final int[] BAUD_RATES = { 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200 };
@@ -28,16 +28,16 @@ public class MainFrame {
 	private JTextArea consoleTA;
 	private JTextField inputTF;
 	private JLabel statusLBL;
-	private JButton openBUT, closeBUT, noteOnBUT, noteOffBUT, midiccBUT, sendBUT;
+	private JButton openBUT, closeBUT, noteOnBUT, noteOffBUT, midiccBUT, sendBUT, clearBUT;
 
 
 	public MainFrame(){
-		
+
 		this(null, DEFAULT_BAUD_RATE);
 	}
-	
+
 	public MainFrame(String serialPortName, int baudRate){
-		
+
 		if (serialPortName != null) currentPort = SerialPort.getCommPort(serialPortName);
 		currentBaudRate = baudRate;
 		JFrame f = new JFrame("Serial terminal for Themis/STM32");
@@ -57,11 +57,11 @@ public class MainFrame {
 
 		//currentBaudRate = DEFAULT_BAUD_RATE;
 	}
-	
-	/** 
+
+	/**
 	 * */
 	JComponent createTextArea() {
-		
+
 		JPanel p = new JPanel();
 		p.setLayout(new BorderLayout());
 		consoleTA = new JTextArea(30, 100);
@@ -90,16 +90,16 @@ public class MainFrame {
 		sendBUT.addActionListener(e ->transmit(inputTF.getText()));
 		return p;
 	}
-	
-	/** 
+
+	/**
 	 * */
 	JToolBar createToolBar() {
-		
+
 		JToolBar tb = new JToolBar();
 		tb.add(openBUT = new JButton("OPEN"));
 		openBUT.addActionListener(e -> openConnection());
 		tb.addSeparator();
-		
+
 		tb.add(new JLabel("Port : "));
 		portCB = new JComboBox<String>();
 		for (SerialPort port : SerialPort.getCommPorts()) {
@@ -109,39 +109,46 @@ public class MainFrame {
 		if (currentPort != null) portCB.setSelectedItem(currentPort.getSystemPortName());
 		portCB.addActionListener(e -> currentPort = SerialPort.getCommPort((String)portCB.getSelectedItem()));
 		tb.add(portCB);
-		
+
 		tb.addSeparator();
 		tb.add(new JLabel("Baudrate : "));
 		baudRateCB = new JComboBox<Integer>();
 		for (int r : BAUD_RATES) baudRateCB.addItem(r);
 		baudRateCB.setSelectedItem(currentBaudRate);
 		baudRateCB.addActionListener(e -> currentBaudRate = (Integer)baudRateCB.getSelectedItem());
-		
+
 		tb.add(baudRateCB);
 
 		tb.addSeparator();
+		tb.add(clearBUT = new JButton("CLEAR"));
+		clearBUT.addActionListener(e -> clearTextArea());
 		tb.add(closeBUT = new JButton("CLOSE"));
 		closeBUT.addActionListener(e -> closeConnection());
-		
+
 		return tb;
 	}
-	
-	/** 
+
+  void clearTextArea(){
+
+		SwingUtilities.invokeLater(() -> consoleTA.setText(""));
+	}
+
+	/**
 	 * */
 	Box createStatusBar() {
-		
+
 		Box b = new Box(BoxLayout.X_AXIS);
 		b.add(statusLBL=new JLabel("STATUS : "));
 		return b;
 	}
-	
-	
-		
-	
+
+
+
+
 	/**
 	 * Ouvre une connection en écoute sur le port série actuellement sélectionné par la combobox
 	 */
-	boolean openConnection() { 
+	boolean openConnection() {
 
 		//currentPort = SerialPort.getCommPort();
 
@@ -152,8 +159,8 @@ public class MainFrame {
 
 		currentPort.setBaudRate(currentBaudRate);
 		boolean success = currentPort.openPort();
-		printStatus("Opening " + currentPort.getSystemPortName() 
-				+ " at " + currentPort.getBaudRate() + " bauds, " 
+		printStatus("Opening " + currentPort.getSystemPortName()
+				+ " at " + currentPort.getBaudRate() + " bauds, "
 				+ (currentPort.getParity()==SerialPort.NO_PARITY ? "No parity " : "Parity ")
 				+ currentPort.getNumDataBits() + " databits, "
 				+ currentPort.getNumStopBits() + " stopbits, "
@@ -163,10 +170,10 @@ public class MainFrame {
 
 		printConnectionStatus(true);
 		currentPort.addDataListener(new DataListener());
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * release serial port resource
 	 */
@@ -190,14 +197,14 @@ public class MainFrame {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param s
 	 */
 	void transmit(String s) {
-		
+
 		inputTF.setText("");
 		consoleTA.append("\n> " + s + "\n");
-		
+
 		int i=0;
 		StringTokenizer st = new StringTokenizer(s, " ");
 		while (st.hasMoreTokens()) {
@@ -212,9 +219,9 @@ public class MainFrame {
 				// transmit as an ascii string:
 				send(token);
 			}
-		}				
+		}
 	}
-	
+
 	void send(byte i) {
 		if (currentPort != null && currentPort.isOpen()) {
 			byte[] buffer = new byte[1];
@@ -223,7 +230,7 @@ public class MainFrame {
 		}
 		else System.out.println("Connection not open");
 	}
-	
+
 	void send(String s) {
 		if (currentPort != null && currentPort.isOpen()) {
 			byte[] buffer = s.getBytes();
@@ -231,7 +238,7 @@ public class MainFrame {
 		}
 		else System.out.println("Connection not open");
 	}
-	
+
 	/**
 	 * Affiche la chaine dans la barre de status
 	 */
@@ -240,7 +247,7 @@ public class MainFrame {
 		//SwingUtilities.invokeLater(() -> statusLBL.setText("[STATUS] " + s));
 		SwingUtilities.invokeLater(() -> consoleTA.append("[STATUS] " + s + "\n"));
 	}
-	
+
 	/**
 	 * Display a msg in the status bar
 	 */
@@ -253,18 +260,18 @@ public class MainFrame {
 		else printStatus("CONNECTION is CLOSED");
 	}
 
-	/** 
+	/**
 	 * */
 	static void listSerialPorts() {
 		SerialPort[] ports = SerialPort.getCommPorts();
 		System.out.println("\nAvailable Ports:\n");
 		for (int i = 0; i < ports.length; ++i)
-			System.out.println("   [" + i + "] " 
-						+ "\"" + ports[i].getSystemPortName() + "\" : " 
+			System.out.println("   [" + i + "] "
+						+ "\"" + ports[i].getSystemPortName() + "\" : "
 						+ "\"" + ports[i].getDescriptivePortName() + "\"" ) ;
 	}
-	
-	
+
+
 	/**
 	 * listends to incoming packets
 	 */
@@ -289,17 +296,17 @@ public class MainFrame {
 			SwingUtilities.invokeLater(() -> consoleTA.append(new String(newData)));
 		}
 	}
-	
-	
+
+
 	// -----------------------------------------------
-	
+
 	public static void main(String[] args) {
-		
+
 		if (args.length >= 2) new MainFrame(args[0], Integer.parseInt(args[1]));
 		else new MainFrame();
-		
-		
+
+
 	}
-	
+
 
 }
