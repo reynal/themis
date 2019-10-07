@@ -7,7 +7,7 @@ import controller.event.RotaryEncoderEvent;
 /**
  * This class represents a model parameter of type "double"
  */
-public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implements RotaryEncoderChangeListener {
+public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> implements RotaryEncoderChangeListener {
 	
 	protected Class<T> clazz; //
 
@@ -36,7 +36,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 	/**
 	 * @return the number of constants for this EnumParameter
 	 */
-	public int getSize() {
+	public int getValuesCount() {
 		return clazz.getEnumConstants().length;
 	}
 	
@@ -54,16 +54,16 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 		// depending on direction, switch to next or previous enum field
 		switch (e.getDirection()) {
 		case UP : 
-			if (value.ordinal() < getSize()-1) {
+			if (value.ordinal() < getValuesCount()-1) {
 				value = clazz.getEnumConstants()[value.ordinal()+1];
-				fireSynthParameterEditEvent();
+				fireModuleParameterChangeEvent();
 			}			
 			break;
 			
 		case DOWN : 
 			if (value.ordinal() > 0) {
 				value = clazz.getEnumConstants()[value.ordinal()-1];
-				fireSynthParameterEditEvent();
+				fireModuleParameterChangeEvent();
 			}			
 			break;
 		}
@@ -72,18 +72,18 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 
 	@Override
 	public void actionPerformed(PushButtonActionEvent e) {
-		if (value.ordinal() < getSize()-1) 
+		if (value.ordinal() < getValuesCount()-1) 
 			value = clazz.getEnumConstants()[value.ordinal()+1];
 		else
 			value = clazz.getEnumConstants()[0];
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 		
 	}
 	
 	@Override
 	public double getValueAsRatio() {
 			
-			return getOrdinal() / (getSize() - 1.0);
+			return getOrdinal() / (getValuesCount() - 1.0);
 	}
 
 	@Override
@@ -94,10 +94,10 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 	}
 
 	@Override
-	public void setValueAsMIDICode(int v) {
-		v = v % getSize();
+	public void setValueFromMIDICode(int v) {
+		v = v % getValuesCount();
 		value = clazz.getEnumConstants()[v];
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 	}
 	
 	// ------------------ test ------
@@ -107,7 +107,7 @@ public class EnumParameter<T extends Enum<T>> extends SynthParameter<T> implemen
 	
 	public static void main(String[] args){
 		EnumParameter<Octave> p = new EnumParameter<Octave>(Octave.class, "octave");
-		System.out.println(p.getSize());
+		System.out.println(p.getValuesCount());
 		System.out.println(p.getMin());
 		System.out.println(p.getMax());
 		p.setValue(Octave.FOUR_INCHES);

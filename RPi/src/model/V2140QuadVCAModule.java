@@ -1,7 +1,12 @@
 package model;
 
-
-public class MixerV2140D extends AbstractModel {
+/**
+ * A model for a Quad VCA (voltage control amplifier, aka "mixer") module based on a V2140 device.
+ * 
+ * @author reynal
+ *
+ */
+public class V2140QuadVCAModule extends AbstractModule {
 
 	private MIDIParameter gain1dBParameter,gain2dBParameter, gain3dBParameter, gain4dBParameter;
 	
@@ -10,18 +15,17 @@ public class MixerV2140D extends AbstractModel {
 	/**
 	 * Builds a mixer model with default channel values
 	 */
-	public MixerV2140D(){
+	public V2140QuadVCAModule(){
 		this("Gain 1", "Gain 2", "Gain 3", "Gain 4");
 	}
 	
 	/**
-	 * 
 	 * @param lbl1 first channel label
 	 * @param lbl2 second channel label
 	 * @param lbl3 third channel label
 	 * @param lbl4 fourth channel label
 	 */
-	public MixerV2140D(String lbl1, String lbl2, String lbl3, String lbl4){
+	public V2140QuadVCAModule(String lbl1, String lbl2, String lbl3, String lbl4){
 		super();
 		parameterList.add(gain1dBParameter = new MIDIParameter(lbl1)); 
 		parameterList.add(gain2dBParameter = new MIDIParameter(lbl2));
@@ -58,7 +62,7 @@ public class MixerV2140D extends AbstractModel {
 
 
 
-	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
+	// ---- SynthParameter getters ---- (write access is forbidden so as to maintain the associated listener mechanism integrity)
 	
 	/**
 	 * @return the gain1dBParameter

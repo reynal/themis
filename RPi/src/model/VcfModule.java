@@ -1,37 +1,53 @@
 package model;
 
+import java.util.logging.Logger;
 
 /**
- * A model for the CEM or AS3320 VCF
- * @author sydxrey
+ * A model for a VCF (aka Voltage Controled Filter) module, whatever the underlying hardware.
+ * 
+ * This model currently comprises:
+ * - an ADSR enveloppe.
+ * - a Cutoff and a Resonance parameters for the filter
+ * - an EG (aka Enveloppe Generator) Depth parameter that sets the actual variation of the cutoff value vs the enveloppe
+ * - a Keyboard Tracking parameter that sets how fast does the cutoff frequency change follow the current MIDI note 
+ * - a filter order, e.g., the number of poles (2 or 4)
+ * 
+ * @author reynal
  *
  */
-public class Vcf3320 extends AbstractModel {
+public class VcfModule extends AbstractModule {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private MIDIParameter cutoffParameter, egDepthParameter, kbdTrackingParameter, resonanceParameter, velocitySensitivityParameter;
 	private EnumParameter<FilterOrder> filterOrderParameter;  
 	private ADSREnveloppe adsrEnveloppe;
 	
 	// list of label constant for use by clients:
-	public static final String CUTOFF = "VCO3320 Cutoff";
-	public static final String RESO = "VCO3320 Reso";
-	public static final String KBD = "VCO3320 Keyboard";
-	public static final String EG_DEPTH = "VCO3320 EG.Depth";
+	public static final String CUTOFF = "VCF Cutoff";
+	public static final String RESONANCE = "VCF Res";
+	public static final String KBD_TRACKING = "VCF Kbd";
+	public static final String EG_DEPTH = "VCF EG Depth";
+	public static final String VEL_SENSITIVITY= "VCF Vel Sens";
 	
-	public Vcf3320() {
+	public VcfModule() {
 		
 		cutoffParameter = new MIDIParameter(CUTOFF);
-		resonanceParameter = new MIDIParameter(RESO);
-		kbdTrackingParameter = new MIDIParameter(KBD);
+		resonanceParameter = new MIDIParameter(RESONANCE);
+		kbdTrackingParameter = new MIDIParameter(KBD_TRACKING);
 		egDepthParameter = new MIDIParameter(EG_DEPTH);
 		adsrEnveloppe = new ADSREnveloppe();
+		velocitySensitivityParameter = new MIDIParameter(VEL_SENSITIVITY);
+		
 		parameterList.addAll(adsrEnveloppe.getParameters());
 		parameterList.add(filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, "FilterOrder"));
 		parameterList.add(cutoffParameter);
 		parameterList.add(resonanceParameter);
 		parameterList.add(kbdTrackingParameter);
 		parameterList.add(egDepthParameter);
-		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e));  // for debug purpose only
+		parameterList.add(velocitySensitivityParameter);
+		
+		for (ModuleParameter<?> param : getParameters()) param.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));  // for debug purpose only
 
 	}
 	
@@ -85,9 +101,6 @@ public class Vcf3320 extends AbstractModel {
 
 	// ----------- enum -------------
 	
-
-
-
 	public static enum FilterOrder {
 		
 		SECOND_ORDER,
@@ -138,7 +151,7 @@ public class Vcf3320 extends AbstractModel {
 		return filterOrderParameter;
 	}
 	
-	public ADSREnveloppe getAdsrEnveloppeParameter() {
+	public ADSREnveloppe getAdsrEnveloppe() {
 		return adsrEnveloppe;
 	}
 	

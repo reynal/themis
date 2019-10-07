@@ -1,6 +1,10 @@
 package view.component;
 
 import java.util.*;
+import java.util.logging.Logger;
+
+import controller.component.ControlFactory;
+
 import java.io.*;
 import device.*;
 import model.*;
@@ -9,62 +13,72 @@ import model.*;
  * A factory that can build a view (a bargraph, a group of leds, etc) for a synth parameter 
  * with all LEDs being controlled by an IS31FL3731 led driver.
  * 
+ * TODO : possible bug with allocatedLedsA/B (same led appears multiple times)
+ * 
  * @author reynal
  *
  */
 public class ViewFactory {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private IS31FL3731 device;
-	private HashSet<IS31FL3731.LEDCoordinate> usedLedsA = new HashSet<IS31FL3731.LEDCoordinate>();
-	private HashSet<IS31FL3731.LEDCoordinate> usedLedsB = new HashSet<IS31FL3731.LEDCoordinate>();
+	private HashSet<IS31FL3731.LEDCoordinate> allocatedLedsA = new HashSet<IS31FL3731.LEDCoordinate>(); // IS31FL3731 first matrix (=72 leds)
+	private HashSet<IS31FL3731.LEDCoordinate> allocatedLedsB = new HashSet<IS31FL3731.LEDCoordinate>(); // second matrix (72 leds)
 		
 	/**
 	 * Construct a new factory for views based on the given IS31FL3731 device.
 	 */
 	public ViewFactory(IS31FL3731 device) {		
 		this.device = device;		
+		if (device == null) LOGGER.warning("Creating a ViewFactory with no IS31FL3731 attached");
 	}
 	
 	
 	/**
 	 * Creates a view based on a single LED.
+	 * 
+	 * @param ledCoordinate the LED (connected to the IS31FL3731 deviceà that implements this view
 	 */
-	public LED createView(SynthParameter<?> param, IS31FL3731.LEDCoordinate ledCoordinate) throws IOException{
+	public LED createView(ModuleParameter<?> param, IS31FL3731.LEDCoordinate ledCoordinate) throws IOException{
 		
-		System.out.println("ViewFactory: creating LED for " + param + " at " + ledCoordinate);
-		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (ledCoordinate.AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
-		if (usedLeds.add(ledCoordinate) == false)
-			throw new IllegalArgumentException("[SingleLED] " + ledCoordinate + " of the IS31FL3731 device is already in use");
+		LOGGER.info("ViewFactory: creating LED for SynthParameter \"" + param + "\" at " + ledCoordinate);
+		HashSet<IS31FL3731.LEDCoordinate> allocatedLeds = (ledCoordinate.AorB == IS31FL3731.Matrix.A ? allocatedLedsA : allocatedLedsB);
+		
+		if (allocatedLeds.add(ledCoordinate) == false)
+			throw new IOException("[SingleLED] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		
 		LED led = new LED(this.device, ledCoordinate);
-		if (param != null) param.addSynthParameterEditListener(led);
+		if (param != null) param.addModuleParameterChangeListener(led);
 		
 		return led;
 	}
 
 	/**
-	 * Creates a BarGraph for the given parameter
+	 * Creates a BarGraph of 8 leds in the same row. Might apply preferably to MIDIParameter, but also works
+	 * with EnumParameter and BooleanParameter (only pb is this will waste some leds).
 	 * 
-	 * @param param the corresponding MIDI parameter
+	 * @param synthParameter the corresponding MIDI parameter whose value is displayed by this BarGraph 
 	 * @param row a row of 8 leds, see IS31FL3731 datasheet 
+	 * @param AorB matrix A or B of the IS31FL3731 device
 	 */
-	public BarGraph createView(SynthParameter<?> param, IS31FL3731.Matrix AorB, int row) throws IOException{
+	public BarGraph createView(ModuleParameter<?> synthParameter, IS31FL3731.Matrix AorB, int row) throws IOException{
 		
-		System.out.println("ViewFactory: creating a BarGraph for " + param + " at row " + row + " on matrix "+AorB);
+		LOGGER.info("ViewFactory: creating an 8-led BarGraph row=" + row + " & matrix=" + AorB + " for \"" + synthParameter + "\"");
 		
-		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
+		HashSet<IS31FL3731.LEDCoordinate> allocatedLeds = (AorB == IS31FL3731.Matrix.A ? allocatedLedsA : allocatedLedsB);
 		
 		// check use of pins:
-		IS31FL3731.LEDCoordinate ledCoordinate = new IS31FL3731.LEDCoordinate(row, 0, AorB); 
+		IS31FL3731.LEDCoordinate ledCoordinate; 
 		for (int col=0; col < 8; col++) {
-			ledCoordinate.setColumn(col);
-			if (usedLeds.add(ledCoordinate) == false)
-				throw new IllegalArgumentException("[BarGraph] " + ledCoordinate + " of the IS31FL3731 device is already in use");
+			ledCoordinate = new IS31FL3731.LEDCoordinate(row, col, AorB);
+			if (allocatedLeds.add(ledCoordinate) == false)
+				throw new IOException("[BarGraph] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		}
 
 		// parameter -> bar graph
 		BarGraph barGraph = new BarGraph(device, AorB, row);
-		if (param != null) param.addSynthParameterEditListener(barGraph);
+		if (synthParameter != null) synthParameter.addModuleParameterChangeListener(barGraph);
 		return barGraph;
 	}
 	
@@ -73,30 +87,51 @@ public class ViewFactory {
 	 * 
 	 * @param row row in matrix A or B, see IS31FL3731 datasheet 
 	 */
-	public BarGraph createView(SynthParameter<?> param, IS31FL3731.Matrix AorB, int row, int colStart) throws IOException{
+	public BarGraph createView(ModuleParameter<?> synthParameter, IS31FL3731.Matrix AorB, int row, int colStart) throws IOException{
 		
-		System.out.println("ViewFactory: creating a group of leds for " + param + " at row " + row + " on matrix "+AorB + " starting at column " + colStart);
+		// if synthParameter is null, this is probably a dummy bargraph for debugging purpose (i.e. one that does displays nothing), 
+		// and we arbitrarily allocate a single led:
+		int ledCount = (synthParameter == null ? 1 : synthParameter.getValuesCount());
 		
-		HashSet<IS31FL3731.LEDCoordinate> usedLeds = (AorB == IS31FL3731.Matrix.A ? usedLedsA : usedLedsB);
+		// compute the rightmost led position and check if it's within the permitted bounds (there are 8 led per row in a IS31FL3731 matrix):
+		int colEnd = colStart + ledCount - 1;
+		if (colEnd >= 8) throw new IllegalArgumentException("colEnd must be lower than 8 : " + colEnd);
 		
-		int colEnd = param == null ? colStart + 1 : colStart + param.getSize() - 1;
-		IS31FL3731.LEDCoordinate ledCoordinate = new IS31FL3731.LEDCoordinate(row, colStart, AorB); 
+		LOGGER.info("ViewFactory: creating a group of leds row=" + row + " & col=" + colStart + "->" + colEnd + " & matrix=" + AorB + " for \"" + synthParameter + "\"");
+		
+		
+		HashSet<IS31FL3731.LEDCoordinate> allocatedLeds = (AorB == IS31FL3731.Matrix.A ? allocatedLedsA : allocatedLedsB);
+		
+		
+		IS31FL3731.LEDCoordinate ledCoordinate; 
 		for (int col=colStart; col <= colEnd; col++) {
-			ledCoordinate.setColumn(col);
-			if (usedLeds.add(ledCoordinate) == false)
-				throw new IllegalArgumentException("[LEDGroup] " + ledCoordinate + " of the IS31FL3731 device is already in use");
+			ledCoordinate = new IS31FL3731.LEDCoordinate(row, col, AorB); 
+			if (allocatedLeds.add(ledCoordinate) == false)
+				throw new IOException("[LEDGroup] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		}
 		
-		BarGraph ledGroup = new BarGraph(device, AorB, row, colStart, colEnd);
-		if (param != null) param.addSynthParameterEditListener(ledGroup);
+		BarGraph ledGroup = new BarGraph(device, AorB, row, colStart, ledCount);
+		if (synthParameter != null) synthParameter.addModuleParameterChangeListener(ledGroup);
 		return ledGroup;
 	}
 
 
 	@Override
 	public String toString() {
-		return super.toString() + " Used pins  " + usedLedsA + " " + usedLedsB;
+		return super.toString() + " IS31FL3731 allocated pins=" + allocatedLedsA + " & " + allocatedLedsB;
 	}
 
+	// ---------- test ---------
+	
+	public static void main(String[] args) throws IOException {
+		
+		// check if hashmap works:
+		ViewFactory vf = new ViewFactory(null);
+		//MIDIParameter p = new MIDIParameter("param MIDI");
+		EnumParameter<Octave> p = new EnumParameter<Octave>(Octave.class, "octave");
+		vf.createView(p, IS31FL3731.Matrix.A, 6, 0);
+		//vf.createView(p, IS31FL3731.Matrix.A, 0, 4);
+		System.out.println(vf);
+	}	
 
 }

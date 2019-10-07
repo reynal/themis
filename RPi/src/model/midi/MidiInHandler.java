@@ -1,44 +1,51 @@
 package model.midi;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.sound.midi.*;
 
-import model.spi.SpiTransmitter;
+import application.ModuleFactory;
+import model.ModuleParameter;
+import model.serial.AbstractSerialTransmitter;
 
 
 /**
- * Capture midi input events, dispatching them to the SPI bus transmitter
- * SR TODO : need to implement a proper listener mechanism so that all interested objects may listen to incoming MIDI msg
+ * Capture midi input events, dispatching them to a serial bus transmitter
+ * 
  */
 public class MidiInHandler implements Receiver {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private MidiDevice device;
-	private SpiTransmitter spiTransmitter;
+	private int midiChannel;
+	private AbstractSerialTransmitter serialTransmitter;
 
 	/**
-	 * 
+	 * Creates a Midi IN handler that listens to incomindg MIDI events on the given midiChannel.
+	 * Note ON/OFF MIDI messages are forwarded to the given AbstractSerialTransmitter
+	 * CC messages are transmitted to appropriate ModuleParameter's.
 	 * @throws MidiUnavailableException
 	 */
-	public MidiInHandler(SpiTransmitter spiTransmitter) throws MidiUnavailableException {
+	public MidiInHandler(AbstractSerialTransmitter spiTransmitter, int midiChannel) throws MidiUnavailableException {
 
-		this.spiTransmitter = spiTransmitter;
+		this.midiChannel = midiChannel;
+		this.serialTransmitter = spiTransmitter;
 
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
 		for (MidiDevice.Info info : infos) {
 
 			this.device = MidiSystem.getMidiDevice(info);
-			System.out.println("Found: " + device);
-
 			int maxTransmitters = device.getMaxTransmitters();
-			System.out.println("  Max transmitters: " + maxTransmitters);
+			LOGGER.info("Found: " + device + " with "+ maxTransmitters +" transmitters (aka Midi Out)");
 
 			if (maxTransmitters == -1 || maxTransmitters > 0) {
 				Transmitter transmitter = device.getTransmitter();
 				transmitter.setReceiver(this);
 				// transmitter.setReceiver(new DumpReceiver()); // DEBUG
-				System.out.println("Opening " + info);
+				LOGGER.info("Opening " + info);
 				device.open();
 				return; 
 			}
@@ -49,17 +56,29 @@ public class MidiInHandler implements Receiver {
 	// the following method is called for every incoming MIDI message...
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
+		
 		System.out.println(message + " received at time " + timeStamp);
+		
 		if (message instanceof ShortMessage) {
 			ShortMessage sm = (ShortMessage)message;
+			if (sm.getChannel() != this.midiChannel) {
+				LOGGER.info("Incoming MIDI Message on channel " + sm.getChannel() + " while we are listening on channel " + midiChannel);
+				return;
+			}
+			// from now on, this message is for us
 			System.out.println("\tStatus=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
-			if (spiTransmitter != null)
+			
+			// forward Note ON and OFF to Serial Transmitter, and CC directly to module parameters !
+			if (serialTransmitter != null)
 				try {
-					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF || sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
-						spiTransmitter.transmitMidiMessage(sm);						
-						System.out.println("\tSend message " + sm + " over SPI bus to STM32");
-						// TODO : SR, ici il faut ajouter les modeles pour qu'ils soient informes puisque 
-						// les CONTROL_CHANGE s'adressent a eux !
+					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF) { 
+						serialTransmitter.transmitMidiMessage(sm);						
+						System.out.println("\tTransmitting Note ON/OFF message " + sm);
+					}
+					else if (sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
+						ModuleParameter<?> parameter = ModuleFactory.getDefault().getModuleParameter(sm.getData1());
+						if (parameter != null) parameter.setValueFromMIDICode(sm.getData2());
+						else LOGGER.warning("No module parameter associated to MIDI CC" + sm.getData1());
 					}
 					
 				} catch (IOException e) {
@@ -71,7 +90,7 @@ public class MidiInHandler implements Receiver {
 
 	@Override
 	public void close() {
-		System.out.println("Closing device " + device);
+		LOGGER.info("Closing MIDI device " + device);
 		device.close();
 	}
 

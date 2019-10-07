@@ -5,7 +5,7 @@ import controller.event.*;
 /**
  * This class represents a model parameter whose value is an integer that can vary b/w 0 and 127
  */
-public class MIDIParameter extends SynthParameter<Integer> {
+public class MIDIParameter extends ModuleParameter<Integer> {
 
 	// inherited : Integer value
 
@@ -23,8 +23,8 @@ public class MIDIParameter extends SynthParameter<Integer> {
 	/**
 	 * @return the number of constants for this param
 	 */
-	public int getSize() {
-		return 127;
+	public int getValuesCount() {
+		return 128;
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 			if (this.value < 0) this.value = 0;
 			break;
 		}
-		if (this.value != old) fireSynthParameterEditEvent();
+		if (this.value != old) fireModuleParameterChangeEvent();
 	}	
 	
 	@Override
@@ -57,14 +57,14 @@ public class MIDIParameter extends SynthParameter<Integer> {
 
 		this.value++;
 		if (this.value > 127) this.value=0;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 		
 	}
 
 	@Override
-	public void setValueAsMIDICode(int v) {
+	public void setValueFromMIDICode(int v) {
 		value = v;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 	}
 	
 	// -------------------------------
@@ -72,7 +72,7 @@ public class MIDIParameter extends SynthParameter<Integer> {
 	// test method to check the listener mechanics
 	public static void main(String[] args) {
 		
-		Vco3340 model = new Vco3340();
+		Vco3340Module model = new Vco3340Module();
 
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));

@@ -9,7 +9,8 @@ import javax.swing.JTextArea;
 
 /**
  * a default implementation of TouchScreenView that displays an animated THeMiS logo. 
- * @author SR
+ * 
+ * @author reynal
  *
  */
 public class DefaultView implements TouchScreenView {
@@ -55,7 +56,7 @@ public class DefaultView implements TouchScreenView {
 
 	@Override
 	public boolean isAnimated() {
-		return true;
+		return false;
 	}
 
 }

@@ -1,35 +1,41 @@
 package model;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /** 
  * A model for a VCO based on the CEM or AS3340 device.
  * 
- * @author Bastien Fratta, S. Reynal
+ * @author Bastien Fratta
+ * @author S. Reynal
  */
-public class Vco3340 extends AbstractModel {
+public class Vco3340Module extends VcoModule {
 
-	private MIDIParameter detuneParameter;
-	private EnumParameter<Octave> octaveParameter;	
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private EnumParameter<WaveShape> waveShapeParameter;
 	private MIDIParameter dutyParameter;
 	private BooleanParameter syncFrom13700Parameter;
 	
 	// list of label constant for use by clients:
-	public static final String DETUNE = "VCO3340 Detune";
-	public static final String OCTAVE = "VCO3340 Octave";
-	public static final String WAVE = "VCO3340 WaveShape";
-	public static final String DUTY = "VCO3340 Duty";
-	public static final String SYNC = "VCO3340 Sync from 13700";
+	public static final String WAVE = "Shape";
+	public static final String DUTY = "Duty";
+	public static final String SYNC = "Sync";
 	
-	public Vco3340() {
+	public Vco3340Module() {
 		super();
-		parameterList.add(detuneParameter = new MIDIParameter(DETUNE));
-		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, OCTAVE));
 		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, WAVE));
 		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
 		parameterList.add(syncFrom13700Parameter = new BooleanParameter(SYNC));
-		for (SynthParameter<?> param : getParameters()) param.addSynthParameterEditListener(e -> System.out.println(e)); // for debug purpose only		
+		
+		// debug:
+		waveShapeParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
+		dutyParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
+		syncFrom13700Parameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
+	}
+	
+	protected String getVcoName() {
+		return "Vco3340";
 	}
 
 	// ---- value getters and setters --- (write operating may fire change events)
@@ -62,35 +68,9 @@ public class Vco3340 extends AbstractModel {
 	public void setDuty(double duty) {
 		this.dutyParameter.setValue((int)(127.0*duty));
 	}
-	
-	public Octave getOctave() { 
-		return octaveParameter.getValue();
-	}
-
-	public void setOctave(Octave v) {
-		octaveParameter.setValue(v);
-	}
-	
-	public double getDetune() {
-		return detuneParameter.getValue();
-	}
-
-	/**
-	 * @param detune b/w -64 and 63 cents
-	 */
-	public void setDetune(int detune) {
-		detuneParameter.setValue((detune + 64));
-	}
-	
+		
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
-	public MIDIParameter getDetuneParameter() {
-		return detuneParameter;
-	}
-	
-	public EnumParameter<Octave> getOctaveParameter(){
-		return octaveParameter;
-	}	
 	
 	public BooleanParameter getSyncFrom13700Parameter() {
 		return syncFrom13700Parameter;
@@ -120,9 +100,9 @@ public class Vco3340 extends AbstractModel {
 	// ------------ test -------------
 	public static void main(String[] args) {
 	
-		Vco3340 vco1 = new Vco3340();
-		List<SynthParameter<?>> paramsVCO1 = vco1.getParameters();
-		for (SynthParameter<?> p : paramsVCO1) {
+		Vco3340Module vco1 = new Vco3340Module();
+		List<ModuleParameter<?>> paramsVCO1 = vco1.getParameters();
+		for (ModuleParameter<?> p : paramsVCO1) {
 			System.out.println(p);
 		}
 	}

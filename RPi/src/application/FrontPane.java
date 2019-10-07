@@ -1,11 +1,13 @@
 package application;
 
 import controller.PerformancePad;
+import controller.SynthControllerPane;
 import controller.component.PushButton;
 
 /**
- * The whole synthetizer panel.
- * @author sydxrey
+ * The whole synthetizer panel. This class is not functional yet.
+ * 
+ * @author reynal
  *
  */
 public class FrontPane {

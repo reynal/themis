@@ -1,4 +1,4 @@
-package application;
+package application.javafx;
 
 /*import controller.component.Control;
 import controller.component.PushButton;

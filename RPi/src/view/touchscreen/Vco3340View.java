@@ -4,23 +4,23 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-import model.SynthParameter;
-import model.Vco3340;
-import model.event.SynthParameterEditEvent;
-import model.event.SynthParameterEditListener;
+import model.ModuleParameter;
+import model.Vco3340Module;
+import model.event.ModuleParameterChangeEvent;
+import model.event.ModuleParameterChangeListener;
 
 public class Vco3340View implements TouchScreenView {
 	
 	private java.awt.Image imageVCO;
-	private Vco3340 model;
+	private Vco3340Module model;
 	
-	public Vco3340View(Vco3340 model){
+	public Vco3340View(Vco3340Module model){
 		this.model = model;
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/3340.png");
-		model.getDetuneParameter().addSynthParameterEditListener(e -> updateDetuneParameterView());
-		model.getOctaveParameter().addSynthParameterEditListener(e -> updateOctaveParameterView());
-		model.getDutyParameter().addSynthParameterEditListener(e -> updateDutyParameterView());
-		model.getSyncFrom13700Parameter().addSynthParameterEditListener(e -> updateSyncFrom13700ParameterView());
+		model.getDetuneParameter().addModuleParameterChangeListener(e -> updateDetuneParameterView());
+		model.getOctaveParameter().addModuleParameterChangeListener(e -> updateOctaveParameterView());
+		model.getDutyParameter().addModuleParameterChangeListener(e -> updateDutyParameterView());
+		model.getSyncFrom13700Parameter().addModuleParameterChangeListener(e -> updateSyncFrom13700ParameterView());
 	}
 	
 	private Object updateSyncFrom13700ParameterView() {

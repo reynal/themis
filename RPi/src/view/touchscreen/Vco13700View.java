@@ -4,23 +4,23 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-import model.SynthParameter;
-import model.Vco13700;
-import model.Vco3340;
-import model.event.SynthParameterEditEvent;
-import model.event.SynthParameterEditListener;
+import model.ModuleParameter;
+import model.Vco13700Module;
+import model.Vco3340Module;
+import model.event.ModuleParameterChangeEvent;
+import model.event.ModuleParameterChangeListener;
 
 public class Vco13700View implements TouchScreenView {
 	
 	private java.awt.Image imageVCO;
-	private Vco13700 model;
+	private Vco13700Module model;
 	
-	public Vco13700View(Vco13700 model){
+	public Vco13700View(Vco13700Module model){
 		this.model = model;
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/13700.png");
-		model.getDetuneParameter().addSynthParameterEditListener(e -> updateDetuneParameterView());
-		model.getOctaveParameter().addSynthParameterEditListener(e -> updateOctaveParameterView());
-		model.getWaveShapeParameter().addSynthParameterEditListener(e -> updateWaveShapeParameterView());
+		model.getDetuneParameter().addModuleParameterChangeListener(e -> updateDetuneParameterView());
+		model.getOctaveParameter().addModuleParameterChangeListener(e -> updateOctaveParameterView());
+		model.getWaveShapeParameter().addModuleParameterChangeListener(e -> updateWaveShapeParameterView());
 	}
 	
 	private Object updateWaveShapeParameterView() {
@@ -47,7 +47,6 @@ public class Vco13700View implements TouchScreenView {
 
 	@Override
 	public boolean isAnimated() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

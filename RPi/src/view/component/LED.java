@@ -23,7 +23,7 @@ import model.event.*;
  * @author reynal
  * @author lucien
  */
-public class LED extends AbstractView implements SynthParameterEditListener  {
+public class LED extends AbstractView implements ModuleParameterChangeListener  {
 
 	// --------------------- fields ---------------------
 
@@ -46,9 +46,11 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 		LOGGER.setLevel(Level.INFO);		
 		this.ledCoordinate = ledCoordinate;
 		// make sure LED is on but not lit
-		is31fl3731.switchLED(ledCoordinate, true);
-		is31fl3731.setLEDpwm(ledCoordinate, 0);
-		LOGGER.info("LED init ok");
+		if (is31fl3731 != null) {
+			is31fl3731.switchLED(ledCoordinate, true);
+			is31fl3731.setLEDpwm(ledCoordinate, 0);
+			LOGGER.info("LED init ok");
+		}
 	}
 
 
@@ -93,9 +95,9 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	/**
 	 * Listener method for parameter changes
 	 */
-	public void synthParameterEdited(SynthParameterEditEvent e) {
+	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
 
-		SynthParameter<?> source = (SynthParameter<?>)e.getSource();
+		ModuleParameter<?> source = (ModuleParameter<?>)e.getSource();
 		if (source instanceof BooleanParameter) {
 			boolean b = ((BooleanParameter)source).getValue();
 			setValue(b);
@@ -181,11 +183,11 @@ public class LED extends AbstractView implements SynthParameterEditListener  {
 	// test with Vco3340 model
 	private static void test2() throws IOException {
 
-		Vco3340 vco3340 = new Vco3340();		
+		Vco3340Module vco3340 = new Vco3340Module();		
 		LED led1 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
 		LED led2 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
-		vco3340.getDetuneParameter().addSynthParameterEditListener(led1);
-		vco3340.getSyncFrom13700Parameter().addSynthParameterEditListener(led2);
+		vco3340.getDetuneParameter().addModuleParameterChangeListener(led1);
+		vco3340.getSyncFrom13700Parameter().addModuleParameterChangeListener(led2);
 		JFrame f = new JFrame("LED test");
 		f.setSize(600,400);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

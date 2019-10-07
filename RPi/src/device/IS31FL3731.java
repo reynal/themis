@@ -47,7 +47,7 @@ public class IS31FL3731 {
 	private static final int COMMAND_REGISTER = 0xFD; 
 	private static final int FUNCTION_REGISTER = 0x0B;
 	protected I2CDevice i2cDevice;
-	private final static Logger LOGGER = Logger.getLogger(IS31FL3731.class.getName());
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	public static final int MIN_PWM = 0;
 	public static final int MAX_PWM = 255;
 	
@@ -71,7 +71,6 @@ public class IS31FL3731 {
 	 */
 	public IS31FL3731() throws IOException, UnsupportedBusNumberException  {
 		
-		LOGGER.setLevel(Level.INFO);
 		
 		// - init I2C bus, create device using given address
 		i2cDevice = I2CFactory.getInstance(I2CBus.BUS_1).getDevice(DeviceAddress.AD_GND.getValue());
@@ -494,7 +493,7 @@ public class IS31FL3731 {
 		}
 		
 		public String toString() {
-			return AorB + "(" + x + "," + y + ")";
+			return AorB + "(" + y + "," + x + ")";
 		}
 		
 	}

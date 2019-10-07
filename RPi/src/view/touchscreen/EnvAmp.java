@@ -4,12 +4,9 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
 
-import model.Vca;
-
-public class EnvAmp{
+public class EnvAmp {
 
 	private Image image;
-	private double animTheta;
 	
 	
 	public EnvAmp(){
@@ -28,6 +25,6 @@ public class EnvAmp{
 
 
 	public boolean isAnimated() {
-		return true;
+		return false;
 	}
 }

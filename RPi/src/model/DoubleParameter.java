@@ -6,7 +6,7 @@ import controller.event.*;
  * This class represents a model parameter of type "double"
  * @deprecated use MIDIParameter instead
  */
-public class DoubleParameter extends SynthParameter<Double> {
+public class DoubleParameter extends ModuleParameter<Double> {
 
 	// inherited : Double value
 	private double min, max, step;
@@ -83,7 +83,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 			if (this.value < min) this.value = min;
 			break;
 		}
-		if (this.value != old) fireSynthParameterEditEvent();
+		if (this.value != old) fireModuleParameterChangeEvent();
 	}	
 	
 	@Override
@@ -91,19 +91,19 @@ public class DoubleParameter extends SynthParameter<Double> {
 
 		this.value+=step;
 		if (this.value > max) this.value=min;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 		
 	}
 
 	@Override
-	public int getSize() {
+	public int getValuesCount() {
 		return 0; // does not make sense here...
 	}
 
 	@Override
-	public void setValueAsMIDICode(int v) {
+	public void setValueFromMIDICode(int v) {
 		value = v/127.0 * (max-min) + min;		
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 	}
 
 	
@@ -112,7 +112,7 @@ public class DoubleParameter extends SynthParameter<Double> {
 	// test method to check the listener mechanics
 	public static void main(String[] args) {
 		
-		Vco3340 model = new Vco3340();
+		Vco3340Module model = new Vco3340Module();
 
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));

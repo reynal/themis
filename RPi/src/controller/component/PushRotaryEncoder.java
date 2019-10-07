@@ -28,7 +28,7 @@ public class PushRotaryEncoder extends RotaryEncoder {
 	 * into the fire method.
 	 *
 	 */
-	protected void fireEncoderPushedEvent(boolean state) {
+	protected void fireEncoderPushedEvent(PushButtonState state) {
 
 		// Guaranteed to return a non-null array
 		Object[] listeners = listenerList.getListenerList();
@@ -40,7 +40,7 @@ public class PushRotaryEncoder extends RotaryEncoder {
 			if (listeners[i] == PushButtonActionListener.class) {
 				// Lazily create the event:
 				if (e == null)
-					e = new PushButtonActionEvent(this);
+					e = new PushButtonActionEvent(this, state);
 				((PushButtonActionListener) listeners[i + 1]).actionPerformed(e); // TODO (reynal) fire changes on EDT!
 			}
 		}

@@ -14,7 +14,10 @@ import com.pi4j.io.i2c.I2CFactory.*;
 import static device.MCP23017.Register.*;
 
 /**
- * A class that represents the MCP23017 GPIO expander.
+ * A class that represents the MCP23017 GPIO expander. 
+ * If in addition one of the INT pins of the device is 
+ * connected to a Raspberry pin, then we can even track level changes occuring
+ * on pins of the MCP23017 device.  
  *
  * GPB0	1	MCP23017	28	GPA7
  * GPB1	2				27	GPA6
@@ -46,7 +49,7 @@ public class MCP23017  {
 	/** a list of event listeners for this device */
 	protected EventListenerList listenerList;
 	
-	// TODO move elsewhere:
+	// TODO reynal move elsewhere:
 	private final static com.pi4j.io.gpio.Pin DEFAULT_RST_PIN = RaspiPin.GPIO_25; // pin 37 
 	private final static com.pi4j.io.gpio.Pin DEFAULT_INT_PIN = RaspiPin.GPIO_04; // pin 16
 	

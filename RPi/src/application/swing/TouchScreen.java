@@ -1,29 +1,42 @@
-package application;
+package application.swing;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.swing.*;
 
-import model.event.SynthParameterEditEvent;
-import model.event.SynthParameterEditListener;
+import application.ModuleFactory;
+import model.event.ModuleParameterChangeEvent;
+import model.event.ModuleParameterChangeListener;
 import view.touchscreen.*;
 
 /**
  * The Raspberry Pi touchscreen
  */
-public class TouchScreen extends JPanel implements ActionListener, SynthParameterEditListener {
+public class TouchScreen extends JPanel implements ActionListener, ModuleParameterChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private TouchScreenView view;
 	private Timer animationTimer;
-	private static final int ANIMATION_TIMER = 20; // ms (a tester sur RPi, attention à ne pas consommer trop de ressources)
-	
+	private static final int ANIMATION_TIMER = 20; // ms (a tester sur RPi, attention ï¿½ ne pas consommer trop de ressources)
+
+    private static final Logger LOGGER = Logger.getLogger("confLogger");
+
+
+	/**
+	 * 
+	 */
 	public TouchScreen() {
 		
 		super();
-		setBackground(Color.black);		
+		//setPreferredSize(new Dimension(500,500));
+		setBackground(Color.black);
 		animationTimer = new Timer(ANIMATION_TIMER , this);
 		//view = new FilterVal();
 		view = new DefaultView();
@@ -32,15 +45,22 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 		
 	}
 	
+	
+	/**
+	 * 
+	 * @param view
+	 */
 	public void setView(TouchScreenView view) {
 		
 		this.view = view;
 		if (view.isAnimated()) animationTimer.start();
 		else animationTimer.stop();
+		repaint();
 		
 		
 	}
 
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		
@@ -69,7 +89,7 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 	}
 	
 	@Override
-	public void synthParameterEdited(SynthParameterEditEvent e) {
+	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
 		// TODO check if this edit is for us, and if this is the case, 
 		// possibly change the view and/or forward change to the current view 
 		// and finally call repaint()
@@ -77,20 +97,7 @@ public class TouchScreen extends JPanel implements ActionListener, SynthParamete
 	}
 	
 
-	// ========== test ===========
 	
-	public static void main(String[] args) {
-
-		JFrame f = new JFrame("Themis");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		f.setContentPane(new TouchScreen());        
-		f.setSize(800, 480);		
-		f.setLocation(0,0);
-		f.setUndecorated(true);
-		f.setVisible(true);
-	}
-
-
+	
 
 }

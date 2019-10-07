@@ -2,22 +2,28 @@ package model;
 
 
 /**
- * This class instantiate every parameters of a ADSR type module and create a list of those parameters
- * As long as there is one type of ADSR every of its parameters is set here.
+ * A model for an ADSR (aka Attack-Decay-Sustain-Release) envelope generator. Traditionally these envelopes are the 
+ * basic elements that produce the variations of texture and amplitude of generated sounds (the so-called "timbre").
+ *  
+ * @links http://youtu.be/BLoM9bBr8lc A nice tutorial on what is a timbre and an ADSR envelope.
+ * @links https://en.wikipedia.org/wiki/Envelope_(music) the ADSR page on wikipedia.
+ * 
+ * @see dac_board.c source file in the STM32 project contains useful constants
  * 
  * @author Bastien Fratta
+ * @author Reynal
  */
 
-public class ADSREnveloppe extends AbstractModel {
+public class ADSREnveloppe extends AbstractModule {
 	
 	private MIDIParameter attackMsParameter, decayMsParameter, sustainLevelParameter, releaseMsParameter;
-	//what about attackLevel or decayLevel ?
 	
+	// should be coherent with STM32 code!!! TODO: how could we "synchronize" these data b/w both projects so that any change there is automatically reflected here?
 	public static final double ATTACK_MIDI_TO_MS = 50.;
 	public static final double DECAY_MIDI_TO_MS = 50.;
 	public static final double RELEASE_MIDI_TO_MS = 50.;
 	
-	// list of label constant for use by clients:
+	// list of label constants for use by clients:
 	public static final String ATTACK = "Attack";
 	public static final String DECAY = "Decay";
 	public static final String SUSTAIN = "Sustain";
@@ -35,6 +41,7 @@ public class ADSREnveloppe extends AbstractModel {
 		parameterList.add(decayMsParameter);
 		parameterList.add(sustainLevelParameter);
 		parameterList.add(releaseMsParameter);
+		
 	}
 	
 	// ---- value getters and setters --- (write operating may fire change events)
@@ -44,7 +51,7 @@ public class ADSREnveloppe extends AbstractModel {
 	}
 
 	public void setAttackMs(double attackMs) {
-		this.attackMsParameter.setValueAsMIDICode((int)(attackMs/ATTACK_MIDI_TO_MS));
+		this.attackMsParameter.setValueFromMIDICode((int)(attackMs/ATTACK_MIDI_TO_MS));
 	}
 
 	public double getDecayMs() {
@@ -52,7 +59,7 @@ public class ADSREnveloppe extends AbstractModel {
 	}
 
 	public void setDecayMs(double decayMs) {
-		this.decayMsParameter.setValueAsMIDICode((int)(decayMs/DECAY_MIDI_TO_MS));
+		this.decayMsParameter.setValueFromMIDICode((int)(decayMs/DECAY_MIDI_TO_MS));
 	}
 
 	public double getSustainLevel() {
@@ -60,7 +67,7 @@ public class ADSREnveloppe extends AbstractModel {
 	}
 
 	public void setSustainLevel(double sustainLevel) {
-		this.sustainLevelParameter.setValueAsMIDICode((int)(sustainLevel * 127.0));
+		this.sustainLevelParameter.setValueFromMIDICode((int)(sustainLevel * 127.0));
 	}
 
 	public double getReleaseMs() {
@@ -68,7 +75,7 @@ public class ADSREnveloppe extends AbstractModel {
 	}
 
 	public void setReleaseMs(double releaseMs) {
-		this.releaseMsParameter.setValueAsMIDICode((int)(releaseMs/RELEASE_MIDI_TO_MS));
+		this.releaseMsParameter.setValueFromMIDICode((int)(releaseMs/RELEASE_MIDI_TO_MS));
 	}
 
 	

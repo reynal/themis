@@ -2,14 +2,10 @@ package view.component;
 
 import java.awt.*;
 import java.io.*;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import java.util.*;
+import java.util.logging.*;
 import javax.swing.*;
-
-import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
-
+import com.pi4j.io.i2c.I2CFactory.*;
 import device.*;
 import model.*;
 import model.event.*;
@@ -25,14 +21,13 @@ import model.event.*;
  * @author reynal
  * @author lucien
  */
-public class BarGraph extends AbstractView implements SynthParameterEditListener  {
+public class BarGraph extends AbstractView implements ModuleParameterChangeListener  {
 
 	// --------------------- fields ---------------------
 
 	private IS31FL3731.LEDCoordinate[] ledArray; // array containing every LED that makes up this BarGraph
 	private JLabel lblForUISimulator;
-	private final static Logger LOGGER = Logger.getLogger(BarGraph.class.getName());
-	static { LOGGER.setLevel(Level.INFO); }
+	private final static Logger LOGGER = Logger.getLogger("confLogger");
 
 
 	// ------------- CONSTRUCTORS ---------------
@@ -47,7 +42,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		super(is31fl3731);
 		this.ledArray = new IS31FL3731.LEDCoordinate[ledArray.length];
 		System.arraycopy(ledArray, 0, this.ledArray, 0, ledArray.length);		
-		initIS31FL3731();
+		initLEDArrayState();
 	}
 		
 	/**
@@ -62,7 +57,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		
 		this.ledArray = new IS31FL3731.LEDCoordinate[8];
 		for (int col = 0; col < this.ledArray.length; col++) this.ledArray[col] = new IS31FL3731.LEDCoordinate(row, col, matrix);
-		initIS31FL3731();
+		initLEDArrayState();
 	}
 
 	/**
@@ -79,11 +74,13 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		
 		this.ledArray = new IS31FL3731.LEDCoordinate[ledCount];
 		for (int i = 0; i < this.ledArray.length; i++) this.ledArray[i] = new IS31FL3731.LEDCoordinate(row, colStart+i, matrix);
-		initIS31FL3731();
+		initLEDArrayState();
 	}
 	
-	
-	private void initIS31FL3731() throws IOException {
+	/**
+	 * Make sure all LED's attached to this object are in the proper initial state.
+	 */
+	private void initLEDArrayState() throws IOException {
 		
 		if (is31fl3731 != null) {
 			for (IS31FL3731.LEDCoordinate ledCoordinate : ledArray) {
@@ -91,6 +88,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 				is31fl3731.setLEDpwm(ledCoordinate, 0); // but keep 'em at 0%
 			}
 		}
+		
 	}
 	
 	/**
@@ -122,8 +120,16 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		}
 
 		// simulator:
-		if (lblForUISimulator != null) 
-			lblForUISimulator.setText(getDisplayString() + " led" + ledArray[led].getColumn() + " is ON");
+		if (lblForUISimulator != null) {
+			String s="";
+			for (int i=0; i<getLEDCount(); i++) {
+				if (i==led) s+="O";
+				else s+="o";
+				
+			}
+			//lblForUISimulator.setText(getSimulatorDisplayString() + " led" + ledArray[led] + " is ON");
+			lblForUISimulator.setText(getSimulatorDisplayString() + " "+s);
+		}
 	}
 	
 	/**
@@ -152,7 +158,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		}
 		
 		if (lblForUISimulator != null)
-			lblForUISimulator.setText(getDisplayString() + " at " + Integer.toString(midiValue));
+			lblForUISimulator.setText(getSimulatorDisplayString() + " at " + Integer.toString(midiValue));
 	}	
 	
 	/**
@@ -167,7 +173,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 	/**
 	 * Listener method for parameter changes
 	 */
-	public void synthParameterEdited(SynthParameterEditEvent e) {
+	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
 
 		if (e.getSource() instanceof EnumParameter) {
 			EnumParameter<?> p = (EnumParameter<?>)e.getSource();
@@ -193,7 +199,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 	public JComponent getUIForSimulator() {
 
 		if (lblForUISimulator == null) {
-			lblForUISimulator = new JLabel(getDisplayString() + "=?");
+			lblForUISimulator = new JLabel(getSimulatorDisplayString() + "=?");
 			lblForUISimulator.setForeground(Color.red);
 		}
 		return lblForUISimulator;
@@ -203,10 +209,10 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 	/**
 	 * for UI simulator debugging purpose
 	 */
-	private String getDisplayString() {
+	private String getSimulatorDisplayString() {
 		
-		return "BarGraph[" + ledArray[0].AorB + ":row" + ledArray[0].getRow() + ":" + ledArray[0].getColumn() 
-				+ "->" +  ledArray[ledArray.length-1].getColumn()+"]";
+		return "BarGraph[" + ledArray[0] + "..." + ledArray[ledArray.length-1] +"]";
+		//return "BarGraph[" + Arrays.deepToString(ledArray) +"]";
 	}		
 	// --------------------- test ----------------------
 
@@ -237,11 +243,11 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		}
 	}
 	
-	// basic test
+	// basic test with no hardware
 	private static void test1() throws IOException {
 
-		//BarGraph group = new BarGraph(null, IS31FL3731.Matrix.A, 0, 0, ledCount-1);
-		BarGraph group = new BarGraph(null, IS31FL3731.Matrix.A, 0);
+		BarGraph group = new BarGraph(null, IS31FL3731.Matrix.A, 0, 0, 4);
+		//BarGraph group = new BarGraph(null, IS31FL3731.Matrix.A, 0);
 		JFrame f = new JFrame("BarGraph test");
 		f.setSize(600,400);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -257,7 +263,6 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 			try {
 				group.setValue(s.getValue());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		});
@@ -266,18 +271,19 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 
 	}	
 
-	// test with Vco3340 model
+	// real hardware test with Vco3340 model
 	private static void test2() throws IOException, UnsupportedBusNumberException {
 		
-		IS31FL3731 is31fl3731 = new IS31FL3731();
+		//IS31FL3731 is31fl3731 = new IS31FL3731();
+		IS31FL3731 is31fl3731 = null;
 
-		Vco3340 vco3340 = new Vco3340();		
+		Vco3340Module vco3340 = new Vco3340Module();		
 		
 		BarGraph bar1 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0); // row=0
-		vco3340.getDutyParameter().addSynthParameterEditListener(bar1);
+		vco3340.getDutyParameter().addModuleParameterChangeListener(bar1);
 		
 		BarGraph bar2 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 6, 0, 4); // row=6 lower
-		vco3340.getOctaveParameter().addSynthParameterEditListener(bar2);
+		vco3340.getOctaveParameter().addModuleParameterChangeListener(bar2);
 
 		JFrame f = new JFrame("BarGraph test");
 		f.setSize(1000,400);
@@ -288,7 +294,7 @@ public class BarGraph extends AbstractView implements SynthParameterEditListener
 		JSlider s;
 		f.add(s=new JSlider(0, 127));
 		f.add(bar1.getUIForSimulator());
-		s.addChangeListener(e -> vco3340.getDutyParameter().setValueAsMIDICode(((JSlider)e.getSource()).getValue()));
+		s.addChangeListener(e -> vco3340.getDutyParameter().setValueFromMIDICode(((JSlider)e.getSource()).getValue()));
 		
 		f.add(new JLabel("Octave:"));
 		f.add(s=new JSlider(0, 3));

@@ -1,6 +1,7 @@
 package controller.component;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 import com.pi4j.io.gpio.PinState; // SR TODO : make this class independent from pi4j
@@ -16,6 +17,7 @@ import controller.event.*;
  */
 public class RotaryEncoder extends Control  {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
 	private MCP23017.Pin channelA; // pin GPIO entree A sur MCP23017
 	private MCP23017.Pin channelB; // pin GPIO entree B sur MCP23017
@@ -35,9 +37,9 @@ public class RotaryEncoder extends Control  {
 	 * @param gpioB pin number for encoder output B
 	 * @throws IOException in case there's an I2C bus issue 
 	 */
-	public RotaryEncoder(String label, MCP23017 mcpDevice, MCP23017.Port portAorB, MCP23017.Pin gpioA, MCP23017.Pin gpioB) throws IOException{
+	public RotaryEncoder(String label, MCP23017 mcpDevice, MCP23017.Pin gpioA, MCP23017.Pin gpioB) throws IOException{
 
-		super(label + "[" + portAorB + ":" + gpioA + "&" + gpioB + "]");
+		super(label + "[" + gpioA + "&" + gpioB + "]");
 
 		if (mcpDevice != null) {
 			this.channelA = gpioA;
@@ -45,12 +47,15 @@ public class RotaryEncoder extends Control  {
 			levelA=PinState.LOW;
 			levelB=PinState.LOW;
 			previousTriggeringChannel=null;
-			mcpDevice.setInput(portAorB); // encoder
-			mcpDevice.setPullupResistors(portAorB, true); // pull up enabled
-			mcpDevice.setInterruptOnChange(portAorB, true); // enables GPIO input pin for interrupt-on-change
+			mcpDevice.setInput(gpioA); // encoder
+			mcpDevice.setInput(gpioB); // encoder
+			mcpDevice.enablePullupResistor(gpioA); // pull up enabled
+			mcpDevice.enablePullupResistor(gpioB); 
+			mcpDevice.enableInterruptOnChange(gpioA); // enables GPIO input pin for interrupt-on-change
+			mcpDevice.enableInterruptOnChange(gpioB); 
 			mcpDevice.addInterruptListener(new PhysicalEncoderChangeListener());
 		}
-		else System.out.println("No MCP23017 registered for " + toString()+" -> simulator mode only");
+		//else LOGGER.warning("No MCP23017 registered for " + toString()+" -> simulator mode only");
 	}
 	
 	
@@ -109,7 +114,8 @@ public class RotaryEncoder extends Control  {
 	 private class PhysicalEncoderChangeListener implements InterruptListener {
 		 
 		/**
-		 * Callback lorsque la pin INTA du MCP23017 est asserted ; signifie qu'une des pins du PORT A a changé, donc qu'un encodeur a tourné, mais pas forcément celui-ci !
+		 * Callback lorsque la pin INTA du MCP23017 est asserted ; 
+		 * signifie qu'une des pins du PORT A a changé, donc qu'un encodeur a tourné, mais pas forcément celui-ci !
 		 * First item: vérifier que c'est bien cet encodeur qui a tourné ! 
 		 */
 		@Override

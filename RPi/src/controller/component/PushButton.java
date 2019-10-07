@@ -1,6 +1,7 @@
 package controller.component;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import com.pi4j.io.gpio.*;
 
@@ -8,7 +9,6 @@ import controller.event.*;
 import device.MCP23017;
 import device.MCP23017.InterruptEvent;
 import device.MCP23017.InterruptListener;
-import device.MCP23017.Port;
 
 /**
  * a class that represents a push button on the front pane
@@ -18,10 +18,15 @@ import device.MCP23017.Port;
  */
 public class PushButton extends Control {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private MCP23017.Pin buttonPin; 
 	
 	/**
-	 * construct a pushbutton with the given UI label that is connected to the given pin of the given MCP23017 device and port
+	 * construct a pushbutton with a UI label that is connected to the given pin of the given MCP23017 device and port
+	 * @param label the UI label of the button ; may be used for a UI simulator
+	 * @param mcpDevice the MCP23017 device this button is connected to
+	 * @param gpio the pin of the device this button is connected to
 	 * @throws IOException 
 	 */
 	public PushButton(String label, MCP23017 mcpDevice, MCP23017.Pin gpio) throws IOException {
@@ -34,7 +39,7 @@ public class PushButton extends Control {
 			mcpDevice.enableInterruptOnChange(gpio); // enables GPIO input pin for interrupt-on-change
 			mcpDevice.addInterruptListener(new PhysicalButtonChangeListener());
 		}
-		else System.out.println("No MCP23017 registered for " + toString() +" -> simulator mode only");
+		//else LOGGER.warning("No MCP23017 registered for " + toString() +" -> simulator mode only");
 
 	}
 
@@ -71,7 +76,7 @@ public class PushButton extends Control {
 	 * into the fire method.
 	 *
 	 */
-	public void firePushButtonActionEvent(PushButtonState state) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simumlator mode
+	public void firePushButtonActionEvent(PushButtonState state) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
 
 		// Guaranteed to return a non-null array
 		Object[] listeners = listenerList.getListenerList();

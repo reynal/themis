@@ -1,7 +1,17 @@
 package model;
 
-// TODO : terminer d'implementer cette classe selon les standards des autres Model
-public class Lfo extends AbstractModel {
+/**
+ * A model for a LFO (aka Low Frequency Oscillator) module. Those modules are usually dedicated
+ * to producing various modulations, for example, vibrator or tremolo, thus imparting dynamic
+ * variations to the sound.
+ * 
+ * TODO :
+ * - add a "MIDI sync" field that represents a synchronization of the LFO frequency to the MIDI clock
+ *  
+ * @author reynal
+ *
+ */
+public class LfoModule extends AbstractModule {
 	
 	private MIDIParameter frequencyParameter;
 	private EnumParameter<WaveShape> waveShapeParameter;
@@ -23,7 +33,7 @@ public class Lfo extends AbstractModel {
 	}
 
 	public void setFrequency(double frequency) {
-		this.frequencyParameter.setValueAsMIDICode((int)(frequency / FREQ_MIDI_TO_HZ));
+		this.frequencyParameter.setValueFromMIDICode((int)(frequency / FREQ_MIDI_TO_HZ));
 	}
 
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)

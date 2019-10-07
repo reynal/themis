@@ -3,9 +3,12 @@ package model;
 import controller.event.*;
 
 /**
- * This class represents a model parameter of type "double"
+ * This class represents a module parameter of type "boolean"
  */
-public class BooleanParameter extends SynthParameter<Boolean> {
+public class BooleanParameter extends ModuleParameter<Boolean> {
+	
+	public static int FALSE = 0;
+	public static int TRUE = 1;
 
 	/**
 	 * Constructs a default parameter with "false" as the default value
@@ -19,7 +22,7 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 	/**
 	 * @return the number of constants for this param
 	 */
-	public int getSize() {
+	public int getValuesCount() {
 		return 2;
 	}	
 	
@@ -27,7 +30,7 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 	public void actionPerformed(PushButtonActionEvent e) {
 		
 		value = !value;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 
 	}
 
@@ -35,7 +38,7 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 	public void encoderRotated(RotaryEncoderEvent e) {
 
 		value = !value;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 		
 	}
 
@@ -48,16 +51,16 @@ public class BooleanParameter extends SynthParameter<Boolean> {
 
 	@Override
 	public int getValueAsMIDICode() {
-		if (value) return 127;
-		return 0;
+		if (value) return TRUE;
+		return FALSE;
 	}
 
 
 	@Override
-	public void setValueAsMIDICode(int v) {
-		if (v < 64) value = false;
+	public void setValueFromMIDICode(int v) {
+		if (v < TRUE) value = false;
 		else value = true;
-		fireSynthParameterEditEvent();
+		fireModuleParameterChangeEvent();
 	}
 
 }
