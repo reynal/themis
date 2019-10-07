@@ -123,5 +123,6 @@ void playDrumMachine(uint8_t data1, uint8_t data2);
 void updateDrumMachine();
 void testDacSelect();
 void testDacWriteSPI();
+void testGamme();
 
 #endif /* DAC_BOARD_H_ */

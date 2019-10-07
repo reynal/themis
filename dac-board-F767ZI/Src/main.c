@@ -78,6 +78,7 @@ UART_HandleTypeDef* huartSTlink;
 
 uint8_t rxUartSTlinkBuff[3];
 
+extern int midiToVCO3340CV[128];
 
 /* USER CODE END PV */
 
@@ -94,6 +95,7 @@ static void MX_UART5_Init(void);
 static void MX_USART3_UART_Init(void);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
+
 
 /* USER CODE END PFP */
 
@@ -175,21 +177,16 @@ int main(void)
 
 	  //testDacSelect();
 	  //testDacWriteSPI();
+	  //testGamme();
 
-	  HAL_Delay(500); // 200ms
+	  HAL_Delay(200); // 200ms
 	  HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
-
 
 	  //HAL_UART_Transmit(huartSTlink, txUartSTlinkBuff, 10, 100);
 	  printf("%d\n", i);
 	  //setMidiCCParam(PWM_3340, i);
 	  i++;
-	  //if (i >= 20) i=1;
-
 	  //HAL_GPIO_TogglePin(VCF_4THORDER_GPIO_Port, VCF_4THORDER_Pin);
-
-	  //setMidiCCParam(VCF_ORDER, value);
-
 	  //value++;
 	  //if (value > 1) value = 0;
 

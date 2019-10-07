@@ -575,6 +575,20 @@ void testDacWriteSPI(){
 	}
 }
 
+// play a range from the lowest to the highest possible note
+// (VCO must be connected to the DAC board)
+void testGamme(){
+
+	int i = 24;
+	while(1){
+		dacWrite(midiToVCO3340CV[i], DAC_VCO_3340_FREQ);
+		HAL_Delay(200); // 200ms
+		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+		printf("%d\n", i++);
+		if (i > 95) i=24;
+	}
+}
+
 // --------------------------------------------------------------------------------------------------
 //                                     HAL interrupt handlers
 // --------------------------------------------------------------------------------------------------
