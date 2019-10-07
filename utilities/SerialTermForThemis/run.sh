@@ -1,1 +1,1 @@
-java -classpath bin:lib/jSerialComm-1.3.11.jar MainFrame /dev/tty.usbmodem1D1333 115200
+java -classpath bin:lib/jSerialComm-1.3.11.jar ThemisSerialDebugger /dev/tty.usbmodem1D1333 115200
