@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.3.1">
+<eagle version="9.5.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="25" unitdist="mil" unit="mil" style="lines" multiple="1" display="no" altdistance="5" altunitdist="mil" altunit="mil"/>
+<grid distance="1" unitdist="mm" unit="mm" style="lines" multiple="1" display="yes" altdistance="5" altunitdist="mil" altunit="mil"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="no" active="yes"/>
+<layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="2" name="Route2" color="16" fill="1" visible="no" active="no"/>
 <layer number="3" name="Route3" color="17" fill="1" visible="no" active="no"/>
 <layer number="4" name="Route4" color="18" fill="1" visible="no" active="no"/>
@@ -26,14 +26,14 @@
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
 <layer number="17" name="Pads" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="18" name="Vias" color="2" fill="1" visible="yes" active="yes"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="yes"/>
-<layer number="20" name="Dimension" color="24" fill="1" visible="no" active="yes"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="yes"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="yes"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="no" active="yes"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="no" active="yes"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="yes"/>
+<layer number="20" name="Dimension" color="24" fill="1" visible="yes" active="yes"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="yes"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="no" active="yes"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
@@ -46,20 +46,20 @@
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
 <layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
 <layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="yes"/>
-<layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="yes"/>
-<layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="yes"/>
-<layer number="42" name="bRestrict" color="1" fill="10" visible="no" active="yes"/>
+<layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
+<layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
+<layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
+<layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="yes"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="yes"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
 <layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
 <layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
@@ -169,12 +169,22 @@
 </layers>
 <board>
 <plain>
-<wire x1="4.445" y1="8.255" x2="70.995" y2="8.255" width="0" layer="20"/>
-<wire x1="70.995" y1="8.255" x2="70.995" y2="56.205" width="0" layer="20"/>
-<wire x1="70.995" y1="56.205" x2="4.445" y2="56.205" width="0" layer="20"/>
-<wire x1="4.445" y1="56.205" x2="4.445" y2="8.255" width="0" layer="20"/>
+<wire x1="4.445" y1="6.255" x2="84.995" y2="6.255" width="0" layer="20"/>
+<wire x1="84.995" y1="6.255" x2="84.995" y2="57.205" width="0" layer="20"/>
+<wire x1="84.995" y1="57.205" x2="4.445" y2="57.205" width="0" layer="20"/>
+<wire x1="4.445" y1="57.205" x2="4.445" y2="6.255" width="0" layer="20"/>
 <text x="59.69" y="52.07" size="1.778" layer="16" rot="MR0">THeMiS Output Stage v1 [BOTTOM]</text>
 <text x="22.225" y="52.07" size="1.778" layer="1">THeMiS Output Stage v1 [TOP]</text>
+<dimension x1="9" y1="52" x2="9" y2="12" x3="-8" y3="32" textsize="1.778" layer="47"/>
+<dimension x1="9" y1="52" x2="9" y2="57" x3="-8" y3="54.5" textsize="1.778" layer="47"/>
+<dimension x1="9" y1="12" x2="9" y2="7" x3="-8" y3="9.5" textsize="1.778" layer="47"/>
+<dimension x1="9" y1="52" x2="79" y2="52" x3="44" y3="59" textsize="1.778" layer="47"/>
+<dimension x1="9" y1="52" x2="4" y2="52" x3="6.5" y3="59" textsize="1.778" layer="47"/>
+<dimension x1="79" y1="52" x2="84" y2="52" x3="81.5" y3="59" textsize="1.778" layer="47"/>
+<wire x1="9" y1="12" x2="79" y2="12" width="0.1524" layer="47"/>
+<wire x1="79" y1="12" x2="79" y2="52" width="0.1524" layer="47"/>
+<wire x1="79" y1="52" x2="9" y2="52" width="0.1524" layer="47"/>
+<wire x1="9" y1="52" x2="9" y2="12" width="0.1524" layer="47"/>
 </plain>
 <libraries>
 <library name="linear">
@@ -2719,34 +2729,6 @@ W = angled&lt;p&gt;
 </package3d>
 </packages3d>
 </library>
-<library name="holes" urn="urn:adsk.eagle:library:237">
-<description>&lt;b&gt;Mounting Holes and Pads&lt;/b&gt;&lt;p&gt;
-&lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
-<packages>
-<package name="3,2" urn="urn:adsk.eagle:footprint:14246/1" library_version="1">
-<description>&lt;b&gt;MOUNTING HOLE&lt;/b&gt; 3.2 mm with drill center</description>
-<wire x1="-2.159" y1="0" x2="0" y2="-2.159" width="2.4892" layer="51" curve="90" cap="flat"/>
-<wire x1="0" y1="2.159" x2="2.159" y2="0" width="2.4892" layer="51" curve="-90" cap="flat"/>
-<circle x="0" y="0" radius="3.429" width="0.1524" layer="21"/>
-<circle x="0" y="0" radius="0.762" width="0.4572" layer="51"/>
-<circle x="0" y="0" radius="3.048" width="2.032" layer="39"/>
-<circle x="0" y="0" radius="3.048" width="2.032" layer="43"/>
-<circle x="0" y="0" radius="3.048" width="2.032" layer="40"/>
-<circle x="0" y="0" radius="3.048" width="2.032" layer="41"/>
-<circle x="0" y="0" radius="3.048" width="2.032" layer="42"/>
-<circle x="0" y="0" radius="1.7" width="0.2032" layer="21"/>
-<hole x="0" y="0" drill="3.2"/>
-</package>
-</packages>
-<packages3d>
-<package3d name="3,2" urn="urn:adsk.eagle:package:14275/1" type="box" library_version="1">
-<description>MOUNTING HOLE 3.2 mm with drill center</description>
-<packageinstances>
-<packageinstance name="3,2"/>
-</packageinstances>
-</package3d>
-</packages3d>
-</library>
 </libraries>
 <attributes>
 </attributes>
@@ -3020,10 +3002,6 @@ design rules under a new name.</description>
 <attribute name="OC_NEWARK" value="unknown" x="46.99" y="46.99" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" x="47.625" y="48.641" size="1.27" layer="27" ratio="10"/>
 </element>
-<element name="U$1" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,2" package3d_urn="urn:adsk.eagle:package:14275/1" value="" x="64.77" y="50.165" smashed="yes"/>
-<element name="U$2" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,2" package3d_urn="urn:adsk.eagle:package:14275/1" value="" x="10.795" y="14.605" smashed="yes"/>
-<element name="U$3" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,2" package3d_urn="urn:adsk.eagle:package:14275/1" value="" x="64.77" y="14.605" smashed="yes"/>
-<element name="U$4" library="holes" library_urn="urn:adsk.eagle:library:237" package="3,2" package3d_urn="urn:adsk.eagle:package:14275/1" value="" x="10.795" y="50.8" smashed="yes"/>
 </elements>
 <signals>
 <signal name="+15V">
@@ -3094,17 +3072,16 @@ design rules under a new name.</description>
 <contactref element="SV2" pad="4"/>
 <contactref element="SV3" pad="4"/>
 <polygon width="0.6096" layer="1" isolate="0.6096">
-<vertex x="5.08" y="55.245"/>
-<vertex x="70.485" y="55.245"/>
-<vertex x="70.485" y="8.89"/>
-<vertex x="6.35" y="8.89"/>
-<vertex x="5.08" y="8.89"/>
+<vertex x="5.08" y="57.245"/>
+<vertex x="84.485" y="57.245"/>
+<vertex x="84.485" y="6.89"/>
+<vertex x="5.08" y="6.89"/>
 </polygon>
 <polygon width="0.6096" layer="16" isolate="0.6096">
-<vertex x="5.08" y="55.245"/>
-<vertex x="70.485" y="55.245"/>
-<vertex x="70.485" y="8.89"/>
-<vertex x="5.08" y="8.89"/>
+<vertex x="5.08" y="57.245"/>
+<vertex x="84.485" y="57.245"/>
+<vertex x="84.485" y="6.89"/>
+<vertex x="5.08" y="6.89"/>
 </polygon>
 <contactref element="IC1" pad="3"/>
 <wire x1="22.86" y1="38.1" x2="22.86" y2="40.64" width="0.6096" layer="16"/>
@@ -3197,6 +3174,18 @@ design rules under a new name.</description>
 <contactref element="SV2" pad="3"/>
 <wire x1="48.26" y1="46.99" x2="48.26" y2="42.545" width="0.6096" layer="16"/>
 </signal>
+<signal name="N$1">
+<via x="9" y="52" extent="1-16" drill="1" shape="square"/>
+</signal>
+<signal name="N$2">
+<via x="9" y="12" extent="1-16" drill="1" shape="square"/>
+</signal>
+<signal name="N$3">
+<via x="79" y="12" extent="1-16" drill="1" shape="square"/>
+</signal>
+<signal name="N$4">
+<via x="79" y="52" extent="1-16" drill="1" shape="square"/>
+</signal>
 </signals>
 <mfgpreviewcolors>
 <mfgpreviewcolor name="soldermaskcolor" color="0xC8008000"/>
@@ -3205,12 +3194,6 @@ design rules under a new name.</description>
 <mfgpreviewcolor name="coppercolor" color="0xFFFFBF00"/>
 <mfgpreviewcolor name="substratecolor" color="0xFF786E46"/>
 </mfgpreviewcolors>
-<errors>
-<approved hash="5,1,ef3fab1ee6ad07d4"/>
-<approved hash="5,1,6d419292853893b7"/>
-<approved hash="5,16,ef3fab1ee6ad07d4"/>
-<approved hash="5,16,6d419292853893b7"/>
-</errors>
 </board>
 </drawing>
 <compatibility>
