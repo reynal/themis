@@ -41,7 +41,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 				+ currentPort.getNumDataBits() + " databits, "
 				+ currentPort.getNumStopBits() + " stopbits");
 		
-		currentPort.addDataListener(new UARTDataListener());
+		//currentPort.addDataListener(new UARTDataListener());
 	}	
 		
 	/**
@@ -55,6 +55,12 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	
 	@Override
 	public void transmitMidiMessage(ShortMessage sm) throws IOException {
+		
+		if (currentPort != null && currentPort.isOpen()) {
+			currentPort.writeBytes(sm.getMessage(), sm.getMessage().length);
+			LOGGER.info("Sending " + sm.getCommand() + sm.getData1() + sm.getData2());
+		}
+		else LOGGER.severe("Connection not open");
 		
 	}
 
@@ -106,7 +112,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 		SerialPort[] ports = SerialPort.getCommPorts();
 		System.out.println("\nAvailable Ports:\n");
 		for (SerialPort port: ports) {
-			if (port.getSystemPortName().contains("tty.usbserial")) return port.getSystemPortName();
+			if (port.getSystemPortName().contains("tty.usb")) return port.getSystemPortName();
 		}
 		return null;
 		
