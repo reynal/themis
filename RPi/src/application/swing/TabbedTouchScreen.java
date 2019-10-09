@@ -1,11 +1,16 @@
 package application.swing;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.*;
 
 import application.ModuleFactory;
 import model.ModuleParameter;
+import model.midi.MidiInHandler;
+import model.serial.DebugTransmitter;
 
 /**
  * Another implementation of the TouchScreen interface based on a JTabbedPane
@@ -17,12 +22,13 @@ import model.ModuleParameter;
 @SuppressWarnings("serial")
 public class TabbedTouchScreen extends JTabbedPane {
 
-	public TabbedTouchScreen() {
+	public TabbedTouchScreen(MidiInHandler midiInHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
 		super();
 		addTab("VCO 3340", new Vco3340Pane());
 		addTab("VCO 13700", new Vco13700Pane());
 		addTab("VCA", new VcaPane());
 		addTab("VCF", new VcfPane());
+		addTab("Piano", new VirtualPiano(midiInHandler));
 	}
 	
 	/*
@@ -123,10 +129,11 @@ public class TabbedTouchScreen extends JTabbedPane {
 	
 	// ---------------------------------------------------------------------------
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MidiUnavailableException, IOException, InvalidMidiDataException {
 		
 		JFrame f = new JFrame("test");
-		f.setContentPane(new TabbedTouchScreen());
+		MidiInHandler midiInHandler = new MidiInHandler(new DebugTransmitter(), 1);
+		f.setContentPane(new TabbedTouchScreen(midiInHandler));
 		f.pack();
 		f.setVisible(true);
 	}

@@ -47,6 +47,7 @@ public class MidiInHandler implements Receiver {
 				// transmitter.setReceiver(new DumpReceiver()); // DEBUG
 				LOGGER.info("Opening " + info);
 				device.open();
+				LOGGER.info("Listening on channel " + midiChannel);
 				return; 
 			}
 		}
@@ -57,25 +58,25 @@ public class MidiInHandler implements Receiver {
 	@Override
 	public void send(MidiMessage message, long timeStamp) {
 		
-		System.out.println(message + " received at time " + timeStamp);
+		//System.out.println(message + " received at time " + timeStamp);
 		
 		if (message instanceof ShortMessage) {
 			ShortMessage sm = (ShortMessage)message;
 			if (sm.getChannel() != this.midiChannel) {
-				LOGGER.info("Incoming MIDI Message on channel " + sm.getChannel() + " while we are listening on channel " + midiChannel);
+				LOGGER.info("Incoming MIDI Message on channel " + sm.getChannel() + " while we are listening on channel " + midiChannel + " (Cmd=" + sm.getCommand() + " data1=" + sm.getData1() + " data2=" + sm.getData2() + ")");
 				return;
 			}
 			// from now on, this message is for us
-			System.out.println("\tStatus=" + sm.getStatus() + ", data1=" + sm.getData1() + ", data2=" + sm.getData2());
+			LOGGER.info("Status=" + sm.getStatus() + " data1=" + sm.getData1() + " data2=" + sm.getData2());
 			
 			// forward Note ON and OFF to Serial Transmitter, and CC directly to module parameters !
 			if (serialTransmitter != null)
 				try {
-					if (sm.getStatus() == ShortMessage.NOTE_ON || sm.getStatus() == ShortMessage.NOTE_OFF) { 
+					if (sm.getCommand() == ShortMessage.NOTE_ON || sm.getCommand() == ShortMessage.NOTE_OFF) { 
 						serialTransmitter.transmitMidiMessage(sm);						
 						System.out.println("\tTransmitting Note ON/OFF message " + sm);
 					}
-					else if (sm.getStatus() == ShortMessage.CONTROL_CHANGE) {
+					else if (sm.getCommand() == ShortMessage.CONTROL_CHANGE) {
 						ModuleParameter<?> parameter = ModuleFactory.getDefault().getModuleParameter(sm.getData1());
 						if (parameter != null) parameter.setValueFromMIDICode(sm.getData2());
 						else LOGGER.warning("No module parameter associated to MIDI CC" + sm.getData1());

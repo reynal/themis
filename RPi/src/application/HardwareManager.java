@@ -4,6 +4,7 @@ import java.awt.HeadlessException;
 import java.io.IOException;
 import java.util.logging.Logger;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -61,7 +62,7 @@ public class HardwareManager {
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
 	public static final boolean DEBUG_MIDI = false;
-	private static final int DEFAULT_MIDI_CHANNEL = 1;
+	private static final int DEFAULT_MIDI_CHANNEL = 0;
 	
 	private static final boolean USE_TABBED_TOUCHSCREEN = true; // flag to test temporary alternate approach
 	
@@ -86,8 +87,10 @@ public class HardwareManager {
 	 * @throws UnsupportedBusNumberException I2C related errors
 	 * @throws IOException UART errors and others
 	 * @throws HeadlessException when a screen is needed but not connected
+	 * @throws MidiUnavailableException 
+	 * @throws InvalidMidiDataException 
 	 */
-	private HardwareManager() throws HeadlessException, IOException, UnsupportedBusNumberException {
+	private HardwareManager() throws HeadlessException, IOException, UnsupportedBusNumberException, InvalidMidiDataException, MidiUnavailableException {
 		
 		checkPlatform(); // RPi or desktop ?
 		
@@ -103,16 +106,16 @@ public class HardwareManager {
 
 		switch (platform) {
 		case DESKTOP:
-			if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen());
+			if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen(midiInHandler));
 			else new SimulatorApp(synthControllerPane, touchScreen, touchScreenMenuBar); 
 			break;
 		case RASPBERRYPI:
 			if (isSynthControlPaneHWConnected) {
-				if (USE_TABBED_TOUCHSCREEN) new HardwareApp(new TabbedTouchScreen());
+				if (USE_TABBED_TOUCHSCREEN) new HardwareApp(new TabbedTouchScreen(midiInHandler));
 				else new HardwareApp(touchScreen, touchScreenMenuBar);
 			}
 			else {
-				if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen());
+				if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen(midiInHandler));
 				else new SimulatorApp(synthControllerPane, touchScreen, touchScreenMenuBar); 
 			}
 			break;
@@ -123,14 +126,17 @@ public class HardwareManager {
 	
 	/**
 	 * Start the hardware.
+	 * @throws MidiUnavailableException 
+	 * @throws InvalidMidiDataException 
 	 */
 	public static void start() {
 		
 		if (singleton == null) // prevents more than one instanciation
 			try {
 				singleton = new HardwareManager();
-			} catch (HeadlessException | IOException | UnsupportedBusNumberException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				System.exit(1);
 			} 
 		
 	}

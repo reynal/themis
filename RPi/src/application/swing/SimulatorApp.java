@@ -38,7 +38,7 @@ public class SimulatorApp extends JFrame {
 		
 		setJMenuBar(mb);		
 	    	    
-		add(new SynthControllerPaneSimulator(scp));
+		// debug add(new SynthControllerPaneSimulator(scp));
 
 		pack();
 		setVisible(true);
@@ -56,13 +56,14 @@ public class SimulatorApp extends JFrame {
 		
 		// JPanel p = createDecoratedPanel("Simulated RPi touchscreen");
 		
-		setLayout(new GridLayout(2,1,10,10));
+		//setLayout(new GridLayout(2,1,10,10));
+		setLayout(new BorderLayout(10,10));
 		setBackground(Color.black); // #222
 		
 		add(ts);
 		ts.setPreferredSize(new Dimension(1600,910)); // TODO => move to resource file
 	    	    
-		add(new SynthControllerPaneSimulator(scp));
+		// debug add(new SynthControllerPaneSimulator(scp));
 
 		pack();
 		setVisible(true);

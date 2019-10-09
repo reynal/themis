@@ -1,31 +1,16 @@
 package application.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.io.*;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
+import javax.sound.midi.*;
+import javax.swing.*;
 
 import model.midi.MidiInHandler;
 import model.serial.DebugTransmitter;
+import model.serial.UartTransmitter;
 
 /**
  * 69 = A4 57 = A3 45 = A2 33 = A1 21 = A0 9 = A-1 0 = C-1 (octave=0 here)
@@ -38,7 +23,7 @@ public class VirtualPiano extends JPanel {
 	private int velocity = 100;
 	private int octave = 5;
 	private final MidiInHandler midiHandler;
-	private final int channel = 1;
+	private final int midiChannel = 0;
 
 	// position of notes boundaries on the JPG image, from 0 to 1 = 100% (width, or
 	// x coordinate)
@@ -48,15 +33,18 @@ public class VirtualPiano extends JPanel {
 	final static String[] KEY_BINDINGS = {"Q", "Z", "S", "E", "D","F", "T", "G", "Y", "H", "U", "J"};
 
 	/**
+	 * @throws InvalidMidiDataException 
+	 * @throws MidiUnavailableException 
 	 * 
 	 */
-	public VirtualPiano(MidiInHandler midiHandler) throws IOException {
+	public VirtualPiano(MidiInHandler midiHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
 
 		this.midiHandler = midiHandler;
 		setLayout(new BorderLayout());
 		add(new Keyboard(), BorderLayout.CENTER);
 		add(createVelocitySlider(), BorderLayout.EAST);
 		add(createOctaveSlider(), BorderLayout.WEST);
+		add(new DemoPanel(), BorderLayout.SOUTH);
 		
 		int i=0;
 		for (String key: KEY_BINDINGS) {
@@ -68,6 +56,9 @@ public class VirtualPiano extends JPanel {
 		}
 	}
 
+	/*
+	 * An action that triggers a Note On MIDI event
+	 */
 	private class NoteOnAction extends AbstractAction {
 
 		int n;
@@ -86,6 +77,9 @@ public class VirtualPiano extends JPanel {
 		}
 	}
 
+	/*
+	 * An action that triggers a Note Off MIDI event
+	 */
 	private class NoteOffAction extends AbstractAction {
 
 		int n;
@@ -155,13 +149,15 @@ public class VirtualPiano extends JPanel {
 		});
 		return p;
 	}
+	
+
 
 	// send a note on message
 	private void noteOn() {
 		if (midiHandler == null)
 			return;
 		try {
-			midiHandler.send(new ShortMessage(ShortMessage.NOTE_ON, channel, octave * 12 + note, velocity), 0);
+			midiHandler.send(new ShortMessage(ShortMessage.NOTE_ON, midiChannel, octave * 12 + note, velocity), 0);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
@@ -172,21 +168,21 @@ public class VirtualPiano extends JPanel {
 		if (midiHandler == null)
 			return;
 		try {
-			midiHandler.send(new ShortMessage(ShortMessage.NOTE_OFF, channel, octave * 12 + note, 0), 0);
+			midiHandler.send(new ShortMessage(ShortMessage.NOTE_OFF, midiChannel, octave * 12 + note, 0), 0);
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
 	}
 
 	/*
-	 * 
+	 * the piano keyboard itself
 	 */
 	private class Keyboard extends JPanel implements MouseListener, MouseMotionListener {
 
 		private final Image backgroundImage;
 
 		Keyboard() {
-			backgroundImage = new ImageIcon(this.getClass().getResource("/resources/img/keyboard.png")).getImage();
+			backgroundImage = new ImageIcon(this.getClass().getResource("/res/keyboard-themis.png")).getImage();
 			addMouseListener(this);
 			addMouseMotionListener(this);
 		}
@@ -297,12 +293,66 @@ public class VirtualPiano extends JPanel {
 		}
 	}
 
+	/*
+	 * 
+	 */
+	private class DemoPanel extends JPanel {
+		
+		JToggleButton tb;
+		Track track;
+		Sequencer seq;
+		
+		DemoPanel() throws InvalidMidiDataException, MidiUnavailableException{
+			add(tb=new JToggleButton("Play demo"));
+			tb.addActionListener(e -> playDemo());
+			
+			Sequence sequence = new Sequence(Sequence.PPQ, 200);
+			track = sequence.createTrack();
+			buildTrack();
+
+			seq = MidiSystem.getSequencer();
+			seq.open();
+			seq.setSequence(sequence);
+			seq.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
+
+			Transmitter	seqTransmitter = seq.getTransmitter(); 
+			seqTransmitter.setReceiver(midiHandler); 
+		}
+		
+		void buildTrack() throws InvalidMidiDataException {
+			
+			for (int i=0; i<10; i++) {
+				if ((i%2) == 0) addNoteOnEventToSequence(200*i, 39, 100);
+				else addNoteOffEventToSequence(200*i, 39);
+			}
+			
+		}
+		
+		void addNoteOnEventToSequence(int time, int nnote, int vel) throws InvalidMidiDataException {
+			MidiMessage msg = new ShortMessage(ShortMessage.NOTE_ON, midiChannel, nnote, vel);
+			MidiEvent me = new MidiEvent(msg, time);
+			track.add(me);
+		}
+		
+		void addNoteOffEventToSequence(int time, int nnote) throws InvalidMidiDataException {
+			MidiMessage msg = new ShortMessage(ShortMessage.NOTE_OFF, midiChannel, nnote, 0);
+			MidiEvent me = new MidiEvent(msg, time);
+			track.add(me);
+		}
+		
+		void playDemo() {
+			if (tb.isSelected()) seq.start();
+			else seq.stop();
+			System.out.println("sequenceur running " + seq.isRunning());	
+		}
+	}	
 	// ------------------------------------------------------------------------------------
 
-	public static void main(String[] args) throws IOException, MidiUnavailableException {
+	public static void main(String[] args) throws IOException, MidiUnavailableException, InvalidMidiDataException {
 		JFrame f = new JFrame("test piano kbd");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		MidiInHandler midiInHandler = new MidiInHandler(new DebugTransmitter(), 1);
+		//MidiInHandler midiInHandler = new MidiInHandler(new DebugTransmitter(), 0);
+		MidiInHandler  midiInHandler = new MidiInHandler(new UartTransmitter("/dev/tty.usbmodem413"), 0);
 		f.setContentPane(new VirtualPiano(midiInHandler));
 		// f.pack();
 		f.setSize(700, 400);
