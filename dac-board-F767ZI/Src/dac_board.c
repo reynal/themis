@@ -589,6 +589,22 @@ void testGamme(){
 	}
 }
 
+// play a range from the lowest to the highest possible note
+// (VCO must be connected to the DAC board)
+void testVcf(){
+
+	double f = 0.0;
+	int i=0;
+	while(1){
+		dacVcfCutoffWrite(f);
+		HAL_Delay(200); // 200ms
+		HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+		printf("%d\n", i++);
+		f += 0.1;
+		if (f > 1.0) f=0;
+	}
+}
+
 // --------------------------------------------------------------------------------------------------
 //                                     HAL interrupt handlers
 // --------------------------------------------------------------------------------------------------
@@ -696,20 +712,20 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	// button blue as note trigger
 	else if (GPIO_Pin == USER_Btn_Pin){ // PC13
 
-	  blueButtonFlag = !blueButtonFlag;
-		//blueButtonFlag = HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin);
-	  //demoMode = blueButtonFlag;
-	  //HAL_GPIO_WritePin(GPIOB, LD3_Pin, demoMode == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		blueButtonFlag = !blueButtonFlag;
+			//blueButtonFlag = HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin);
+	  	  //demoMode = blueButtonFlag;
+	  	HAL_GPIO_WritePin(GPIOB, LD3_Pin, blueButtonFlag == 1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 
-	  /*if (blueButtonFlag == 1){ // note ON
+	  if (blueButtonFlag == 1){ // note ON
 		  //processIncomingMidiMessage(NOTE_ON|0xA, 36,100); // drum debug ???
-		  //processIncomingMidiMessage(NOTE_ON, 36,100);
-		  demoMode = 1;
+		  processIncomingMidiMessage(NOTE_ON, 40,100);
+		  //demoMode = 1;
 	  }
 	  else if (blueButtonFlag == 0){ // note OFF
-		  //processIncomingMidiMessage(NOTE_OFF, 50, 100);
-		  demoMode = 0;
-	  }*/
+		  processIncomingMidiMessage(NOTE_OFF, 40, 0);
+		  //demoMode = 0;
+	  }
 	}
 }
 
@@ -962,7 +978,8 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 		break;
 
 	case VCF_CUTOFF:
-		dacWrite((int) MAX_CUTOFF * (value/127.), DAC_VCF_CUTOFF);
+		dacVcfCutoffWrite(globalParams.vcfCutoff = value/127.);
+		stateMachineVcf.cutoffFrequency = globalParams.vcfCutoff;
 		break;
 
 	case PWM_3340:

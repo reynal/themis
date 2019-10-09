@@ -124,5 +124,6 @@ void updateDrumMachine();
 void testDacSelect();
 void testDacWriteSPI();
 void testGamme();
+void testVcf();
 
 #endif /* DAC_BOARD_H_ */

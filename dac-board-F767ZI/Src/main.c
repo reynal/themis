@@ -178,6 +178,7 @@ int main(void)
 	  //testDacSelect();
 	  //testDacWriteSPI();
 	  //testGamme();
+	  //testVcf();
 
 	  HAL_Delay(200); // 200ms
 	  HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
