@@ -10,6 +10,10 @@ active: about
 
 Themis is a hybrid digital-analog music synthetiser based on analog chips CEM3340, CEM3320 and V2164D by [CoolAudio](http://coolaudio.com/), a Raspberry Pi 3 for the user interface, and a STM32F7 for the enveloppes generation. The project is hosted by [ENSEA](http://www.ensea.fr) Graduate School of Electrical Engineering, Cergy, Univ. Paris-Seine, and involves a dozen graduate students each year. A working prototype is to be released by Spring 2019. The project is led by Professor [S. Reynal](http://www-reynal.ensea.fr).
 
+2019-2020 Team members:
+- Apolline
+- Luca
+
 2018-2019 Team members:
 - Alexandre Niger (Polyrythmic Sequencer)
 - Alexis Poumeyrol (CEM3340, Analog Team)
