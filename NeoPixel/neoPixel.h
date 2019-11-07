@@ -14,7 +14,12 @@ typedef struct neopixel_s {
 	uint8_t* bufferSPI; //The message we send throught SPI to color the pixels
 } neopixel;
 
+//controling neopixel objects
 void nP_create(neopixel* ret,uint32_t npixel);
 void nP_setPixel(neopixel* np,uint32_t n, uint32_t rgb);
 
+//sending the data
+void nP_prepareMessage(neopixel* np);
+uint32_t nP_convertByteSPI(uint8_t color);
+void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color);
 #endif
