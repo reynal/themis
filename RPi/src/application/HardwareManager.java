@@ -64,7 +64,7 @@ public class HardwareManager {
 	public static final boolean DEBUG_MIDI = false;
 	private static final int DEFAULT_MIDI_CHANNEL = 0;
 	
-	private static final boolean USE_TABBED_TOUCHSCREEN = true; // flag to test temporary alternate approach
+	private static final boolean USE_TABBED_TOUCHSCREEN = false; // flag to test temporary alternate approach
 	
 	enum Platform {
 		RASPBERRYPI, // => SPI, possibly UART, simulator depends on screen TODO: check screen size
@@ -100,7 +100,7 @@ public class HardwareManager {
 		
 		createSynthControllerPane(); // based on MCP23017 and IS31FL3137 led driver
 		
-		//createTouchScreen();
+		createTouchScreen();
 		
 		initShutdownHook(); // closes resource before exiting
 
