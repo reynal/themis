@@ -38,7 +38,8 @@ public class SimulatorApp extends JFrame {
 		
 		setJMenuBar(mb);		
 	    	    
-		// debug add(new SynthControllerPaneSimulator(scp));
+		// debug 
+		add(new SynthControllerPaneSimulator(scp));
 
 		pack();
 		setVisible(true);
@@ -63,7 +64,8 @@ public class SimulatorApp extends JFrame {
 		add(ts);
 		ts.setPreferredSize(new Dimension(1600,910)); // TODO => move to resource file
 	    	    
-		// debug add(new SynthControllerPaneSimulator(scp));
+		// debug 
+		add(new SynthControllerPaneSimulator(scp));
 
 		pack();
 		setVisible(true);
