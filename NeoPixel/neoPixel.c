@@ -7,12 +7,19 @@
  *  This contain the functions used to control NeoPixels.
  *  A NeoPixel device is represented by a neopixel struct.
  *
- *  To change the color of the NeoPixels we comunicate with them throught SPI, we send 100 to send a 0 and 110 to send a 1.
- *  For each pixel we need 1 byte for each of the RGB colors so a total of 72 bits will be transported throught SPI
+ *  To change the color of the NeoPixels we comunicate with them throught SPI,
+ *  we send 100 to send a 0 and 110 to send a 1.
+ *  For each pixel we need 1 byte for each of the RGB colors
+ *  so a total of 72 bits will be transported throught SPI
+ *
+ *  Since each bit of data send to the NeoPixel must be 1.25 µs long the SPI bus will need to be send a bit each 416 ns.
+ *  It will need to be clocked at 2.4 MHz.
  */
 
 
 #include <neoPixel.h>
+
+
 /*
  * Initialise a neopixel struct representing a NeoPixel device
  * Arguments :
@@ -70,7 +77,7 @@ void nP_prepareMessage(neopixel* np){
  * 	Output:
  * 		An int whose 24 first bits are converted to be send to the NeoPixel device throught SPI
  * 	Example:
- * 		if we give 10010100 as an input the outpu will be 110 100 100 110 100 110 100 100
+ * 		if we give 10010100 as an input the output will be 110 100 100 110 100 110 100 100
  */
 uint32_t nP_convertByteSPI(uint8_t color){
 	uint32_t ret = 0;
@@ -88,7 +95,7 @@ uint32_t nP_convertByteSPI(uint8_t color){
  * Put the result of nP_convertByteSPI at the end of the buffer to send
  * Arguments:
  * 		bufferSPI the buffer being filled
- * 		index : a dynamicaly evolving number tracking the sise of bufferSPI
+ * 		index : a dynamicaly evolving number tracking the size of bufferSPI
  * 		color : the 24 bits word which will be placed at the end of bufferSPI
  */
 void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color){
@@ -98,4 +105,14 @@ void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color){
 	}
 }
 
+/*
+ * Send the data to update the leds
+ * Arguments:
+ * 		np : the neopixel struct representing the leds to update
+ */
+void nP_send(neopixel* np, SPI_HandleTypeDef SpiHandle){
+	nP_prepareMessage(np);
+	HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 24 * 3, 1000); //Le timeout est à détailler
+	//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
 
+}
