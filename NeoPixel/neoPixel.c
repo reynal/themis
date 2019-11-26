@@ -112,7 +112,23 @@ void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color){
  */
 void nP_send(neopixel* np, SPI_HandleTypeDef SpiHandle){
 	nP_prepareMessage(np);
-	HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 24 * 3, 1000); //Le timeout est à détailler
+	while(1){ //debug
+		HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 24 * 3, 1000); //Le timeout est à détailler
+		HAL_Delay(1);
+	}
 	//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
 
+}
+
+void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel){
+	for(int i=0; i<nPixel; i++){
+		nP_sendByteGPIO(buffer[i]);
+	}
+}
+
+void nP_sendByteGPIO(uint8_t data){
+	for(int i=0; i<8; i++){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, (data >> i) & 1);
+		HAL_Delay(416);
+	}
 }

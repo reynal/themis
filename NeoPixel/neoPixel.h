@@ -9,6 +9,7 @@
 
 
 
+
 /*
  * This struct is used to store the number of neopixels on the object we use and what color they should be
  */
@@ -29,6 +30,7 @@ void nP_prepareMessage(neopixel* np);
 uint32_t nP_convertByteSPI(uint8_t color);
 void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color);
 void nP_send(neopixel* np,SPI_HandleTypeDef SpiHandle);
-
+void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel);
+void nP_sendByteGPIO(uint8_t data);
 
 #endif
