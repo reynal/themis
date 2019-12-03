@@ -39,6 +39,22 @@ void tnP_test1(){
 	SPI_HandleTypeDef SpiHandle;
 	SpiHandle.Instance = SPInp;
 	nP_create(&np,1);
-	nP_setPixel(&np, 0, ROUGE );
-	nP_send(&np, SpiHandle);
+	nP_setPixel(&np, 0, BLEU );
+	nP_prepareMessage(&np);
+	while(1)
+		nP_send(&np, SpiHandle);
+}
+
+//Light up a few led
+void tnP_test2(){
+	neopixel np;
+	SPI_HandleTypeDef SpiHandle;
+	SpiHandle.Instance = SPInp;
+	nP_create(&np,3);
+	nP_setPixel(&np, 0, BLANC );
+	nP_setPixel(&np, 1, BLANC );
+	nP_setPixel(&np, 2, BLANC );
+	nP_prepareMessage(&np);
+	while(1)
+		nP_send(&np, SpiHandle);
 }

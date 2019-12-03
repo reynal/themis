@@ -48,9 +48,9 @@ void nP_create(neopixel* ret,uint32_t npixel){ //Initialise la structure
  */
 void nP_setPixel(neopixel* np,uint32_t n, uint32_t rgb){ //permet de donner une valeur rgb à 1 pixel
 	if(n < np->npixel){
-		np->red[n] = 0xFF0000 & rgb;
-		np->green[n] = 0x00FF00 & rgb;
-		np->blue[n] = 0x0000FF & rgb;
+		np->red[n] = (0xFF0000 & rgb) >> 16;
+		np->green[n] = (0x00FF00 & rgb) >> 8;
+		np->blue[n] = (0x0000FF & rgb) >> 0;
 	}
 }
 /*
@@ -61,12 +61,12 @@ void nP_setPixel(neopixel* np,uint32_t n, uint32_t rgb){ //permet de donner une 
 void nP_prepareMessage(neopixel* np){
 	int index = 0;
 	for(int i=0;i < np->npixel;i++){
-		uint32_t greenColor = nP_convertByteSPI(np->green[i]);
-		nP_concat(np->bufferSPI,&index,greenColor);
-		uint32_t redColor = nP_convertByteSPI(np->red[i]);
-		nP_concat(np->bufferSPI,&index,redColor);
 		uint32_t blueColor = nP_convertByteSPI(np->blue[i]);
-		nP_concat(np->bufferSPI,&index,blueColor);
+		nP_concat(np->bufferSPI,index + 2,blueColor);
+		uint32_t redColor = nP_convertByteSPI(np->red[i]);
+		nP_concat(np->bufferSPI,index + 1,redColor);
+		uint32_t greenColor = nP_convertByteSPI(np->green[i]);
+		nP_concat(np->bufferSPI,index + 0,greenColor);
 	}
 }
 
@@ -82,8 +82,8 @@ void nP_prepareMessage(neopixel* np){
 uint32_t nP_convertByteSPI(uint8_t color){
 	uint32_t ret = 0;
 	for(int i=7; i>=0; i--){ //We must send the MSB first
-		ret = ret >> 3;
-		if((color << i) & 1) //We look at the i-th bit of color
+		ret = ret << 3;
+		if((color >> i) & 1) //We look at the i-th bit of color
 			ret += 6; //110
 		else
 			ret += 4; //100
@@ -95,30 +95,42 @@ uint32_t nP_convertByteSPI(uint8_t color){
  * Put the result of nP_convertByteSPI at the end of the buffer to send
  * Arguments:
  * 		bufferSPI the buffer being filled
- * 		index : a dynamicaly evolving number tracking the size of bufferSPI
+ * 		index : a dynamicaly evolving number tracking the size of bufferSPI.
  * 		color : the 24 bits word which will be placed at the end of bufferSPI
  */
-void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color){
-	for(int i=0; i<3 ;i++){ //there is 3 times 8 bits in the word color
-		bufferSPI[*index] = (char) (color << (8 * i)) & 0xFF;
-		*index += 1;
-	}
+void nP_concat(uint8_t* bufferSPI,int index,uint32_t color){
+	*((uint32_t*) (bufferSPI + index * 3)) = color & 0xFFFFFF;
 }
 
 /*
  * Send the data to update the leds
  * Arguments:
  * 		np : the neopixel struct representing the leds to update
+ *
+ * Note regarding the SPI transimision :
+ * 		For each neopixel we sent 3 color code.
+ * 		Each color code represent 8 bits of data and are send over 24 bits throught SPI
+ * 		For each pixel we send 8 times a 9 bit word (the packet size we use)
  */
 void nP_send(neopixel* np, SPI_HandleTypeDef SpiHandle){
-	nP_prepareMessage(np);
+	//uint32_t null = 0;
 	while(1){ //debug
-		HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 24 * 3, 1000); //Le timeout est à détailler
-		HAL_Delay(1);
+		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 9, 1000);
+		HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 16, 1000);
+		//HAL_SPI_Transmit(&SpiHandle,(uint8_t*) &null, 1, 1000);
+		//nP_sendReset(&SpiHandle);
+		HAL_Delay(10);
+		//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
 	}
-	//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
-
 }
+
+
+void nP_sendReset(SPI_HandleTypeDef* SpiHandle){
+	uint32_t null = 0;
+	for(int i=0; i< 100 * 18; i++)
+		HAL_SPI_Transmit(SpiHandle,(uint8_t*) &null, 1, 1000); //We send a signal as long as 100 leds to reach with a margin the 50 µs pause.
+}
+
 
 void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel){
 	for(int i=0; i<nPixel; i++){

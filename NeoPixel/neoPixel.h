@@ -28,8 +28,9 @@ void nP_setPixel(neopixel* np,uint32_t n, uint32_t rgb);
 //sending the data
 void nP_prepareMessage(neopixel* np);
 uint32_t nP_convertByteSPI(uint8_t color);
-void nP_concat(uint8_t* bufferSPI,int* index,uint32_t color);
+void nP_concat(uint8_t* bufferSPI,int index,uint32_t color);
 void nP_send(neopixel* np,SPI_HandleTypeDef SpiHandle);
+void nP_sendReset(SPI_HandleTypeDef* SpiHandle);
 void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel);
 void nP_sendByteGPIO(uint8_t data);
 
