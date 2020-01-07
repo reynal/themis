@@ -62,20 +62,22 @@ void Error_Handler(void);
 #define MCO_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
-#define LS138_EN_Pin GPIO_PIN_3
-#define LS138_EN_GPIO_Port GPIOA
-#define LS138_A0_Pin GPIO_PIN_4
-#define LS138_A0_GPIO_Port GPIOA
-#define LS138_A1_Pin GPIO_PIN_5
-#define LS138_A1_GPIO_Port GPIOA
-#define LS138_A2_Pin GPIO_PIN_6
-#define LS138_A2_GPIO_Port GPIOA
-#define VCO_TRIANGLE_Pin GPIO_PIN_0
-#define VCO_TRIANGLE_GPIO_Port GPIOB
-#define VCO_PULSE_Pin GPIO_PIN_1
-#define VCO_PULSE_GPIO_Port GPIOB
-#define VCO_SYNC_Pin GPIO_PIN_12
-#define VCO_SYNC_GPIO_Port GPIOA
+#define DAC_SYNC_Pin GPIO_PIN_3
+#define DAC_SYNC_GPIO_Port GPIOA
+#define DAC_BUSY_Pin GPIO_PIN_4
+#define DAC_BUSY_GPIO_Port GPIOA
+#define DAC_LDAC_Pin GPIO_PIN_5
+#define DAC_LDAC_GPIO_Port GPIOA
+#define RST_Pin GPIO_PIN_0
+#define RST_GPIO_Port GPIOB
+#define TIM1_CH1_3340A_Pin GPIO_PIN_8
+#define TIM1_CH1_3340A_GPIO_Port GPIOA
+#define TIM1_CH2_3340B_Pin GPIO_PIN_9
+#define TIM1_CH2_3340B_GPIO_Port GPIOA
+#define TIM1_CH3_13700_Pin GPIO_PIN_10
+#define TIM1_CH3_13700_GPIO_Port GPIOA
+#define EXTI11_SW2_Pin GPIO_PIN_11
+#define EXTI11_SW2_GPIO_Port GPIOA
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -84,12 +86,8 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LD3_Pin GPIO_PIN_3
 #define LD3_GPIO_Port GPIOB
-#define VCO_SAW_Pin GPIO_PIN_5
-#define VCO_SAW_GPIO_Port GPIOB
-#define VCF_2ND_Pin GPIO_PIN_6
-#define VCF_2ND_GPIO_Port GPIOB
-#define VCF_4TH_Pin GPIO_PIN_7
-#define VCF_4TH_GPIO_Port GPIOB
+#define EXTI5_SW1_Pin GPIO_PIN_5
+#define EXTI5_SW1_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
