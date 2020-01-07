@@ -1,0 +1,7 @@
+vcf.c:38:6:setVcfOrder	16	static
+vcf.c:50:6:setVcfCutoffGlobal	16	static
+vcf.c:55:6:setVcfResonanceGlobal	16	static
+vcf.c:60:6:updateVcfResonance	8	static
+vcf.c:65:6:initVcf	16	static
+vcf.c:70:6:updateVcfCutoff	32	static
+vcf.c:81:6:testVcf	16	static

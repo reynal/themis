@@ -12,6 +12,13 @@
 #ifndef ADSR_H_
 #define ADSR_H_
 
+#include "stm32f7xx_hal.h"
+#include "dac_board.h"
+
+#define	ADSR_TIMER_PERIOD_FACTOR 20
+#define	ADSR_TIMER_PERIOD (ADSR_TIMER_PERIOD_FACTOR * TIMER_PERIOD) // 1ms = 0.001
+#define	ADSR_TIMER_PERIOD_MS (1000.0 * ADSR_TIMER_PERIOD) // around 1ms
+
 /**
  *  following is a list of default MIDI CC values (from 0 to 127)
  *  and the associated maximum values:
@@ -26,46 +33,42 @@
  *  	DEF_MIDICC_VCO3340_PWM_DUTY * MAX_VCO3340_PWM_DUTY
  */
 // VCA ADSR (times in ms)
-#define DEF_MIDICC_ATTACK_TIME_VCA 8
+#define DEF_MIDICC_ATTACK_TIME_VCA 2 // A
 #define MAX_ATTACK_TIME_VCA 1000
-#define DEF_MIDICC_DECAY_TIME_VCA 8
+
+#define DEF_MIDICC_DECAY_TIME_VCA 8 // D
 #define MAX_DECAY_TIME_VCA 1000
-#define DEF_MIDICC_RELEASE_TIME_VCA 16
-#define MAX_RELEASE_TIME_VCA 5000
-#define DEF_MIDICC_SUSTAIN_LVL_VCA 64
+
+#define DEF_MIDICC_SUSTAIN_LVL_VCA 110 // S
 #define MAX_SUSTAIN_LVL_VCA 1
+
+#define DEF_MIDICC_RELEASE_TIME_VCA 64 // R
+#define MAX_RELEASE_TIME_VCA 5000
+
 // VCF ADSR (times in ms)
-#define DEF_MIDICC_ATTACK_TIME_VCF 64
+#define DEF_MIDICC_ATTACK_TIME_VCF 48 // A
 #define MAX_ATTACK_TIME_VCF 1000
-#define DEF_MIDICC_DECAY_TIME_VCF 16
+
+#define DEF_MIDICC_DECAY_TIME_VCF 48 // D
 #define MAX_DECAY_TIME_VCF 1000
-#define DEF_MIDICC_RELEASE_TIME_VCF 8
-#define MAX_RELEASE_TIME_VCF 5000
-#define DEF_MIDICC_SUSTAIN_LVL_VCF 64
+
+#define DEF_MIDICC_SUSTAIN_LVL_VCF 64 // S
 #define MAX_SUSTAIN_LVL_VCF 1
-// Filter
-#define DEF_MIDICC_CUTOFF 100
-#define MAX_CUTOFF 1.0
-#define DEF_MIDICC_RESONANCE 0
-#define MAX_RESONANCE 4095
-#define DEF_MIDICC_KBD_TRACKING_VCF 3
-#define MAX_KBD_TRACKING_VCF 1 // maximum permitted voltage shift in percents
-#define DEF_MIDICC_ENV_AMOUNT_VCF 105
-#define MAX_ENV_AMOUNT_VCF 1
+
+#define DEF_MIDICC_RELEASE_TIME_VCF 32 // R
+#define MAX_RELEASE_TIME_VCF 5000
+
+// VCF EG etc
+#define DEF_MIDICC_KBD_TRACKING_VCF 0 // kbd tracking (maximum permitted voltage shift in percents)
+#define MAX_KBD_TRACKING_VCF 0 //
+
+#define DEF_MIDICC_ENV_AMOUNT_VCF 127 // env amount
+#define MAX_ENV_AMOUNT_VCF 1.0
+
 // Velocity
 #define DEF_MIDICC_VELOCITY_SENSITIVITY_VCA 13
-#define DEF_MIDICC_VELOCITY_SENSITIVITY_VCF 13
+#define DEF_MIDICC_VELOCITY_SENSITIVITY_VCF 0
 #define MAX_VELOCITY_SENSITIVITY 1
-// VCO3340
-#define DEF_MIDICC_VCO3340_PWM_DUTY 127
-#define MAX_VCO3340_PWM_DUTY 2450
-#define DEF_MIDICC_VCO3340_LEVEL 100
-#define MAX_VCO3340_LEVEL 4095
-// VCO13700
-#define DEF_MIDICC_VCO13700_LEVEL 100
-#define DEF_MIDICC_VCO13700_WAVE 64
-
-
 
 
 
@@ -92,11 +95,6 @@ typedef enum {
   RELEASE     // 3
 } AdsrMachineState;
 
-/* global parameters cutoff and Q influence the shape of the CVF adsr enveloppe */
-typedef struct {
-  double vcfCutoff; // between 0 and 100%
-  double vcfResonance; // between 0 and 100%
-} GlobalSynthParams;
 
 /*
   parameters for the generation of the VCA enveloppes
@@ -106,16 +104,8 @@ typedef struct {
   AdsrParams* adsrParam; // adsr env params
   double amplitude; // current CV value
   double velocitySensitivity; // 0-100% ; actual CV is modulated by velocity depending on this parameter (0= no mod, 1=full mod)
-
-  /* linear enveloppes for V2140D (aka in dB) */
   double tmpDelta; // env value gets increased by this quantity at each time step (this is dx/dt * 1ms)
   double tmpTargetLevel; // target level inside each phase (ex: 1.0 for the A phase, sustain for the D phase, 0 for the R phase)
-
-  /* Exponential enveloppes for LM13700 based VCA with no exp conv : */
-  //double tmpExp; // stores exp(-t/tau) on a temporary basis to speed up computation for exponential enveloppes
-  //double mulFactorAttack; // exp(-T/tau_a), where T=timer period (TIMER_PERIOD)
-  //double mulFactorDecay; // exp(-T/tau_d)
-  //double mulFactorRelease; // exp(-T/tau_r)
 } StateMachineVca;
 
 /*
@@ -130,43 +120,38 @@ typedef struct {
   double velocitySensitivity; // 0-100% ; filter sensitivity to velocity
   double kbdTracking; // 0-100%, filter sensitivity to current note freq
   double envAmount; // 0-100%, filter sensitivity to enveloppe
+  double tmpVelocityMulFactor;
   double tmpDelta; // env value gets increased by this quantity at each time step (this is dx/dt * 1ms)
   double tmpTargetLevel; // target level at end of each phase, depends on env_amount, sustain and velocity_mul_factor
   double tmpKbdtrackingShiftFactor; // global shift (aka voltage addition) due to kbd_tracking
-
-  /* exponential env generation:
-  double tmpExp; // stores exp(-t/tau) on a temporary basis
-  double mulFactorAttack; // exp(-T/tau_a), where T=timer period (TIMER_PERIOD)
-  double mulFactorDecay; // exp(-T/tau_d)
-  double mulFactorRelease; // exp(-T/tau_r)
-  */
-  double tmpIncrease; // env value gets increased by this quantity at each time step
+  //double tmpIncrease; // env value gets increased by this quantity at each time step
 } StateMachineVcf;
 
-/*
- * struct for VCO parameters
- */
-typedef struct {
-	double detune; //-50%-50% of one tone
-	int octave; // can be positive or negative
-} VcoParameters;
 
-/**
- *  struct for drums
- */
-typedef struct {
-	int bassdrumCounter;
-	int rimshotCounter;
-	int snareCounter;
-	int lowtomCounter;
-	int hightomCounter;
-} DrumTriggers;
+/* Private function prototypes -----------------------------------------------*/
 
-#define BASS_DRUM_NOTE 36
-#define RIMSHOT_NOTE 37
-#define SNARE_NOTE 38
-#define LOWTOM_NOTE 41
-#define HIGHTOM_NOTE 48
 
+void prepareVcaEnvelopeNoteON();
+void prepareVcaEnvelopeNoteOFF();
+void updateVcaEnvelope();
+
+void prepareVcfEnvelopeNoteON();
+void prepareVcfEnvelopeNoteOFF();
+void updateVcfEnvelope();
+
+void setVcfCutoffGlobal(uint8_t value);
+void setVcfResonanceGlobal(uint8_t value);
+
+void setVcaAdsrAttack(uint8_t value);
+void setVcaAdsrDecay(uint8_t value);
+void setVcaAdsrSustain(uint8_t value);
+void setVcaAdsrRelease(uint8_t value);
+void setVcaVelocitySensitivity(uint8_t value);
+
+void setVcfAdsrAttack(uint8_t value);
+void setVcfAdsrDecay(uint8_t value);
+void setVcfAdsrSustain(uint8_t value);
+void setVcfAdsrRelease(uint8_t value);
+void setVcfVelocitySensitivity(uint8_t value);
 
 #endif /* ADSR_H_ */

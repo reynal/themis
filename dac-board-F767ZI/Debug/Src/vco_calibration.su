@@ -1,0 +1,8 @@
+vco_calibration.c:83:6:runVcoCalibration	8	static
+vco_calibration.c:113:6:startCalib3340A	8	static
+vco_calibration.c:129:6:startCalib3340B	8	static
+vco_calibration.c:145:6:startCalib13700	8	static
+vco_calibration.c:167:5:getTimerIntervalFromMidiNote	24	static
+vco_calibration.c:192:6:printMidiToVCOCVTables	24	static
+vco_calibration.c:220:6:resetMidiToVCOCVTables	16	static
+vco_calibration.c:234:6:VCO_Calib_CaptureCallback	40	static
