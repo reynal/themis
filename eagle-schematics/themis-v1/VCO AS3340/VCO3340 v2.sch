@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.2">
+<eagle version="9.5.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -10403,29 +10403,32 @@ soft sync contre le bruit</text>
 <label x="2.54" y="-162.56" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$20" class="0">
+<net name="TEMPCO1" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="MUL_GAIN1"/>
 <pinref part="R1_3340" gate="G$1" pin="1"/>
 <wire x1="-73.66" y1="-78.74" x2="-91.44" y2="-78.74" width="0.1524" layer="91"/>
+<label x="-83.82" y="-78.74" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$23" class="0">
+<net name="TEMPCO2" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="MUL_GAIN2"/>
 <pinref part="R2_3340" gate="G$1" pin="1"/>
 <wire x1="-73.66" y1="-86.36" x2="-73.66" y2="-83.82" width="0.1524" layer="91"/>
 <wire x1="-73.66" y1="-83.82" x2="-76.2" y2="-83.82" width="0.1524" layer="91"/>
+<label x="-76.2" y="-83.82" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$28" class="0">
+<net name="SAW" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="SAW_OUT"/>
 <pinref part="R7_3340" gate="G$1" pin="2"/>
 <wire x1="-73.66" y1="-132.08" x2="-76.2" y2="-132.08" width="0.1524" layer="91"/>
+<label x="-76.2" y="-132.08" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$30" class="0">
+<net name="VEE" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="VEE"/>
 <pinref part="R3_3340" gate="G$1" pin="2"/>
@@ -10443,9 +10446,10 @@ soft sync contre le bruit</text>
 <wire x1="-124.46" y1="-91.44" x2="-124.46" y2="-99.06" width="0.1524" layer="91"/>
 <junction x="-124.46" y="-99.06"/>
 <pinref part="CDEC_3340B1" gate="G$1" pin="2"/>
+<label x="-86.36" y="-93.98" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$40" class="0">
+<net name="FREQ_CTRL" class="0">
 <segment>
 <pinref part="R14_3340" gate="G$1" pin="1"/>
 <pinref part="CEM3340" gate="G$1" pin="FREQ_CTRL"/>
@@ -10457,6 +10461,7 @@ soft sync contre le bruit</text>
 <junction x="-10.16" y="-86.36"/>
 <pinref part="R12_3340" gate="G$1" pin="1"/>
 <junction x="-7.62" y="-86.36"/>
+<label x="-22.86" y="-86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$42" class="0">
@@ -10466,11 +10471,12 @@ soft sync contre le bruit</text>
 <wire x1="0" y1="-71.12" x2="2.54" y2="-71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$43" class="0">
+<net name="SCALE" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="SCALE"/>
 <pinref part="R11_3340" gate="G$1" pin="1"/>
 <wire x1="-22.86" y1="-93.98" x2="-20.32" y2="-93.98" width="0.1524" layer="91"/>
+<label x="-22.86" y="-96.52" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$45" class="0">
@@ -10480,11 +10486,12 @@ soft sync contre le bruit</text>
 <wire x1="-2.54" y1="-99.06" x2="7.62" y2="-99.06" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$46" class="0">
+<net name="TIMING_CAP" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="TIMING_CAP"/>
 <pinref part="C_3340" gate="G$1" pin="2"/>
 <wire x1="-22.86" y1="-116.84" x2="-20.32" y2="-116.84" width="0.1524" layer="91"/>
+<label x="-22.86" y="-114.3" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SYNC_3340" class="0">
@@ -10503,7 +10510,7 @@ soft sync contre le bruit</text>
 <junction x="66.04" y="-99.06"/>
 </segment>
 </net>
-<net name="N$25" class="0">
+<net name="LINEAR_CTRL" class="0">
 <segment>
 <pinref part="CEM3340" gate="G$1" pin="LINEAR_CTRL"/>
 <pinref part="R8_3340" gate="G$1" pin="1"/>
@@ -10513,6 +10520,7 @@ soft sync contre le bruit</text>
 <wire x1="-12.7" y1="-104.14" x2="5.08" y2="-104.14" width="0.1524" layer="91"/>
 <wire x1="-12.7" y1="-99.06" x2="-12.7" y2="-101.6" width="0.1524" layer="91"/>
 <junction x="-12.7" y="-101.6"/>
+<label x="-22.86" y="-104.14" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SAW_3340" class="0">
@@ -10556,7 +10564,7 @@ soft sync contre le bruit</text>
 <label x="157.48" y="-139.7" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$49" class="0">
+<net name="TRI_IN" class="0">
 <segment>
 <pinref part="411" gate="A" pin="D"/>
 <wire x1="132.08" y1="-73.66" x2="124.46" y2="-73.66" width="0.1524" layer="91"/>
@@ -10566,7 +10574,7 @@ soft sync contre le bruit</text>
 <junction x="124.46" y="-73.66"/>
 </segment>
 </net>
-<net name="N$50" class="0">
+<net name="SAW_IN" class="0">
 <segment>
 <pinref part="C2_411" gate="G$1" pin="2"/>
 <pinref part="R2_411" gate="G$1" pin="2"/>
@@ -10576,7 +10584,7 @@ soft sync contre le bruit</text>
 <junction x="124.46" y="-101.6"/>
 </segment>
 </net>
-<net name="N$51" class="0">
+<net name="PULSE_IN" class="0">
 <segment>
 <pinref part="411" gate="C" pin="D"/>
 <wire x1="137.16" y1="-139.7" x2="124.46" y2="-139.7" width="0.1524" layer="91"/>
@@ -10758,18 +10766,20 @@ soft sync contre le bruit</text>
 <pinref part="CDEC_3340B1" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$1" class="0">
+<net name="SOFT_SYNC" class="0">
 <segment>
 <pinref part="C2_SYNC3340" gate="G$1" pin="2"/>
 <pinref part="CEM3340" gate="G$1" pin="SOFT_SYNC"/>
 <wire x1="-17.78" y1="-132.08" x2="-22.86" y2="-132.08" width="0.1524" layer="91"/>
+<label x="-20.32" y="-132.08" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$16" class="0">
+<net name="HARD_SYNC" class="0">
 <segment>
 <pinref part="C1_SYNC3340" gate="G$1" pin="2"/>
 <pinref part="CEM3340" gate="G$1" pin="HARD_SYNC"/>
 <wire x1="-78.74" y1="-116.84" x2="-73.66" y2="-116.84" width="0.1524" layer="91"/>
+<label x="-78.74" y="-114.3" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="411_IN_TRI" class="0">
@@ -10784,7 +10794,7 @@ soft sync contre le bruit</text>
 <label x="68.58" y="-172.72" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
-<net name="411_IN_PULSE" class="0">
+<net name="411_IN_SAW" class="0">
 <segment>
 <wire x1="134.62" y1="-88.9" x2="134.62" y2="-81.28" width="0.1524" layer="91"/>
 <label x="134.62" y="-83.82" size="1.778" layer="95"/>
@@ -10854,7 +10864,7 @@ soft sync contre le bruit</text>
 <junction x="-127" y="-106.68"/>
 </segment>
 </net>
-<net name="411_IN_SAW" class="0">
+<net name="411_IN_PULSE" class="0">
 <segment>
 <pinref part="CONN_STM32" gate="1" pin="7"/>
 <wire x1="73.66" y1="-172.72" x2="73.66" y2="-162.56" width="0.1524" layer="91"/>
@@ -10886,7 +10896,7 @@ soft sync contre le bruit</text>
 <label x="-101.6" y="-106.68" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$2" class="0">
+<net name="SAW_OUT" class="0">
 <segment>
 <pinref part="411" gate="D" pin="S"/>
 <pinref part="R2S_411" gate="G$1" pin="2"/>
