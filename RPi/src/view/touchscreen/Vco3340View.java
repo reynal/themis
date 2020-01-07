@@ -1,20 +1,18 @@
 package view.touchscreen;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageObserver;
 
-import model.ModuleParameter;
-import model.Vco3340Module;
-import model.event.ModuleParameterChangeEvent;
-import model.event.ModuleParameterChangeListener;
+import model.Vco3340AModule;
 
 public class Vco3340View implements TouchScreenView {
 	
 	private java.awt.Image imageVCO;
-	private Vco3340Module model;
+	private Vco3340AModule model;
 	
-	public Vco3340View(Vco3340Module model){
+	public Vco3340View(Vco3340AModule model){
 		this.model = model;
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/3340.png");
 		model.getDetuneParameter().addModuleParameterChangeListener(e -> updateDetuneParameterView());

@@ -3,11 +3,13 @@ package controller.component;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.swing.event.EventListenerList;
 import com.pi4j.io.gpio.PinState; // SR TODO : make this class independent from pi4j
-import device.MCP23017.*;
+
+import controller.event.RotaryEncoderChangeListener;
+import controller.event.RotaryEncoderEvent;
 import device.MCP23017;
-import controller.event.*;
+import device.MCP23017.InterruptEvent;
+import device.MCP23017.InterruptListener;
 
 /**
  * A hardware quadratic encoder that can fire UP or DOWN change events upon rotation.
@@ -65,7 +67,7 @@ public class RotaryEncoder extends Control  {
 	 */
 	public RotaryEncoder(String label) {
 		super(label);
-		System.out.println("No MCP23017 registered for " + toString());
+		LOGGER.info("No MCP23017 registered for " + toString());
 	}
 
 	/**

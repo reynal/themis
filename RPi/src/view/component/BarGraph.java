@@ -277,7 +277,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 		//IS31FL3731 is31fl3731 = new IS31FL3731();
 		IS31FL3731 is31fl3731 = null;
 
-		Vco3340Module vco3340 = new Vco3340Module();		
+		Vco3340AModule vco3340 = new Vco3340AModule();		
 		
 		BarGraph bar1 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0); // row=0
 		vco3340.getDutyParameter().addModuleParameterChangeListener(bar1);

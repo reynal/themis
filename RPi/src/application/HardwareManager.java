@@ -6,14 +6,13 @@ import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
+import com.fazecast.jSerialComm.SerialPort;
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 import com.pi4j.system.SystemInfo;
 
 import application.swing.HardwareApp;
-import application.swing.SimulatorApp;
+import application.swing.SynthControllerPaneSimulator;
 import application.swing.TabbedTouchScreen;
 import application.swing.TouchScreen;
 import controller.SynthControllerPane;
@@ -27,8 +26,6 @@ import model.serial.DebugTransmitter;
 import model.serial.SpiTransmitter;
 import model.serial.UartTransmitter;
 import view.component.ViewFactory;
-import view.touchscreen.TouchScreenView;
-import view.touchscreen.TouchScreenViewFactory;
 
 /**
  * This singleton class is responsible for configuring the underlying hardware and providing hardware information on-demand.
@@ -62,12 +59,12 @@ public class HardwareManager {
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
 	public static final boolean DEBUG_MIDI = false;
-	private static final int DEFAULT_MIDI_CHANNEL = 0;
+	private static final int DEFAULT_MIDI_CHANNEL = 0; // TODO corresponds to MIDI channel 1 ???
 	
-	private static final boolean USE_TABBED_TOUCHSCREEN = false; // flag to test temporary alternate approach
+	private static final boolean USE_TABBED_TOUCHSCREEN = true; // flag to test temporary alternate approach
 	
 	enum Platform {
-		RASPBERRYPI, // => SPI, possibly UART, simulator depends on screen TODO: check screen size
+		RASPBERRYPI, // => SPI, possibly UART, simulator depends on available screen TODO: check screen size
 		DESKTOP // => UART, simulator
 	}
 	
@@ -78,9 +75,6 @@ public class HardwareManager {
 	private AbstractSerialTransmitter serialTransmitter;
 	private MidiInHandler midiInHandler;
 	private SynthControllerPane synthControllerPane;
-	private TouchScreen touchScreen;
-	private TouchScreenViewFactory touchScreenViewFactory;
-	private JMenuBar touchScreenMenuBar;
 	
 	/**
 	 * TODO: handle command line options
@@ -100,23 +94,28 @@ public class HardwareManager {
 		
 		createSynthControllerPane(); // based on MCP23017 and IS31FL3137 led driver
 		
-		createTouchScreen();
+		// debug createTouchScreen();
 		
 		initShutdownHook(); // closes resource before exiting
 
 		switch (platform) {
+		
+		// simulator
 		case DESKTOP:
-			if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen(midiInHandler));
-			else new SimulatorApp(synthControllerPane, touchScreen, touchScreenMenuBar); 
+			new SynthControllerPaneSimulator(synthControllerPane); // open front pane simulator
+			new TabbedTouchScreen(midiInHandler).openJFrame();
+			new TouchScreen().openJFrame();
 			break;
+			
+		// hardware may be connected
 		case RASPBERRYPI:
 			if (isSynthControlPaneHWConnected) {
 				if (USE_TABBED_TOUCHSCREEN) new HardwareApp(new TabbedTouchScreen(midiInHandler));
-				else new HardwareApp(touchScreen, touchScreenMenuBar);
+				//else new HardwareApp(touchScreen, touchScreenMenuBar);
 			}
 			else {
-				if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(synthControllerPane, new TabbedTouchScreen(midiInHandler));
-				else new SimulatorApp(synthControllerPane, touchScreen, touchScreenMenuBar); 
+				//if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(new TabbedTouchScreen(midiInHandler));
+				//else new SimulatorApp(touchScreen, touchScreenMenuBar); 
 			}
 			break;
 		default:
@@ -166,29 +165,34 @@ public class HardwareManager {
 			if (boardType != SystemInfo.BoardType.RaspberryPi_3B) platform = Platform.DESKTOP;
 			
 		} catch (IOException | UnsupportedOperationException | InterruptedException e) {
-			LOGGER.info(e.toString() + " => probably not running on a RPi");
+			LOGGER.info(e.toString() + " => probably not running on a RPi, assuming Platform.DESKTOP");
 			platform = Platform.DESKTOP;
 		}
+		
+		
 	}
 	
 	/*
 	 * Init a serial transmitter based on hardware guess, then makes it a listener to 
 	 * module parameter changes.
 	 */
-	private void createSerialTransmitter() throws IOException {
+	private void createSerialTransmitter() {
 		
 		serialTransmitter = null;
-		
-		if (platform == Platform.RASPBERRYPI)
+
+		try {
+			if (platform == Platform.RASPBERRYPI)
 				serialTransmitter = new SpiTransmitter();
-		else { // let's try to see if there's a serial port available on the host station:
-			
-			String s = UartTransmitter.getTTYUsbSerialPort();
-			if (s != null) serialTransmitter = new UartTransmitter(s);
-			else serialTransmitter = new DebugTransmitter();
+			else { // let's try to see if there's a serial port available on the host station:
+				serialTransmitter = new UartTransmitter();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			serialTransmitter = new DebugTransmitter();
 		}
-		
+
 		ModuleFactory.getDefault().attachSerialTransmitter(serialTransmitter);
+
 	}
 	
 	/*
@@ -206,11 +210,13 @@ public class HardwareManager {
 		
 		if (DEBUG_MIDI) 
 			new MidiDumpReceiver(System.out);
-
+		
+		
 	}
 	
 	/*
-	 * 
+	 * Try to create a SynthControllerPane if a front pane hardware (MCP23017 etc) is connected. 
+	 * Otherwise creates a graphic simulator.
 	 */
 	private void createSynthControllerPane() {
 
@@ -228,45 +234,16 @@ public class HardwareManager {
 		} catch (IOException | UnsupportedBusNumberException | UnsatisfiedLinkError e) {
 			//e.printStackTrace();
 			isSynthControlPaneHWConnected = false;
-			LOGGER.warning(e.toString());
+			LOGGER.warning("Fontpane hardware probably not connected!");
 		}
 		
 		ControlFactory controlFactoryLeft = new ControlFactory(mcpDevice1); // one factory for each MCP device
 		ControlFactory controlFactoryRight = new ControlFactory(mcpDevice2);
 		ViewFactory viewFactory = new ViewFactory(is31Device);
 		synthControllerPane = new SynthControllerPane(controlFactoryLeft, controlFactoryRight, viewFactory);
-		
 	}
-	
-	/*
-	 * 
-	 */
-	private void createTouchScreen() {
 		
-		touchScreen = new TouchScreen();
-		touchScreenViewFactory = new TouchScreenViewFactory(ModuleFactory.getDefault());
-		touchScreenMenuBar = new JMenuBar();
-		//touchScreenMenuBar.setBorderPainted(false);
-		//touchScreenMenuBar.setBackground(Color.BLACK);
-		addMenuItem(touchScreenMenuBar, "VCO 13700", touchScreenViewFactory.getVco13700View());
-		addMenuItem(touchScreenMenuBar, "VCO 3340", touchScreenViewFactory.getVco3340View());
-		addMenuItem(touchScreenMenuBar, "VCF", touchScreenViewFactory.getVcfView());
-		addMenuItem(touchScreenMenuBar, "VCA", touchScreenViewFactory.getVcaView());
-	}
-	
 
-	/*
-	 * 
-	 */
-	private void addMenuItem(JMenuBar menuBar, String lbl, TouchScreenView view) {
-		
-		JMenuItem menu = new JMenuItem(lbl);		
-		//menu.setBackground(Color.BLACK);
-		//menu.setForeground(Color.LIGHT_GRAY);
-		menu.addActionListener(e -> touchScreen.setView(view));
-		menuBar.add(menu);
-	}	
-	
 	/*
 	 * 
 	 */

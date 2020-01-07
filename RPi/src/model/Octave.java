@@ -15,8 +15,8 @@ public enum Octave {
 	
 	public static void main(String[] args) {
 		
-		Octave o = Octave.TWO_INCHES;
-		int i = Octave.values().length;
+		//Octave o = Octave.TWO_INCHES;
+		//int i = Octave.values().length;
 		Octave.class.isEnum();
 		
 	}

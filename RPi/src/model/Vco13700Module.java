@@ -13,16 +13,20 @@ public class Vco13700Module extends VcoModule {
 
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
-	private MIDIParameter waveShapeParameter;
+	private MIDIParameter triLevelParameter, squLevelParameter;
 	
-	public static final String WAVE = "Shape";
-	
+	public static final String TRI_LEVEL = "Triangle";
+	public static final String SQU_LEVEL = "Square";
+	// TODO : subbass level
+		
 	public Vco13700Module() {
 		super();
-		parameterList.add(waveShapeParameter = new MIDIParameter(WAVE));
+		parameterList.add(triLevelParameter = new MIDIParameter(TRI_LEVEL));
+		parameterList.add(squLevelParameter = new MIDIParameter(SQU_LEVEL));
 		
 		// debug:
-		waveShapeParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
+		triLevelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
+		squLevelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected String getVcoName() {
@@ -30,27 +34,33 @@ public class Vco13700Module extends VcoModule {
 	}
 	
 		
-	enum WaveShape {
-		
-		SQUARE,
-		TRIANGLE;
-	}
-
 	// ---- value getters and setters --- (write operating may fire change events)
 	
-	public int getWaveShape() {
-		return waveShapeParameter.getValueAsMIDICode();
+	public int getTriLevel() {
+		return triLevelParameter.getValueAsMIDICode();
 	}
 	
-	public void setWaveShape(int waveshape) {
-		waveShapeParameter.setValue(waveshape);
+	public void setTriLevel(int lvl) {
+		triLevelParameter.setValue(lvl);
+	}
+	
+	public int getSquLevel() {
+		return squLevelParameter.getValueAsMIDICode();
+	}
+	
+	public void setSquLevel(int lvl) {
+		squLevelParameter.setValue(lvl);
 	}
 	
 	
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
-	public MIDIParameter getWaveShapeParameter() {
-		return waveShapeParameter;
+	public MIDIParameter getTriLevelParameter() {
+		return triLevelParameter;
+	}
+
+	public MIDIParameter getSquLevelParameter() {
+		return squLevelParameter;
 	}
 
 }

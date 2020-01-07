@@ -3,10 +3,6 @@ package controller;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-
-import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
-
 import application.ModuleFactory;
 import controller.component.Control;
 import controller.component.ControlFactory;
@@ -47,44 +43,44 @@ public class SynthControllerPane {
 		ModuleFactory models = ModuleFactory.getDefault();
 		
 		try {
-		// ================================= COLUMN #0 :3340 =================================
+		// ================================= COLUMN #0 :3340A =================================
 		is31Matrix = IS31FL3731.Matrix.A;
 		// encoder:
-		controls[0][0] = controlFactoryLeft.createControl(models.getVco3340().getDetuneParameter(), MCP23017.Pin.P0A, MCP23017.Pin.P1A);
-		views[0][0] = viewFactory.createView(models.getVco3340().getDetuneParameter(), is31Matrix, 0);
+		controls[0][0] = controlFactoryLeft.createControl(models.getVco3340A().getDetuneParameter(), MCP23017.Pin.P0A, MCP23017.Pin.P1A);
+		views[0][0] = viewFactory.createView(models.getVco3340A().getDetuneParameter(), is31Matrix, 0);
 		
 		// push:.
-		controls[0][1] = controlFactoryLeft.createControl(models.getVco3340().getOctaveParameter(), MCP23017.Pin.P2A);
-		views[0][1] = viewFactory.createView(models.getVco3340().getOctaveParameter(), is31Matrix, 6, 0);
+		controls[0][1] = controlFactoryLeft.createControl(models.getVco3340A().getOctaveParameter(), MCP23017.Pin.P2A);
+		views[0][1] = viewFactory.createView(models.getVco3340A().getOctaveParameter(), is31Matrix, 6, 0);
 		
 		
 		// encoder:
-		controls[0][2] = controlFactoryLeft.createControl(models.getVco3340().getWaveShapeParameter(), MCP23017.Pin.P3A, MCP23017.Pin.P4A);
-		views[0][2] = viewFactory.createView(models.getVco3340().getWaveShapeParameter(), is31Matrix, 1, 0);
+		controls[0][2] = controlFactoryLeft.createControl(models.getVco3340A().getWaveShapeParameter(), MCP23017.Pin.P3A, MCP23017.Pin.P4A);
+		views[0][2] = viewFactory.createView(models.getVco3340A().getWaveShapeParameter(), is31Matrix, 1, 0);
 		
 		// push:
-		controls[0][3] = controlFactoryLeft.createControl(models.getVco3340().getSyncFrom13700Parameter(), MCP23017.Pin.P5A);
-		views[0][3] = viewFactory.createView(models.getVco3340().getSyncFrom13700Parameter(), is31Matrix, 6, 4);
+		controls[0][3] = controlFactoryLeft.createControl(models.getVco3340A().getSyncFrom13700Parameter(), MCP23017.Pin.P5A);
+		views[0][3] = viewFactory.createView(models.getVco3340A().getSyncFrom13700Parameter(), is31Matrix, 6, 4);
 		
 		// encoder :
-		controls[0][4] = controlFactoryLeft.createControl(models.getVco3340().getDutyParameter(), MCP23017.Pin.P6A, MCP23017.Pin.P7A);
-		views[0][4] = viewFactory.createView(models.getVco3340().getDutyParameter(), is31Matrix, 2);
+		controls[0][4] = controlFactoryLeft.createControl(models.getVco3340A().getDutyParameter(), MCP23017.Pin.P6A, MCP23017.Pin.P7A);
+		views[0][4] = viewFactory.createView(models.getVco3340A().getDutyParameter(), is31Matrix, 2);
 
 		
-		// ================================= COLUMN #1: 13700 =================================
+		// ================================= COLUMN #1: 3340B =================================
 		is31Matrix = IS31FL3731.Matrix.A;
 		// encoder:
-		controls[1][0] = controlFactoryLeft.createControl(models.getVco13700().getDetuneParameter(), MCP23017.Pin.P0B, MCP23017.Pin.P1B);
-		views[1][0] = viewFactory.createView(models.getVco13700().getDetuneParameter(), is31Matrix, 3);
+		controls[1][0] = controlFactoryLeft.createControl(models.getVco3340B().getDetuneParameter(), MCP23017.Pin.P0B, MCP23017.Pin.P1B);
+		views[1][0] = viewFactory.createView(models.getVco3340B().getDetuneParameter(), is31Matrix, 3);
 		
 		// push:
-		controls[1][1] = controlFactoryLeft.createControl(models.getVco13700().getOctaveParameter(), MCP23017.Pin.P2B);
-		views[1][1] = viewFactory.createView(models.getVco13700().getOctaveParameter(), is31Matrix, 7, 0);
+		controls[1][1] = controlFactoryLeft.createControl(models.getVco3340B().getOctaveParameter(), MCP23017.Pin.P2B);
+		views[1][1] = viewFactory.createView(models.getVco3340B().getOctaveParameter(), is31Matrix, 7, 0);
 		
 		
 		// encoder:
-		controls[1][2] = controlFactoryLeft.createControl(models.getVco13700().getWaveShapeParameter(), MCP23017.Pin.P3B, MCP23017.Pin.P4B);
-		views[1][2] = viewFactory.createView(models.getVco13700().getWaveShapeParameter(), is31Matrix, 4);
+		controls[1][2] = controlFactoryLeft.createControl(null, MCP23017.Pin.P3B, MCP23017.Pin.P4B);
+		views[1][2] = viewFactory.createView(null, is31Matrix, 4);
 		
 		// push:
 		controls[1][3] = controlFactoryLeft.createControl(null, MCP23017.Pin.P5B);

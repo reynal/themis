@@ -1,21 +1,11 @@
 package application.swing;
 	
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.util.logging.Logger;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
-
-import application.ModuleFactory;
-import controller.SynthControllerPane;
-import controller.component.*;
-import model.*;
-import model.serial.*;
-import view.touchscreen.*;
+import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 
 /**
  * This is the main application frame in hardware mode, i.e., when a Raspberry is the current platform.

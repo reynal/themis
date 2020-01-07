@@ -18,7 +18,7 @@ public class TouchScreenViewFactory {
 	public TouchScreenViewFactory(ModuleFactory f) {
 
 		vco13700View = new Vco13700View(f.getVco13700());
-		vco3340View = new Vco3340View(f.getVco3340());
+		vco3340View = new Vco3340View(f.getVco3340A());
 		vcfView = new VcfView(f.getVcf());
 		vcaView = new VcaView(f.getVca());	
 	}

@@ -1,10 +1,8 @@
 package model.sequencer;
 
 
-import java.util.*;
-import javax.sound.midi.*;
-import static model.sequencer.EventDuration.*;
-import model.sequencer.TrackThemis.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.Sequence;
 /**
  * SequenceThemis
  * 

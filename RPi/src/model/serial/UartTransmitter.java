@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
-import javax.swing.SwingUtilities;
 
-import com.fazecast.jSerialComm.*;
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
+
+import application.Preferences;
 
 /**
  * This class acts as a MIDI over UART transmitter to any listening device.
@@ -24,17 +27,17 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	
 	/**
 	 * 
-	 * @param serialPortName
+	 * @param s
 	 * @param openConsole
 	 * @throws IOException
 	 */
-	public UartTransmitter(String serialPortName) throws IOException{
+	public UartTransmitter(SerialPort s) throws IOException{
 
-		currentPort = SerialPort.getCommPort(serialPortName);
+		currentPort = s;
 		currentPort.setBaudRate(DEFAULT_BAUD_RATE);
 		if (!currentPort.openPort())
 			throw new IOException("UART opening failed");
-		System.out.println("Opening UART on " 
+		LOGGER.info("Opening UART on " 
 				+ currentPort.getSystemPortName()
 				+ " at " + currentPort.getBaudRate() + " bauds, "
 				+ (currentPort.getParity()==SerialPort.NO_PARITY ? "No parity " : "Parity ")
@@ -49,8 +52,8 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	 * @throws IOException 
 	 */
 	public UartTransmitter() throws IOException {
-		super();
-		System.out.println("Opening UART serial connection");
+		this(SerialPort.getCommPort(Preferences.getPreferences().getStringProperty(Preferences.Key.USB_DEV)));
+		
 	}
 	
 	@Override
@@ -88,7 +91,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 			for (int i = 0; i < numRead; i++) {
 				System.out.println("Received : 0x" + String.format("%02X (%d)", newData[i],newData[i]));
 			}
-			System.out.println(new String(newData));
+			System.out.println("\t"+new String(newData));
 		}
 	}
 	
@@ -96,23 +99,33 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	public static void listSerialPorts() {
 		
 		SerialPort[] ports = SerialPort.getCommPorts();
-		System.out.println("\nAvailable Ports:\n");
+		if (ports.length==0) {
+			LOGGER.severe("No serial/USB port!");
+			return;
+		}
+		LOGGER.info("Available UART/USB Ports:");
 		for (int i = 0; i < ports.length; ++i)
-			System.out.println("   [" + i + "] "
-						+ "\"" + ports[i].getSystemPortName() + "\" : "
-						+ "\"" + ports[i].getDescriptivePortName() + "\"" ) ;
+			System.out.println("\t[" + i + "] "
+						+ "\"" + ports[i].getSystemPortName() + " ("
+						+ ports[i].getDescriptivePortName() + ")" ) ;
 	}
 	
 	/**
 	 * try to discover the device associated with the USB to Serial converter that connects to the STM32 Nucleo board...
 	 * @return null if nothing matches
 	 */
-	public static String getTTYUsbSerialPort() {
+	public static SerialPort getTTYUsbSerialPort() {
+		
+		listSerialPorts(); // for debugging purpose
 		
 		SerialPort[] ports = SerialPort.getCommPorts();
-		System.out.println("\nAvailable Ports:\n");
+		if (ports.length==0)  return null;
 		for (SerialPort port: ports) {
-			if (port.getSystemPortName().contains("tty.usb")) return port.getSystemPortName();
+			if (port.getSystemPortName().contains("tty.usb")) {
+				LOGGER.info("Found USB port " + port.getSystemPortName() + " (" + port.getDescriptivePortName() + ")");
+				return port;
+			}
+				
 		}
 		return null;
 		

@@ -12,7 +12,7 @@ public class PerformancePad {
 	
 	
 	private PushButton[][] pushButtons;
-	private int lenght;
+	private int length;
 	
 	/**
 	 * 

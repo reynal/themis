@@ -72,7 +72,7 @@ public class MIDIParameter extends ModuleParameter<Integer> {
 	// test method to check the listener mechanics
 	public static void main(String[] args) {
 		
-		Vco3340Module model = new Vco3340Module();
+		Vco3340AModule model = new Vco3340AModule();
 
 		//model.getDetuneParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #1 needs update : " + e));
 		//model.getOctaveParameter().addSynthParameterEditListener(e -> System.out.println("Bargraph #2 needs update : " + e));

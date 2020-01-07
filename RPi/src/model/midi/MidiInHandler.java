@@ -6,12 +6,13 @@ import java.util.logging.Logger;
 import javax.sound.midi.*;
 
 import application.ModuleFactory;
+import application.Preferences;
 import model.ModuleParameter;
-import model.serial.AbstractSerialTransmitter;
+import model.serial.*;
 
 
 /**
- * Capture midi input events, dispatching them to a serial bus transmitter
+ * Capture MIDI input events, dispatching them to interested listeners, e.g., a serial bus transmitter
  * 
  */
 public class MidiInHandler implements Receiver {
@@ -23,35 +24,60 @@ public class MidiInHandler implements Receiver {
 	private AbstractSerialTransmitter serialTransmitter;
 
 	/**
-	 * Creates a Midi IN handler that listens to incomindg MIDI events on the given midiChannel.
-	 * Note ON/OFF MIDI messages are forwarded to the given AbstractSerialTransmitter
-	 * CC messages are transmitted to appropriate ModuleParameter's.
+	 * Creates a Midi IN handler that listens to incoming MIDI events on the given midiChannel.
+	 * Note ON/OFF MIDI messages are directly forwarded to the given AbstractSerialTransmitter (e.g., USB port, etc)
+	 * 
+	 * Midi CC messages are transmitted to appropriate ModuleParameter's.
+	 * 
 	 * @throws MidiUnavailableException
 	 */
 	public MidiInHandler(AbstractSerialTransmitter spiTransmitter, int midiChannel) throws MidiUnavailableException {
 
 		this.midiChannel = midiChannel;
 		this.serialTransmitter = spiTransmitter;
+		
+		listMidiOutDevices();
 
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		
+		String expectedMidiDevice = Preferences.getPreferences().getStringProperty(Preferences.Key.MIDI_IN);
+		
+		for (MidiDevice.Info info : infos) {
+			
+			if (!info.getDescription().contains(expectedMidiDevice)) continue; 
+
+			device = MidiSystem.getMidiDevice(info);
+			int maxTransmitters = device.getMaxTransmitters();
+			if (maxTransmitters == 0 || device instanceof Sequencer) continue; // not a MIDI OUT port
+			
+			Transmitter transmitter = device.getTransmitter();
+			transmitter.setReceiver(this);
+			// transmitter.setReceiver(new DumpReceiver()); // DEBUG
+			LOGGER.info("Opening MIDI device \"" + info.getDescription() + "\", listening on channel " + midiChannel);
+			device.open();
+			return; 
+		}
+		throw new MidiUnavailableException("Could not find any input MIDI source");
+	}
+	
+	public static void listMidiOutDevices() {
+		
+		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		
+		LOGGER.info("Listing Midi Devices with transmitters: (out of " + infos.length + " MIDI devices found)");
 
 		for (MidiDevice.Info info : infos) {
 
-			this.device = MidiSystem.getMidiDevice(info);
-			int maxTransmitters = device.getMaxTransmitters();
-			LOGGER.info("Found: " + device + " with "+ maxTransmitters +" transmitters (aka Midi Out)");
-
-			if (maxTransmitters == -1 || maxTransmitters > 0) {
-				Transmitter transmitter = device.getTransmitter();
-				transmitter.setReceiver(this);
-				// transmitter.setReceiver(new DumpReceiver()); // DEBUG
-				LOGGER.info("Opening " + info);
-				device.open();
-				LOGGER.info("Listening on channel " + midiChannel);
-				return; 
+			try {
+				MidiDevice device;
+				device = MidiSystem.getMidiDevice(info);
+				int maxTransmitters = device.getMaxTransmitters();
+				if (maxTransmitters == 0 || device instanceof Sequencer) continue; // not a MIDI OUT port
+				System.out.println("\t- \"" + info.getDescription() + "\"" + (maxTransmitters==-1 ? "" : (maxTransmitters + " transmitters")));
+			} catch (MidiUnavailableException e) {
+				e.printStackTrace();
 			}
 		}
-		throw new MidiUnavailableException("Could not find any midi input sources");
 	}
 
 	// the following method is called for every incoming MIDI message...
@@ -97,8 +123,10 @@ public class MidiInHandler implements Receiver {
 
 	public static void main(String[] args) throws Exception {
 
-		/*SpiTransmitter spi = new SpiTransmitter();
-		MidiInHandler mih = new MidiInHandler(spi);*/
+		//UartTransmitter trans = new UartTransmitter();
+		new MidiInHandler(null, 0);
+		
+		//listMidiOutDevices();
 	}
 
 }

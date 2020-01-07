@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * @author Bastien Fratta
  * @author S. Reynal
  */
-public class Vco3340Module extends VcoModule {
+public class Vco3340AModule extends VcoModule {
 
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
@@ -22,7 +22,7 @@ public class Vco3340Module extends VcoModule {
 	public static final String DUTY = "Duty";
 	public static final String SYNC = "Sync";
 	
-	public Vco3340Module() {
+	public Vco3340AModule() {
 		super();
 		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, WAVE));
 		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
@@ -35,7 +35,7 @@ public class Vco3340Module extends VcoModule {
 	}
 	
 	protected String getVcoName() {
-		return "Vco3340";
+		return "Vco3340A";
 	}
 
 	// ---- value getters and setters --- (write operating may fire change events)
@@ -62,11 +62,8 @@ public class Vco3340Module extends VcoModule {
 		return dutyParameter.getValue();
 	}
 
-	/**
-	 * @param duty b/w 0.0 and 1.0
-	 */
-	public void setDuty(double duty) {
-		this.dutyParameter.setValue((int)(127.0*duty));
+	public void setDuty(int duty) {
+		this.dutyParameter.setValue(duty);
 	}
 		
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
@@ -100,7 +97,7 @@ public class Vco3340Module extends VcoModule {
 	// ------------ test -------------
 	public static void main(String[] args) {
 	
-		Vco3340Module vco1 = new Vco3340Module();
+		Vco3340AModule vco1 = new Vco3340AModule();
 		List<ModuleParameter<?>> paramsVCO1 = vco1.getParameters();
 		for (ModuleParameter<?> p : paramsVCO1) {
 			System.out.println(p);

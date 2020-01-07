@@ -183,7 +183,7 @@ public class LED extends AbstractView implements ModuleParameterChangeListener  
 	// test with Vco3340 model
 	private static void test2() throws IOException {
 
-		Vco3340Module vco3340 = new Vco3340Module();		
+		Vco3340AModule vco3340 = new Vco3340AModule();		
 		LED led1 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
 		LED led2 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
 		vco3340.getDetuneParameter().addModuleParameterChangeListener(led1);

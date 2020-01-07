@@ -2,7 +2,6 @@ package application;
 
 import controller.PerformancePad;
 import controller.SynthControllerPane;
-import controller.component.PushButton;
 
 /**
  * The whole synthetizer panel. This class is not functional yet.
