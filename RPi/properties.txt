@@ -1,0 +1,4 @@
+# properties file for ThEmIS project:
+MIDI_IN=Akai MAX49 Port A
+USB_DEV=/dev/tty.usbmodem1421203
+MIDI_DEMO_FILE=ableton2.mid
