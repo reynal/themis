@@ -234,7 +234,7 @@ public class HardwareManager {
 		} catch (IOException | UnsupportedBusNumberException | UnsatisfiedLinkError e) {
 			//e.printStackTrace();
 			isSynthControlPaneHWConnected = false;
-			LOGGER.warning("Fontpane hardware probably not connected!");
+			LOGGER.warning("Frontpane hardware probably not connected!");
 		}
 		
 		ControlFactory controlFactoryLeft = new ControlFactory(mcpDevice1); // one factory for each MCP device

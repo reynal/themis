@@ -1,8 +1,6 @@
 package application.swing;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,9 +13,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
-import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -42,7 +38,7 @@ public class VirtualPiano extends JPanel {
 	private int note;
 	private int velocity = 100;
 	private int octave = 5;
-	private final MidiInHandler midiHandler;
+	private final MidiInHandler midiInHandler;
 	private final int midiChannel = 0;
 	
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
@@ -53,13 +49,12 @@ public class VirtualPiano extends JPanel {
 	final static String[] KEY_BINDINGS = {"Q", "Z", "S", "E", "D","F", "T", "G", "Y", "H", "U", "J"};
 
 	/**
-	 * @throws InvalidMidiDataException 
-	 * @throws MidiUnavailableException 
+	 * @param midiInHandler the MIDI message handler responsible for sending MIDI messages to the STM32 via the serial transmitter.  
 	 * 
 	 */
-	public VirtualPiano(MidiInHandler midiHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
+	public VirtualPiano(MidiInHandler midiInHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
 
-		this.midiHandler = midiHandler;
+		this.midiInHandler = midiInHandler;
 		setLayout(new BorderLayout());
 		add(new Keyboard(), BorderLayout.CENTER);
 		add(createVelocitySlider(), BorderLayout.EAST);
@@ -142,10 +137,12 @@ public class VirtualPiano extends JPanel {
 	
 	// send a note on or note off message based on the current value of the note and octave fields.
 	private void noteOnOff(boolean isOn) {
-		if (midiHandler == null)
+		if (midiInHandler == null) {
+			LOGGER.warning("No Midi Handler!");
 			return;
+		}
 		try {
-			midiHandler.send(new ShortMessage(
+			midiInHandler.send(new ShortMessage(
 					isOn ? ShortMessage.NOTE_ON : ShortMessage.NOTE_OFF, 
 							midiChannel, 
 							octave * 12 + note, 
@@ -211,7 +208,7 @@ public class VirtualPiano extends JPanel {
 			seq.setLoopCount(Sequencer.LOOP_CONTINUOUSLY);
 
 			Transmitter	seqTransmitter = seq.getTransmitter(); 
-			seqTransmitter.setReceiver(midiHandler); 
+			seqTransmitter.setReceiver(midiInHandler); 
 		}
 		
 		void loadDefaultMidiFile() throws InvalidMidiDataException {

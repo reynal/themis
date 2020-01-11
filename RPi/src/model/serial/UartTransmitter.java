@@ -1,8 +1,10 @@
 package model.serial;
 
 import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Logger;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -128,6 +130,21 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 				
 		}
 		return null;
+		
+	}
+	
+	// ----------------------------- main --------------------
+	
+	public static void main(String[] args) throws Exception {
+		
+		UartTransmitter ut = new UartTransmitter();
+		Random rg = new Random();
+		while(true) {
+			ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_ON, 35 + rg.nextInt(12), 100));
+			Thread.sleep(1000);
+			ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_OFF, 40, 100));
+			Thread.sleep(1000);
+		}
 		
 	}
 	

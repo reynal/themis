@@ -36,7 +36,7 @@ public class MidiInHandler implements Receiver {
 		this.midiChannel = midiChannel;
 		this.serialTransmitter = spiTransmitter;
 		
-		listMidiOutDevices();
+		listMidiTransmitters();
 
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		
@@ -57,10 +57,10 @@ public class MidiInHandler implements Receiver {
 			device.open();
 			return; 
 		}
-		throw new MidiUnavailableException("Could not find any input MIDI source");
+		LOGGER.warning("Could not find any input MIDI source! Please plug a MIDI keyboard!");
 	}
 	
-	public static void listMidiOutDevices() {
+	public static void listMidiTransmitters() {
 		
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		
@@ -96,7 +96,7 @@ public class MidiInHandler implements Receiver {
 			LOGGER.info("Status=" + sm.getStatus() + " data1=" + sm.getData1() + " data2=" + sm.getData2());
 			
 			// forward Note ON and OFF to Serial Transmitter, and CC directly to module parameters !
-			if (serialTransmitter != null)
+			if (serialTransmitter != null) {
 				try {
 					if (sm.getCommand() == ShortMessage.NOTE_ON || sm.getCommand() == ShortMessage.NOTE_OFF) { 
 						serialTransmitter.transmitMidiMessage(sm);						
@@ -105,18 +105,22 @@ public class MidiInHandler implements Receiver {
 					else if (sm.getCommand() == ShortMessage.CONTROL_CHANGE) {
 						ModuleParameter<?> parameter = ModuleFactory.getDefault().getModuleParameter(sm.getData1());
 						if (parameter != null) parameter.setValueFromMIDICode(sm.getData2());
-						else LOGGER.warning("No module parameter associated to MIDI CC" + sm.getData1());
+						else LOGGER.warning("No ModuleParameter associated with MIDI CC" + sm.getData1());
 					}
 					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+			else LOGGER.warning("No SERIAL transmitter plugged into MidiInHandler");
+			
 		}
 
 	}
 
 	@Override
 	public void close() {
+		if (device == null) return; 
 		LOGGER.info("Closing MIDI device " + device);
 		device.close();
 	}
