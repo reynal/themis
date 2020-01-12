@@ -69,14 +69,15 @@ public class TabbedTouchScreen extends JTabbedPane {
 		JSlider js = new JSlider(JSlider.VERTICAL, 0, parameter.getValuesCount()-1, 0);
 		p.add(js, BorderLayout.CENTER);
 		
-		JLabel lbl = new JLabel("0", SwingConstants.CENTER);
+		JLabel lbl = new JLabel(parameter.getValue().toString(), SwingConstants.CENTER);
 		p.add(lbl, BorderLayout.SOUTH);
 		
 		js.addChangeListener(e -> {
 			//System.out.println(e);
-			int midiValue = ((JSlider)e.getSource()).getValue();
-			lbl.setText(Integer.toString(midiValue));
+			int midiValue = ((JSlider)e.getSource()).getValue();			
 			parameter.setValueFromMIDICode(midiValue);
+			//lbl.setText(Integer.toString(midiValue));
+			lbl.setText(parameter.getValue().toString());
 			});
 		return p;
 	}
@@ -90,10 +91,12 @@ public class TabbedTouchScreen extends JTabbedPane {
 			
 			super(BoxLayout.X_AXIS);
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getDetuneParameter()));
+			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getSemitonesParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getOctaveParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getWaveShapeParameter()));
 			//add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340().getSyncFrom13700Parameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getDutyParameter()));
+			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340A().getLevelParameter()));
 		}
 		
 	}
@@ -107,6 +110,7 @@ public class TabbedTouchScreen extends JTabbedPane {
 			
 			super(BoxLayout.X_AXIS);
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340B().getDetuneParameter()));
+			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340B().getSemitonesParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340B().getOctaveParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340B().getPulseLevelParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco3340B().getSawLevelParameter()));
@@ -125,6 +129,7 @@ public class TabbedTouchScreen extends JTabbedPane {
 			
 			super(BoxLayout.X_AXIS);
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco13700().getDetuneParameter()));
+			add(createMidiCCSlider(ModuleFactory.getDefault().getVco13700().getSemitonesParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco13700().getOctaveParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco13700().getSquLevelParameter()));
 			add(createMidiCCSlider(ModuleFactory.getDefault().getVco13700().getTriLevelParameter()));

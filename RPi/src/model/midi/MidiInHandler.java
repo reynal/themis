@@ -64,7 +64,7 @@ public class MidiInHandler implements Receiver {
 		
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		
-		LOGGER.info("Listing Midi Devices with transmitters: (out of " + infos.length + " MIDI devices found)");
+		String str = "Listing Midi Devices with transmitters: (out of " + infos.length + " MIDI devices found)\n";
 
 		for (MidiDevice.Info info : infos) {
 
@@ -73,11 +73,12 @@ public class MidiInHandler implements Receiver {
 				device = MidiSystem.getMidiDevice(info);
 				int maxTransmitters = device.getMaxTransmitters();
 				if (maxTransmitters == 0 || device instanceof Sequencer) continue; // not a MIDI OUT port
-				System.out.println("\t- \"" + info.getDescription() + "\"" + (maxTransmitters==-1 ? "" : (maxTransmitters + " transmitters")));
+				str += "\t- \"" + info.getDescription() + "\"" + (maxTransmitters==-1 ? "" : (maxTransmitters + " transmitters"));
 			} catch (MidiUnavailableException e) {
 				e.printStackTrace();
 			}
 		}
+		LOGGER.info(str);
 	}
 
 	// the following method is called for every incoming MIDI message...
@@ -93,18 +94,23 @@ public class MidiInHandler implements Receiver {
 				return;
 			}
 			// from now on, this message is for us
-			LOGGER.info("Status=" + sm.getStatus() + " data1=" + sm.getData1() + " data2=" + sm.getData2());
-			
 			// forward Note ON and OFF to Serial Transmitter, and CC directly to module parameters !
 			if (serialTransmitter != null) {
 				try {
-					if (sm.getCommand() == ShortMessage.NOTE_ON || sm.getCommand() == ShortMessage.NOTE_OFF) { 
+					if (sm.getCommand() == ShortMessage.NOTE_ON) { 
 						serialTransmitter.transmitMidiMessage(sm);						
-						System.out.println("\tTransmitting Note ON/OFF message " + sm);
+						LOGGER.info("\tSending Note-ON to STM32: note="+sm.getData1()+" vel="+sm.getData2());
+					}
+					else if (sm.getCommand() == ShortMessage.NOTE_OFF) { 
+						serialTransmitter.transmitMidiMessage(sm);						
+						LOGGER.info("\tSending Note-OFF to STM32: note="+sm.getData1());
 					}
 					else if (sm.getCommand() == ShortMessage.CONTROL_CHANGE) {
 						ModuleParameter<?> parameter = ModuleFactory.getDefault().getModuleParameter(sm.getData1());
-						if (parameter != null) parameter.setValueFromMIDICode(sm.getData2());
+						if (parameter != null) {
+							parameter.setValueFromMIDICode(sm.getData2());
+							LOGGER.info("\tForwarding MIDI CC"+sm.getData1()+" message to " + parameter + " with value " + sm.getData2());
+						}
 						else LOGGER.warning("No ModuleParameter associated with MIDI CC" + sm.getData1());
 					}
 					

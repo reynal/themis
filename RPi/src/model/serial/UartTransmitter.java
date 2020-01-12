@@ -12,6 +12,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 import application.Preferences;
+import model.MidiCCImplementation;
 
 /**
  * This class acts as a MIDI over UART transmitter to any listening device.
@@ -46,7 +47,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 				+ currentPort.getNumDataBits() + " databits, "
 				+ currentPort.getNumStopBits() + " stopbits");
 		
-		//currentPort.addDataListener(new UARTDataListener());
+		currentPort.addDataListener(new UARTDataListener());
 	}	
 		
 	/**
@@ -62,8 +63,8 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	public void transmitMidiMessage(ShortMessage sm) throws IOException {
 		
 		if (currentPort != null && currentPort.isOpen()) {
-			currentPort.writeBytes(sm.getMessage(), sm.getMessage().length);
-			LOGGER.info("Sending " + sm.getCommand() + sm.getData1() + sm.getData2());
+			int n = currentPort.writeBytes(sm.getMessage(), sm.getMessage().length);
+			LOGGER.info("Sending "+n+" bytes over " + currentPort.getSystemPortName() + " : " + sm.getCommand() + " " + sm.getData1() + " " + sm.getData2());
 		}
 		else LOGGER.severe("Connection not open");
 		
@@ -90,10 +91,8 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 			byte[] newData = new byte[nBytes];
 			int numRead = comPort.readBytes(newData, newData.length);
 			//printStatus("Read " + numRead + " bytes");
-			for (int i = 0; i < numRead; i++) {
-				System.out.println("Received : 0x" + String.format("%02X (%d)", newData[i],newData[i]));
-			}
-			System.out.println("\t"+new String(newData));
+			//for (int i = 0; i < numRead; i++) System.out.println("Received : 0x" + String.format("%02X (%d)", newData[i],newData[i]));
+			System.out.print(new String(newData));
 		}
 	}
 	
@@ -139,10 +138,16 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 		
 		UartTransmitter ut = new UartTransmitter();
 		Random rg = new Random();
+		int value = 0;
+		int cc = MidiCCImplementation.OCTAVE_3340A.getCode();
 		while(true) {
-			ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_ON, 35 + rg.nextInt(12), 100));
-			Thread.sleep(1000);
-			ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_OFF, 40, 100));
+			//ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_ON, 35 + rg.nextInt(12), 100));
+			//Thread.sleep(1000);
+			//ut.transmitMidiMessage(new ShortMessage(ShortMessage.NOTE_OFF, 40, 100));
+			
+			ut.transmitMidiMessage(new ShortMessage(ShortMessage.CONTROL_CHANGE, cc, value));
+			value++;
+			if (value > 3) value = 0;
 			Thread.sleep(1000);
 		}
 		

@@ -3,6 +3,7 @@ package application;
 import static model.MidiCCImplementation.DETUNE_13700;
 import static model.MidiCCImplementation.DETUNE_3340A;
 import static model.MidiCCImplementation.DETUNE_3340B;
+import static model.MidiCCImplementation.LEVEL_3340A;
 import static model.MidiCCImplementation.LEVEL_PULSE_3340B;
 import static model.MidiCCImplementation.LEVEL_SAW_3340B;
 import static model.MidiCCImplementation.LEVEL_SQU_13700;
@@ -29,7 +30,7 @@ import static model.MidiCCImplementation.VCF_RELEASE;
 import static model.MidiCCImplementation.VCF_RESONANCE;
 import static model.MidiCCImplementation.VCF_SUSTAIN;
 import static model.MidiCCImplementation.VCF_VELOCITY_SENSITIVITY;
-import static model.MidiCCImplementation.WAVE_3340A;
+import static model.MidiCCImplementation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -182,6 +183,8 @@ public class ModuleFactory {
 		midiCcIdTable.put(getVco3340A().getSyncFrom13700Parameter(), SYNC_3340A);
 		midiCcIdTable.put(getVco3340A().getWaveShapeParameter(), WAVE_3340A);
 		midiCcIdTable.put(getVco3340A().getDutyParameter(), PWM_3340A);
+		midiCcIdTable.put(getVco3340A().getLevelParameter(), LEVEL_3340A);
+		midiCcIdTable.put(getVco3340A().getSemitonesParameter(), SEMITONES_3340A);
 
 		// 3340B
 		midiCcIdTable.put(getVco3340B().getDetuneParameter(), DETUNE_3340B); 
@@ -190,12 +193,14 @@ public class ModuleFactory {
 		midiCcIdTable.put(getVco3340B().getPulseLevelParameter(), LEVEL_PULSE_3340B);
 		midiCcIdTable.put(getVco3340B().getSawLevelParameter(), LEVEL_SAW_3340B);
 		midiCcIdTable.put(getVco3340B().getDutyParameter(), PWM_3340B);
+		midiCcIdTable.put(getVco3340B().getSemitonesParameter(), SEMITONES_3340B);
 
 		// 13700
 		midiCcIdTable.put(getVco13700().getDetuneParameter(), DETUNE_13700);
 		midiCcIdTable.put(getVco13700().getOctaveParameter(), OCTAVE_13700);
 		midiCcIdTable.put(getVco13700().getTriLevelParameter(), LEVEL_TRI_13700);
 		midiCcIdTable.put(getVco13700().getSquLevelParameter(), LEVEL_SQU_13700);
+		midiCcIdTable.put(getVco13700().getSemitonesParameter(), SEMITONES_13700);
 
 		// 3320 vcf
 		midiCcIdTable.put(getVcf().getCutoffParameter(), VCF_CUTOFF);

@@ -58,10 +58,13 @@ public class HardwareManager {
 
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
-	public static final boolean DEBUG_MIDI = false;
+	public static final boolean DUMP_MIDI = false;
 	private static final int DEFAULT_MIDI_CHANNEL = 0; // TODO corresponds to MIDI channel 1 ???
 	
-	private static final boolean USE_TABBED_TOUCHSCREEN = true; // flag to test temporary alternate approach
+	private static final boolean CREATE_SYNTH_CTRLPANE = false;
+	private static final boolean OPEN_SYNTH_CTRLPANE_SIMULATION = false;
+	private static final boolean OPEN_TABBED_TOUCHSCREEN = true; 
+	private static final boolean OPEN_RPI_TOUCHSCREEN = false;
 	
 	enum Platform {
 		RASPBERRYPI, // => SPI, possibly UART, simulator depends on available screen TODO: check screen size
@@ -92,7 +95,7 @@ public class HardwareManager {
 		
 		initMidiInSystem(); // Midi in handler
 		
-		createSynthControllerPane(); // based on MCP23017 and IS31FL3137 led driver
+		if (CREATE_SYNTH_CTRLPANE) createSynthControllerPane(); // based on MCP23017 and IS31FL3137 led driver
 		
 		// debug createTouchScreen();
 		
@@ -102,15 +105,15 @@ public class HardwareManager {
 		
 		// simulator
 		case DESKTOP:
-			new SynthControllerPaneSimulator(synthControllerPane); // open front pane simulator
-			new TabbedTouchScreen(midiInHandler).openJFrame();
-			new TouchScreen().openJFrame();
+			if (OPEN_SYNTH_CTRLPANE_SIMULATION) new SynthControllerPaneSimulator(synthControllerPane); // open front pane simulator
+			if (OPEN_TABBED_TOUCHSCREEN) new TabbedTouchScreen(midiInHandler).openJFrame();
+			if (OPEN_RPI_TOUCHSCREEN) new TouchScreen().openJFrame();
 			break;
 			
 		// hardware may be connected
 		case RASPBERRYPI:
 			if (isSynthControlPaneHWConnected) {
-				if (USE_TABBED_TOUCHSCREEN) new HardwareApp(new TabbedTouchScreen(midiInHandler));
+				if (OPEN_TABBED_TOUCHSCREEN) new HardwareApp(new TabbedTouchScreen(midiInHandler));
 				//else new HardwareApp(touchScreen, touchScreenMenuBar);
 			}
 			else {
@@ -208,7 +211,7 @@ public class HardwareManager {
 				e.printStackTrace();
 		}
 		
-		if (DEBUG_MIDI) 
+		if (DUMP_MIDI) 
 			new MidiDumpReceiver(System.out);
 		
 		

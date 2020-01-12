@@ -16,22 +16,26 @@ public class Vco3340AModule extends VcoModule {
 	private EnumParameter<WaveShape> waveShapeParameter;
 	private MIDIParameter dutyParameter;
 	private BooleanParameter syncFrom13700Parameter;
+	private MIDIParameter levelParameter;
 	
 	// list of label constant for use by clients:
 	public static final String WAVE = "Shape";
 	public static final String DUTY = "Duty";
 	public static final String SYNC = "Sync";
+	public static final String LEVEL = "Level";
 	
 	public Vco3340AModule() {
 		super();
 		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, WAVE));
 		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
 		parameterList.add(syncFrom13700Parameter = new BooleanParameter(SYNC));
+		parameterList.add(levelParameter = new MIDIParameter(LEVEL));
 		
 		// debug:
 		waveShapeParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
 		dutyParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
-		syncFrom13700Parameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
+		syncFrom13700Parameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
+		levelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected String getVcoName() {
@@ -65,6 +69,14 @@ public class Vco3340AModule extends VcoModule {
 	public void setDuty(int duty) {
 		this.dutyParameter.setValue(duty);
 	}
+	
+	public int getLevel() {
+		return levelParameter.getValue();
+	}
+	
+	public void setLevel(int v){
+		levelParameter.setValue(v);
+	}
 		
 	// ---- SynthParameter getters ---- (write access is forbidden so as to listener mechanism integrity)
 	
@@ -81,15 +93,17 @@ public class Vco3340AModule extends VcoModule {
 		return dutyParameter;
 	}
 
+	public MIDIParameter getLevelParameter() {
+		return levelParameter;
+	}
 
 	// ----------- enum -------------
 	
 	public static enum WaveShape {
 		
-		SQUARE,
 		TRIANGLE,
-		PULSE,
-		SAWTOOTH;
+		SAWTOOTH,
+		PULSE;
 	}
 
 
