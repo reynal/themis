@@ -8540,9 +8540,6 @@ Output mode V : 2-3</text>
 </net>
 <net name="2164_OUT3" class="0">
 <segment>
-<pinref part="CONN_CURRENT_SUMMING" gate="G$1" pin="8"/>
-<wire x1="337.82" y1="68.58" x2="332.74" y2="68.58" width="0.1524" layer="91"/>
-<wire x1="332.74" y1="68.58" x2="332.74" y2="-7.62" width="0.1524" layer="91"/>
 <pinref part="MIXER" gate="G$5" pin="I_OUT"/>
 <wire x1="332.74" y1="-7.62" x2="320.04" y2="-7.62" width="0.1524" layer="91"/>
 <label x="325.12" y="-10.16" size="1.778" layer="95" rot="R180"/>
@@ -8577,6 +8574,12 @@ Output mode V : 2-3</text>
 <pinref part="CIN4" gate="G$1" pin="2"/>
 <pinref part="R4" gate="G$1" pin="2"/>
 <wire x1="238.76" y1="-7.62" x2="243.84" y2="-7.62" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="CONN_CURRENT_SUMMING" gate="G$1" pin="8"/>
+<wire x1="337.82" y1="68.58" x2="332.74" y2="68.58" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>

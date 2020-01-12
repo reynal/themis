@@ -8727,8 +8727,8 @@ W = angled&lt;p&gt;
 <part name="C3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="075-032X103" package3d_urn="urn:adsk.eagle:package:23646/1" value="300p"/>
 <part name="RC2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="91k"/>
 <part name="RF2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
-<part name="R1_VCF" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
-<part name="R2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
+<part name="R1_CV" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
+<part name="R2_CV" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
 <part name="REE" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="1.5k"/>
 <part name="R1_DIVCUR" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="470"/>
 <part name="R2_DIVCUR" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="470"/>
@@ -8749,7 +8749,7 @@ W = angled&lt;p&gt;
 <part name="RF3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="100k"/>
 <part name="RF4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
 <part name="RRI" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="51k"/>
-<part name="R3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
+<part name="R_RES" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
 <part name="RB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="220k"/>
 <part name="RB3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="220k"/>
 <part name="RB2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="220k"/>
@@ -8780,7 +8780,7 @@ W = angled&lt;p&gt;
 <sheets>
 <sheet>
 <plain>
-<text x="464.82" y="22.86" size="1.778" layer="97">According to the AS3320 datasheet, 
+<text x="472.44" y="22.86" size="1.778" layer="97">According to the AS3320 datasheet, 
 control voltage at pin 12 ranges from
 0 to 200mV.</text>
 <wire x1="337.82" y1="38.1" x2="642.62" y2="38.1" width="0.1524" layer="97"/>
@@ -8828,11 +8828,11 @@ ne devrait pas arriver ...)</text>
 <attribute name="NAME" x="516.89" y="-64.5414" size="1.778" layer="95"/>
 <attribute name="VALUE" x="516.89" y="-69.342" size="1.778" layer="96"/>
 </instance>
-<instance part="R1_VCF" gate="G$1" x="467.36" y="-7.62" smashed="yes" rot="R270">
+<instance part="R1_CV" gate="G$1" x="467.36" y="-7.62" smashed="yes" rot="R270">
 <attribute name="NAME" x="471.17" y="-8.6614" size="1.778" layer="95"/>
 <attribute name="VALUE" x="471.17" y="-5.842" size="1.778" layer="96"/>
 </instance>
-<instance part="R2" gate="G$1" x="472.44" y="2.54" smashed="yes">
+<instance part="R2_CV" gate="G$1" x="472.44" y="2.54" smashed="yes">
 <attribute name="NAME" x="476.25" y="6.5786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="476.25" y="4.318" size="1.778" layer="96"/>
 </instance>
@@ -8900,7 +8900,7 @@ ne devrait pas arriver ...)</text>
 <attribute name="NAME" x="425.2214" y="-72.39" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="430.022" y="-72.39" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R3" gate="G$1" x="472.44" y="12.7" smashed="yes">
+<instance part="R_RES" gate="G$1" x="472.44" y="12.7" smashed="yes">
 <attribute name="NAME" x="476.25" y="16.7386" size="1.778" layer="95"/>
 <attribute name="VALUE" x="476.25" y="14.478" size="1.778" layer="96"/>
 </instance>
@@ -9067,14 +9067,15 @@ ne devrait pas arriver ...)</text>
 <label x="533.4" y="22.86" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$37" class="0">
+<net name="VCF_FREQ_CV" class="0">
 <segment>
-<pinref part="R1_VCF" gate="G$1" pin="1"/>
-<pinref part="R2" gate="G$1" pin="1"/>
+<pinref part="R1_CV" gate="G$1" pin="1"/>
+<pinref part="R2_CV" gate="G$1" pin="1"/>
 <wire x1="467.36" y1="-2.54" x2="467.36" y2="2.54" width="0.1524" layer="91"/>
 <junction x="467.36" y="2.54"/>
 <pinref part="VCF" gate="POW$1" pin="FREQ_CV"/>
 <wire x1="464.82" y1="2.54" x2="467.36" y2="2.54" width="0.1524" layer="91"/>
+<label x="467.36" y="2.54" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="5V" class="0">
@@ -9105,7 +9106,7 @@ ne devrait pas arriver ...)</text>
 <segment>
 <wire x1="477.52" y1="12.7" x2="482.6" y2="12.7" width="0.1524" layer="91"/>
 <label x="482.6" y="12.7" size="1.778" layer="95"/>
-<pinref part="R3" gate="G$1" pin="2"/>
+<pinref part="R_RES" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <wire x1="538.48" y1="5.08" x2="525.78" y2="5.08" width="0.1524" layer="91"/>
@@ -9117,7 +9118,7 @@ ne devrait pas arriver ...)</text>
 <segment>
 <wire x1="477.52" y1="2.54" x2="482.6" y2="2.54" width="0.1524" layer="91"/>
 <label x="482.6" y="2.54" size="1.778" layer="95"/>
-<pinref part="R2" gate="G$1" pin="2"/>
+<pinref part="R2_CV" gate="G$1" pin="2"/>
 </segment>
 <segment>
 <wire x1="538.48" y1="2.54" x2="525.78" y2="2.54" width="0.1524" layer="91"/>
@@ -9150,11 +9151,12 @@ ne devrait pas arriver ...)</text>
 <pinref part="C_DIVCUR" gate="G$1" pin="2"/>
 </segment>
 </net>
-<net name="N$5" class="0">
+<net name="VCAP1" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$1" pin="CAP"/>
 <pinref part="C1" gate="G$1" pin="2"/>
 <wire x1="474.98" y1="-93.98" x2="474.98" y2="-86.36" width="0.1524" layer="91"/>
+<label x="474.98" y="-91.44" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="AGND" class="0">
@@ -9164,7 +9166,7 @@ ne devrait pas arriver ...)</text>
 </segment>
 <segment>
 <wire x1="467.36" y1="-12.7" x2="467.36" y2="-15.24" width="0.1524" layer="91"/>
-<pinref part="R1_VCF" gate="G$1" pin="2"/>
+<pinref part="R1_CV" gate="G$1" pin="2"/>
 <pinref part="AGND2" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
@@ -9238,22 +9240,29 @@ ne devrait pas arriver ...)</text>
 <wire x1="360.68" y1="-73.66" x2="360.68" y2="-76.2" width="0.1524" layer="91"/>
 <junction x="360.68" y="-73.66"/>
 </segment>
+<segment>
+<pinref part="R_PD_4TH_ORDER" gate="G$1" pin="1"/>
+<wire x1="558.8" y1="-17.78" x2="563.88" y2="-17.78" width="0.1524" layer="91"/>
+<label x="558.8" y="-17.78" size="1.778" layer="95"/>
+</segment>
 </net>
-<net name="N$18" class="0">
+<net name="VCAP2" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$2" pin="CAP"/>
 <pinref part="C2" gate="G$1" pin="2"/>
 <wire x1="523.24" y1="-93.98" x2="523.24" y2="-86.36" width="0.1524" layer="91"/>
+<label x="523.24" y="-91.44" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$24" class="0">
+<net name="VCAP4" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$3" pin="CAP"/>
 <pinref part="C4" gate="G$1" pin="2"/>
 <wire x1="619.76" y1="-93.98" x2="619.76" y2="-86.36" width="0.1524" layer="91"/>
+<label x="619.76" y="-91.44" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$57" class="0">
+<net name="OUT1" class="0">
 <segment>
 <pinref part="RF1" gate="G$1" pin="1"/>
 <wire x1="472.44" y1="-66.04" x2="490.22" y2="-66.04" width="0.1524" layer="91"/>
@@ -9261,20 +9270,22 @@ ne devrait pas arriver ...)</text>
 <pinref part="VCF" gate="OTA$1" pin="OUT"/>
 <pinref part="RC2" gate="G$1" pin="2"/>
 <junction x="490.22" y="-66.04"/>
+<label x="490.22" y="-73.66" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
-<net name="N$17" class="0">
+<net name="VCAP3" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$4" pin="CAP"/>
 <pinref part="C3" gate="G$1" pin="2"/>
 <wire x1="571.5" y1="-93.98" x2="571.5" y2="-86.36" width="0.1524" layer="91"/>
+<label x="571.5" y="-88.9" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="VM3320" class="0">
+<net name="VEE" class="0">
 <segment>
 <pinref part="REE" gate="G$1" pin="2"/>
 <wire x1="426.72" y1="-10.16" x2="426.72" y2="-7.62" width="0.1524" layer="91"/>
-<label x="441.96" y="-12.7" size="1.778" layer="95"/>
+<label x="419.1" y="-7.62" size="1.778" layer="95"/>
 <pinref part="VCF" gate="POW$1" pin="V-"/>
 <pinref part="C-15V" gate="G$1" pin="1"/>
 <wire x1="426.72" y1="-7.62" x2="431.8" y2="-7.62" width="0.1524" layer="91"/>
@@ -9283,7 +9294,7 @@ ne devrait pas arriver ...)</text>
 <pinref part="C-15VPOL" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$62" class="0">
+<net name="IN2" class="0">
 <segment>
 <pinref part="RC2" gate="G$1" pin="1"/>
 <pinref part="VCF" gate="OTA$2" pin="IN"/>
@@ -9293,9 +9304,10 @@ ne devrait pas arriver ...)</text>
 <junction x="500.38" y="-66.04"/>
 <wire x1="500.38" y1="-66.04" x2="500.38" y2="-58.42" width="0.1524" layer="91"/>
 <pinref part="RB1" gate="G$1" pin="2"/>
+<label x="500.38" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$65" class="0">
+<net name="OUT2" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$2" pin="OUT"/>
 <wire x1="538.48" y1="-76.2" x2="538.48" y2="-66.04" width="0.1524" layer="91"/>
@@ -9306,9 +9318,10 @@ ne devrait pas arriver ...)</text>
 <pinref part="2ND_VS_4TH" gate="B" pin="S"/>
 <wire x1="530.86" y1="-33.02" x2="538.48" y2="-33.02" width="0.1524" layer="91"/>
 <wire x1="538.48" y1="-33.02" x2="538.48" y2="-66.04" width="0.1524" layer="91"/>
+<label x="538.48" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$72" class="0">
+<net name="IN3" class="0">
 <segment>
 <pinref part="RC3" gate="G$1" pin="1"/>
 <pinref part="VCF" gate="OTA$4" pin="IN"/>
@@ -9318,9 +9331,10 @@ ne devrait pas arriver ...)</text>
 <junction x="548.64" y="-66.04"/>
 <pinref part="RB2" gate="G$1" pin="2"/>
 <wire x1="548.64" y1="-66.04" x2="548.64" y2="-58.42" width="0.1524" layer="91"/>
+<label x="548.64" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$82" class="0">
+<net name="OUT3" class="0">
 <segment>
 <pinref part="RC4" gate="G$1" pin="2"/>
 <pinref part="VCF" gate="OTA$4" pin="OUT"/>
@@ -9328,9 +9342,10 @@ ne devrait pas arriver ...)</text>
 <pinref part="RF3" gate="G$1" pin="2"/>
 <wire x1="586.74" y1="-66.04" x2="571.5" y2="-66.04" width="0.1524" layer="91"/>
 <junction x="586.74" y="-66.04"/>
+<label x="586.74" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$83" class="0">
+<net name="IN4" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$3" pin="IN"/>
 <pinref part="RC4" gate="G$1" pin="1"/>
@@ -9340,20 +9355,23 @@ ne devrait pas arriver ...)</text>
 <junction x="596.9" y="-66.04"/>
 <pinref part="RB3" gate="G$1" pin="2"/>
 <wire x1="596.9" y1="-66.04" x2="596.9" y2="-58.42" width="0.1524" layer="91"/>
+<label x="596.9" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$86" class="0">
+<net name="VIN_RES" class="0">
 <segment>
 <pinref part="RRI" gate="G$1" pin="1"/>
 <pinref part="VCF" gate="OTA$1" pin="IN_RES"/>
 <wire x1="426.72" y1="-73.66" x2="426.72" y2="-76.2" width="0.1524" layer="91"/>
+<label x="426.72" y="-76.2" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$87" class="0">
+<net name="VCF_RES_CUR" class="0">
 <segment>
 <pinref part="VCF" gate="POW$1" pin="RES_CUR"/>
-<pinref part="R3" gate="G$1" pin="1"/>
+<pinref part="R_RES" gate="G$1" pin="1"/>
 <wire x1="464.82" y1="12.7" x2="467.36" y2="12.7" width="0.1524" layer="91"/>
+<label x="464.82" y="12.7" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 <net name="N$58" class="0">
@@ -9368,7 +9386,7 @@ ne devrait pas arriver ...)</text>
 <pinref part="CRES_VCF" gate="G$1" pin="1"/>
 </segment>
 </net>
-<net name="N$69" class="0">
+<net name="OUT4" class="0">
 <segment>
 <pinref part="VCF" gate="OTA$3" pin="OUT"/>
 <pinref part="RF4" gate="G$1" pin="2"/>
@@ -9378,6 +9396,7 @@ ne devrait pas arriver ...)</text>
 <wire x1="635" y1="-38.1" x2="635" y2="-66.04" width="0.1524" layer="91"/>
 <wire x1="576.58" y1="-38.1" x2="635" y2="-38.1" width="0.1524" layer="91"/>
 <pinref part="2ND_VS_4TH" gate="C" pin="S"/>
+<label x="635" y="-73.66" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$73" class="0">
@@ -9471,13 +9490,6 @@ ne devrait pas arriver ...)</text>
 <pinref part="RTEST_VCF" gate="G$1" pin="1"/>
 <pinref part="C_IN" gate="G$1" pin="1"/>
 <wire x1="393.7" y1="-27.94" x2="393.7" y2="-33.02" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="GND" class="0">
-<segment>
-<pinref part="R_PD_4TH_ORDER" gate="G$1" pin="1"/>
-<wire x1="558.8" y1="-17.78" x2="563.88" y2="-17.78" width="0.1524" layer="91"/>
-<label x="558.8" y="-17.78" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
