@@ -1,6 +1,0 @@
-mcp4822.c:40:6:dac4822AdressSelect	16	static
-mcp4822.c:96:6:dac4822ABWrite	24	static
-mcp4822.c:116:6:spiDacs_TxCpltCallback	8	static
-mcp4822.c:126:6:dacWrite	16	static
-mcp4822.c:244:6:testDacSelect	16	static
-mcp4822.c:258:6:testDacWriteSPI	24	static

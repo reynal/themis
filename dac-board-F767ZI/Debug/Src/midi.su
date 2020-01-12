@@ -1,4 +1,0 @@
-midi.c:169:6:midiNoteOnHandler	8	static
-midi.c:187:6:midiNoteOffHandler	8	static
-midi.c:208:6:setMidiCCParam	16	static
-midi.c:365:6:processIncomingMidiMessage	24	static

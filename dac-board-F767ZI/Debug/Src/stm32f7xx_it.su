@@ -1,8 +1,0 @@
-stm32f7xx_it.c:74:6:SysTick_Handler	8	static
-stm32f7xx_it.c:95:6:EXTI9_5_IRQHandler	8	static
-stm32f7xx_it.c:109:6:TIM1_UP_TIM10_IRQHandler	8	static
-stm32f7xx_it.c:123:6:TIM2_IRQHandler	8	static
-stm32f7xx_it.c:137:6:USART3_IRQHandler	8	static
-stm32f7xx_it.c:151:6:EXTI15_10_IRQHandler	8	static
-stm32f7xx_it.c:165:6:UART5_IRQHandler	8	static
-stm32f7xx_it.c:179:6:SPI5_IRQHandler	8	static
