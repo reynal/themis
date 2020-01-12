@@ -2,4 +2,7 @@
 *.o
 *.su
 *.d
+*.elf
+*.list
+*.map
 Icon*
