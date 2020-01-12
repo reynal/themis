@@ -60,10 +60,10 @@
 
 // VCF EG etc
 #define DEF_MIDICC_KBD_TRACKING_VCF 0 // kbd tracking (maximum permitted voltage shift in percents)
-#define MAX_KBD_TRACKING_VCF 0 //
+#define MAX_KBD_TRACKING_VCF 0 // TODO
 
-#define DEF_MIDICC_ENV_AMOUNT_VCF 127 // env amount
-#define MAX_ENV_AMOUNT_VCF 1.0
+#define DEF_MIDICC_EG_DEPTH_VCF 127 // env amount
+#define MAX_EG_DEPTH_VCF 1.0 // TODO
 
 // Velocity
 #define DEF_MIDICC_VELOCITY_SENSITIVITY_VCA 13
@@ -141,6 +141,10 @@ void updateVcfEnvelope();
 
 void setVcfCutoffGlobal(uint8_t value);
 void setVcfResonanceGlobal(uint8_t value);
+
+void setVcfEgDepth(uint8_t value);
+void setVcfKbdTracking(uint8_t value);
+
 
 void setVcaAdsrAttack(uint8_t value);
 void setVcaAdsrDecay(uint8_t value);

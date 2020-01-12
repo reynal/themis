@@ -101,9 +101,9 @@ MidiCCParam midiccCodeToParams[128] = {
 		UNUSED_CC, 		// 68
 		UNUSED_CC, 		// 69
 		UNUSED_CC, 		// 70
-		UNUSED_CC, 		// 71
-		UNUSED_CC, 		// 72
-		UNUSED_CC, 		// 73
+		SEMITONES_3340_A, 	// 71
+		SEMITONES_3340_B, 	// 72
+		SEMITONES_13700, 	// 73
 		OCTAVE_3340_A, 	// 74
 		OCTAVE_3340_B, 	// 75
 		OCTAVE_13700,	// 76
@@ -170,7 +170,7 @@ void midiNoteOnHandler(){
 
 	if (dbg_noteOn ==TRUE) return; // debounce button
 
-	printf("Note On\n");
+	// printf("Note On\n");
 	dbg_noteOn = TRUE;
 
 	switchRedLEDOn(); 	// switch on LED so that we can monitor enveloppe level TODO : pwm !
@@ -188,7 +188,7 @@ void midiNoteOffHandler(){
 
 	if (dbg_noteOn == FALSE) return; // debounce button
 
-	printf("Note Off\n");
+	// printf("Note Off\n");
 	dbg_noteOn = FALSE;
 
 	switchRedLEDOff();
@@ -208,69 +208,87 @@ void midiNoteOffHandler(){
 void setMidiCCParam(MidiCCParam param, uint8_t value){
 
 
+	//printf("setMidiCCParam\n");
+	toggleBlueLED();
+
 	switch (param){
 
 		// ------------------------------ VCA ------------------------------
 	case VCA_ATTACK:
+		// printf("VCA A=%d\n", value);
 		setVcaAdsrAttack(value);
 		break;
 
 	case VCA_DECAY:
+		// printf("VCA D=%d\n", value);
 		setVcaAdsrDecay(value);
 		break;
 
 	case VCA_SUSTAIN:
+		// printf("VCA S=%d\n", value);
 		setVcaAdsrSustain(value);
 		break;
 
 	case VCA_RELEASE:
+		// printf("VCA R=%d\n", value);
 		setVcaAdsrRelease(value);
 		break;
 
 		// ------------------------------ VCF ------------------------------
 	case VCF_ATTACK:
+		// printf("VCF Attack=%d\n", value);
 		setVcfAdsrAttack(value);
 		break;
 
 	case VCF_DECAY:
+		// printf("VCF Decay=%d\n", value);
 		setVcfAdsrDecay(value);
 		break;
 
 	case VCF_SUSTAIN:
+		// printf("VCF Sustain=%d\n", value);
 		setVcfAdsrSustain(value);
 		break;
 
 	case VCF_RELEASE:
+		// printf("VCF Release=%d\n", value);
 		setVcfAdsrRelease(value);
 		break;
 
 	case VCF_KBDTRACKING :
-		//TODO
+		// printf("VCF KBDTracking=%d\n", value);
+		setVcfKbdTracking(value);
 		break;
 
 	case VCF_EG :
-		//TODO
+		// printf("VCF EG=%d\n", value);
+		setVcfEgDepth(value);
 		break;
 
 		// ------------------------------ velocity ------------------------------
 	case VCA_VELOCITY_SENSITIVITY:
+		// printf("VCA Velo sens=%d\n", value);
 		setVcaVelocitySensitivity(value);
 		break;
 
 	case VCF_VELOCITY_SENSITIVITY:
+		// printf("VCF Velo sens=%d\n", value);
 		setVcfVelocitySensitivity(value);
 		break;
 
 		// ------------------------------ filter ------------------------------
 	case VCF_CUTOFF:
+		// printf("VCF Cutoff=%d\n", value);
 		setVcfCutoffGlobal(value);
 		break;
 
 	case VCF_RESONANCE:
+		// printf("VCF Res=%d\n", value);
 		setVcfResonanceGlobal(value);
 		break;
 
 	case VCF_ORDER :
+		// printf("VCF Order=%d\n", value);
 		setVcfOrder(value);
 		break;
 
@@ -278,45 +296,62 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 		// ------------------------------ VCO 13700 ------------------------------
 
 	case OCTAVE_13700 :
+		// printf("VCO13700 Octave=%d\n", value);
 		setVco13700Octave(value);
 		break;
 
+	case SEMITONES_13700 :
+		setVco13700Semitones(value);
+		break;
+
 	case DETUNE_13700 :
+		// printf("VCO13700 Detune=%d\n", value);
 		setVco13700Detune(value);
 		break;
 
 	case LEVEL_TRI_13700 :
-		// TODO
+		// printf("VCO13700 Tri=%d\n", value);
+		setVco13700TriLevel(value);
 		break;
 
 	case LEVEL_SQU_13700 :
-		//TODO : dacWrite((int) 4095 * (value/127.) * MAX_MIXER, DAC_V2140D_IN2);
-		//TODO : dacWrite((int) 4095 * (1 - value/127.) * MAX_MIXER, DAC_V2140D_IN3);
+		// printf("VCO13700 Squ=%d\n", value);
+		setVco13700SquareLevel(value);
 		break;
 
 		// ------------------------------ VCO 3340A------------------------------
 
 	case OCTAVE_3340_A:
+		// printf("VCO3340A Octave=%d\n", value);
 		setVco3340AOctave(value);
+		break;
+
+	case SEMITONES_3340_A :
+		setVco3340ASemitones(value);
 		break;
 
 	case DETUNE_3340_A:
-		setVco3340AOctave(value);
+		// printf("VCO3340A Detune=%d\n", value);
+		setVco3340ADetune(value);
 		break;
 
 	case LEVEL_3340_A:
+		// printf("VCO3340A Level=%d\n", value);
 		setVco3340ALevel(value);
 		break;
 
 	case WAVE_3340_A:
+		// printf("VCO3340A Wave=%d\n", value);
 		setVco3340AWaveType(value);
 		break;
 
 	case PWM_3340_A:
+		// printf("VCO3340A PWM=%d\n", value);
 		setVco3340APWMDuty(value);
 		break;
 
 	case SYNC_3340_A:
+		// printf("VCO3340A Sync=%d\n", value);
 		setVco3340ASync(value);
 		break;
 
@@ -324,36 +359,48 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 		// ------------------------------ VCO3340B ------------------------------
 
 	case OCTAVE_3340_B:
-		setVco3340AOctave(value);
+		// printf("VCO3340B Octave=%d\n", value);
+		setVco3340BOctave(value);
+		break;
+
+	case SEMITONES_3340_B :
+		setVco3340BSemitones(value);
 		break;
 
 	case DETUNE_3340_B:
-		setVco3340AOctave(value);
+		// printf("VCO3340B Detune=%d\n", value);
+		setVco3340BDetune(value);
 		break;
 
 	case PWM_3340_B:
-		// TODO
+		// printf("VCO3340B PWM=%d\n", value);
+		setVco3340BPWMDuty(value);
 		break;
 
 	case LEVEL_TRI_3340_B:
+		// printf("VCO3340B Tri level=%d\n", value);
 		setVco3340BTriLevel(value);
 		break;
 
 	case LEVEL_SAW_3340_B:
+		// printf("VCO3340B Saw level=%d\n", value);
 		setVco3340BSawLevel(value);
 		break;
 
 	case LEVEL_PULSE_3340_B:
+		// printf("VCO3340B Pulse level=%d\n", value);
 		setVco3340BPulseLevel(value);
 		break;
 
 		// ------------------------------ MISC ------------------------------
 
 	case CALIBRATE :
-		runVcoCalibration();
+		// printf("Calibrate=%d\n", value);
+		//runVcoCalibration();
 		break;
 
 	case UNUSED_CC:
+		// printf("%d UNUSED!\n", param);
 		break;
 	}
 }

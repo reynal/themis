@@ -33,6 +33,7 @@ typedef enum {
 	UNUSED_CC,
 
 	OCTAVE_3340_A, // 0 1 2 3
+	SEMITONES_3340_A, 	// -11 to 11
 	DETUNE_3340_A,// 0-127, 0% at 64
 	WAVE_3340_A,  // 0 1 2
 	PWM_3340_A,// 0-127
@@ -40,13 +41,15 @@ typedef enum {
 	SYNC_3340_A, // 0 ou 127
 
 	OCTAVE_3340_B, // 0 1 2 3
+	SEMITONES_3340_B, 	// -11 to 11
 	DETUNE_3340_B,// 0-127, 0% at 64
-	PWM_3340_B,// 0-127
 	LEVEL_TRI_3340_B, // 0-127 mixer 1
 	LEVEL_SAW_3340_B, // 0-127 mixer 1
 	LEVEL_PULSE_3340_B, // 0-127 mixer 1
+	PWM_3340_B,// 0-127
 
 	OCTAVE_13700, // 0 1 2 3
+	SEMITONES_13700, 	// -11 to 11
 	DETUNE_13700, // 0-127
 	LEVEL_TRI_13700, // 0-127 entre sq et tri (mixer 2 mixer 3)
 	LEVEL_SQU_13700, // 0-127 mixer 1
@@ -56,6 +59,7 @@ typedef enum {
 	VCF_ORDER,
 	VCF_KBDTRACKING,
 	VCF_EG,
+
 	VCF_VELOCITY_SENSITIVITY,
 	VCF_ATTACK,
 	VCF_DECAY,

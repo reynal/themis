@@ -159,13 +159,13 @@ void dacWrite(int word12bits, Dac targetDac){
 	// ------- Noise -------
 
 		case DAC_NOISE:
-			dac4822ABWrite(word12bits, 0, MCP4822_CHANNEL_B);
+			dac4822ABWrite(word12bits, 0, MCP4822_CHANNEL_B); // same DAC as 13700 (second on the left)
 			break;
 
-	// ------- Mixer 1 2 3 4 -------
+	// ------- Mixer 1 2 3 4 (southern one, i.e., closer to the STM32 DAC board ; 1 2 3 4 go from south to north) -------
 
 		case DAC_V2140D_3340B_PULSE_LVL:
-		case DAC_V2140D_IN3 : // 3340 #2 pulse
+		case DAC_V2140D_IN3 : // 3340B pulse
 			dac4822ABWrite(word12bits, 1, MCP4822_CHANNEL_A);
 			break;
 
@@ -174,33 +174,33 @@ void dacWrite(int word12bits, Dac targetDac){
 			break;
 
 		case DAC_V2140D_3340B_TRI_LVL:
-		case DAC_V2140D_IN1 : // 3340 #2 triangle
+		case DAC_V2140D_IN1 : // 3340B triangle
 			dac4822ABWrite(word12bits, 2, MCP4822_CHANNEL_A);
 			break;
 
 		case DAC_V2140D_3340B_SAW_LVL:
-		case DAC_V2140D_IN2 : // 3340 #2 saw
+		case DAC_V2140D_IN2 : // 3340B saw
 			dac4822ABWrite(word12bits, 2, MCP4822_CHANNEL_B);
 			break;
 
-	// ------- Mixer 5 6 7 8 -------
+	// ------- Mixer 5 6 7 8 (northern one, that is, closer to the XLR jack plug ; 5 6 7 8 go from south to north) -------
 
 
 		case DAC_V2140D_3340A_LVL:
-		case DAC_V2140D_IN7 : // GAIN3_B sur schema EAGLE
+		case DAC_V2140D_IN7 : // GAIN3_B on EAGLE schematic
 			dac4822ABWrite(word12bits, 4, MCP4822_CHANNEL_A);
 			break;
 
 		case DAC_V2140D_VCA :
-		case DAC_V2140D_IN8:  // GAIN4_B sur schema EAGLE
+		case DAC_V2140D_IN8:  // GAIN4_B on EAGLE schematic
 			dac4822ABWrite(word12bits, 4, MCP4822_CHANNEL_B_GAIN2);
 			break;
 
-		case DAC_V2140D_IN5 : // GAIN1_B sur schema EAGLE, not connected yet
+		case DAC_V2140D_IN5 : // GAIN1_B on EAGLE schematic, not connected yet
 			dac4822ABWrite(word12bits, 5, MCP4822_CHANNEL_A);
 			break;
 
-		case DAC_V2140D_IN6 : // GAIN2_B sur schema EAGLE, not connected yet
+		case DAC_V2140D_IN6 : // GAIN2_B on EAGLE schematic, not connected yet
 			dac4822ABWrite(word12bits, 5, MCP4822_CHANNEL_B);
 			break;
 
@@ -209,25 +209,30 @@ void dacWrite(int word12bits, Dac targetDac){
 
 
 		case DAC_VCF_CUTOFF:
-					dac4822ABWrite(word12bits, 6, MCP4822_CHANNEL_A);
-					break;
+			dac4822ABWrite(word12bits, 6, MCP4822_CHANNEL_A);
+			break;
 
 		case DAC_VCF_RES :
-					dac4822ABWrite(word12bits, 6, MCP4822_CHANNEL_B_GAIN2);
-					break;
+			dac4822ABWrite(word12bits, 6, MCP4822_CHANNEL_B_GAIN2);
+			break;
 
 
-	// -------- not implemented ---------
+	// -------- not implemented yet ---------
 
 		case DAC_V2140D_FM_LVL:
-		case DAC_V2140D_SH_LVL:
-		case DAC_V2140D_RINGMOD_LVL:
-		case DAC_V2140D_13700_SQU_LVL:
-
-
-		default:
-			printf("NOT IMPLEMENTED!\n");
 			break;
+		case DAC_V2140D_SH_LVL:
+			break;
+		case DAC_V2140D_RINGMOD_LVL:
+			break;
+		case DAC_V2140D_13700_SQU_LVL:
+			break;
+		case DAC_V2140D_13700_TRI_LVL:
+			break;
+		case DAC_V2140D_13700_SUBBASS_LVL:
+			break;
+
+
 
 	}
 }

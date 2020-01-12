@@ -39,19 +39,32 @@ extern MidiNote midiNote;
 
 /* Private variables ---------------------------------------------------------*/
 
-Vco13700Parameters vco13700 = { .detune=NO_DETUNE, .octave=CENTER_OCTAVE};
+Vco13700Parameters vco13700 = {
+		.detune=NO_DETUNE,
+		.semitones=NO_SHIFT,
+		.octave=CENTER_OCTAVE,
+		.tri_level=DEF_MIDICC_VCO13700_TRI_LEVEL,
+		.squ_level=DEF_MIDICC_VCO13700_SQU_LEVEL,
+		.subbass_level=DEF_MIDICC_VCO13700_SUBBASS_LEVEL
+};
+
 Vco3340AParameters vco3340A = {
 		.detune=NO_DETUNE,
+		.semitones=NO_SHIFT,
 		.octave=CENTER_OCTAVE,
 		.level=DEF_MIDICC_VCO3340A_LEVEL,
-		.pwm=DEF_MIDICC_VCO3340A_PWM_DUTY};
+		.pwm=DEF_MIDICC_VCO3340A_PWM_DUTY
+};
+
 Vco3340BParameters vco3340B = {
 		.detune=NO_DETUNE,
+		.semitones=NO_SHIFT,
 		.octave=CENTER_OCTAVE,
 		.pwm=DEF_MIDICC_VCO3340B_PWM_DUTY,
 		.tri_level = DEF_MIDICC_VCO3340B_TRI_LEVEL,
 		.saw_level = DEF_MIDICC_VCO3340B_SAW_LEVEL,
-		.pulse_level = DEF_MIDICC_VCO3340B_PULSE_LEVEL};
+		.pulse_level = DEF_MIDICC_VCO3340B_PULSE_LEVEL
+};
 
 
 // an array that maps a MIDI note to a DAC value for the VCO DAC (from 0 to 4095): e.g. note 36 maps to 442
@@ -120,6 +133,9 @@ void initVco(){
 	setVco3340BPulseLevel(DEF_MIDICC_VCO3340B_PULSE_LEVEL);
 	setVco3340BSawLevel(DEF_MIDICC_VCO3340B_SAW_LEVEL);
 	setVco3340BTriLevel(DEF_MIDICC_VCO3340B_TRI_LEVEL);
+	setVco13700SquareLevel(DEF_MIDICC_VCO13700_SQU_LEVEL);
+	setVco13700TriLevel(DEF_MIDICC_VCO13700_TRI_LEVEL);
+	setVco13700SubbassLevel(DEF_MIDICC_VCO13700_SUBBASS_LEVEL);
 
 
 }
@@ -127,11 +143,11 @@ void initVco(){
 // used during calibration:
 void prepareVCOForCalibration(){
 
-	HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET); // "unplug" 3340A vco output from mixer so as
+	HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET); // to reduce interference with other VCO
 	HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
-	dacWrite(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY); HAL_Delay(1);
-	dacWrite(MAX_VCO3340B_PWM_DUTY, DAC_VCO_3340B_PWM_DUTY); HAL_Delay(1);
+	dacWrite(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY); HAL_Delay(1); // make sure VCO calibration output
+	dacWrite(MAX_VCO3340B_PWM_DUTY, DAC_VCO_3340B_PWM_DUTY); HAL_Delay(1); // is a square (i.e., 50% duty cycle)
 
 }
 
@@ -144,16 +160,46 @@ void setVco13700Octave(uint8_t midiValue){
 	vco13700.octave = midiValue;
 }
 
+void setVco13700Semitones(uint8_t midiValue){
+	if (midiValue > 22 || midiValue < 0) midiValue = NO_SHIFT;
+	vco13700.semitones = midiValue;
+}
+
 void setVco13700Detune(uint8_t value){
 	vco13700.detune = value;
 }
 
 void updateVco13700Freq(){
 
-	int dacLvl = midiToVCO13700CV[midiNote.note + 12 * (vco13700.octave-CENTER_OCTAVE)] + vco13700.detune - NO_DETUNE;
+	int dacLvl = midiToVCO13700CV[midiNote.note + 12 * (vco13700.octave-CENTER_OCTAVE) + (vco13700.semitones-NO_SHIFT)] + vco13700.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_13700_FREQ);
 
 }
+
+void setVco13700SquareLevel(uint8_t midiValue){
+	vco13700.squ_level = midiValue;
+}
+
+void updateVco13700SquareLevel(){
+	dacWrite((int)(MAX_VCO13700_SQU_LEVEL * (127.0-vco13700.squ_level) /127.0), DAC_V2140D_13700_SQU_LVL);
+}
+
+void setVco13700TriLevel(uint8_t midiValue){
+	vco13700.tri_level = midiValue;
+}
+
+void updateVco13700TriLevel(){
+	dacWrite((int)(MAX_VCO13700_TRI_LEVEL * (127.0-vco13700.tri_level) /127.0), DAC_V2140D_13700_TRI_LVL);
+}
+
+void setVco13700SubbassLevel(uint8_t midiValue){
+	vco13700.subbass_level = midiValue;
+}
+
+void updateVco13700SubbassLevel(){
+	dacWrite((int)(MAX_VCO13700_SUBBASS_LEVEL * (127.0-vco13700.subbass_level) /127.0), DAC_V2140D_13700_SUBBASS_LVL);
+}
+
 
 // ---------------------------------------------------------------------------------------------------
 //                       vco 3340A (the one with the analog switch IC plugged in)
@@ -165,12 +211,18 @@ void setVco3340AOctave(uint8_t midiValue){
 	vco3340A.octave = midiValue;
 }
 
+void setVco3340ASemitones(uint8_t midiValue){
+	if (midiValue > 22 || midiValue < 0) midiValue = NO_SHIFT;
+	vco3340A.semitones = midiValue;
+}
+
+
 void setVco3340ADetune(uint8_t value){
 	vco3340A.detune = value;
 }
 
 void updateVco3340AFreq(){
-	int dacLvl = midiToVCO3340ACV[midiNote.note + 12 * (vco3340A.octave-CENTER_OCTAVE)] + vco3340A.detune - NO_DETUNE;
+	int dacLvl = midiToVCO3340ACV[midiNote.note + 12 * (vco3340A.octave-CENTER_OCTAVE) + (vco3340A.semitones-NO_SHIFT)] + vco3340A.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340A_FREQ);
 
 }
@@ -185,7 +237,7 @@ void updateVco3340APWMDuty(){
 
 void setVco3340AWaveType(uint8_t midiValue){
 	midiValue = midiValue % 3;
-	if (midiValue == 0){ // pulse
+	if (midiValue == 2){ // pulse
 		HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_SET);
@@ -195,7 +247,7 @@ void setVco3340AWaveType(uint8_t midiValue){
 		HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_SET);
 	}
-	else if (midiValue == 2){ // triangle
+	else if (midiValue == 0){ // triangle
 		HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
 		HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_SET);
@@ -223,6 +275,12 @@ void setVco3340BOctave(uint8_t midiValue){
 	vco3340B.octave = midiValue;
 }
 
+void setVco3340BSemitones(uint8_t midiValue){
+	if (midiValue > 22 || midiValue < 0) midiValue = NO_SHIFT;
+	vco3340B.semitones = midiValue;
+}
+
+
 void setVco3340BDetune(uint8_t value){
 	vco3340B.detune = value;
 }
@@ -232,7 +290,7 @@ void setVco3340BDetune(uint8_t value){
  *  using the current calibration table.
  */
 void updateVco3340BFreq(){
-	int dacLvl = midiToVCO3340BCV[midiNote.note + 12 * (vco3340B.octave-CENTER_OCTAVE)] + vco3340B.detune - NO_DETUNE;
+	int dacLvl = midiToVCO3340BCV[midiNote.note + 12 * (vco3340B.octave-CENTER_OCTAVE) + (vco3340B.semitones-NO_SHIFT)] + vco3340B.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340B_FREQ);
 }
 

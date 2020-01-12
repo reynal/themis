@@ -57,42 +57,46 @@ extern GlobalFilterParams globalFilterParams;
 
 #define LEGATO
 
-AdsrParams vcaAdsr =
-		{ .attackTimeMs = MAX_ATTACK_TIME_VCA * DEF_MIDICC_ATTACK_TIME_VCA
-				/ 127.0, .decayTimeMs = MAX_DECAY_TIME_VCA
-				* DEF_MIDICC_DECAY_TIME_VCA / 127.0, .releaseTimeMs =
-				MAX_RELEASE_TIME_VCA * DEF_MIDICC_RELEASE_TIME_VCA / 127.0,
-				.sustainLevel = MAX_SUSTAIN_LVL_VCA * DEF_MIDICC_SUSTAIN_LVL_VCA
-						/ 127.0, };
+AdsrParams vcaAdsr = {
+		.attackTimeMs = MAX_ATTACK_TIME_VCA * DEF_MIDICC_ATTACK_TIME_VCA / 127.0,
+		.decayTimeMs = MAX_DECAY_TIME_VCA * DEF_MIDICC_DECAY_TIME_VCA / 127.0,
+		.releaseTimeMs = MAX_RELEASE_TIME_VCA * DEF_MIDICC_RELEASE_TIME_VCA / 127.0,
+		.sustainLevel = MAX_SUSTAIN_LVL_VCA * DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0,
+};
 
 StateMachineVca stateMachineVca = {
-//.t = 0,
-		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY
-				* DEF_MIDICC_VELOCITY_SENSITIVITY_VCA / 127.0,
+		//.t = 0,
+		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCA / 127.0,
 		//.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_ATTACK_TIME),
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_DECAY_TIME),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_RELEASE_TIME),
-		.machineState = IDLE, .adsrParam = &vcaAdsr };
+		.machineState = IDLE,
+		.adsrParam = &vcaAdsr
+};
 
-AdsrParams vcfAdsr =
-		{ .attackTimeMs = MAX_ATTACK_TIME_VCF * DEF_MIDICC_ATTACK_TIME_VCF
-				/ 127.0, .decayTimeMs = MAX_DECAY_TIME_VCF
-				* DEF_MIDICC_DECAY_TIME_VCF / 127.0, .releaseTimeMs =
-				MAX_RELEASE_TIME_VCF * DEF_MIDICC_RELEASE_TIME_VCF / 127.0,
-				.sustainLevel = MAX_SUSTAIN_LVL_VCF * DEF_MIDICC_SUSTAIN_LVL_VCF
-						/ 127.0, };
+AdsrParams vcfAdsr = {
+		.attackTimeMs = MAX_ATTACK_TIME_VCF * DEF_MIDICC_ATTACK_TIME_VCF / 127.0,
+		.decayTimeMs = MAX_DECAY_TIME_VCF * DEF_MIDICC_DECAY_TIME_VCF / 127.0,
+		.releaseTimeMs = MAX_RELEASE_TIME_VCF * DEF_MIDICC_RELEASE_TIME_VCF / 127.0,
+		.sustainLevel = MAX_SUSTAIN_LVL_VCF * DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0,
+};
 
-StateMachineVcf stateMachineVcf = { .t = 0, .tMax = 0, .velocitySensitivity =
-		MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCF / 127.0,
-		.kbdTracking = MAX_KBD_TRACKING_VCF * DEF_MIDICC_KBD_TRACKING_VCF
-				/ 127.0, .envAmount = MAX_ENV_AMOUNT_VCF
-				* DEF_MIDICC_ENV_AMOUNT_VCF / 127.0,
+StateMachineVcf stateMachineVcf = {
+		.t = 0,
+		.tMax = 0,
+		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCF / 127.0,
+		.kbdTracking = MAX_KBD_TRACKING_VCF * DEF_MIDICC_KBD_TRACKING_VCF / 127.0,
+		.envAmount = MAX_EG_DEPTH_VCF * DEF_MIDICC_EG_DEPTH_VCF / 127.0,
 		//.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.attackTimeMs),
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.decayTimeMs),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.releaseTimeMs),
-		.machineState = IDLE, .adsrParam = &vcfAdsr };
+		.machineState = IDLE,
+		.adsrParam = &vcfAdsr
+};
 
 /* Private function prototypes -----------------------------------------------*/
+
+// ========================== VCA ==============================
 
 /**
  * Init data for the Attack phase of the VCA envelope. This is triggered by a MIDI Note On.
@@ -170,6 +174,8 @@ void updateVcaEnvelope() {
 
 }
 
+// =================== VCF ===================
+
 /**
  * Init data for the Attack phase of the VCF envelope. This is triggered by a MIDI Note On.
  */
@@ -244,15 +250,17 @@ void updateVcfEnvelope() {
 		break;
 
 	case DECAY:
-		if (s->t < s->tMax) {
-			s->tmpTargetLevel = globalFilterParams.vcfCutoff + (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel; // modulate sustain level with velocity factor
+		if (s->t < s->tMax) { // while DECAY phase's still ongoing...
+			s->tmpTargetLevel = globalFilterParams.vcfCutoff
+								+ (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel; // modulate sustain level with velocity factor
 			s->tmpDelta = (s->tmpTargetLevel - s->cutoffFrequency) / (s->tMax  - s->t);
 			s->cutoffFrequency += s->tmpDelta;
 			s->t++;
 		}
-		else
-			s->cutoffFrequency = globalFilterParams.vcfCutoff + (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel;
-		// else stays on sustain plateau until NOTE OFF occurs
+		else // otherwise we stay on sustain plateau until a NOTE OFF event occurs
+			s->cutoffFrequency = globalFilterParams.vcfCutoff
+								+ (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel;
+
 		break;
 
 	case RELEASE:
@@ -271,6 +279,8 @@ void updateVcfEnvelope() {
 	updateVcfCutoff();
 
 }
+
+// ===================== setters =============================
 
 void setVcaAdsrAttack(uint8_t value) {
 	vcaAdsr.attackTimeMs = ((value + 1) / 127.) * MAX_ATTACK_TIME_VCA;
@@ -311,6 +321,15 @@ void setVcfAdsrRelease(uint8_t value) {
 void setVcfVelocitySensitivity(uint8_t value) {
 	stateMachineVcf.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value / 127.;
 }
+
+void setVcfEgDepth(uint8_t value) {
+	stateMachineVcf.envAmount = MAX_EG_DEPTH_VCF * value / 127.;
+}
+
+void setVcfKbdTracking(uint8_t value) {
+	stateMachineVcf.kbdTracking = MAX_KBD_TRACKING_VCF * value / 127.;
+}
+
 
 /* exponential enveloppes
  void updateVCAEnveloppeStateMachine(){

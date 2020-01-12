@@ -39,9 +39,8 @@ typedef enum {
 	  DAC_V2140D_IN6,
 	  DAC_V2140D_IN7,
 	  DAC_V2140D_IN8,
-	  DAC_NOISE,
-	  //DAC_EN_RABE_A,
-	  //DAC_EN_RABE_B,
+	  DAC_NOISE,			// not used yet
+
 	  // the following are aliases to mixer inputs (see function dacWrite for details on how they are being used)
 	  DAC_V2140D_3340A_LVL,
 

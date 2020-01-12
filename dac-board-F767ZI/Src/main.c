@@ -176,12 +176,15 @@ int main(void) {
 		//testScale();
 		//testVcf();
 		//testGPIOVcfVco();
-		HAL_Delay(1000);
+		HAL_Delay(500);
 		toggleBlueLED();
+
+		HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
 		printf("%d\n", i);
 
-		i+=63;
+		i++;
 		if (i>127)i=0;
+
 
 
 	}
@@ -771,15 +774,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 		// TODO :use HAL_SPI_Receive_IT
 		HAL_SPI_Receive(hspiMidi, rxSpiMidiBuff, 3, HAL_MAX_DELAY); // read three MIDI bytes in a row
-		processIncomingMidiMessage(rxSpiMidiBuff[0], rxSpiMidiBuff[1],
-				rxSpiMidiBuff[2]);
+		processIncomingMidiMessage(rxSpiMidiBuff[0], rxSpiMidiBuff[1], rxSpiMidiBuff[2]);
 	}
 
 	// button blue as note trigger
 	else if (GPIO_Pin == USER_Btn_Pin) { // PC13
 
-		blueButtonActionPerformedCallback(
-				HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin));
+		blueButtonActionPerformedCallback(HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin));
 
 	}
 }
@@ -791,8 +792,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 	//printf("Received: %s\n", rxUartSTlinkBuff);
-	processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1],
-			rxUartSTlinkBuff[2]);
+	//toggleBlueLED();
+	processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
 	HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
 }
 
