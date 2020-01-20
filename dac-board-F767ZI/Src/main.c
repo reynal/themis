@@ -151,7 +151,8 @@ int main(void) {
 	MX_USART3_UART_Init();
 	/* USER CODE BEGIN 2 */
 
-	initSynthParams(); // be sure to do this BEFORE starting htimEnveloppes!
+	initAdsrParameters();
+	initSynthParams(); // be sure to do this BEFORE starting htimDacs!
 	startAdsrTIM(); // start timer responsible for updating ADSR enveloppes and writing to DACs
 	HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
 
@@ -180,10 +181,12 @@ int main(void) {
 		toggleBlueLED();
 
 		HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
-		printf("%d\n", i);
+		//printf("%d\n", i);
 
 		i++;
 		if (i>127)i=0;
+
+
 
 
 

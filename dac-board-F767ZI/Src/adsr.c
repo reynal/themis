@@ -55,14 +55,23 @@ extern GlobalFilterParams globalFilterParams;
 
 /* Private variables ---------------------------------------------------------*/
 
-#define LEGATO
+//#define LEGATO
 
-AdsrParams vcaAdsr = {
-		.attackTimeMs = MAX_ATTACK_TIME_VCA * DEF_MIDICC_ATTACK_TIME_VCA / 127.0,
-		.decayTimeMs = MAX_DECAY_TIME_VCA * DEF_MIDICC_DECAY_TIME_VCA / 127.0,
-		.releaseTimeMs = MAX_RELEASE_TIME_VCA * DEF_MIDICC_RELEASE_TIME_VCA / 127.0,
-		.sustainLevel = MAX_SUSTAIN_LVL_VCA * DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0,
-};
+
+// the following table maps a Midi CC value (0-127) to a time constant in ms in an exponential way
+const int midiValueToTimeMs[128] = { 1, 8, 16, 25, 34, 44, 53, 63, 74, 85, 96, 108, 121, 134, 147, 161, \
+		175, 191, 206, 223, 240, 257, 276, 295, 315, 335, 357, 379, 402, 426, \
+		452, 478, 505, 533, 563, 593, 625, 658, 693, 729, 766, 805, 845, 887, \
+		931, 976, 1023, 1072, 1124, 1177, 1232, 1289, 1349, 1412, 1476, 1544, \
+		1614, 1686, 1762, 1841, 1923, 2008, 2097, 2189, 2285, 2385, 2489, \
+		2596, 2709, 2826, 2947, 3073, 3205, 3342, 3484, 3632, 3786, 3946, \
+		4112, 4285, 4465, 4653, 4848, 5050, 5261, 5480, 5708, 5946, 6193, \
+		6449, 6716, 6994, 7283, 7583, 7896, 8221, 8559, 8911, 9277, 9657, \
+		10053, 10465, 10893, 11338, 11802, 12284, 12785, 13306, 13849, 14413, \
+		15000, 15610, 16245, 16905, 17592, 18306, 19050, 19823, 20627, 21463, \
+		22333, 23238, 24179, 25158, 26176, 27235, 28337, 29483 };
+
+AdsrParams vcaAdsr;
 
 StateMachineVca stateMachineVca = {
 		//.t = 0,
@@ -74,12 +83,7 @@ StateMachineVca stateMachineVca = {
 		.adsrParam = &vcaAdsr
 };
 
-AdsrParams vcfAdsr = {
-		.attackTimeMs = MAX_ATTACK_TIME_VCF * DEF_MIDICC_ATTACK_TIME_VCF / 127.0,
-		.decayTimeMs = MAX_DECAY_TIME_VCF * DEF_MIDICC_DECAY_TIME_VCF / 127.0,
-		.releaseTimeMs = MAX_RELEASE_TIME_VCF * DEF_MIDICC_RELEASE_TIME_VCF / 127.0,
-		.sustainLevel = MAX_SUSTAIN_LVL_VCF * DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0,
-};
+AdsrParams vcfAdsr;
 
 StateMachineVcf stateMachineVcf = {
 		.t = 0,
@@ -99,19 +103,35 @@ StateMachineVcf stateMachineVcf = {
 // ========================== VCA ==============================
 
 /**
+ * Init all ADSR enveloppes parameters.
+ */
+void initAdsrParameters(){
+
+	vcaAdsr.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCA];
+	vcaAdsr.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCA];
+	vcaAdsr.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCA];
+	vcaAdsr.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0;
+
+	vcfAdsr.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCF];
+	vcfAdsr.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCF];
+	vcfAdsr.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCF];
+	vcfAdsr.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0;
+
+}
+
+/**
  * Init data for the Attack phase of the VCA envelope. This is triggered by a MIDI Note On.
  */
 void prepareVcaEnvelopeNoteON() {
 
 	// stateMachineVca.amplitude=0.0; // commented Dec 3 2019 SR : avoid clip when re-triggering note while the enveloppe is not finished
-	stateMachineVca.tmpTargetLevel =
-			((1.0 - stateMachineVca.velocitySensitivity)
-					+ (midiNote.velocity / 127.)
-							* stateMachineVca.velocitySensitivity);
-	stateMachineVca.tmpDelta = ADSR_TIMER_PERIOD_MS
-			* stateMachineVca.tmpTargetLevel / vcaAdsr.attackTimeMs; // prepare dx for the attack phase of x(t)
+	stateMachineVca.tmpTargetLevel = ((1.0 - stateMachineVca.velocitySensitivity)  + (midiNote.velocity / 127.) * stateMachineVca.velocitySensitivity);
+
+	stateMachineVca.tmpDelta = ADSR_TIMER_PERIOD_MS * stateMachineVca.tmpTargetLevel / vcaAdsr.attackTimeMs; // prepare dx for the attack phase of x(t)
 
 	stateMachineVca.machineState = ATTACK; // force vca machine state to ATTACK
+
+	stateMachineVca.amplitude = 0.0;
 }
 
 /**
@@ -120,8 +140,8 @@ void prepareVcaEnvelopeNoteON() {
 void prepareVcaEnvelopeNoteOFF() {
 
 	stateMachineVca.tmpTargetLevel = 0.0;
-	stateMachineVca.tmpDelta = - ADSR_TIMER_PERIOD_MS
-			* stateMachineVca.amplitude / vcaAdsr.releaseTimeMs; // prepare dx for the R phase of x(t)
+
+	stateMachineVca.tmpDelta = - ADSR_TIMER_PERIOD_MS * stateMachineVca.amplitude / vcaAdsr.releaseTimeMs; // prepare dx for the R phase of x(t)
 
 	stateMachineVca.machineState = RELEASE; // force vca machine state to RELEASE
 
@@ -283,19 +303,19 @@ void updateVcfEnvelope() {
 // ===================== setters =============================
 
 void setVcaAdsrAttack(uint8_t value) {
-	vcaAdsr.attackTimeMs = ((value + 1) / 127.) * MAX_ATTACK_TIME_VCA;
+	vcaAdsr.attackTimeMs = midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_ATTACK_TIME_VCA;
 }
 
 void setVcaAdsrDecay(uint8_t value) {
-	vcaAdsr.decayTimeMs = ((value + 1) / 127.) * MAX_DECAY_TIME_VCA;
+	vcaAdsr.decayTimeMs =  midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_DECAY_TIME_VCA;
 }
 
 void setVcaAdsrSustain(uint8_t value) {
-	vcaAdsr.sustainLevel = (value / 127.) * MAX_SUSTAIN_LVL_VCA;
+	vcaAdsr.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCA;
 }
 
 void setVcaAdsrRelease(uint8_t value) {
-	vcaAdsr.releaseTimeMs = ((value + 1) / 127.) * MAX_RELEASE_TIME_VCA;
+	vcaAdsr.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCA;
 }
 
 void setVcaVelocitySensitivity(uint8_t value) {
@@ -303,19 +323,19 @@ void setVcaVelocitySensitivity(uint8_t value) {
 }
 
 void setVcfAdsrAttack(uint8_t value) {
-	vcfAdsr.attackTimeMs = ((value + 1) / 127.) * MAX_ATTACK_TIME_VCF;
+	vcfAdsr.attackTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_ATTACK_TIME_VCF;
 }
 
 void setVcfAdsrDecay(uint8_t value) {
-	vcfAdsr.decayTimeMs = ((value + 1) / 127.) * MAX_DECAY_TIME_VCF;
+	vcfAdsr.decayTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_DECAY_TIME_VCF;
 }
 
 void setVcfAdsrSustain(uint8_t value) {
-	vcfAdsr.sustainLevel = (value / 127.) * MAX_SUSTAIN_LVL_VCF;
+	vcfAdsr.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCF;
 }
 
 void setVcfAdsrRelease(uint8_t value) {
-	vcfAdsr.releaseTimeMs = ((value + 1) / 127.) * MAX_RELEASE_TIME_VCF;
+	vcfAdsr.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCF;
 }
 
 void setVcfVelocitySensitivity(uint8_t value) {

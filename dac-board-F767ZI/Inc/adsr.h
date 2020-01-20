@@ -34,29 +34,29 @@
  */
 // VCA ADSR (times in ms)
 #define DEF_MIDICC_ATTACK_TIME_VCA 2 // A
-#define MAX_ATTACK_TIME_VCA 1000
+//#define MAX_ATTACK_TIME_VCA 1000
 
 #define DEF_MIDICC_DECAY_TIME_VCA 8 // D
-#define MAX_DECAY_TIME_VCA 1000
+//#define MAX_DECAY_TIME_VCA 1000
 
 #define DEF_MIDICC_SUSTAIN_LVL_VCA 110 // S
-#define MAX_SUSTAIN_LVL_VCA 1
+//#define MAX_SUSTAIN_LVL_VCA 1
 
 #define DEF_MIDICC_RELEASE_TIME_VCA 64 // R
-#define MAX_RELEASE_TIME_VCA 5000
+//#define MAX_RELEASE_TIME_VCA 5000
 
 // VCF ADSR (times in ms)
 #define DEF_MIDICC_ATTACK_TIME_VCF 48 // A
-#define MAX_ATTACK_TIME_VCF 1000
+//#define MAX_ATTACK_TIME_VCF 1000
 
 #define DEF_MIDICC_DECAY_TIME_VCF 48 // D
-#define MAX_DECAY_TIME_VCF 1000
+//#define MAX_DECAY_TIME_VCF 1000
 
 #define DEF_MIDICC_SUSTAIN_LVL_VCF 64 // S
-#define MAX_SUSTAIN_LVL_VCF 1
+//#define MAX_SUSTAIN_LVL_VCF 1
 
 #define DEF_MIDICC_RELEASE_TIME_VCF 32 // R
-#define MAX_RELEASE_TIME_VCF 5000
+//#define MAX_RELEASE_TIME_VCF 5000
 
 // VCF EG etc
 #define DEF_MIDICC_KBD_TRACKING_VCF 0 // kbd tracking (maximum permitted voltage shift in percents)
@@ -130,6 +130,7 @@ typedef struct {
 
 /* Private function prototypes -----------------------------------------------*/
 
+void initAdsrParameters();
 
 void prepareVcaEnvelopeNoteON();
 void prepareVcaEnvelopeNoteOFF();

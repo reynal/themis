@@ -13,7 +13,8 @@
 #include "misc.h"
 
 // timers
-#define HTIM1_INPUT_FREQ 108000000.0
+//#define HTIM1_INPUT_FREQ 108000000.0
+#define HTIM1_INPUT_FREQ 101000000.0 // test for ADSR algorithms (real value is 108e6)
 #define HTIM1_PRESCALER 100.0
 #define HTIM1_PERIOD 50.0
 // for Timer 2, see vco_calibration.h:

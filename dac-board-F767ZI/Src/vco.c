@@ -117,7 +117,8 @@ int midiToVCO13700CV[128] = {
 void initVco(){
 
 	setVco3340AWaveType(DEF_MIDICC_VCO3340A_WAVE);
-	setVco3340ASync(0);
+	//setVco3340ASync(0);
+	setVco3340ASync(64); // debug
 
 	midiNote.note = DEF_MIDI_NOTE;
 
