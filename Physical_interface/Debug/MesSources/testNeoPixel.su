@@ -1,0 +1,5 @@
+testNeoPixel.c:3:6:tnP_testGPIO	16	static
+testNeoPixel.c:14:6:tnP_testSPI	120	static
+testNeoPixel.c:25:6:tnP_testLed0	120	static
+testNeoPixel.c:37:6:tnP_test1	224	static
+testNeoPixel.c:49:6:tnP_test2	224	static
