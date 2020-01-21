@@ -8,34 +8,34 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
-<layer number="2" name="Route2" color="1" fill="3" visible="yes" active="no"/>
-<layer number="3" name="Route3" color="4" fill="3" visible="yes" active="no"/>
-<layer number="4" name="Route4" color="1" fill="4" visible="yes" active="no"/>
-<layer number="5" name="Route5" color="4" fill="4" visible="yes" active="no"/>
-<layer number="6" name="Route6" color="1" fill="8" visible="yes" active="no"/>
-<layer number="7" name="Route7" color="4" fill="8" visible="yes" active="no"/>
-<layer number="8" name="Route8" color="1" fill="2" visible="yes" active="no"/>
-<layer number="9" name="Route9" color="4" fill="2" visible="yes" active="no"/>
-<layer number="10" name="Route10" color="1" fill="7" visible="yes" active="no"/>
-<layer number="11" name="Route11" color="4" fill="7" visible="yes" active="no"/>
-<layer number="12" name="Route12" color="1" fill="5" visible="yes" active="no"/>
-<layer number="13" name="Route13" color="4" fill="5" visible="yes" active="no"/>
-<layer number="14" name="Route14" color="1" fill="6" visible="yes" active="no"/>
-<layer number="15" name="Route15" color="4" fill="6" visible="yes" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
-<layer number="20" name="Dimension" color="24" fill="1" visible="yes" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
+<layer number="2" name="Route2" color="1" fill="3" visible="no" active="no"/>
+<layer number="3" name="Route3" color="4" fill="3" visible="no" active="no"/>
+<layer number="4" name="Route4" color="1" fill="4" visible="no" active="no"/>
+<layer number="5" name="Route5" color="4" fill="4" visible="no" active="no"/>
+<layer number="6" name="Route6" color="1" fill="8" visible="no" active="no"/>
+<layer number="7" name="Route7" color="4" fill="8" visible="no" active="no"/>
+<layer number="8" name="Route8" color="1" fill="2" visible="no" active="no"/>
+<layer number="9" name="Route9" color="4" fill="2" visible="no" active="no"/>
+<layer number="10" name="Route10" color="1" fill="7" visible="no" active="no"/>
+<layer number="11" name="Route11" color="4" fill="7" visible="no" active="no"/>
+<layer number="12" name="Route12" color="1" fill="5" visible="no" active="no"/>
+<layer number="13" name="Route13" color="4" fill="5" visible="no" active="no"/>
+<layer number="14" name="Route14" color="1" fill="6" visible="no" active="no"/>
+<layer number="15" name="Route15" color="4" fill="6" visible="no" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
+<layer number="20" name="Dimension" color="24" fill="1" visible="no" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -44,8 +44,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -53,19 +53,19 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
-<layer number="59" name="tCarbon" color="7" fill="1" visible="yes" active="no"/>
-<layer number="60" name="bCarbon" color="7" fill="1" visible="yes" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
+<layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
 <layer number="88" name="SimResults" color="9" fill="1" visible="yes" active="yes"/>
 <layer number="89" name="SimProbes" color="9" fill="1" visible="yes" active="yes"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
@@ -25210,7 +25210,7 @@ high speed (Philips)</description>
 </spice>
 <attribute name="C3" value="0.47 micro"/>
 </part>
-<part name="CEM1" library="analog-audio-chips" deviceset="CEM3340" device=""/>
+<part name="3340B" library="analog-audio-chips" deviceset="CEM3340" device=""/>
 <part name="R8_1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1.5M"/>
 <part name="R_CV_FREQ1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="68k"/>
 <part name="R_CV_FREQ_STAB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
@@ -25256,7 +25256,7 @@ high speed (Philips)</description>
 <part name="SUPPLY52" library="6P1_EVB" deviceset="+15V" device=""/>
 <part name="R_FM_LIN1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1M"/>
 <part name="C_FM_LIN1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-025X075" package3d_urn="urn:adsk.eagle:package:23637/1" value="100n"/>
-<part name="CEM3" library="analog-audio-chips" deviceset="CEM3340" device=""/>
+<part name="3340A" library="analog-audio-chips" deviceset="CEM3340" device=""/>
 <part name="R8_3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1.5M"/>
 <part name="R_CV_FREQ3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="68k"/>
 <part name="R_CV_FREQ_STAB3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
@@ -25318,7 +25318,6 @@ high speed (Philips)</description>
 <part name="R2_PWM3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="330k"/>
 <part name="AGND102" library="supply1" deviceset="AGND" device=""/>
 <part name="SUPPLY59" library="6P1_EVB" deviceset="+15V" device=""/>
-<part name="SYNC_IN1" library="6P1_EVB" deviceset="TESTPOINT" device=""/>
 <part name="R_PD_411_IN_TRI1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
 <part name="R_PD_411_IN_PULSE1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="100k"/>
 <part name="R_PD_411_IN_SAW1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
@@ -25434,6 +25433,7 @@ high speed (Philips)</description>
 <part name="VCF_JUMPER" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA04-1" device="" package3d_urn="urn:adsk.eagle:package:8337/1"/>
 <part name="JP_MIXER_A" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA04-2" device="" package3d_urn="urn:adsk.eagle:package:8368/1"/>
 <part name="JP_MIXER_B" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA04-2" device="" package3d_urn="urn:adsk.eagle:package:8368/1"/>
+<part name="JP_SYNC_3340B_TO_A" library="6P1_EVB" deviceset="JUMPER" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -25672,9 +25672,9 @@ Otherwise connect 1 with 2, and
 </instance>
 <instance part="AGND5" gate="VR1" x="25.4" y="467.36" smashed="yes"/>
 <instance part="AGND6" gate="VR1" x="-83.82" y="213.36" smashed="yes"/>
-<instance part="AGND7" gate="VR1" x="-83.82" y="261.62" smashed="yes"/>
+<instance part="AGND7" gate="VR1" x="-83.82" y="256.54" smashed="yes"/>
 <instance part="AGND8" gate="VR1" x="172.72" y="236.22" smashed="yes"/>
-<instance part="AGND13" gate="VR1" x="-83.82" y="297.18" smashed="yes"/>
+<instance part="AGND13" gate="VR1" x="-83.82" y="292.1" smashed="yes"/>
 <instance part="CDEC+15V_MIXERB" gate="G$1" x="22.86" y="480.06" smashed="yes" rot="R270">
 <attribute name="NAME" x="16.256" y="484.759" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="9.144" y="480.441" size="1.778" layer="96"/>
@@ -25830,9 +25830,9 @@ Otherwise connect 1 with 2, and
 <attribute name="VALUE" x="-104.521" y="461.264" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="AGND57" gate="VR1" x="-91.44" y="467.36" smashed="yes"/>
-<instance part="AGND58" gate="VR1" x="-76.2" y="330.2" smashed="yes"/>
-<instance part="AGND59" gate="VR1" x="-76.2" y="368.3" smashed="yes"/>
-<instance part="AGND60" gate="VR1" x="-76.2" y="439.42" smashed="yes"/>
+<instance part="AGND58" gate="VR1" x="-76.2" y="327.66" smashed="yes"/>
+<instance part="AGND59" gate="VR1" x="-76.2" y="365.76" smashed="yes"/>
+<instance part="AGND60" gate="VR1" x="-76.2" y="436.88" smashed="yes"/>
 <instance part="AGND61" gate="VR1" x="-76.2" y="403.86" smashed="yes"/>
 <instance part="SUPPLY43" gate="+15V" x="-101.6" y="487.68" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-104.775" y="485.14" size="1.778" layer="96" rot="R90"/>
@@ -25863,7 +25863,7 @@ Otherwise connect 1 with 2, and
 <attribute name="NAME" x="-99.441" y="390.144" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="-94.361" y="390.144" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="CEM1" gate="G$1" x="-274.32" y="495.3" smashed="yes"/>
+<instance part="3340B" gate="G$1" x="-274.32" y="495.3" smashed="yes"/>
 <instance part="R8_1" gate="G$1" x="-243.84" y="497.84" smashed="yes">
 <attribute name="NAME" x="-247.65" y="499.3386" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-247.65" y="494.538" size="1.778" layer="96"/>
@@ -26003,7 +26003,7 @@ Otherwise connect 1 with 2, and
 <attribute name="NAME" x="-247.396" y="490.601" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-252.476" y="488.061" size="1.778" layer="96"/>
 </instance>
-<instance part="CEM3" gate="G$1" x="-429.26" y="360.68" smashed="yes"/>
+<instance part="3340A" gate="G$1" x="-429.26" y="360.68" smashed="yes"/>
 <instance part="R8_3" gate="G$1" x="-398.78" y="363.22" smashed="yes">
 <attribute name="NAME" x="-402.59" y="364.7186" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-402.59" y="359.918" size="1.778" layer="96"/>
@@ -26208,9 +26208,6 @@ Otherwise connect 1 with 2, and
 <instance part="AGND102" gate="VR1" x="-556.26" y="320.04" smashed="yes"/>
 <instance part="SUPPLY59" gate="+15V" x="-558.8" y="355.6" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-561.975" y="353.06" size="1.778" layer="96" rot="R90"/>
-</instance>
-<instance part="SYNC_IN1" gate="G$1" x="-325.12" y="403.86" smashed="yes" rot="R90">
-<attribute name="NAME" x="-323.977" y="408.432" size="2.54" layer="95" font="vector" ratio="12" rot="R90"/>
 </instance>
 <instance part="R_PD_411_IN_TRI1" gate="G$1" x="-287.02" y="406.4" smashed="yes" rot="R180">
 <attribute name="NAME" x="-288.0614" y="405.13" size="1.778" layer="95" rot="R270"/>
@@ -26610,6 +26607,9 @@ Otherwise connect 1 with 2, and
 <instance part="JP_MIXER_B" gate="G$1" x="22.86" y="408.94" smashed="yes">
 <attribute name="VALUE" x="19.05" y="398.78" size="1.778" layer="96"/>
 <attribute name="NAME" x="19.05" y="414.782" size="1.778" layer="95"/>
+</instance>
+<instance part="JP_SYNC_3340B_TO_A" gate="G$1" x="-342.9" y="434.34" smashed="yes" rot="R90">
+<attribute name="NAME" x="-339.4075" y="429.895" size="1.778" layer="95" rot="R90"/>
 </instance>
 </instances>
 <busses>
@@ -27157,7 +27157,7 @@ Otherwise connect 1 with 2, and
 <label x="-175.26" y="91.44" size="1.27" layer="95"/>
 </segment>
 <segment>
-<pinref part="CEM1" gate="G$1" pin="PWM_CTRL"/>
+<pinref part="3340B" gate="G$1" pin="PWM_CTRL"/>
 <label x="-416.56" y="472.44" size="1.778" layer="95" rot="R180"/>
 <wire x1="-327.66" y1="492.76" x2="-353.06" y2="492.76" width="0.1524" layer="91"/>
 <wire x1="-353.06" y1="492.76" x2="-353.06" y2="472.44" width="0.1524" layer="91"/>
@@ -27189,7 +27189,7 @@ Otherwise connect 1 with 2, and
 <label x="-175.26" y="83.82" size="1.27" layer="95"/>
 </segment>
 <segment>
-<pinref part="CEM3" gate="G$1" pin="PWM_CTRL"/>
+<pinref part="3340A" gate="G$1" pin="PWM_CTRL"/>
 <label x="-535.94" y="337.82" size="1.778" layer="95" rot="R180"/>
 <wire x1="-482.6" y1="358.14" x2="-508" y2="358.14" width="0.1524" layer="91"/>
 <wire x1="-508" y1="358.14" x2="-508" y2="337.82" width="0.1524" layer="91"/>
@@ -27557,7 +27557,7 @@ Otherwise connect 1 with 2, and
 <pinref part="SUPPLY50" gate="+15V" pin="+15V"/>
 </segment>
 <segment>
-<pinref part="CEM1" gate="G$1" pin="VCC"/>
+<pinref part="3340B" gate="G$1" pin="VCC"/>
 <wire x1="-276.86" y1="523.24" x2="-274.32" y2="523.24" width="0.1524" layer="91"/>
 <pinref part="SUPPLY46" gate="+15V" pin="+15V"/>
 <wire x1="-276.86" y1="538.48" x2="-274.32" y2="538.48" width="0.1524" layer="91"/>
@@ -27585,7 +27585,7 @@ Otherwise connect 1 with 2, and
 <pinref part="SUPPLY57" gate="+15V" pin="+15V"/>
 </segment>
 <segment>
-<pinref part="CEM3" gate="G$1" pin="VCC"/>
+<pinref part="3340A" gate="G$1" pin="VCC"/>
 <wire x1="-431.8" y1="388.62" x2="-429.26" y2="388.62" width="0.1524" layer="91"/>
 <pinref part="SUPPLY53" gate="+15V" pin="+15V"/>
 <wire x1="-431.8" y1="403.86" x2="-429.26" y2="403.86" width="0.1524" layer="91"/>
@@ -27698,6 +27698,7 @@ Otherwise connect 1 with 2, and
 <segment>
 <pinref part="CSTAB3_MIXERB" gate="G$1" pin="1"/>
 <pinref part="AGND7" gate="VR1" pin="AGND"/>
+<wire x1="-83.82" y1="259.08" x2="-83.82" y2="264.16" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="CSTAB_VCA" gate="G$1" pin="1"/>
@@ -27706,6 +27707,7 @@ Otherwise connect 1 with 2, and
 <segment>
 <pinref part="CSTAB2_MIXERB" gate="G$1" pin="1"/>
 <pinref part="AGND13" gate="VR1" pin="AGND"/>
+<wire x1="-83.82" y1="294.64" x2="-83.82" y2="299.72" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="MIXER_A" gate="G$1" pin="GND"/>
@@ -27715,10 +27717,12 @@ Otherwise connect 1 with 2, and
 <segment>
 <pinref part="CSTAB3_MIXERA" gate="G$1" pin="1"/>
 <pinref part="AGND59" gate="VR1" pin="AGND"/>
+<wire x1="-76.2" y1="368.3" x2="-76.2" y2="370.84" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="CSTAB1_MIXERA" gate="G$1" pin="1"/>
 <pinref part="AGND60" gate="VR1" pin="AGND"/>
+<wire x1="-76.2" y1="439.42" x2="-76.2" y2="441.96" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="CSTAB2_MIXERA" gate="G$1" pin="1"/>
@@ -27728,6 +27732,7 @@ Otherwise connect 1 with 2, and
 <segment>
 <pinref part="AGND58" gate="VR1" pin="AGND"/>
 <pinref part="CSTAB4_MIXERA" gate="G$1" pin="1"/>
+<wire x1="-76.2" y1="330.2" x2="-76.2" y2="332.74" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="CONV_ITOV_OUT" gate="A" pin="+IN"/>
@@ -28009,7 +28014,7 @@ Otherwise connect 1 with 2, and
 <pinref part="AGND80" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
-<pinref part="CEM1" gate="G$1" pin="GND"/>
+<pinref part="3340B" gate="G$1" pin="GND"/>
 <wire x1="-276.86" y1="492.76" x2="-274.32" y2="492.76" width="0.1524" layer="91"/>
 <pinref part="AGND81" gate="VR1" pin="AGND"/>
 </segment>
@@ -28066,7 +28071,7 @@ Otherwise connect 1 with 2, and
 <pinref part="AGND92" gate="VR1" pin="AGND"/>
 </segment>
 <segment>
-<pinref part="CEM3" gate="G$1" pin="GND"/>
+<pinref part="3340A" gate="G$1" pin="GND"/>
 <wire x1="-431.8" y1="358.14" x2="-429.26" y2="358.14" width="0.1524" layer="91"/>
 <pinref part="AGND93" gate="VR1" pin="AGND"/>
 </segment>
@@ -28245,13 +28250,12 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="IN2_MIXERA" class="0">
 <segment>
-<pinref part="JP_SAWOUT_VCO3340B" gate="G$1" pin="2"/>
-<label x="-182.88" y="464.82" size="1.778" layer="95"/>
-<wire x1="-198.12" y1="464.82" x2="-157.48" y2="464.82" width="0.1524" layer="91"/>
-<wire x1="-157.48" y1="464.82" x2="-157.48" y2="426.72" width="0.1524" layer="91"/>
 <pinref part="CIN2_MIXERA" gate="G$1" pin="1"/>
 <label x="-127" y="426.72" size="1.778" layer="95"/>
-<wire x1="-157.48" y1="426.72" x2="-109.22" y2="426.72" width="0.1524" layer="91"/>
+<wire x1="-185.42" y1="426.72" x2="-109.22" y2="426.72" width="0.1524" layer="91"/>
+<wire x1="-185.42" y1="426.72" x2="-185.42" y2="383.54" width="0.1524" layer="91"/>
+<pinref part="JP_OUT_VCO3340A" gate="G$1" pin="2"/>
+<wire x1="-185.42" y1="383.54" x2="-198.12" y2="383.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="IN_VCA" class="0">
@@ -28570,7 +28574,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TEMPCO1_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="MUL_GAIN1"/>
+<pinref part="3340B" gate="G$1" pin="MUL_GAIN1"/>
 <pinref part="R1_3" gate="G$1" pin="1"/>
 <wire x1="-327.66" y1="523.24" x2="-345.44" y2="523.24" width="0.1524" layer="91"/>
 <label x="-347.98" y="523.24" size="1.778" layer="95"/>
@@ -28578,7 +28582,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TEMPCO2_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="MUL_GAIN2"/>
+<pinref part="3340B" gate="G$1" pin="MUL_GAIN2"/>
 <pinref part="R2_3" gate="G$1" pin="1"/>
 <wire x1="-327.66" y1="515.62" x2="-327.66" y2="518.16" width="0.1524" layer="91"/>
 <wire x1="-327.66" y1="518.16" x2="-330.2" y2="518.16" width="0.1524" layer="91"/>
@@ -28587,7 +28591,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="SAW_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="SAW_OUT"/>
+<pinref part="3340B" gate="G$1" pin="SAW_OUT"/>
 <pinref part="R7_1" gate="G$1" pin="2"/>
 <wire x1="-327.66" y1="469.9" x2="-330.2" y2="469.9" width="0.1524" layer="91"/>
 <label x="-330.2" y="472.44" size="1.778" layer="95"/>
@@ -28595,7 +28599,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="VEE_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="VEE"/>
+<pinref part="3340B" gate="G$1" pin="VEE"/>
 <pinref part="R3_1" gate="G$1" pin="2"/>
 <wire x1="-327.66" y1="508" x2="-330.2" y2="508" width="0.1524" layer="91"/>
 <wire x1="-330.2" y1="508" x2="-345.44" y2="508" width="0.1524" layer="91"/>
@@ -28617,7 +28621,7 @@ Otherwise connect 1 with 2, and
 <net name="FREQ_CTRL_VCOB" class="0">
 <segment>
 <pinref part="R_CV_FREQ_STAB1" gate="G$1" pin="1"/>
-<pinref part="CEM1" gate="G$1" pin="FREQ_CTRL"/>
+<pinref part="3340B" gate="G$1" pin="FREQ_CTRL"/>
 <wire x1="-276.86" y1="515.62" x2="-264.16" y2="515.62" width="0.1524" layer="91"/>
 <wire x1="-264.16" y1="515.62" x2="-261.62" y2="515.62" width="0.1524" layer="91"/>
 <wire x1="-264.16" y1="530.86" x2="-264.16" y2="515.62" width="0.1524" layer="91"/>
@@ -28638,7 +28642,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="SCALE_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="SCALE"/>
+<pinref part="3340B" gate="G$1" pin="SCALE"/>
 <pinref part="R11_1" gate="G$1" pin="1"/>
 <wire x1="-276.86" y1="508" x2="-274.32" y2="508" width="0.1524" layer="91"/>
 <label x="-276.86" y="505.46" size="1.778" layer="95"/>
@@ -28653,7 +28657,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TIMING_CAP_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="TIMING_CAP"/>
+<pinref part="3340B" gate="G$1" pin="TIMING_CAP"/>
 <pinref part="C_1" gate="G$1" pin="2"/>
 <wire x1="-276.86" y1="485.14" x2="-274.32" y2="485.14" width="0.1524" layer="91"/>
 <label x="-276.86" y="487.68" size="1.778" layer="95"/>
@@ -28668,7 +28672,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="LINEAR_CTRL_VCOB" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="LINEAR_CTRL"/>
+<pinref part="3340B" gate="G$1" pin="LINEAR_CTRL"/>
 <pinref part="R8_1" gate="G$1" pin="1"/>
 <wire x1="-276.86" y1="500.38" x2="-266.7" y2="500.38" width="0.1524" layer="91"/>
 <pinref part="R10_1" gate="G$1" pin="1"/>
@@ -28685,7 +28689,7 @@ Otherwise connect 1 with 2, and
 <net name="SOFT_SYNC_VCOB" class="0">
 <segment>
 <pinref part="C2_SYNC1" gate="G$1" pin="2"/>
-<pinref part="CEM1" gate="G$1" pin="SOFT_SYNC"/>
+<pinref part="3340B" gate="G$1" pin="SOFT_SYNC"/>
 <wire x1="-271.78" y1="469.9" x2="-276.86" y2="469.9" width="0.1524" layer="91"/>
 <label x="-276.86" y="474.98" size="1.778" layer="95" rot="R180"/>
 </segment>
@@ -28693,7 +28697,7 @@ Otherwise connect 1 with 2, and
 <net name="HARD_SYNC_VCOB" class="0">
 <segment>
 <pinref part="C1_SYNC1" gate="G$1" pin="2"/>
-<pinref part="CEM1" gate="G$1" pin="HARD_SYNC"/>
+<pinref part="3340B" gate="G$1" pin="HARD_SYNC"/>
 <wire x1="-332.74" y1="485.14" x2="-327.66" y2="485.14" width="0.1524" layer="91"/>
 <label x="-332.74" y="487.68" size="1.778" layer="95"/>
 </segment>
@@ -28715,7 +28719,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TEMPCO1_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="MUL_GAIN1"/>
+<pinref part="3340A" gate="G$1" pin="MUL_GAIN1"/>
 <pinref part="R1_4" gate="G$1" pin="1"/>
 <wire x1="-482.6" y1="388.62" x2="-500.38" y2="388.62" width="0.1524" layer="91"/>
 <label x="-492.76" y="388.62" size="1.778" layer="95"/>
@@ -28723,7 +28727,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TEMPCO2_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="MUL_GAIN2"/>
+<pinref part="3340A" gate="G$1" pin="MUL_GAIN2"/>
 <pinref part="R2_4" gate="G$1" pin="1"/>
 <wire x1="-482.6" y1="381" x2="-482.6" y2="383.54" width="0.1524" layer="91"/>
 <wire x1="-482.6" y1="383.54" x2="-485.14" y2="383.54" width="0.1524" layer="91"/>
@@ -28732,7 +28736,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="SAW_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="SAW_OUT"/>
+<pinref part="3340A" gate="G$1" pin="SAW_OUT"/>
 <pinref part="R7_3" gate="G$1" pin="2"/>
 <wire x1="-482.6" y1="335.28" x2="-485.14" y2="335.28" width="0.1524" layer="91"/>
 <label x="-485.14" y="335.28" size="1.778" layer="95"/>
@@ -28740,7 +28744,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="VEE_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="VEE"/>
+<pinref part="3340A" gate="G$1" pin="VEE"/>
 <pinref part="R3_3" gate="G$1" pin="2"/>
 <wire x1="-482.6" y1="373.38" x2="-485.14" y2="373.38" width="0.1524" layer="91"/>
 <wire x1="-485.14" y1="373.38" x2="-500.38" y2="373.38" width="0.1524" layer="91"/>
@@ -28762,7 +28766,7 @@ Otherwise connect 1 with 2, and
 <net name="FREQ_CTRL_VCOA" class="0">
 <segment>
 <pinref part="R_CV_FREQ_STAB3" gate="G$1" pin="1"/>
-<pinref part="CEM3" gate="G$1" pin="FREQ_CTRL"/>
+<pinref part="3340A" gate="G$1" pin="FREQ_CTRL"/>
 <wire x1="-431.8" y1="381" x2="-419.1" y2="381" width="0.1524" layer="91"/>
 <wire x1="-419.1" y1="381" x2="-416.56" y2="381" width="0.1524" layer="91"/>
 <wire x1="-419.1" y1="396.24" x2="-419.1" y2="381" width="0.1524" layer="91"/>
@@ -28783,7 +28787,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="SCALE_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="SCALE"/>
+<pinref part="3340A" gate="G$1" pin="SCALE"/>
 <pinref part="R11_3" gate="G$1" pin="1"/>
 <wire x1="-431.8" y1="373.38" x2="-429.26" y2="373.38" width="0.1524" layer="91"/>
 <label x="-431.8" y="370.84" size="1.778" layer="95"/>
@@ -28798,7 +28802,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TIMING_CAP_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="TIMING_CAP"/>
+<pinref part="3340A" gate="G$1" pin="TIMING_CAP"/>
 <pinref part="C_3" gate="G$1" pin="2"/>
 <wire x1="-431.8" y1="350.52" x2="-429.26" y2="350.52" width="0.1524" layer="91"/>
 <label x="-431.8" y="353.06" size="1.778" layer="95"/>
@@ -28822,7 +28826,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="LINEAR_CTRL_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="LINEAR_CTRL"/>
+<pinref part="3340A" gate="G$1" pin="LINEAR_CTRL"/>
 <pinref part="R8_3" gate="G$1" pin="1"/>
 <wire x1="-431.8" y1="365.76" x2="-421.64" y2="365.76" width="0.1524" layer="91"/>
 <pinref part="R10_3" gate="G$1" pin="1"/>
@@ -28857,7 +28861,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="TRI_3340_VCOA" class="0">
 <segment>
-<pinref part="CEM3" gate="G$1" pin="TRI_OUT"/>
+<pinref part="3340A" gate="G$1" pin="TRI_OUT"/>
 <wire x1="-431.8" y1="342.9" x2="-368.3" y2="342.9" width="0.1524" layer="91"/>
 <label x="-386.08" y="342.9" size="1.778" layer="95"/>
 <wire x1="-368.3" y1="342.9" x2="-330.2" y2="342.9" width="0.1524" layer="91"/>
@@ -28913,7 +28917,9 @@ Otherwise connect 1 with 2, and
 <label x="-342.9" y="383.54" size="1.778" layer="95" rot="R90"/>
 <pinref part="3" gate="B" pin="S"/>
 <wire x1="-342.9" y1="403.86" x2="-342.9" y2="388.62" width="0.1524" layer="91"/>
-<pinref part="SYNC_IN1" gate="G$1" pin="P$1"/>
+<pinref part="JP_SYNC_3340B_TO_A" gate="G$1" pin="1"/>
+<wire x1="-342.9" y1="431.8" x2="-342.9" y2="403.86" width="0.1524" layer="91"/>
+<junction x="-342.9" y="403.86"/>
 </segment>
 </net>
 <net name="TRI_OUT_VCOA" class="0">
@@ -28927,7 +28933,7 @@ Otherwise connect 1 with 2, and
 <net name="SOFT_SYNC_VCOA" class="0">
 <segment>
 <pinref part="C2_SYNC3" gate="G$1" pin="2"/>
-<pinref part="CEM3" gate="G$1" pin="SOFT_SYNC"/>
+<pinref part="3340A" gate="G$1" pin="SOFT_SYNC"/>
 <wire x1="-426.72" y1="335.28" x2="-431.8" y2="335.28" width="0.1524" layer="91"/>
 <label x="-429.26" y="335.28" size="1.778" layer="95"/>
 </segment>
@@ -28935,7 +28941,7 @@ Otherwise connect 1 with 2, and
 <net name="HARD_SYNC_VCOA" class="0">
 <segment>
 <pinref part="C1_SYNC3" gate="G$1" pin="2"/>
-<pinref part="CEM3" gate="G$1" pin="HARD_SYNC"/>
+<pinref part="3340A" gate="G$1" pin="HARD_SYNC"/>
 <wire x1="-487.68" y1="350.52" x2="-482.6" y2="350.52" width="0.1524" layer="91"/>
 <label x="-487.68" y="353.06" size="1.778" layer="95"/>
 </segment>
@@ -28944,7 +28950,7 @@ Otherwise connect 1 with 2, and
 <segment>
 <wire x1="-492.76" y1="360.68" x2="-513.08" y2="360.68" width="0.1524" layer="91"/>
 <pinref part="R6_3" gate="G$1" pin="2"/>
-<pinref part="CEM3" gate="G$1" pin="PULSE_OUT"/>
+<pinref part="3340A" gate="G$1" pin="PULSE_OUT"/>
 <wire x1="-513.08" y1="360.68" x2="-520.7" y2="360.68" width="0.1524" layer="91"/>
 <wire x1="-482.6" y1="365.76" x2="-492.76" y2="365.76" width="0.1524" layer="91"/>
 <wire x1="-492.76" y1="360.68" x2="-492.76" y2="365.76" width="0.1524" layer="91"/>
@@ -29389,24 +29395,22 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="IN3_MIXERA" class="0">
 <segment>
-<pinref part="JP_PULSEOUT_VCO3340B" gate="G$1" pin="2"/>
-<label x="-182.88" y="457.2" size="1.778" layer="95"/>
-<wire x1="-198.12" y1="457.2" x2="-160.02" y2="457.2" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="457.2" x2="-160.02" y2="388.62" width="0.1524" layer="91"/>
 <pinref part="CIN3_MIXERA" gate="G$1" pin="1"/>
 <label x="-124.46" y="388.62" size="1.778" layer="95"/>
 <wire x1="-160.02" y1="388.62" x2="-101.6" y2="388.62" width="0.1524" layer="91"/>
+<pinref part="JP_SAWOUT_VCO3340B" gate="G$1" pin="2"/>
+<wire x1="-160.02" y1="388.62" x2="-160.02" y2="464.82" width="0.1524" layer="91"/>
+<wire x1="-160.02" y1="464.82" x2="-198.12" y2="464.82" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="IN4_MIXERA" class="0">
 <segment>
-<pinref part="JP_OUT_VCO3340A" gate="G$1" pin="2"/>
-<label x="-185.42" y="383.54" size="1.778" layer="95"/>
-<wire x1="-198.12" y1="383.54" x2="-160.02" y2="383.54" width="0.1524" layer="91"/>
-<wire x1="-160.02" y1="383.54" x2="-160.02" y2="350.52" width="0.1524" layer="91"/>
 <pinref part="CIN4_MIXERA" gate="G$1" pin="1"/>
 <label x="-124.46" y="350.52" size="1.778" layer="95"/>
-<wire x1="-160.02" y1="350.52" x2="-101.6" y2="350.52" width="0.1524" layer="91"/>
+<wire x1="-162.56" y1="350.52" x2="-101.6" y2="350.52" width="0.1524" layer="91"/>
+<pinref part="JP_PULSEOUT_VCO3340B" gate="G$1" pin="2"/>
+<wire x1="-162.56" y1="350.52" x2="-162.56" y2="457.2" width="0.1524" layer="91"/>
+<wire x1="-162.56" y1="457.2" x2="-198.12" y2="457.2" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -29418,7 +29422,7 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="VCO3340B_TRI_OUT" class="0">
 <segment>
-<pinref part="CEM1" gate="G$1" pin="TRI_OUT"/>
+<pinref part="3340B" gate="G$1" pin="TRI_OUT"/>
 <wire x1="-276.86" y1="477.52" x2="-274.32" y2="477.52" width="0.1524" layer="91"/>
 <label x="-241.3" y="477.52" size="1.778" layer="95"/>
 <pinref part="TP_TRI1" gate="G$1" pin="P$1"/>
@@ -29437,13 +29441,15 @@ Otherwise connect 1 with 2, and
 <junction x="-342.9" y="464.82"/>
 <wire x1="-342.9" y1="464.82" x2="-203.2" y2="464.82" width="0.1524" layer="91"/>
 <pinref part="JP_SAWOUT_VCO3340B" gate="G$1" pin="1"/>
+<pinref part="JP_SYNC_3340B_TO_A" gate="G$1" pin="2"/>
+<wire x1="-342.9" y1="464.82" x2="-342.9" y2="436.88" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="VCO3340B_PULSE_OUT" class="0">
 <segment>
 <wire x1="-337.82" y1="495.3" x2="-358.14" y2="495.3" width="0.1524" layer="91"/>
 <pinref part="R6_1" gate="G$1" pin="2"/>
-<pinref part="CEM1" gate="G$1" pin="PULSE_OUT"/>
+<pinref part="3340B" gate="G$1" pin="PULSE_OUT"/>
 <wire x1="-358.14" y1="495.3" x2="-365.76" y2="495.3" width="0.1524" layer="91"/>
 <wire x1="-327.66" y1="500.38" x2="-337.82" y2="500.38" width="0.1524" layer="91"/>
 <wire x1="-337.82" y1="495.3" x2="-337.82" y2="500.38" width="0.1524" layer="91"/>
