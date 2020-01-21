@@ -3,37 +3,53 @@ package model;
 /**
  * An enum for all possible Midi Control Change (aka MidiCC) supported by the underlying hardware.
  * 
- * @see dac_board.c file in the STM32 project
+ * @see midi.c file in the STM32 project
  * 
  * @author reynal
  *
  */
 public enum MidiCCImplementation {
 		
-		WAVE_3340(9),
-		DETUNE_13700(10),
-		WAVE_13700(11),
-		PWM_3340(14),
-		LEVEL_3340(15),
-		LEVEL_13700(16),
-		VCF_CUTOFF(19),
-		VCF_RESONANCE(21),
-		VCF_KBDTRACKING(22),
-		VCF_ATTACK(23),
-		VCF_DECAY(24),
-		VCF_SUSTAIN(25),
-		VCF_RELEASE(26),
-		VCF_EG(27),
-		VCA_ATTACK(28),
-		VCA_DECAY(29),
-		VCA_SUSTAIN(30),
-		VCA_RELEASE(31),
-		OCTAVE_3340(74),
-		OCTAVE_13700(75),
-		SYNC_3340(77),
-		VCA_VELOCITY_SENSITIVITY(104),
+		OCTAVE_3340A(74),
+		SEMITONES_3340A(71),
+		DETUNE_3340A(14),		
+		WAVE_3340A(15),
+		PWM_3340A(16),
+		LEVEL_3340A(17),
+		SYNC_3340A(77),
+
+		OCTAVE_3340B(75),
+		SEMITONES_3340B(72),
+		DETUNE_3340B(18),
+		LEVEL_TRI_3340B(19),
+		LEVEL_PULSE_3340B(20),
+		LEVEL_SAW_3340B(21),
+		PWM_3340B(22),
+
+		OCTAVE_13700(76),
+		SEMITONES_13700(73),
+		DETUNE_13700(23),
+		LEVEL_TRI_13700(24),
+		LEVEL_SQU_13700(25),
+
+		VCF_CUTOFF(28),
+		VCF_RESONANCE(30),
 		VCF_ORDER(109),
-		VCF_VELOCITY_SENSITIVITY(110),
+		VCF_KBDTRACKING(31),
+		VCF_EG(36),
+		
+		VCF_VELOCITY_SENSITIVITY(110),		
+		VCF_ATTACK(32),
+		VCF_DECAY(33),
+		VCF_SUSTAIN(34),
+		VCF_RELEASE(35),
+		
+		VCA_VELOCITY_SENSITIVITY(104),
+		VCA_ATTACK(37),
+		VCA_DECAY(38),
+		VCA_SUSTAIN(39),
+		VCA_RELEASE(40),
+		
 		CALIBRATE(127);
 		
 		int code;

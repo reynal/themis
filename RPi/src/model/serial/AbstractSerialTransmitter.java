@@ -1,7 +1,6 @@
 package model.serial;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
@@ -10,7 +9,6 @@ import application.ModuleFactory;
 import model.BooleanParameter;
 import model.EnumParameter;
 import model.MIDIParameter;
-import model.ModuleParameter;
 import model.event.ModuleParameterChangeEvent;
 import model.event.ModuleParameterChangeListener;
 

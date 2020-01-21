@@ -1,10 +1,16 @@
 package model.sequencer;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Synthesizer;
+import javax.sound.midi.Track;
+import javax.sound.midi.Transmitter;
 
 
 
@@ -57,15 +63,15 @@ public class SimpleMidiPlayer{
 
 		if (! (seq instanceof Synthesizer)){
 			
-			System.out.println("sequencer n'implémente pas l'interface Synthetizer");
+			System.out.println("sequencer n'implï¿½mente pas l'interface Synthetizer");
 
-			Synthesizer synth = MidiSystem.getSynthesizer(); // renvoie un pointeur vers le synthé GM
+			Synthesizer synth = MidiSystem.getSynthesizer(); // renvoie un pointeur vers le synthï¿½ GM
 			synth.open();
-			Receiver	synthReceiver = synth.getReceiver(); // midi OUT du synthé
+			Receiver	synthReceiver = synth.getReceiver(); // midi OUT du synthï¿½
 			Transmitter	seqTransmitter = seq.getTransmitter(); // midi IN du sequenceur
 			seqTransmitter.setReceiver(synthReceiver); // midi IN du sequencer avec midi OUT du synth
 		}
-		else System.out.println("sequencer implémente l'interface Synthetizer");
+		else System.out.println("sequencer implï¿½mente l'interface Synthetizer");
 		seq.start(); // TODO : thread ?
 		System.out.println("sequenceur started");
 	}
@@ -78,7 +84,7 @@ public class SimpleMidiPlayer{
 			
 			MidiDevice device = MidiSystem.getMidiDevice(info);
 			for (Class i : device.getClass().getInterfaces())
-				System.out.println("\t implémente : " + i);
+				System.out.println("\t implï¿½mente : " + i);
 			System.out.println("device correspondant : " + device);
 		}
 		

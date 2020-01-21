@@ -1,13 +1,13 @@
 package view.component;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.logging.Logger;
 
-import controller.component.ControlFactory;
-
-import java.io.*;
-import device.*;
-import model.*;
+import device.IS31FL3731;
+import model.EnumParameter;
+import model.ModuleParameter;
+import model.Octave;
 
 /**
  * A factory that can build a view (a bargraph, a group of leds, etc) for a synth parameter 

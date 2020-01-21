@@ -13,15 +13,18 @@ public abstract class VcoModule extends AbstractModule {
 	private static final Logger LOGGER = Logger.getLogger("confLogger");
 	
 	protected MIDIParameter detuneParameter;
-	protected EnumParameter<Octave> octaveParameter;	
+	protected EnumParameter<Octave> octaveParameter;
+	protected EnumParameter<Semitones> semitonesParameter;
 
 	public static final String DETUNE = "Detune";
 	public static final String OCTAVE = "Octave";
+	public static final String SEMITONES = "Semitones";
 	
 	public VcoModule() {
 		super();
 		parameterList.add(detuneParameter = new MIDIParameter(getVcoName() + DETUNE));
 		parameterList.add(octaveParameter = new EnumParameter<Octave>(Octave.class, getVcoName() + OCTAVE));
+		parameterList.add(semitonesParameter = new EnumParameter<Semitones>(Semitones.class, getVcoName() + SEMITONES));
 		
 		// debug:
 		detuneParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
@@ -40,7 +43,7 @@ public abstract class VcoModule extends AbstractModule {
 		octaveParameter.setValue(v);
 	}
 	
-	public double getDetune() {
+	public int getDetune() {
 		return detuneParameter.getValue();
 	}
 
@@ -59,6 +62,10 @@ public abstract class VcoModule extends AbstractModule {
 	
 	public EnumParameter<Octave> getOctaveParameter(){
 		return octaveParameter;
+	}	
+	
+	public EnumParameter<Semitones> getSemitonesParameter(){
+		return semitonesParameter;
 	}	
 		
 }

@@ -1,15 +1,16 @@
 package model.sequencer;
 
 
-import java.util.*;
-import javax.sound.midi.*;
-import static model.sequencer.EventDuration.*;
+import java.util.ArrayList;
+
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.Track;
 /**
  * TrackThemis
  * 
  */
 
-// cas à traiter: fin de boucle note on, début de boucle note off
+// cas ï¿½ traiter: fin de boucle note on, dï¿½but de boucle note off
 public class TrackThemis{
 	
 
@@ -47,14 +48,14 @@ ArrayList<TrackThemis> history;
 	
 	// my own stuff
 	
-	public enum EventType {  // éventuellement à sortir si on ne peut pas mélanger CC et NOTE sur une track
+	public enum EventType {  // ï¿½ventuellement ï¿½ sortir si on ne peut pas mï¿½langer CC et NOTE sur une track
         NOTE,
         CC;
 	}
 	
 	/**
 	 * type
-	 * Défini le message midi
+	 * Dï¿½fini le message midi
 	 */
 	void type() {
 		
@@ -120,7 +121,7 @@ ArrayList<TrackThemis> history;
 
 	/**
 	 * randomize
-	 * randomize whole line (réutiliser move)
+	 * randomize whole line (rï¿½utiliser move)
 	 */
 	public void randomize(EventDuration range) {
 		// TODO

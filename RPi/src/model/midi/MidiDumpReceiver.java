@@ -37,11 +37,11 @@ package model.midi;
 
 import java.io.PrintStream;
 
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.MetaMessage;
-import javax.sound.midi.SysexMessage;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 /**
  * Displays the file format information of a MIDI file.
@@ -199,9 +199,9 @@ public class MidiDumpReceiver implements Receiver {
 	}
 
 	public String decodeMessage(MetaMessage message) {
-		byte[] abMessage = message.getMessage();
+		//byte[] abMessage = message.getMessage();
 		byte[] abData = message.getData();
-		int nDataLength = message.getLength();
+		//int nDataLength = message.getLength();
 		String strMessage = null;
 		// System.out.println("data array length: " + abData.length);
 		switch (message.getType()) {

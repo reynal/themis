@@ -29,6 +29,7 @@ public class VcfModule extends AbstractModule {
 	public static final String KBD_TRACKING = "VCF Kbd";
 	public static final String EG_DEPTH = "VCF EG Depth";
 	public static final String VEL_SENSITIVITY= "VCF Vel Sens";
+	public static final String FILTER_ORDER = "Filter Order";
 	
 	public VcfModule() {
 		
@@ -38,9 +39,10 @@ public class VcfModule extends AbstractModule {
 		egDepthParameter = new MIDIParameter(EG_DEPTH);
 		adsrEnveloppe = new ADSREnveloppe();
 		velocitySensitivityParameter = new MIDIParameter(VEL_SENSITIVITY);
+		filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, FILTER_ORDER);
 		
 		parameterList.addAll(adsrEnveloppe.getParameters());
-		parameterList.add(filterOrderParameter = new EnumParameter<FilterOrder>(FilterOrder.class, "FilterOrder"));
+		parameterList.add(filterOrderParameter);
 		parameterList.add(cutoffParameter);
 		parameterList.add(resonanceParameter);
 		parameterList.add(kbdTrackingParameter);

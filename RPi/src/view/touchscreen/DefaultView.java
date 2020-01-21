@@ -1,10 +1,11 @@
 package view.touchscreen;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageObserver;
 
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
 /**

@@ -1,14 +1,11 @@
 package view.touchscreen;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.geom.AffineTransform;
+import java.awt.image.ImageObserver;
 
-import model.ModuleParameter;
 import model.Vco13700Module;
-import model.Vco3340Module;
-import model.event.ModuleParameterChangeEvent;
-import model.event.ModuleParameterChangeListener;
 
 public class Vco13700View implements TouchScreenView {
 	
@@ -20,7 +17,7 @@ public class Vco13700View implements TouchScreenView {
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/13700.png");
 		model.getDetuneParameter().addModuleParameterChangeListener(e -> updateDetuneParameterView());
 		model.getOctaveParameter().addModuleParameterChangeListener(e -> updateOctaveParameterView());
-		model.getWaveShapeParameter().addModuleParameterChangeListener(e -> updateWaveShapeParameterView());
+		//model.getWaveShapeParameter().addModuleParameterChangeListener(e -> updateWaveShapeParameterView());
 	}
 	
 	private Object updateWaveShapeParameterView() {

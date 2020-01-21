@@ -21,27 +21,30 @@ import view.component.ViewFactory;
  * if no hardware is currently plugged to the Raspberry, or for debugging and
  * testing purpose.
  * 
- * This is practically implemtend as a JPanel that can hosts several subpanes,
+ * This is practically implemented as a JFrame that can hosts several subpanes,
  * one for each group of parameters.
  * 
  * @author reynal
  *
  */
 @SuppressWarnings("serial")
-public class SynthControllerPaneSimulator extends JPanel {
+public class SynthControllerPaneSimulator extends JFrame {
 
 	public SynthControllerPaneSimulator(SynthControllerPane synthControllerPane) {
+		
+		super("ThEmIS SynthControllerPaneSimulator");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		setBackground(Color.black);
-		setBorder(BorderFactory.createTitledBorder(new LineBorder(Color.gray, 1), "Synth controller pane simulator",
-				TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 10), Color.white));
+		JPanel mainPanel = new JPanel();
+		mainPanel.setBackground(Color.black);
+		mainPanel.setBorder(BorderFactory.createTitledBorder(
+				new LineBorder(Color.gray, 1), "Synth controller pane simulator",
+					TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION, new Font("SansSerif", Font.BOLD, 10), Color.white));
 
-		setLayout(new GridLayout(1, synthControllerPane.getColumnCount(), 10, 10)); // rows, cols, hgap, vgap
-
-		JPanel panel;
+		mainPanel.setLayout(new GridLayout(1, synthControllerPane.getColumnCount(), 10, 10)); // rows, cols, hgap, vgap
 
 		for (int col = 0; col < synthControllerPane.getColumnCount(); col++) {
-			panel = new JPanel();
+			JPanel panel = new JPanel();
 			panel.setBackground(Color.black);
 			panel.setLayout(new GridLayout(2 * synthControllerPane.getRowCount(), 1, 10, 10));
 			for (int row = 0; row < synthControllerPane.getRowCount(); row++) {
@@ -49,8 +52,13 @@ public class SynthControllerPaneSimulator extends JPanel {
 				panel.add(v != null ? v.getUIForSimulator() : new JLabel("???"));
 				panel.add(UIUtilities.createUIForControl(synthControllerPane.getControl(col,row)));
 			}
-			add(panel);
+			mainPanel.add(panel);
 		}
+		
+		setContentPane(mainPanel);
+		setLocation(0,450);
+		pack();
+		setVisible(true);
 	}
 
 	// -------- test --------
@@ -61,10 +69,7 @@ public class SynthControllerPaneSimulator extends JPanel {
 		ControlFactory controlFactoryRight = new ControlFactory(null);
 		ViewFactory viewFactory = new ViewFactory(null);		
 		SynthControllerPane scp = new SynthControllerPane(controlFactoryLeft, controlFactoryRight, viewFactory);
-		JFrame f = new JFrame("test");
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setContentPane(new SynthControllerPaneSimulator(scp));
-		f.pack();
-		f.setVisible(true);
+		SynthControllerPaneSimulator scps = new SynthControllerPaneSimulator(scp);
+		scps.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 }

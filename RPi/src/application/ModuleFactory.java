@@ -1,18 +1,50 @@
 package application;
 
+import static model.MidiCCImplementation.DETUNE_13700;
+import static model.MidiCCImplementation.DETUNE_3340A;
+import static model.MidiCCImplementation.DETUNE_3340B;
+import static model.MidiCCImplementation.LEVEL_3340A;
+import static model.MidiCCImplementation.LEVEL_PULSE_3340B;
+import static model.MidiCCImplementation.LEVEL_SAW_3340B;
+import static model.MidiCCImplementation.LEVEL_SQU_13700;
+import static model.MidiCCImplementation.LEVEL_TRI_13700;
+import static model.MidiCCImplementation.LEVEL_TRI_3340B;
+import static model.MidiCCImplementation.OCTAVE_13700;
+import static model.MidiCCImplementation.OCTAVE_3340A;
+import static model.MidiCCImplementation.OCTAVE_3340B;
+import static model.MidiCCImplementation.PWM_3340A;
+import static model.MidiCCImplementation.PWM_3340B;
+import static model.MidiCCImplementation.SYNC_3340A;
+import static model.MidiCCImplementation.VCA_ATTACK;
+import static model.MidiCCImplementation.VCA_DECAY;
+import static model.MidiCCImplementation.VCA_RELEASE;
+import static model.MidiCCImplementation.VCA_SUSTAIN;
+import static model.MidiCCImplementation.VCA_VELOCITY_SENSITIVITY;
+import static model.MidiCCImplementation.VCF_ATTACK;
+import static model.MidiCCImplementation.VCF_CUTOFF;
+import static model.MidiCCImplementation.VCF_DECAY;
+import static model.MidiCCImplementation.VCF_EG;
+import static model.MidiCCImplementation.VCF_KBDTRACKING;
+import static model.MidiCCImplementation.VCF_ORDER;
+import static model.MidiCCImplementation.VCF_RELEASE;
+import static model.MidiCCImplementation.VCF_RESONANCE;
+import static model.MidiCCImplementation.VCF_SUSTAIN;
+import static model.MidiCCImplementation.VCF_VELOCITY_SENSITIVITY;
+import static model.MidiCCImplementation.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
-import model.*;
+import model.MidiCCImplementation;
+import model.ModuleParameter;
+import model.VcaModule;
+import model.VcfModule;
+import model.Vco13700Module;
+import model.Vco3340AModule;
+import model.Vco3340BModule;
 import model.serial.AbstractSerialTransmitter;
-import view.touchscreen.VcaView;
-import view.touchscreen.VcfView;
-import view.touchscreen.Vco13700View;
-import view.touchscreen.Vco3340View;
-
-import static model.MidiCCImplementation.*;
 
 /**
  * This class is responsible for creating all the hardware, i.e., all the modules that represent
@@ -30,7 +62,8 @@ public class ModuleFactory {
 	private HashMap<ModuleParameter<?>, MidiCCImplementation> midiCcIdTable;
 	private ModuleParameter<?>[] midiCCToModuleParameter;
 	
-	private Vco3340Module vco3340;
+	private Vco3340AModule vco3340A;
+	private Vco3340BModule vco3340B;
 	private Vco13700Module vco13700;
 	private VcaModule vca;
 	private VcfModule vcf;
@@ -51,7 +84,8 @@ public class ModuleFactory {
 	
 	private ModuleFactory(){
 		
-		vco3340 = new Vco3340Module();
+		vco3340A = new Vco3340AModule();
+		vco3340B = new Vco3340BModule();
 		vco13700 = new Vco13700Module();
 		vca = new VcaModule();
 		vcf = new VcfModule();
@@ -65,8 +99,12 @@ public class ModuleFactory {
 	
 	// --------------------- module getters ---------------------
 	
-	public Vco3340Module getVco3340() {
-		return vco3340;
+	public Vco3340AModule getVco3340A() {
+		return vco3340A;
+	}
+
+	public Vco3340BModule getVco3340B() {
+		return vco3340B;
 	}
 
 	public Vco13700Module getVco13700() {
@@ -88,7 +126,8 @@ public class ModuleFactory {
 		
 		ArrayList<ModuleParameter<?>> list = new ArrayList<ModuleParameter<?>>();
 		
-		list.addAll(getVco3340().getParameters());
+		list.addAll(getVco3340A().getParameters());
+		list.addAll(getVco3340B().getParameters());
 		list.addAll(getVco13700().getParameters());
 		list.addAll(getVca().getParameters());
 		list.addAll(getVcf().getParameters());
@@ -138,17 +177,30 @@ public class ModuleFactory {
 		
 		midiCcIdTable =  new HashMap<ModuleParameter<?>, MidiCCImplementation> ();
 		
-		// 3340
-		//midiCcIdHashMap.put(getVco3340().getDetuneParameter(), ???); TODO
-		midiCcIdTable.put(getVco3340().getOctaveParameter(), OCTAVE_3340);
-		midiCcIdTable.put(getVco3340().getSyncFrom13700Parameter(), SYNC_3340);
-		midiCcIdTable.put(getVco3340().getWaveShapeParameter(), WAVE_3340);
-		midiCcIdTable.put(getVco3340().getDutyParameter(), PWM_3340);
+		// 3340A
+		midiCcIdTable.put(getVco3340A().getDetuneParameter(), DETUNE_3340A); 
+		midiCcIdTable.put(getVco3340A().getOctaveParameter(), OCTAVE_3340A);
+		midiCcIdTable.put(getVco3340A().getSyncFrom13700Parameter(), SYNC_3340A);
+		midiCcIdTable.put(getVco3340A().getWaveShapeParameter(), WAVE_3340A);
+		midiCcIdTable.put(getVco3340A().getDutyParameter(), PWM_3340A);
+		midiCcIdTable.put(getVco3340A().getLevelParameter(), LEVEL_3340A);
+		midiCcIdTable.put(getVco3340A().getSemitonesParameter(), SEMITONES_3340A);
+
+		// 3340B
+		midiCcIdTable.put(getVco3340B().getDetuneParameter(), DETUNE_3340B); 
+		midiCcIdTable.put(getVco3340B().getOctaveParameter(), OCTAVE_3340B);
+		midiCcIdTable.put(getVco3340B().getTriLevelParameter(), LEVEL_TRI_3340B);
+		midiCcIdTable.put(getVco3340B().getPulseLevelParameter(), LEVEL_PULSE_3340B);
+		midiCcIdTable.put(getVco3340B().getSawLevelParameter(), LEVEL_SAW_3340B);
+		midiCcIdTable.put(getVco3340B().getDutyParameter(), PWM_3340B);
+		midiCcIdTable.put(getVco3340B().getSemitonesParameter(), SEMITONES_3340B);
 
 		// 13700
 		midiCcIdTable.put(getVco13700().getDetuneParameter(), DETUNE_13700);
 		midiCcIdTable.put(getVco13700().getOctaveParameter(), OCTAVE_13700);
-		midiCcIdTable.put(getVco13700().getWaveShapeParameter(), WAVE_13700);
+		midiCcIdTable.put(getVco13700().getTriLevelParameter(), LEVEL_TRI_13700);
+		midiCcIdTable.put(getVco13700().getSquLevelParameter(), LEVEL_SQU_13700);
+		midiCcIdTable.put(getVco13700().getSemitonesParameter(), SEMITONES_13700);
 
 		// 3320 vcf
 		midiCcIdTable.put(getVcf().getCutoffParameter(), VCF_CUTOFF);
@@ -176,17 +228,26 @@ public class ModuleFactory {
 		
 		midiCCToModuleParameter =  new ModuleParameter[128];
 		
-		// 3340
-		//midiCcIdHashMap.put(getVco3340().getDetuneParameter(), ???); TODO
-		midiCCToModuleParameter[OCTAVE_3340.getCode()]	= getVco3340().getOctaveParameter();
-		midiCCToModuleParameter[SYNC_3340.getCode()]	= getVco3340().getSyncFrom13700Parameter();
-		midiCCToModuleParameter[WAVE_3340.getCode()]	= getVco3340().getWaveShapeParameter();
-		midiCCToModuleParameter[PWM_3340.getCode()]		= getVco3340().getDutyParameter();
+		// 3340A
+		midiCCToModuleParameter[DETUNE_3340A.getCode()]	= getVco3340A().getDetuneParameter(); 
+		midiCCToModuleParameter[OCTAVE_3340A.getCode()]	= getVco3340A().getOctaveParameter();
+		midiCCToModuleParameter[SYNC_3340A.getCode()]	= getVco3340A().getSyncFrom13700Parameter();
+		midiCCToModuleParameter[WAVE_3340A.getCode()]	= getVco3340A().getWaveShapeParameter();
+		midiCCToModuleParameter[PWM_3340A.getCode()]	= getVco3340A().getDutyParameter();
+
+		// 3340B
+		midiCCToModuleParameter[DETUNE_3340B.getCode()]	= getVco3340B().getDetuneParameter(); 
+		midiCCToModuleParameter[OCTAVE_3340B.getCode()]	= getVco3340B().getOctaveParameter();
+		midiCCToModuleParameter[LEVEL_TRI_3340B.getCode()]	= getVco3340B().getTriLevelParameter();
+		midiCCToModuleParameter[LEVEL_SAW_3340B.getCode()]	= getVco3340B().getSawLevelParameter();
+		midiCCToModuleParameter[LEVEL_PULSE_3340B.getCode()]= getVco3340B().getPulseLevelParameter();
+		midiCCToModuleParameter[PWM_3340B.getCode()]	= getVco3340B().getDutyParameter();
 
 		// 13700
 		midiCCToModuleParameter[DETUNE_13700.getCode()]	= getVco13700().getDetuneParameter();
 		midiCCToModuleParameter[OCTAVE_13700.getCode()]	= getVco13700().getOctaveParameter();
-		midiCCToModuleParameter[WAVE_13700.getCode()]	= getVco13700().getWaveShapeParameter();
+		midiCCToModuleParameter[LEVEL_TRI_13700.getCode()]	= getVco13700().getTriLevelParameter();
+		midiCCToModuleParameter[LEVEL_SQU_13700.getCode()]= getVco13700().getSquLevelParameter();
 
 		// 3320 vcf
 		midiCCToModuleParameter[VCF_CUTOFF.getCode()]	= getVcf().getCutoffParameter();

@@ -1,16 +1,13 @@
 package model.serial;
 
 import java.io.IOException;
-import java.util.*;
 import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
 
-import com.pi4j.io.spi.*;
-
-import application.ModuleFactory;
-import model.event.*;
-import model.*;
+import com.pi4j.io.spi.SpiChannel;
+import com.pi4j.io.spi.SpiDevice;
+import com.pi4j.io.spi.SpiFactory;
 
 /**
  * This class acts as a fast MIDI over SPI transmitter to any listening device, including the STM32.

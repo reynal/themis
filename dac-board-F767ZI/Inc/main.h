@@ -55,6 +55,9 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
+void startAdsrTIM();
+void stopAdsrTIM();
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -127,22 +130,22 @@ void Error_Handler(void);
 #define TCK_GPIO_Port GPIOA
 #define LS138_A2_Pin GPIO_PIN_11
 #define LS138_A2_GPIO_Port GPIOC
-#define SAW_3340_Pin GPIO_PIN_0
-#define SAW_3340_GPIO_Port GPIOD
+#define PULSE_3340_Pin GPIO_PIN_0
+#define PULSE_3340_GPIO_Port GPIOD
 #define DRUM_SNARE_Pin GPIO_PIN_1
 #define DRUM_SNARE_GPIO_Port GPIOD
-#define SYNC_3340_Pin GPIO_PIN_2
-#define SYNC_3340_GPIO_Port GPIOD
+#define SAW_3340_Pin GPIO_PIN_9
+#define SAW_3340_GPIO_Port GPIOG
 #define RMII_TX_EN_Pin GPIO_PIN_11
 #define RMII_TX_EN_GPIO_Port GPIOG
+#define SYNC_3340_Pin GPIO_PIN_12
+#define SYNC_3340_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
 #define SW0_Pin GPIO_PIN_3
 #define SW0_GPIO_Port GPIOB
 #define LD2_Pin GPIO_PIN_7
 #define LD2_GPIO_Port GPIOB
-#define PULSE_3340_Pin GPIO_PIN_1
-#define PULSE_3340_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
