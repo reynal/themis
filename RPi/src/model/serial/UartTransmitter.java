@@ -136,6 +136,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	
 	public static void main(String[] args) throws Exception {
 		
+		listSerialPorts();
 		UartTransmitter ut = new UartTransmitter();
 		Random rg = new Random();
 		int value = 0;
