@@ -1,9 +1,0 @@
-neoPixel.c:29:6:nP_create	56	dynamic
-neoPixel.c:49:6:nP_setPixel	24	static
-neoPixel.c:61:6:nP_prepareMessage	40	static
-neoPixel.c:82:10:nP_convertByteSPI	24	static
-neoPixel.c:101:6:nP_concat	32	static
-neoPixel.c:118:6:nP_send	16	static
-neoPixel.c:131:6:nP_sendReset	24	static
-neoPixel.c:138:6:nP_sendDataGPIO	24	static
-neoPixel.c:144:6:nP_sendByteGPIO	24	static

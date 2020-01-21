@@ -1,0 +1,11 @@
+copy.sh
+*.swp
+*.elf
+*.o
+.DS_Store
+*.su
+*.d
+*.elf
+*.list
+*.map
+Icon*
