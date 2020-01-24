@@ -669,9 +669,9 @@ public class IS31FL3731 {
 	public static void main(String[] args) throws IOException, UnsupportedBusNumberException, InterruptedException {
 		
 		//testFunctionRegister();
-		//new TestDevice();
+		new TestDevice();
 		//testBasicHeadless();
-		testCalib();
+		//testCalib();
 	}
 	
 	private static void testCalib() throws IOException, UnsupportedBusNumberException, InterruptedException {
@@ -715,12 +715,12 @@ public class IS31FL3731 {
 				for (int pwm=0; pwm < 256; pwm+=16) {
 					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
 					System.out.print(".");
-					Thread.sleep(20);
+					Thread.sleep(10);
 				}
 				for (int pwm=240; pwm >= 0; pwm-=16) {
 					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
 					System.out.print(".");
-					Thread.sleep(20);
+					Thread.sleep(10);
 				}
 			}
 		}
@@ -731,9 +731,9 @@ public class IS31FL3731 {
 		
 		IS31FL3731 device;
 		int currentRow, currentCol, currentPwm;
-		Matrix currentMatrix;
+		Matrix currentMatrix = Matrix.B;
 		
-		JSpinner jsLine, jsCol, jsMatrix;
+		JSpinner jsLine, jsCol; // jsMatrix;
 		JSlider pwmSlider;
 		JButton butOpen, butSend;
 		
@@ -745,10 +745,10 @@ public class IS31FL3731 {
 			JPanel pane = new JPanel();
 			pane.setLayout(new GridLayout(5,2));
 
-			pane.add(new JLabel("matrix :"));		
-			jsMatrix = new JSpinner();
-			pane.add(jsMatrix);
-			jsMatrix.addChangeListener(e -> selectMatrix());
+//			pane.add(new JLabel("matrix :"));		
+//			jsMatrix = new JSpinner();
+//			pane.add(jsMatrix);
+//			jsMatrix.addChangeListener(e -> selectMatrix());
 
 			pane.add(new JLabel("line :"));
 			jsLine = new JSpinner();
@@ -767,9 +767,9 @@ public class IS31FL3731 {
 			pane.add(pwmSlider);
 			pwmSlider.addChangeListener(e -> selectPwm());
 		
-			butOpen = new JButton("open device");
+			butOpen = new JButton("test");
 			pane.add(butOpen);
-			butOpen.addActionListener(e -> openDevice());
+			butOpen.addActionListener(e -> testLEDs());
 		
 			butSend = new JButton("send to device");
 			pane.add(butSend);
@@ -779,17 +779,46 @@ public class IS31FL3731 {
 			//pack();
 			setSize(800,300);
 			setVisible(true);
+			
+			openDevice();
 		
+		}
+		
+		private void testDevice()  {
+			try {
+			for (int row=0; row<8; row++) {
+				device.switchLEDRow(row, currentMatrix, 0xFF);
+				for (int col=0; col<8; col++) {
+					for (int pwm=0; pwm < 256; pwm+=16) {
+						device.setLEDpwm(new LEDCoordinate(row, col, currentMatrix), pwm);
+						System.out.print(".");
+						Thread.sleep(1);
+					}
+					for (int pwm=240; pwm >= 0; pwm-=16) {
+						device.setLEDpwm(new LEDCoordinate(row, col, currentMatrix), pwm);
+						System.out.print(".");
+						Thread.sleep(1);
+					}
+				}
+			}
+			} catch (Exception e) { e.printStackTrace();}
 		}
 
 		private void sendToDevice() {
 			System.out.println("Sending data to device : row=" + currentRow + ", col=" + currentCol + ", matrix="+currentMatrix + ", pwm=" + currentPwm);
+			try {
+				device.setLEDpwm(new LEDCoordinate(currentRow, currentCol, currentMatrix), currentPwm);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		private void selectPwm() {
 			currentPwm = (Integer)pwmSlider.getValue();
 			if (currentPwm > 255) currentPwm = 255;
 			else if (currentCol < 0) currentPwm = 0;
+			sendToDevice();
 		}
 
 		private void selectCol() {
@@ -804,9 +833,9 @@ public class IS31FL3731 {
 			else if (currentRow < 0) currentRow = 0;
 		}
 
-		private void selectMatrix() {
+		/*private void selectMatrix() {
 			currentMatrix = (Integer)jsMatrix.getValue() == 0 ? Matrix.A : Matrix.B;
-		}
+		}*/
 
 		private void openDevice() {
 			try {
@@ -816,6 +845,22 @@ public class IS31FL3731 {
 				e.printStackTrace();
 				System.exit(0);
 			}
+		}
+		
+		private void testLEDs() {
+			try {
+			for (int row=0; row<9; row++) {
+				// all LEDs off:
+					device.switchLEDRow(row, currentMatrix, 0xFF);
+				for (int col=0; col<8; col++) {
+					device.setLEDpwm(new LEDCoordinate(row, col, currentMatrix), 255);
+					Thread.sleep(20);
+				}
+			}			
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
 		}
 	}
 	
