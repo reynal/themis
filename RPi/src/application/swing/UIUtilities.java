@@ -20,7 +20,7 @@ public class UIUtilities {
 			
 			JButton b = new JButton(c.getLabel());
 			// simply transmits events from JButton to PushButton:
-			b.addActionListener(e -> ((PushButton)c).firePushButtonActionEvent(((JButton)e.getSource()).isSelected() ? PushButtonState.PRESSED : PushButtonState.RELEASED ));
+			b.addActionListener(e -> ((PushButton)c).fireActionEvent(((JButton)e.getSource()).isSelected() ? PushButtonState.PRESSED : PushButtonState.RELEASED ));
 			return b;
 
 		}
@@ -36,8 +36,8 @@ public class UIUtilities {
 			p.add(lbl, BorderLayout.CENTER);
 			JButton butPlus = new JButton("+");
 			p.add(butPlus, BorderLayout.EAST);
-			butPlus.addActionListener(e -> ((RotaryEncoder)c).fireRotaryEncoderEvent(RotaryEncoderDirection.UP));
-			butMinus.addActionListener(e -> ((RotaryEncoder)c).fireRotaryEncoderEvent(RotaryEncoderDirection.DOWN));
+			butPlus.addActionListener(e -> ((RotaryEncoder)c).fireChangeEvent(RotaryEncoder.Direction.UP));
+			butMinus.addActionListener(e -> ((RotaryEncoder)c).fireChangeEvent(RotaryEncoder.Direction.DOWN));
 			return p;			
 			
 		}

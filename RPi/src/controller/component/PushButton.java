@@ -55,7 +55,7 @@ public class PushButton extends Control {
 	 * 
 	 * @param l the listener
 	 */
-	public void addPushButtonActionListener(PushButtonActionListener l) {
+	public void addActionListener(PushButtonActionListener l) {
 		listenerList.add(PushButtonActionListener.class, l);
 	}
 
@@ -66,7 +66,7 @@ public class PushButton extends Control {
 	 * @param l
 	 *            the listener that was previously added
 	 */
-	public void removePushButtonActionListener(PushButtonActionListener l) {
+	public void removeActionListener(PushButtonActionListener l) {
 		listenerList.remove(PushButtonActionListener.class, l);
 	}
 
@@ -76,7 +76,7 @@ public class PushButton extends Control {
 	 * into the fire method.
 	 *
 	 */
-	public void firePushButtonActionEvent(PushButtonState state) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
+	public void fireActionEvent(PushButtonState state) { // note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
 
 		// Guaranteed to return a non-null array
 		Object[] listeners = listenerList.getListenerList();
@@ -105,7 +105,7 @@ public class PushButton extends Control {
 
 			if (event.getPin() == buttonPin) {
 				//System.out.println(event);
-				firePushButtonActionEvent(event.getLevel() == PinState.HIGH ? PushButtonState.RELEASED : PushButtonState.PRESSED);
+				fireActionEvent(event.getLevel() == PinState.HIGH ? PushButtonState.RELEASED : PushButtonState.PRESSED);
 			}
 			
 		}	 
@@ -125,16 +125,16 @@ public class PushButton extends Control {
 			device.printRegisters();
 			
 			PushButton pb = new PushButton("Push P4A", device, MCP23017.Pin.P4A);
-			pb.addPushButtonActionListener(e -> System.out.println(e));
+			pb.addActionListener(e -> System.out.println(e));
 			
 			pb = new PushButton("Push P7A", device, MCP23017.Pin.P7A);
-			pb.addPushButtonActionListener(e -> System.out.println(e));
+			pb.addActionListener(e -> System.out.println(e));
 
 			pb = new PushButton("Push P0B", device, MCP23017.Pin.P0B);
-			pb.addPushButtonActionListener(e -> System.out.println(e));
+			pb.addActionListener(e -> System.out.println(e));
 
 			pb = new PushButton("Push P3B", device, MCP23017.Pin.P3B);
-			pb.addPushButtonActionListener(e -> System.out.println(e));
+			pb.addActionListener(e -> System.out.println(e));
 
 			int i=0;
 			while ((i++)<100) {
