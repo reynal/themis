@@ -3,6 +3,7 @@ package device;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
+import java.util.*;
 
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
@@ -59,6 +60,8 @@ public class IS31FL3731 {
 	};
 	
 	public static final int[] GAMMA_CORRECTION_16 = {0, 2, 4, 6, 10, 13, 18, 22, 28, 33, 46, 61, 86, 116, 161, 199, 255};
+	
+
 
 	// TODO : store led coordinates being used by View's (aka register led / unregister led)
 	
@@ -97,15 +100,10 @@ public class IS31FL3731 {
 		
 		// switch all LEDs off and set all pwm to 0
 		LOGGER.info("Init LED state...");
-		for (int row=0; row<9; row++) {
-			// all LEDs off:
-			switchLEDRow(row, Matrix.A, 0x00); 
-			switchLEDRow(row, Matrix.B, 0x00); 
-			for (int col=0; col<8; col++) {
-				setLEDpwm(new LEDCoordinate(row, col, Matrix.A), 0);
-				setLEDpwm(new LEDCoordinate(row, col, Matrix.B), 0);
-			}
-		}
+		int addr = FrameRegister.ONOFF_REG_BASE_ADDR.getAddress();
+		for (int i=0; i<18; i++)  i2cDevice.write(addr+i, (byte)0); // OxOO to Ox11 = 18 registers (turn all LEDs off)
+		addr = FrameRegister.PWM_REG_BASE_ADDR.getAddress();
+		for (int i=0; i<144; i++) i2cDevice.write(addr+i, (byte)0); // 0x24 to 0xB3 = 144 registers (set all PWM duty cycle data to 0)
 		LOGGER.info("LED state init'd");
 	}
 	
@@ -460,41 +458,150 @@ public class IS31FL3731 {
 	
 	/**
 	 * this class represents a pair of (row, column) coordinate for a given matrix.
+	 * 
 	 * @author SR
 	 *
 	 */
-	public static class LEDCoordinate extends Point {
+	public static class LEDCoordinate { 
 
 		private static final long serialVersionUID = 1L;
+		private static final boolean APPLY_BUG_FIX = true;
 		public Matrix AorB;
+		private int col, row;
 
+		@SuppressWarnings("unused")
 		public LEDCoordinate(int row, int col, Matrix AorB) {
-			super (col % 8, row % 9);
+			this.row = row % 9;
+			this.col = col % 8;
 			this.AorB = AorB;
+			
+			// for matrix A, LED were soldered the opposite way (with A and K reversed)... and we need to switch another LED to obtain the desired result
+			if (APPLY_BUG_FIX && AorB == Matrix.A) { // comment out if hardware is fine!
+				//System.out.print("Applying bug fix for " + this);
+				Point trueLED = bugFixMap[row][col];
+				this.row = trueLED.x; 
+				this.col = trueLED.y;
+				//System.out.println(" -> " + this);
+			}
+			
 		}
 		public int getPWMRegisterAdress() {
 			int addr = FrameRegister.PWM_REG_BASE_ADDR.getAddress();
-			addr += y * 16; // 16 leds per row (A+B)
-			addr += x;
+			addr += row * 16; // 16 leds per row (A+B)
+			addr += col;
 			if (AorB == Matrix.B) addr += 8;
 			return addr;
 		}
 		
-		public int getColumn() { return x;}
+		public int getColumn() { return col;}
 		
-		public int getRow() { return y;}
+		public int getRow() { return row;}
 		
-		public void setColumn(int x) { this.x = x;}
+		public void setColumn(int col) { this.col = col;}
 		
-		public void setRow(int y) { this.y = y;}
+		public void setRow(int row) { this.row = row;}
 		
 		public boolean equals(Object obj) {			
 			return super.equals(obj) && ((LEDCoordinate)obj).AorB == this.AorB; 
 		}
 		
 		public String toString() {
-			return AorB + "(" + y + "," + x + ")";
+			return AorB + "(" + row + "," + col + ")";
 		}
+		
+		private static Point[][] bugFixMap;
+		
+		// bug fix for the A matrix (with green LEDs), where LED were soldered in the wrong direction...
+		// the following HashMap maps the LED we want to switch to the LED we should actually switch physically
+		// for example switching C1-1 (row=0, col=0) actually switches C2-1 (row=1, col=0)
+		static {
+			bugFixMap = new Point[9][8]; //Point(row, col)
+			
+			bugFixMap[0][0]=new Point(1,0); // C1-1 -> C2-1
+			bugFixMap[0][1]=new Point(2,0); // C1-2 -> C3-1
+			bugFixMap[0][2]=new Point(3,0);
+			bugFixMap[0][3]=new Point(4,0);
+			bugFixMap[0][4]=new Point(5,0);
+			bugFixMap[0][5]=new Point(6,0);
+			bugFixMap[0][6]=new Point(7,0);
+			bugFixMap[0][7]=new Point(8,0);
+
+			bugFixMap[1][0]=new Point(0,0);
+			bugFixMap[1][1]=new Point(2,1);
+			bugFixMap[1][2]=new Point(3,1);
+			bugFixMap[1][3]=new Point(4,1);
+			bugFixMap[1][4]=new Point(5,1);
+			bugFixMap[1][5]=new Point(6,1);
+			bugFixMap[1][6]=new Point(7,1);
+			bugFixMap[1][7]=new Point(8,1);
+
+			bugFixMap[2][0]=new Point(0,1);
+			bugFixMap[2][1]=new Point(1,1);
+			bugFixMap[2][2]=new Point(3,2);
+			bugFixMap[2][3]=new Point(4,2);
+			bugFixMap[2][4]=new Point(5,2);
+			bugFixMap[2][5]=new Point(6,2);
+			bugFixMap[2][6]=new Point(7,2);
+			bugFixMap[2][7]=new Point(8,2);
+
+			bugFixMap[3][0]=new Point(0,2);
+			bugFixMap[3][1]=new Point(1,2);
+			bugFixMap[3][2]=new Point(2,2);
+			bugFixMap[3][3]=new Point(4,3);
+			bugFixMap[3][4]=new Point(5,3);
+			bugFixMap[3][5]=new Point(6,3);
+			bugFixMap[3][6]=new Point(7,3);
+			bugFixMap[3][7]=new Point(8,3);
+
+			bugFixMap[4][0]=new Point(0,3);
+			bugFixMap[4][1]=new Point(1,3);
+			bugFixMap[4][2]=new Point(2,3);
+			bugFixMap[4][3]=new Point(3,3);
+			bugFixMap[4][4]=new Point(5,4);
+			bugFixMap[4][5]=new Point(6,4);
+			bugFixMap[4][6]=new Point(7,4);
+			bugFixMap[4][7]=new Point(8,4);
+
+			bugFixMap[5][0]=new Point(0,4);
+			bugFixMap[5][1]=new Point(1,4);
+			bugFixMap[5][2]=new Point(2,4);
+			bugFixMap[5][3]=new Point(3,4);
+			bugFixMap[5][4]=new Point(4,4);
+			bugFixMap[5][5]=new Point(6,5);
+			bugFixMap[5][6]=new Point(7,5);
+			bugFixMap[5][7]=new Point(8,5);
+
+			bugFixMap[6][0]=new Point(0,5);
+			bugFixMap[6][1]=new Point(1,5);
+			bugFixMap[6][2]=new Point(2,5);
+			bugFixMap[6][3]=new Point(3,5);
+			bugFixMap[6][4]=new Point(4,5);
+			bugFixMap[6][5]=new Point(5,5);
+			bugFixMap[6][6]=new Point(7,6);
+			bugFixMap[6][7]=new Point(8,6);
+
+			bugFixMap[7][0]=new Point(0,6);
+			bugFixMap[7][1]=new Point(1,6);
+			bugFixMap[7][2]=new Point(2,6);
+			bugFixMap[7][3]=new Point(3,6);
+			bugFixMap[7][4]=new Point(4,6);
+			bugFixMap[7][5]=new Point(5,6);
+			bugFixMap[7][6]=new Point(6,6);
+			bugFixMap[7][7]=new Point(8,7);
+
+			bugFixMap[8][0]=new Point(0,7);
+			bugFixMap[8][1]=new Point(1,7);
+			bugFixMap[8][2]=new Point(2,7);
+			bugFixMap[8][3]=new Point(3,7);
+			bugFixMap[8][4]=new Point(4,7);
+			bugFixMap[8][5]=new Point(5,7);
+			bugFixMap[8][6]=new Point(6,7);
+			bugFixMap[8][7]=new Point(7,7);
+
+
+		}
+		
+		 
 		
 	}
 	
@@ -669,58 +776,81 @@ public class IS31FL3731 {
 	public static void main(String[] args) throws IOException, UnsupportedBusNumberException, InterruptedException {
 		
 		//testFunctionRegister();
-		new TestDevice();
-		//testBasicHeadless();
+		//new TestDevice();
+		testBasicHeadless();
+		//testBugFix();
 		//testCalib();
 	}
 	
 	private static void testCalib() throws IOException, UnsupportedBusNumberException, InterruptedException {
-		
+
 		Scanner in = new Scanner(System.in);
 		LEDCoordinate ledCoord = new LEDCoordinate(0, 0, Matrix.B);
 		LEDCoordinate ledCoord2 = new LEDCoordinate(0, 2, Matrix.B);
-		
+
 		IS31FL3731 device = new IS31FL3731();
 		device.switchLED(ledCoord, true);
 		device.switchLED(ledCoord2, true);
 		device.setLEDpwm(ledCoord, 200);
-		
-		/*while (true) {
-			int pwm = in.nextInt();
-			device.setLEDpwm(ledCoord, pwm);			
-		}*/
-		int pwm=255;
+
+		/*
+		 * while (true) { int pwm = in.nextInt(); device.setLEDpwm(ledCoord, pwm); }
+		 */
+		int pwm = 255;
 		while (true) {
-		for (int i = 0; i<16; i++) {
-			in.nextLine();
-			device.setLEDpwmGammaCorrected16(ledCoord, i);
-			device.setLEDpwm(ledCoord2, pwm);
-			pwm=255-pwm;
-			System.out.println(i);
-			//Thread.sleep(400);
+			for (int i = 0; i < 16; i++) {
+				in.nextLine();
+				device.setLEDpwmGammaCorrected16(ledCoord, i);
+				device.setLEDpwm(ledCoord2, pwm);
+				pwm = 255 - pwm;
+				System.out.println(i);
+				// Thread.sleep(400);
+			}
 		}
-		}
+	}
+	
+	
+	private static void testBugFix() throws IOException, UnsupportedBusNumberException, InterruptedException {
+
+		Scanner in = new Scanner(System.in);
+		int row = 4;
+		int col = 2;
+		LEDCoordinate ledA = new LEDCoordinate(row, col, Matrix.A);
+		LEDCoordinate ledB = new LEDCoordinate(row, col, Matrix.B);
+		System.out.println("Switching " + ledA + " and " + ledB);
+
+		IS31FL3731 device = new IS31FL3731();
+		device.switchLED(ledA, true);
+		device.switchLED(ledB, true);
+		device.setLEDpwm(ledA, 250);
+		device.setLEDpwm(ledB, 250);
 	}
 	
 	
 	private static void testBasicHeadless() throws IOException, UnsupportedBusNumberException, InterruptedException {
 		
 		IS31FL3731 device = new IS31FL3731();
-		
-		
-		Matrix m = Matrix.B;
-		for (int row=0; row<8; row++) {
-			device.switchLEDRow(row, m, 0xFF);
-			for (int col=0; col<8; col++) {
-				for (int pwm=0; pwm < 256; pwm+=16) {
-					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
-					System.out.print(".");
-					Thread.sleep(10);
-				}
-				for (int pwm=240; pwm >= 0; pwm-=16) {
-					device.setLEDpwm(new LEDCoordinate(row, col, m), pwm);
-					System.out.print(".");
-					Thread.sleep(10);
+
+		while (true) {
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					LEDCoordinate ledA = new LEDCoordinate(row, col, Matrix.A);
+					LEDCoordinate ledB = new LEDCoordinate(row, col, Matrix.B);
+					device.switchLED(ledA, true);
+					device.switchLED(ledB, true);
+					// System.out.print(led);
+					for (int pwm = 0; pwm < 16; pwm++) {
+						device.setLEDpwmGammaCorrected16(ledA, pwm);
+						device.setLEDpwmGammaCorrected16(ledB, pwm);
+						// System.out.print(".");
+						Thread.sleep(20);
+					}
+					for (int pwm = 15; pwm >= 0; pwm--) {
+						device.setLEDpwmGammaCorrected16(ledA, pwm);
+						device.setLEDpwmGammaCorrected16(ledB, pwm);
+						// System.out.print(".");
+						Thread.sleep(20);
+					}
 				}
 			}
 		}
