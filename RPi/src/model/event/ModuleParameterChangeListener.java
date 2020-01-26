@@ -17,6 +17,6 @@ public interface ModuleParameterChangeListener extends EventListener {
 	 * Invoked when an edit occurs.
 	 * @param e
 	 */
-	void moduleParameterChanged(ModuleParameterChangeEvent e);
+	void valueChanged(ModuleParameterChangeEvent e);
 
 }

@@ -1,8 +1,11 @@
 package model;
 
 import javax.swing.event.EventListenerList;
-import controller.event.*;
-import model.event.*;
+
+import controller.event.PushButtonActionListener;
+import controller.event.RotaryEncoderChangeListener;
+import model.event.ModuleParameterChangeEvent;
+import model.event.ModuleParameterChangeListener;
 
 /**
  * This class represents a synthetizer module parameter (one module may have several parameters), for instance:
@@ -38,7 +41,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 	 * 
 	 * @param l the listener
 	 */
-	public void addModuleParameterChangeListener(ModuleParameterChangeListener l) {
+	public void addChangeListener(ModuleParameterChangeListener l) {
 		listenerList.add(ModuleParameterChangeListener.class, l);
 	}
 
@@ -48,7 +51,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 	 * 
 	 * @param l the listener that was previously added
 	 */
-	public void removeModuleParameterChangeListener(ModuleParameterChangeListener l) {
+	public void removeChangeListener(ModuleParameterChangeListener l) {
 		listenerList.remove(ModuleParameterChangeListener.class, l);
 	}
 
@@ -58,7 +61,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 	 * into the fire method.
 	 *
 	 */
-	protected void fireModuleParameterChangeEvent() {
+	protected void fireChangeEvent() {
 
 		// Guaranteed to return a non-null array
 		Object[] listeners = listenerList.getListenerList();
@@ -71,7 +74,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 				// Lazily create the event:
 				if (e == null)
 					e = new ModuleParameterChangeEvent(this);
-				((ModuleParameterChangeListener) listeners[i + 1]).moduleParameterChanged(e); 
+				((ModuleParameterChangeListener) listeners[i + 1]).valueChanged(e); 
 			}
 		}
 	}	
@@ -95,7 +98,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 	 */
 	public void setValue(T value) {
 		this.value = value;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 	}
 		
 	/**

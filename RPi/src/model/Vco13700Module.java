@@ -25,8 +25,8 @@ public class Vco13700Module extends VcoModule {
 		parameterList.add(squLevelParameter = new MIDIParameter(SQU_LEVEL));
 		
 		// debug:
-		triLevelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
-		squLevelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
+		triLevelParameter.addChangeListener(e -> LOGGER.info(e.toString()));
+		squLevelParameter.addChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected String getVcoName() {

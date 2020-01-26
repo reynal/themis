@@ -49,7 +49,7 @@ public class MIDIParameter extends ModuleParameter<Integer> {
 			if (this.value < 0) this.value = 0;
 			break;
 		}
-		if (this.value != old) fireModuleParameterChangeEvent();
+		if (this.value != old) fireChangeEvent();
 	}	
 	
 	@Override
@@ -57,14 +57,14 @@ public class MIDIParameter extends ModuleParameter<Integer> {
 
 		this.value++;
 		if (this.value > 127) this.value=0;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 		
 	}
 
 	@Override
 	public void setValueFromMIDICode(int v) {
 		value = v;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 	}
 	
 	// -------------------------------
