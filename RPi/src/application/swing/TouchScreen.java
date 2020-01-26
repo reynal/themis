@@ -102,7 +102,7 @@ public class TouchScreen extends JPanel implements ActionListener, ModuleParamet
 	}
 
 	@Override
-	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
+	public void valueChanged(ModuleParameterChangeEvent e) {
 		// TODO check if this edit is for us, and if this is the case,
 		// possibly change the view and/or forward change to the current view
 		// and finally call repaint()

@@ -29,7 +29,7 @@ import static device.MCP23017.Register.*;
  * GPB7	8				21	GPA0
  * Vdd	9				20	INTA
  * Vss	10				19	INTB
- * NC	11				18	/RESET (default: connected to RPi Pin 37 = GPIO.25)
+ * NC	11				18	/RESET (default: connected to RPi Pin 37 = GPIO.25 in wPi numbering scheme)
  * SCK	12				17	A2
  * SDA	13				16	A1
  * NC	14				15	A0

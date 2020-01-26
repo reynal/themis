@@ -161,7 +161,7 @@ public class ModuleFactory {
 		
 		for (ModuleParameter<?> parameter : getAllModuleParameters()) {
 			
-			parameter.addModuleParameterChangeListener(serialTransmitter);
+			parameter.addChangeListener(serialTransmitter);
 		}
 		
 	}
