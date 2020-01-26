@@ -95,7 +95,7 @@ public class LED extends AbstractView implements ModuleParameterChangeListener  
 	/**
 	 * Listener method for parameter changes
 	 */
-	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
+	public void valueChanged(ModuleParameterChangeEvent e) {
 
 		ModuleParameter<?> source = (ModuleParameter<?>)e.getSource();
 		if (source instanceof BooleanParameter) {
@@ -186,8 +186,8 @@ public class LED extends AbstractView implements ModuleParameterChangeListener  
 		Vco3340AModule vco3340 = new Vco3340AModule();		
 		LED led1 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
 		LED led2 = new LED(null, new IS31FL3731.LEDCoordinate(0, 0, IS31FL3731.Matrix.A));
-		vco3340.getDetuneParameter().addModuleParameterChangeListener(led1);
-		vco3340.getSyncFrom13700Parameter().addModuleParameterChangeListener(led2);
+		vco3340.getDetuneParameter().addChangeListener(led1);
+		vco3340.getSyncFrom13700Parameter().addChangeListener(led2);
 		JFrame f = new JFrame("LED test");
 		f.setSize(600,400);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

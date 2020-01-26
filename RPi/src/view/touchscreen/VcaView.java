@@ -11,7 +11,7 @@ public class VcaView implements TouchScreenView{
 	
 	public VcaView(VcaModule model){
 		imageEnveloppe = Toolkit.getDefaultToolkit().getImage("src/resources/img/Enveloppe Mode.png");
-		model.getVelocitySensitivityParameter().addModuleParameterChangeListener(e -> updateVelocitySensitivityParameterView());
+		model.getVelocitySensitivityParameter().addChangeListener(e -> updateVelocitySensitivityParameterView());
 		
 	}
 	

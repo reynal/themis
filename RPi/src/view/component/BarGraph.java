@@ -173,7 +173,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 	/**
 	 * Listener method for parameter changes
 	 */
-	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
+	public void valueChanged(ModuleParameterChangeEvent e) {
 
 		if (e.getSource() instanceof EnumParameter) {
 			EnumParameter<?> p = (EnumParameter<?>)e.getSource();
@@ -229,7 +229,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 		Scanner in = new Scanner(System.in);
 		
 		IS31FL3731 is31fl3731 = new IS31FL3731();
-		BarGraph bg = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0);
+		BarGraph bg = new BarGraph(is31fl3731, IS31FL3731.Matrix.A, 0);
 		
 		// test switchLed()
 		//bg.switchLed(3);
@@ -274,16 +274,16 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 	// real hardware test with Vco3340 model
 	private static void test2() throws IOException, UnsupportedBusNumberException {
 		
-		//IS31FL3731 is31fl3731 = new IS31FL3731();
-		IS31FL3731 is31fl3731 = null;
+		IS31FL3731 is31fl3731 = new IS31FL3731();
+		//IS31FL3731 is31fl3731 = null;
 
 		Vco3340AModule vco3340 = new Vco3340AModule();		
 		
-		BarGraph bar1 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 0); // row=0
-		vco3340.getDutyParameter().addModuleParameterChangeListener(bar1);
+		BarGraph bar1 = new BarGraph(is31fl3731, IS31FL3731.Matrix.A, 0); // row=0
+		vco3340.getDutyParameter().addChangeListener(bar1);
 		
 		BarGraph bar2 = new BarGraph(is31fl3731, IS31FL3731.Matrix.B, 6, 0, 4); // row=6 lower
-		vco3340.getOctaveParameter().addModuleParameterChangeListener(bar2);
+		vco3340.getOctaveParameter().addChangeListener(bar2);
 
 		JFrame f = new JFrame("BarGraph test");
 		f.setSize(1000,400);

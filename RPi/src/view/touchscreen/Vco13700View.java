@@ -15,8 +15,8 @@ public class Vco13700View implements TouchScreenView {
 	public Vco13700View(Vco13700Module model){
 		this.model = model;
 		imageVCO = Toolkit.getDefaultToolkit().getImage("src/resources/img/13700.png");
-		model.getDetuneParameter().addModuleParameterChangeListener(e -> updateDetuneParameterView());
-		model.getOctaveParameter().addModuleParameterChangeListener(e -> updateOctaveParameterView());
+		model.getDetuneParameter().addChangeListener(e -> updateDetuneParameterView());
+		model.getOctaveParameter().addChangeListener(e -> updateOctaveParameterView());
 		//model.getWaveShapeParameter().addModuleParameterChangeListener(e -> updateWaveShapeParameterView());
 	}
 	
