@@ -29,7 +29,7 @@ import static device.MCP23017.Register.*;
  * GPB7	8				21	GPA0
  * Vdd	9				20	INTA
  * Vss	10				19	INTB
- * NC	11				18	/RESET (default: connected to RPi Pin 37 = GPIO.25)
+ * NC	11				18	/RESET (default: connected to RPi Pin 37 = GPIO.25 in wPi numbering scheme)
  * SCK	12				17	A2
  * SDA	13				16	A1
  * NC	14				15	A0
@@ -851,7 +851,7 @@ public class MCP23017  {
 
 		MCP23017 device = new MCP23017();
 
-		device.registerRpiPinForReset(RaspiPin.GPIO_25);
+		device.registerRpiPinForReset(RaspiPin.GPIO_25); // pin 37
 		device.reset();
 		device.printRegisters();
 		
@@ -862,7 +862,7 @@ public class MCP23017  {
 		device.setPullupResistors(Port.B, true);
 		device.setInterruptOnChange(Port.A, true);
 		device.setInterruptOnChange(Port.B, true);
-		device.registerRpiPinForInterrupt(RaspiPin.GPIO_04);
+		device.registerRpiPinForInterrupt(RaspiPin.GPIO_04); // pin 16 (aka GPIO23 in WiringPi numbering scheme)
 		device.addInterruptListener(e -> System.out.println(e));
 		device.clearInterrupts(Port.A);
 		device.clearInterrupts(Port.B);

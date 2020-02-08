@@ -24,10 +24,10 @@ public class VcfView implements TouchScreenView{
 		imageVCF = Toolkit.getDefaultToolkit().getImage("src/resources/img/Filter Mode 1.png");
 		// or Image image = new ImageIcon(this.getClass().getResource("/images/img.png")).
 		
-		model.getCutoffParameter().addModuleParameterChangeListener(e -> updateCutoffParameterView());
-		model.getResonanceParameter().addModuleParameterChangeListener(e -> updateResonanceParameterView());
-		model.getKbdTrackingParameter().addModuleParameterChangeListener(e -> updateKbdTrackingParameterView());
-		model.getEgDepthParameter().addModuleParameterChangeListener(e -> updateEgDepthParameterView());
+		model.getCutoffParameter().addChangeListener(e -> updateCutoffParameterView());
+		model.getResonanceParameter().addChangeListener(e -> updateResonanceParameterView());
+		model.getKbdTrackingParameter().addChangeListener(e -> updateKbdTrackingParameterView());
+		model.getEgDepthParameter().addChangeListener(e -> updateEgDepthParameterView());
 	}
 
 	private void updateEgDepthParameterView() {

@@ -30,7 +30,7 @@ public class BooleanParameter extends ModuleParameter<Boolean> {
 	public void actionPerformed(PushButtonActionEvent e) {
 		
 		value = !value;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 
 	}
 
@@ -38,7 +38,7 @@ public class BooleanParameter extends ModuleParameter<Boolean> {
 	public void encoderRotated(RotaryEncoderEvent e) {
 
 		value = !value;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 		
 	}
 
@@ -60,7 +60,7 @@ public class BooleanParameter extends ModuleParameter<Boolean> {
 	public void setValueFromMIDICode(int v) {
 		if (v < TRUE) value = false;
 		else value = true;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 	}
 
 }

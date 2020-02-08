@@ -29,6 +29,11 @@ public class RotaryEncoder extends Control  {
 	private Channel previousTriggeringChannel; // dernier port ayant changé d'état (soit gpioA soit gpioB ; pour le debounce)
 	public static enum Channel {A,B};
 	
+	public static enum Direction {
+
+		UP,
+		DOWN;
+	}
 	
 	/**
 	 * Constructor for a rotary encoder connected to two input pins of the MCP23017 device.
@@ -74,7 +79,7 @@ public class RotaryEncoder extends Control  {
 	 * Adds the specified listener to receive action events from this encoder.
 	 * @param l the listener
 	 */
-	public void addRotaryEncoderChangeListener(RotaryEncoderChangeListener l) {
+	public void addChangeListener(RotaryEncoderChangeListener l) {
 	     listenerList.add(RotaryEncoderChangeListener.class, l);
 	 }
 
@@ -82,7 +87,7 @@ public class RotaryEncoder extends Control  {
 	 * Removes the specified listener so that it no longer receives action events from this encoder.
 	 * @param l the listener that was previously added
 	 */
-	 public void removeRotaryEncoderChangeListener(RotaryEncoderChangeListener l) {
+	 public void removeChangeListener(RotaryEncoderChangeListener l) {
 	     listenerList.remove(RotaryEncoderChangeListener.class, l);
 	 }
 	 
@@ -92,7 +97,7 @@ public class RotaryEncoder extends Control  {
 	 * is lazily created using the parameters passed into
 	 * the fire method.
 	 */
-	 public void fireRotaryEncoderEvent(RotaryEncoderDirection dir) { // TODO note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
+	 public void fireChangeEvent(Direction dir) { // TODO note SR : should be protected, but we have to make it public cause SwingMain uses it in simulator mode
 		 
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
@@ -148,11 +153,11 @@ public class RotaryEncoder extends Control  {
 				previousTriggeringChannel = triggeringChannel;
 				if ((triggeringChannel == Channel.A) && (levelA == PinState.LOW) && (levelB==PinState.LOW)){ 
 					//++position; // transition 10 -> 00
-					fireRotaryEncoderEvent(RotaryEncoderDirection.UP);
+					fireChangeEvent(Direction.UP);
 				}
 				else if ((triggeringChannel == Channel.B) && (levelB == PinState.HIGH) && (levelA==PinState.HIGH)){ 
 					//--position; // transition 10 -> 11
-					fireRotaryEncoderEvent(RotaryEncoderDirection.DOWN);
+					fireChangeEvent(Direction.DOWN);
 				}
 				//System.out.println("pos="+position);
 			}

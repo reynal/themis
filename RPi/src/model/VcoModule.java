@@ -27,8 +27,8 @@ public abstract class VcoModule extends AbstractModule {
 		parameterList.add(semitonesParameter = new EnumParameter<Semitones>(Semitones.class, getVcoName() + SEMITONES));
 		
 		// debug:
-		detuneParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
-		octaveParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
+		detuneParameter.addChangeListener(e -> LOGGER.info(e.toString())); 
+		octaveParameter.addChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected abstract String getVcoName();

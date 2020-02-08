@@ -44,14 +44,14 @@ public class ControlFactory {
 		if (allocatedPins.add(pin) == false)
 			throw new IOException("Pin " + pin + " of the MCP23017 device is already in use");
 
-		PushButton b = new PushButton(synthParameter == null ? "Dummy" : synthParameter.getLabel(), device, pin);
+		PushButton button = new PushButton(synthParameter == null ? "Dummy" : synthParameter.getLabel(), device, pin);
 		if (synthParameter != null) 
-			b.addPushButtonActionListener(synthParameter);
+			button.addActionListener(synthParameter);
 		if (synthParameter==null)
 			LOGGER.info("Creating a dummy PushButton (no synthParam attached) on MCP230A7 GPIO pin " + pin);
 		else
 			LOGGER.info("Creating a PushButton for \"" + synthParameter + "\" on MCP230A7 GPIO pin " + pin);
-		return b;
+		return button;
 		
 	}
 
@@ -71,14 +71,14 @@ public class ControlFactory {
 			throw new IOException("Pin " + pinB + " of the MCP23017 device is already in use");
 
 		// push button -> parameter
-		RotaryEncoder re = new RotaryEncoder(synthParam == null ? "Dummy" : synthParam.getLabel(), device, pinA, pinB);
+		RotaryEncoder encoder = new RotaryEncoder(synthParam == null ? "Dummy" : synthParam.getLabel(), device, pinA, pinB);
 		if (synthParam != null) 
-			re.addRotaryEncoderChangeListener(synthParam);
+			encoder.addChangeListener(synthParam);
 		if (synthParam==null) 
 			LOGGER.info("Creating a dummy RotaryEncoder (no synthparam attached) on MCP230A7 GPIO pins " + pinA + " and " + pinB);
 		else
 			LOGGER.info("Creating a RotaryEncoder for \"" + synthParam + "\" on MCP230A7 GPIO pins " + pinA + " and " + pinB);
-		return re;
+		return encoder;
 	}	
 	
 	// ---------- test ---------

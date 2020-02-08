@@ -49,7 +49,7 @@ public class ViewFactory {
 			throw new IOException("[SingleLED] " + ledCoordinate + " of the IS31FL3731 device is already in use");
 		
 		LED led = new LED(this.device, ledCoordinate);
-		if (param != null) param.addModuleParameterChangeListener(led);
+		if (param != null) param.addChangeListener(led);
 		
 		return led;
 	}
@@ -78,7 +78,7 @@ public class ViewFactory {
 
 		// parameter -> bar graph
 		BarGraph barGraph = new BarGraph(device, AorB, row);
-		if (synthParameter != null) synthParameter.addModuleParameterChangeListener(barGraph);
+		if (synthParameter != null) synthParameter.addChangeListener(barGraph);
 		return barGraph;
 	}
 	
@@ -111,7 +111,7 @@ public class ViewFactory {
 		}
 		
 		BarGraph ledGroup = new BarGraph(device, AorB, row, colStart, ledCount);
-		if (synthParameter != null) synthParameter.addModuleParameterChangeListener(ledGroup);
+		if (synthParameter != null) synthParameter.addChangeListener(ledGroup);
 		return ledGroup;
 	}
 

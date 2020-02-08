@@ -98,6 +98,12 @@ public class MidiInHandler implements Receiver {
 			if (serialTransmitter != null) {
 				try {
 					if (sm.getCommand() == ShortMessage.NOTE_ON) { 
+						if(sm.getData2() == 0) // bug fix for old keyboard that do now understand NOTE OFF, but a NOTE ON with 0 vel instead
+							try {
+								sm = new ShortMessage(ShortMessage.NOTE_OFF, sm.getData1(), 0);
+							} catch (InvalidMidiDataException e) {
+								e.printStackTrace();
+							}
 						serialTransmitter.transmitMidiMessage(sm);						
 						LOGGER.info("\tSending Note-ON to STM32: note="+sm.getData1()+" vel="+sm.getData2());
 					}
@@ -134,7 +140,9 @@ public class MidiInHandler implements Receiver {
 	public static void main(String[] args) throws Exception {
 
 		//UartTransmitter trans = new UartTransmitter();
-		new MidiInHandler(null, 0);
+		//new MidiInHandler(null, 0);
+		
+		listMidiTransmitters();
 		
 		//listMidiOutDevices();
 	}

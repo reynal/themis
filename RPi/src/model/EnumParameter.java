@@ -56,14 +56,14 @@ public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> impleme
 		case UP : 
 			if (value.ordinal() < getValuesCount()-1) {
 				value = clazz.getEnumConstants()[value.ordinal()+1];
-				fireModuleParameterChangeEvent();
+				fireChangeEvent();
 			}			
 			break;
 			
 		case DOWN : 
 			if (value.ordinal() > 0) {
 				value = clazz.getEnumConstants()[value.ordinal()-1];
-				fireModuleParameterChangeEvent();
+				fireChangeEvent();
 			}			
 			break;
 		}
@@ -76,7 +76,7 @@ public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> impleme
 			value = clazz.getEnumConstants()[value.ordinal()+1];
 		else
 			value = clazz.getEnumConstants()[0];
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 		
 	}
 	
@@ -97,7 +97,7 @@ public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> impleme
 	public void setValueFromMIDICode(int v) {
 		v = v % getValuesCount();
 		value = clazz.getEnumConstants()[v];
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 	}
 	
 	// ------------------ test ------

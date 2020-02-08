@@ -83,6 +83,9 @@ UART_HandleTypeDef *huartSTlink;
 
 uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
 uint8_t rxSpiMidiBuff[3]; // RX BUFF for SPI_rpi coming from RPi (three MIDI bytes)
+const uint8_t txUartSTlinkBuff[256];
+int isUartSTlinkBusy = FALSE;
+uint8_t* txUartSTlinkBuffPtr = txUartSTlinkBuff;
 
 /* USER CODE END PV */
 
@@ -722,6 +725,15 @@ int __io_putchar(int ch) {
 	return ch;
 }
 
+int io_putchar(int ch){ // TODO : validate new algo
+
+	if (isUartSTlinkBusy == TRUE){
+		*(txUartSTlinkBuffPtr++) = ch;
+		if (txUartSTlinkBuffPtr >=  TX_UART_STLINK_BUFF_SZ)
+	}
+
+}
+
 // --------------------------------------------------------------------------------------------------
 //                                     peripherals
 // --------------------------------------------------------------------------------------------------
@@ -794,10 +806,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
  */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
-	//printf("Received: %s\n", rxUartSTlinkBuff);
-	//toggleBlueLED();
-	processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
-	HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
+	if (huart == huartSTlink){ // TODO: validate
+		//printf("Received: %s\n", rxUartSTlinkBuff);
+		//toggleBlueLED();
+		processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
+		HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
+	}
 }
 
 /* USER CODE END 4 */

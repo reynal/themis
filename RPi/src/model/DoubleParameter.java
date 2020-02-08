@@ -83,7 +83,7 @@ public class DoubleParameter extends ModuleParameter<Double> {
 			if (this.value < min) this.value = min;
 			break;
 		}
-		if (this.value != old) fireModuleParameterChangeEvent();
+		if (this.value != old) fireChangeEvent();
 	}	
 	
 	@Override
@@ -91,7 +91,7 @@ public class DoubleParameter extends ModuleParameter<Double> {
 
 		this.value+=step;
 		if (this.value > max) this.value=min;
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 		
 	}
 
@@ -103,7 +103,7 @@ public class DoubleParameter extends ModuleParameter<Double> {
 	@Override
 	public void setValueFromMIDICode(int v) {
 		value = v/127.0 * (max-min) + min;		
-		fireModuleParameterChangeEvent();
+		fireChangeEvent();
 	}
 
 	

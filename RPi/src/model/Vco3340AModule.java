@@ -32,10 +32,10 @@ public class Vco3340AModule extends VcoModule {
 		parameterList.add(levelParameter = new MIDIParameter(LEVEL));
 		
 		// debug:
-		waveShapeParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
-		dutyParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString())); 
-		syncFrom13700Parameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
-		levelParameter.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));
+		waveShapeParameter.addChangeListener(e -> LOGGER.info(e.toString())); 
+		dutyParameter.addChangeListener(e -> LOGGER.info(e.toString())); 
+		syncFrom13700Parameter.addChangeListener(e -> LOGGER.info(e.toString()));
+		levelParameter.addChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected String getVcoName() {

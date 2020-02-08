@@ -40,7 +40,7 @@ public abstract class AbstractSerialTransmitter implements ModuleParameterChange
 
 
 	@Override
-	public void moduleParameterChanged(ModuleParameterChangeEvent e) {
+	public void valueChanged(ModuleParameterChangeEvent e) {
 		
 		try {
 			Object source = e.getSource();

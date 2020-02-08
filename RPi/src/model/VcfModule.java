@@ -49,7 +49,7 @@ public class VcfModule extends AbstractModule {
 		parameterList.add(egDepthParameter);
 		parameterList.add(velocitySensitivityParameter);
 		
-		for (ModuleParameter<?> param : getParameters()) param.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));  // for debug purpose only
+		for (ModuleParameter<?> param : getParameters()) param.addChangeListener(e -> LOGGER.info(e.toString()));  // for debug purpose only
 
 	}
 	

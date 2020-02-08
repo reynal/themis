@@ -30,7 +30,7 @@ public class VcaModule extends AbstractModule {
 		velocitySensitivityParameter = new MIDIParameter(VEL_SENSITIVITY);
 		parameterList.add(velocitySensitivityParameter);
 		
-		for (ModuleParameter<?> param : getParameters()) param.addModuleParameterChangeListener(e -> LOGGER.info(e.toString()));  // for debug purpose only
+		for (ModuleParameter<?> param : getParameters()) param.addChangeListener(e -> LOGGER.info(e.toString()));  // for debug purpose only
 	}
 	
 	// ---- value getters and setters --- (write operating may fire change events)
