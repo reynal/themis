@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 import com.pi4j.io.gpio.PinState; // SR TODO : make this class independent from pi4j
+import com.pi4j.io.gpio.RaspiPin;
 
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
 import device.MCP23017;
+import device.MCP23017.DeviceAddress;
 import device.MCP23017.InterruptEvent;
 import device.MCP23017.InterruptListener;
+import device.MCP23017.Port;
 
 /**
  * A hardware quadratic encoder that can fire UP or DOWN change events upon rotation.
@@ -121,8 +124,8 @@ public class RotaryEncoder extends Control  {
 	 private class PhysicalEncoderChangeListener implements InterruptListener {
 		 
 		/**
-		 * Callback lorsque la pin INTA du MCP23017 est asserted ; 
-		 * signifie qu'une des pins du PORT A a changé, donc qu'un encodeur a tourné, mais pas forcément celui-ci !
+		 * Callback lorsque la pin INT du MCP23017 est asserted ; 
+		 * signifie qu'une des pins du PORT A ou B a changé, donc qu'un encodeur a tourné, mais pas forcément celui-ci !
 		 * First item: vérifier que c'est bien cet encodeur qui a tourné ! 
 		 */
 		@Override
@@ -163,6 +166,56 @@ public class RotaryEncoder extends Control  {
 			}
 		}	 
 	 }
+	 
+	 
+	 
+	 
+	 // ---------------------- test methods --------------------------
+	 
+		public static void main(String[] args) throws Exception  {
+
+
+			//for (int i : I2CFactory.getBusIds()) System.gpout.println(i);
+
+			MCP23017 device = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04);
+			//MCP23017 device = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05);
+
+			device.registerRpiPinForReset(MCP23017.DEFAULT_RST_PIN); // pin 37
+			device.reset();
+			device.printRegisters();
+			
+			device.enableIntPinsMirror();
+			device.setInput(Port.A);
+			device.setInput(Port.B);
+			device.setPullupResistors(Port.A, true);
+			device.setPullupResistors(Port.B, true);
+			device.setInterruptOnChange(Port.A, true);
+			device.setInterruptOnChange(Port.B, true);
+			device.addInterruptListener(e -> System.out.println(e));
+			device.clearInterrupts(Port.A);
+			device.clearInterrupts(Port.B);
+			device.printRegisters();
+			
+			RotaryEncoder encoder = new RotaryEncoder("Test encoder", device, MCP23017.Pin.P1B, MCP23017.Pin.P2B);
+			encoder.addChangeListener(e -> System.out.println(e));
+
+			PushButton push = new PushButton("Test pushbutton", device, MCP23017.Pin.P0B);
+			push.addActionListener(e -> System.out.println(e));
+
+			int i=0;
+			while ((i++)<20) {
+				//System.out.printf("INTFA: %02X \t GPIOA: %02X\n", device.readInterruptFlagRegister(Port.A), device.read(Port.A)); //, device.read(Port.B));
+				//System.out.printf("A: %02X \t B: %02X\n", device.read(Port.A), device.read(Port.B));
+				//System.out.print(i+" ");
+				System.out.print(".");
+				//device.printRegistersBriefA();
+				//device.printRegistersBriefB();
+				Thread.sleep(1000);
+			}
+			System.out.println("closing device");
+			device.close();
+		}	 
+	 
 
 	
 }

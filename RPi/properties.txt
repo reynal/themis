@@ -1,13 +1,13 @@
 # properties file for ThEmIS project:
 # MIDI keyboard:
-#MIDI_IN=Akai MAX49 Port A
+MIDI_IN=Akai MAX49 Port A
 #MIDI_IN=UM-ONE
-MIDI_IN=USB Oxygen 61
+#MIDI_IN=USB Oxygen 61
 # name of USB connection to STM32:
 # mac mini home:
-#USB_DEV=/dev/tty.usbmodem1421203
+USB_DEV=/dev/tty.usbmodem1421203
 # mac mini ensea:
-USB_DEV=/dev/tty.usbmodem1443
+#USB_DEV=/dev/tty.usbmodem1443
 # macbook:
 #USB_DEV=/dev/tty.usbmodem413
 MIDI_DEMO_FILE=ableton2.mid

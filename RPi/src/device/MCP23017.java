@@ -2,6 +2,7 @@ package device;
 
 import java.io.*;
 import java.util.*;
+import java.util.logging.Logger;
 
 import javax.swing.event.*;
 
@@ -40,18 +41,24 @@ import static device.MCP23017.Register.*;
  */
 public class MCP23017  {
 
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	// -------------- fields --------------
 	
 	private I2CDevice i2cDevice; 
 	private I2CBus i2cBus;
 	private GpioPinDigitalOutput mcp23017RstPin;
+	private GpioPinDigitalInput mcp23017IntPin; 
 	
 	/** a list of event listeners for this device */
 	protected EventListenerList listenerList;
 	
 	// TODO reynal move elsewhere:
-	private final static com.pi4j.io.gpio.Pin DEFAULT_RST_PIN = RaspiPin.GPIO_25; // pin 37 
-	private final static com.pi4j.io.gpio.Pin DEFAULT_INT_PIN = RaspiPin.GPIO_04; // pin 16
+	public final static com.pi4j.io.gpio.Pin DEFAULT_RST_PIN = RaspiPin.GPIO_25; // pin 37 
+	public final static com.pi4j.io.gpio.Pin DEFAULT_INT_PIN = RaspiPin.GPIO_04; // pin 16
+	public final static DeviceAddress DEFAULT_I2C_ADDRESS = DeviceAddress.ADR_000;
+	
+	//int interruptCounter = 0; // for debugging spurious interrupts
 	
 	// -------------- constructors --------------
 	
@@ -77,20 +84,23 @@ public class MCP23017  {
 
 	/** default 0x20 address, RPi interrupt line connected to intPin */
 	public MCP23017(com.pi4j.io.gpio.Pin intPin) throws UnsupportedBusNumberException, IOException {
-		this(DeviceAddress.ADR_000, intPin);
+		this(DEFAULT_I2C_ADDRESS, intPin);
 	}
 	
 	/** default 0x20 address, no RPi interrupt line */
 	public MCP23017() throws UnsupportedBusNumberException, IOException {
-		this(DeviceAddress.ADR_000, null);
+		this(DEFAULT_I2C_ADDRESS, null);
 	}
 
 	/**
-	 * close the corresponding I2C bus
+	 * close the I2C bus to which this device is connected and unprovision RST and INT RPi pins.
 	 * @throws IOException
 	 */
 	public void close() throws IOException {
 		
+		GpioFactory.getInstance().unprovisionPin(mcp23017RstPin);
+		GpioFactory.getInstance().unprovisionPin(mcp23017IntPin);
+		mcp23017IntPin = null;
 		i2cBus.close();
 		
 	}
@@ -200,7 +210,7 @@ public class MCP23017  {
 			case B : i2cDevice.write(INTENB.getAddress(), mask); break;
 		}
 		// clear interrupts:
-		clearInterrupts(MCP23017.Port.A);
+		clearInterrupts(port);
 	}
 
 	/**
@@ -218,7 +228,7 @@ public class MCP23017  {
 			case B : i2cDevice.write(INTENB.getAddress(), mask); break;
 		}
 		// clear interrupts:
-		clearInterrupts(MCP23017.Port.A);
+		clearInterrupts(port);
 	}
 	
 	/**
@@ -324,7 +334,7 @@ public class MCP23017  {
 	}	
 
 	/**
-	 * returns the register (INTCAP) that captured the the GPIO port value at the 
+	 * returns the register (INTCAP) that captured the GPIO port value at the 
 	 * time the interrupt occurred. Also CLEARS pending interrupts!
 	 * @param port A or B
 	 */
@@ -338,17 +348,26 @@ public class MCP23017  {
 	}
 	
 	/**
-	 * clear interrupt flag register by reading the ??? register (see datasheet p 23)
+	 * clear interrupt flag register by reading the INTCAPx register (see datasheet p 23)
 	 * TODO : add some timeout feature
 	 */
 	public void clearInterrupts(Port port) throws IOException {
-		while(readInterruptFlagRegister(port) != 0) {
-			readInterruptCapturedRegister(port);
-			//System.out.println("Clearing interrupts on port " + port);
+		while(this.mcp23017IntPin.isLow()) readInterruptCapturedRegister(port);
+	}
+	
+	public void clearInterrupts() throws IOException {
+		
+		while(this.mcp23017IntPin.isLow()) {
+			readInterruptCapturedRegister(Port.A);
+			readInterruptCapturedRegister(Port.B);
 		}
 	}
 	
-	/** The INT pins are internally connected */
+	/** 
+	 * Both INT pins (i.e., INTA and INTB) are internally OR'd and the result is available on INTA output pin
+	 * In practice, this implies that both ports A and B trigger the same interrupt line (although they still
+	 * have separate INT flag registers) 
+	 * */
 	public void enableIntPinsMirror() throws IOException {
 		
 		int iocon = i2cDevice.read(IOCON.getAddress());
@@ -465,30 +484,52 @@ public class MCP23017  {
 	}	
 	
 	/**
-	 * Registers the given Raspberry Pi as being the input pin connected to the INTA pin of this MCP23017 device, so that 
+	 * Registers the given Raspberry Pi as being the input pin connected to the INTA output pin of this MCP23017 device, so that 
 	 * the RPi get informed whenever an interrupt occurs on this MCP23017 device.
+	 * GpioDigitalInputPin get provisioned here, so make sure you don't reuse a previously provisioned pin!
 	 * @param intPin
 	 * TODO : set IOCON.MIRROR=1 so that the INTn pins are functionally OR’ed (i.e. an interrupt on either port will cause both pins to activate)
 	 */
 	public void registerRpiPinForInterrupt(com.pi4j.io.gpio.Pin intPin) {
 		 
 		// provision a RPi gpio pin as an input pin with its internal pull up resistor enabled
-		final GpioPinDigitalInput mcp23017IntPin = GpioFactory.getInstance().provisionDigitalInputPin(intPin, PinPullResistance.PULL_UP);
+		mcp23017IntPin = GpioFactory.getInstance().provisionDigitalInputPin(intPin, PinPullResistance.PULL_UP);
 
 		// create and register gpio pin listener
-		mcp23017IntPin.addListener(new MyGpioPinListenerDigital());
+		mcp23017IntPin.addListener(new INTPinChangeListener());
+		
+		Thread t = new Thread(() -> {
+			try {
+				while(mcp23017IntPin != null) {
+					clearInterrupts();
+					//System.out.print(".");
+					Thread.sleep(100);
+				}
+			} 
+			catch (InterruptedException | IOException e) {e.printStackTrace();} 
+		});
+		t.start();
 		
 	}
 		
 	/**
 	 * Registers the given Raspberry Pi as being the output pin connected to the RST pin of this MCP23017 device, so that 
-	 * the RPi can reset the device
+	 * the RPi can reset the device. Same pin can be reused to reset different MCP devices as this is an output pin.
 	 * @param rstPin
 	 */
 	public void registerRpiPinForReset(com.pi4j.io.gpio.Pin rstPin) {
 		 
-		mcp23017RstPin = GpioFactory.getInstance().provisionDigitalOutputPin(rstPin);
+		// check if this pin has already bin registered:
+		GpioPin gpio = GpioFactory.getInstance().getProvisionedPin(rstPin);
+		if (gpio == null) mcp23017RstPin = GpioFactory.getInstance().provisionDigitalOutputPin(rstPin);
+		else if (gpio instanceof GpioPinDigitalOutput) mcp23017RstPin = (GpioPinDigitalOutput)gpio; // reuse already provisioned pin
+		else { // not an Output (maybe an input or a multipurpose) => reprovision as output
+			GpioFactory.getInstance().unprovisionPin(gpio);
+			mcp23017RstPin = GpioFactory.getInstance().provisionDigitalOutputPin(rstPin);
+		}
+		
 		mcp23017RstPin.high();
+		
 		
 	}
 	
@@ -506,7 +547,7 @@ public class MCP23017  {
 			}
 			mcp23017RstPin.high();
 		}
-		else System.err.println("[ERROR] No RPi pin registered for PCM23017 RST");
+		else LOGGER.severe("[ERROR] No RPi pin registered for PCM23017 RST");
 		
 	}
 
@@ -733,7 +774,7 @@ public class MCP23017  {
 	
 	/**
 	 * A low-level event that indicates that an interrupt was generated by this MCP23017 device
-	 * @author sydxrey
+	 * @author reynal
 	 */
 	public class InterruptEvent extends EventObject {
 		
@@ -768,7 +809,12 @@ public class MCP23017  {
 	
 	}
 	
-	private class MyGpioPinListenerDigital implements GpioPinListenerDigital {
+	/**
+	 * A Pi4J listener that forwards changes on the device INTA/B pin to registered MCP23017 GPIO ports change listeners.
+	 * @author reynal
+	 *
+	 */
+	private class INTPinChangeListener implements GpioPinListenerDigital {
 
 		/**
 		 * Callback when either the INTA or INTB pin of this MCP23017 device has been asserted (=FALLING transition), 
@@ -776,27 +822,37 @@ public class MCP23017  {
 		 */
 		@Override
 		public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+			
 
-			if (event.getEdge() == PinEdge.RISING) return; // MCP23017's INT clear!
+			if (event.getEdge() == PinEdge.RISING) {
+				//System.out.println("[handle...event #"+interruptCounter+"] INT RISING EDGE");
+				/*try {
+					System.out.printf("\t[handle...event #"+interruptCounter+"] " + INTFA +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTFA.getAddress())));
+					System.out.printf("\t[handle...event #"+interruptCounter+"] " + INTFB +"\t%8s\n", Integer.toBinaryString(i2cDevice.read(INTFB.getAddress())));
+				} catch (IOException e) { e.printStackTrace();} */
+				return; // MCP23017's INT clear!
+			}
+			/* else if (event.getEdge() == PinEdge.FALLING) {
+				interruptCounter++;
+				System.out.println("[handle...event #"+interruptCounter+"] INT FALLING EDGE");
+			} */
 			//printRegistersBriefA();
 			//printRegistersBriefB();
 			
 			try {
 				for (Port port: Port.values()) {
-					int intfRegister = readInterruptFlagRegister(port);
-					if (intfRegister == 0) continue; // next port
-					int captureRegister = readInterruptCapturedRegister(port);
-					//System.out.printf("\n------------------------- Port %s -------------------------\n FLAGS: %02X \t CAPTURE: %02X\n", port.toString(), intfRegister, captureRegister);
-					System.out.printf("\n------------------------- Port %s -------------------------\n FLAGS: %8s \t CAPTURE: %8s\n", port.toString(), Integer.toBinaryString(intfRegister), Integer.toBinaryString(captureRegister));
-					clearInterrupts(port);
-					for (Pin pin : Pin.getPinListFromMask((byte)intfRegister, port)) {
+					int intFlagsRegister = readInterruptFlagRegister(port);
+					if (intFlagsRegister == 0) continue; // next port
+					int captureRegister = readInterruptCapturedRegister(port); // this will clear interrupts and re-trigger a call to this listener
+					//clearInterrupts(port); // SR : i don't think this is really useful
+					//System.out.printf("\n------------------------- Port %s -------------------------\n FLAGS: %8s \t CAPTURE: %8s\n", port.toString(), Integer.toBinaryString(intfRegister), Integer.toBinaryString(captureRegister));
+					for (Pin pin : Pin.getPinListFromMask((byte)intFlagsRegister, port)) {
 						PinState lvl =  (captureRegister & pin.getMask()) != 0 ? PinState.HIGH : PinState.LOW;
 						fireInterruptEvent(pin, lvl);
 					}
+					
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 		
+			} catch (IOException e) { e.printStackTrace(); } 		
 		}		
 		
 	}
@@ -825,6 +881,7 @@ public class MCP23017  {
 	 */
 	 protected void fireInterruptEvent(Pin pin, com.pi4j.io.gpio.PinState level) {
 		 
+		 //System.out.println("[fire...event#"+interruptCounter+"]");
 	     // Guaranteed to return a non-null array
 	     Object[] listeners = listenerList.getListenerList();
 	     
@@ -849,9 +906,11 @@ public class MCP23017  {
 
 		//for (int i : I2CFactory.getBusIds()) System.gpout.println(i);
 
-		MCP23017 device = new MCP23017();
+		//MCP23017 device = new MCP23017();
+		MCP23017 device = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04);
+		//MCP23017 device = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05);
 
-		device.registerRpiPinForReset(RaspiPin.GPIO_25); // pin 37
+		device.registerRpiPinForReset(DEFAULT_RST_PIN); // pin 37
 		device.reset();
 		device.printRegisters();
 		
@@ -860,22 +919,25 @@ public class MCP23017  {
 		device.setInput(Port.B);
 		device.setPullupResistors(Port.A, true);
 		device.setPullupResistors(Port.B, true);
-		device.setInterruptOnChange(Port.A, true);
+		//device.setInterruptOnChange(Port.A, true);
 		device.setInterruptOnChange(Port.B, true);
-		device.registerRpiPinForInterrupt(RaspiPin.GPIO_04); // pin 16 (aka GPIO23 in WiringPi numbering scheme)
+		//device.addInterruptListener(e -> System.out.println("[main #"+ device.interruptCounter +"] INT occured: " + e));
 		device.addInterruptListener(e -> System.out.println(e));
-		device.clearInterrupts(Port.A);
-		device.clearInterrupts(Port.B);
+		device.clearInterrupts();
 		device.printRegisters();
 
 		int i=0;
-		while ((i++)<100) {
+		while ((i++)<120) {
 			//System.out.printf("INTFA: %02X \t GPIOA: %02X\n", device.readInterruptFlagRegister(Port.A), device.read(Port.A)); //, device.read(Port.B));
 			//System.out.printf("A: %02X \t B: %02X\n", device.read(Port.A), device.read(Port.B));
 			//System.out.print(i+" ");
-			System.out.print(".");
+			//System.out.print(".");
+			//System.out.println("#" + device.interruptCounter + " : " + (device.mcp23017IntPin.isHigh() ? "INT HIGH" : "INT LOW"));
+			//System.out.println("INTFA="+device.readInterruptFlagRegister(Port.A));
+			//System.out.println("INTFB="+device.readInterruptFlagRegister(Port.B));
+			//device.clearInterrupts();
 			//device.printRegistersBriefA();
-			//device.printRegistersBriefB();
+			//device.printRegistersBriefB();			
 			Thread.sleep(1000);
 		}
 		System.out.println("closing device");

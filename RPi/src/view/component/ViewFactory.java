@@ -4,10 +4,19 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.logging.Logger;
 
+import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
+
+import controller.component.RotaryEncoder;
 import device.IS31FL3731;
+import device.MCP23017;
+import device.MCP23017.DeviceAddress;
+import device.MCP23017.Port;
 import model.EnumParameter;
+import model.MIDIParameter;
 import model.ModuleParameter;
 import model.Octave;
+import model.Vco3340AModule;
 
 /**
  * A factory that can build a view (a bargraph, a group of leds, etc) for a synth parameter 
@@ -123,7 +132,12 @@ public class ViewFactory {
 
 	// ---------- test ---------
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		
+		testWithHW();
+	}
+	
+	private static void testHashset() throws IOException {
 		
 		// check if hashmap works:
 		ViewFactory vf = new ViewFactory(null);
@@ -132,6 +146,53 @@ public class ViewFactory {
 		vf.createView(p, IS31FL3731.Matrix.A, 6, 0);
 		//vf.createView(p, IS31FL3731.Matrix.A, 0, 4);
 		System.out.println(vf);
-	}	
-
+		
+	}
+	
+	private static void testWithHW() throws Exception {
+		
+		IS31FL3731 is31fl3731 = new IS31FL3731();
+		ViewFactory vf = new ViewFactory(is31fl3731);
+		
+		Vco3340AModule vco3340 = new Vco3340AModule();		
+		
+		MIDIParameter p = vco3340.getDutyParameter();
+		
+		BarGraph bar = new BarGraph(is31fl3731, IS31FL3731.Matrix.A, 0); // row=0
+		p.addChangeListener(bar);
+		
+		//MCP23017 device = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04);
+		MCP23017 device = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05);
+		device.registerRpiPinForReset(MCP23017.DEFAULT_RST_PIN); // pin 37
+		device.reset();
+		device.printRegisters();
+		device.enableIntPinsMirror();
+		device.setInput(Port.A);
+		device.setInput(Port.B);
+		device.setPullupResistors(Port.A, true);
+		device.setPullupResistors(Port.B, true);
+		device.setInterruptOnChange(Port.A, true);
+		device.setInterruptOnChange(Port.B, true);
+		//device.addInterruptListener(e -> System.out.println(e));
+		device.clearInterrupts(Port.A);
+		device.clearInterrupts(Port.B);
+		device.printRegisters();
+		
+		RotaryEncoder encoder = new RotaryEncoder("Test encoder", device, MCP23017.Pin.P7B, MCP23017.Pin.P5B);
+		encoder.addChangeListener(p);
+		
+		
+		int i=0;
+		while (i < 100) {
+			//System.out.print(".");
+			i = p.getValue();
+			Thread.sleep(1000);
+			device.clearInterrupts(Port.A);
+			device.clearInterrupts(Port.B);
+		}
+		
+		device.close();
+		System.out.println("MCP closed");
+	}
+		
 }
