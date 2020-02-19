@@ -25063,10 +25063,7 @@ high speed (Philips)</description>
 <part name="CDEC_MCP" library="6P1_EVB" deviceset="C-EU" device="075-032X103" value="100n"/>
 <part name="RIN2_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="27k"/>
 <part name="RSTAB2_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0207/10" package3d_urn="urn:adsk.eagle:package:23491/2" value="470"/>
-<part name="RIN_VCA" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="27k"/>
-<part name="RSTAB_VCA" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
 <part name="CSTAB2_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="560p"/>
-<part name="CSTAB_VCA" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="560p"/>
 <part name="RIN3_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="27k"/>
 <part name="RSTAB3_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
 <part name="CSTAB3_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="560p"/>
@@ -25084,19 +25081,9 @@ high speed (Philips)</description>
 </part>
 <part name="MIXER_B" library="analog-audio-chips" deviceset="SSM2164_MULTI" device=""/>
 <part name="RMODE_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="8.2k"/>
-<part name="CIN_VCA" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="470n">
-<spice>
-<pinmapping spiceprefix="C">
-<pinmap gate="G$1" pin="1" pinorder="1"/>
-<pinmap gate="G$1" pin="2" pinorder="2"/>
-</pinmapping>
-</spice>
-<attribute name="C3" value="0.47 micro"/>
-</part>
 <part name="AGND5" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND6" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND7" library="supply1" deviceset="AGND" device=""/>
-<part name="AGND8" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND13" library="supply1" deviceset="AGND" device=""/>
 <part name="CDEC+15V_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="100n"/>
 <part name="CDEC-15V_MIXERB" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="100n"/>
@@ -25254,8 +25241,6 @@ high speed (Philips)</description>
 <part name="R2_PWM1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="330k"/>
 <part name="AGND87" library="supply1" deviceset="AGND" device=""/>
 <part name="SUPPLY52" library="6P1_EVB" deviceset="+15V" device=""/>
-<part name="R_FM_LIN1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1M"/>
-<part name="C_FM_LIN1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-025X075" package3d_urn="urn:adsk.eagle:package:23637/1" value="100n"/>
 <part name="3340A" library="analog-audio-chips" deviceset="CEM3340" device=""/>
 <part name="R8_3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1.5M"/>
 <part name="R_CV_FREQ3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="68k"/>
@@ -25325,8 +25310,6 @@ high speed (Philips)</description>
 <part name="AGND103" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND104" library="supply1" deviceset="AGND" device=""/>
 <part name="AGND105" library="supply1" deviceset="AGND" device=""/>
-<part name="R_FM_LIN3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="1M"/>
-<part name="C_FM_LIN3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-025X075" package3d_urn="urn:adsk.eagle:package:23637/1" value="100n"/>
 <part name="EXPCONV2" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="1AMP_P7+4" device="N" package3d_urn="urn:adsk.eagle:package:16409/2" value="TL081"/>
 <part name="R1_EXPCONV2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="330"/>
 <part name="R2_EXPCONV2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10"/>
@@ -25422,7 +25405,6 @@ high speed (Philips)</description>
 <part name="R_PD_4TH_ORDER_VCF" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="100k"/>
 <part name="VCF_ANALOG_SW" library="linear" library_urn="urn:adsk.eagle:library:262" deviceset="DG413DJ" device="N" package3d_urn="urn:adsk.eagle:package:922/2"/>
 <part name="JP1" library="6P1_EVB" deviceset="JUMPER" device=""/>
-<part name="JP_FMLIN_VCO3340B" library="6P1_EVB" deviceset="JUMPER" device=""/>
 <part name="JP_TRIOUT_VCO3340B" library="6P1_EVB" deviceset="JUMPER" device=""/>
 <part name="JP_SAWOUT_VCO3340B" library="6P1_EVB" deviceset="JUMPER" device=""/>
 <part name="JP_PULSEOUT_VCO3340B" library="6P1_EVB" deviceset="JUMPER" device=""/>
@@ -25434,6 +25416,33 @@ high speed (Philips)</description>
 <part name="JP_MIXER_A" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA04-2" device="" package3d_urn="urn:adsk.eagle:package:8368/1"/>
 <part name="JP_MIXER_B" library="con-lstb" library_urn="urn:adsk.eagle:library:162" deviceset="MA04-2" device="" package3d_urn="urn:adsk.eagle:package:8368/1"/>
 <part name="JP_SYNC_3340B_TO_A" library="6P1_EVB" deviceset="JUMPER" device=""/>
+<part name="JP_FMLIN_VCO3340B1" library="6P1_EVB" deviceset="JUMPER" device=""/>
+<part name="VCO1" library="ota" deviceset="LM13700" device="N" value="LM13700N"/>
+<part name="RSTAB3_MIXERB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="51k"/>
+<part name="RSTAB3_MIXERB2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
+<part name="RSTAB3_MIXERB3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
+<part name="RSTAB3_MIXERB4" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
+<part name="RSTAB3_MIXERB5" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="10k"/>
+<part name="CSTAB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="10u"/>
+<part name="JP_OUT_VCO3340A1" library="6P1_EVB" deviceset="JUMPER" device=""/>
+<part name="RSTAB4_MIXERB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
+<part name="JP_OUT_VCO3340A2" library="6P1_EVB" deviceset="JUMPER" device=""/>
+<part name="CSTAB2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="560p"/>
+<part name="AGND1" library="supply1" deviceset="AGND" device=""/>
+<part name="RIN4_MIXERB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="27k"/>
+<part name="RSTAB4_MIXERB2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="0204/7" package3d_urn="urn:adsk.eagle:package:23498/2" value="470"/>
+<part name="CSTAB3" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="560p"/>
+<part name="AGND2" library="supply1" deviceset="AGND" device=""/>
+<part name="CIN4_MIXERB1" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="C-EU" device="050-030X075" package3d_urn="urn:adsk.eagle:package:23640/1" value="470n">
+<spice>
+<pinmapping spiceprefix="C">
+<pinmap gate="G$1" pin="1" pinorder="1"/>
+<pinmap gate="G$1" pin="2" pinorder="2"/>
+</pinmapping>
+</spice>
+<attribute name="C3" value="0.47 micro"/>
+</part>
+<part name="AGND3" library="supply1" deviceset="AGND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -25492,20 +25501,20 @@ control voltage at pin 12 ranges from
 <text x="139.7" y="480.06" size="6.4516" layer="97">AS3320 VCF</text>
 <text x="279.4" y="375.92" size="1.778" layer="97" rot="R90">Low Pass 2nd Order</text>
 <text x="340.36" y="401.32" size="1.778" layer="97">Low Pass 4th Order</text>
-<text x="139.7" y="281.94" size="6.4516" layer="97">VCA</text>
-<wire x1="132.08" y1="279.4" x2="254" y2="279.4" width="0.1524" layer="97"/>
-<wire x1="254" y1="279.4" x2="254" y2="220.98" width="0.1524" layer="97"/>
-<wire x1="254" y1="220.98" x2="132.08" y2="220.98" width="0.1524" layer="97"/>
-<wire x1="132.08" y1="220.98" x2="132.08" y2="279.4" width="0.1524" layer="97"/>
+<text x="132.08" y="281.94" size="6.4516" layer="97">VCA</text>
+<wire x1="68.58" y1="279.4" x2="254" y2="279.4" width="0.1524" layer="97"/>
+<wire x1="254" y1="279.4" x2="254" y2="213.36" width="0.1524" layer="97"/>
+<wire x1="254" y1="213.36" x2="68.58" y2="213.36" width="0.1524" layer="97"/>
+<wire x1="68.58" y1="213.36" x2="68.58" y2="279.4" width="0.1524" layer="97"/>
 <wire x1="-579.12" y1="256.54" x2="-203.2" y2="256.54" width="0.1524" layer="97"/>
 <wire x1="-203.2" y1="256.54" x2="-203.2" y2="119.38" width="0.1524" layer="97"/>
 <wire x1="-203.2" y1="119.38" x2="-579.12" y2="119.38" width="0.1524" layer="97"/>
 <wire x1="-579.12" y1="119.38" x2="-579.12" y2="256.54" width="0.1524" layer="97"/>
 <text x="-571.5" y="259.08" size="6.4516" layer="97">VCO 13700 (square, triangle, subbass outputs)</text>
-<wire x1="-144.78" y1="513.08" x2="96.52" y2="513.08" width="0.1524" layer="97"/>
-<wire x1="96.52" y1="513.08" x2="96.52" y2="205.74" width="0.1524" layer="97"/>
-<wire x1="96.52" y1="205.74" x2="-144.78" y2="205.74" width="0.1524" layer="97"/>
-<wire x1="-144.78" y1="205.74" x2="-144.78" y2="513.08" width="0.1524" layer="97"/>
+<wire x1="-142.24" y1="513.08" x2="96.52" y2="513.08" width="0.1524" layer="97"/>
+<wire x1="96.52" y1="513.08" x2="96.52" y2="190.5" width="0.1524" layer="97"/>
+<wire x1="96.52" y1="190.5" x2="-144.78" y2="190.5" width="0.1524" layer="97"/>
+<wire x1="-144.78" y1="190.5" x2="-142.24" y2="513.08" width="0.1524" layer="97"/>
 <text x="99.06" y="368.3" size="1.778" layer="97">Connect 2 and 3 to bypass VCF.
 Otherwise connect 1 with 2, and
 3 with 4.</text>
@@ -25613,21 +25622,9 @@ Otherwise connect 1 with 2, and
 <attribute name="NAME" x="-80.01" y="313.9186" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-80.01" y="311.658" size="1.778" layer="96"/>
 </instance>
-<instance part="RIN_VCA" gate="G$1" x="165.1" y="256.54" smashed="yes" rot="R180">
-<attribute name="NAME" x="168.91" y="255.0414" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="168.91" y="259.842" size="1.778" layer="96" rot="R180"/>
-</instance>
-<instance part="RSTAB_VCA" gate="G$1" x="172.72" y="251.46" smashed="yes" rot="R270">
-<attribute name="NAME" x="174.2186" y="255.27" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="169.418" y="255.27" size="1.778" layer="96" rot="R270"/>
-</instance>
 <instance part="CSTAB2_MIXERB" gate="G$1" x="-83.82" y="302.26" smashed="yes" rot="R180">
 <attribute name="NAME" x="-85.344" y="301.879" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-85.344" y="306.959" size="1.778" layer="96" rot="R180"/>
-</instance>
-<instance part="CSTAB_VCA" gate="G$1" x="172.72" y="241.3" smashed="yes" rot="R180">
-<attribute name="NAME" x="171.196" y="240.919" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="171.196" y="245.999" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="RIN3_MIXERB" gate="G$1" x="-91.44" y="281.94" smashed="yes" rot="R180">
 <attribute name="NAME" x="-87.63" y="280.4414" size="1.778" layer="95" rot="R180"/>
@@ -25641,39 +25638,33 @@ Otherwise connect 1 with 2, and
 <attribute name="NAME" x="-85.344" y="266.319" size="1.778" layer="95" rot="R180"/>
 <attribute name="VALUE" x="-85.344" y="271.399" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="RIN4_MIXERB" gate="G$1" x="-91.44" y="236.22" smashed="yes" rot="R180">
-<attribute name="NAME" x="-87.63" y="234.7214" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-87.63" y="239.522" size="1.778" layer="96" rot="R180"/>
+<instance part="RIN4_MIXERB" gate="G$1" x="-91.44" y="248.92" smashed="yes" rot="R180">
+<attribute name="NAME" x="-87.63" y="247.4214" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-87.63" y="252.222" size="1.778" layer="96" rot="R180"/>
 </instance>
-<instance part="RSTAB4_MIXERB" gate="G$1" x="-83.82" y="231.14" smashed="yes" rot="R270">
-<attribute name="NAME" x="-82.3214" y="234.95" size="1.778" layer="95" rot="R270"/>
-<attribute name="VALUE" x="-87.122" y="234.95" size="1.778" layer="96" rot="R270"/>
+<instance part="RSTAB4_MIXERB" gate="G$1" x="-83.82" y="243.84" smashed="yes" rot="R270">
+<attribute name="NAME" x="-82.3214" y="247.65" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="-87.122" y="247.65" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="CSTAB8" gate="G$1" x="-83.82" y="220.98" smashed="yes" rot="R180">
-<attribute name="NAME" x="-85.344" y="220.599" size="1.778" layer="95" rot="R180"/>
-<attribute name="VALUE" x="-85.344" y="225.679" size="1.778" layer="96" rot="R180"/>
+<instance part="CSTAB8" gate="G$1" x="-83.82" y="233.68" smashed="yes" rot="R180">
+<attribute name="NAME" x="-85.344" y="233.299" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-85.344" y="238.379" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="CIN2_MIXERB" gate="G$1" x="-114.3" y="317.5" smashed="yes" rot="R90">
 <attribute name="NAME" x="-117.221" y="321.564" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-110.236" y="315.341" size="1.778" layer="96"/>
 </instance>
 <instance part="MIXER_B" gate="G$1" x="25.4" y="505.46" smashed="yes"/>
-<instance part="MIXER_B" gate="G$2" x="215.9" y="256.54" smashed="yes"/>
 <instance part="MIXER_B" gate="G$3" x="-40.64" y="317.5" smashed="yes"/>
-<instance part="MIXER_B" gate="G$4" x="-35.56" y="236.22" smashed="yes"/>
+<instance part="MIXER_B" gate="G$4" x="-35.56" y="248.92" smashed="yes"/>
 <instance part="MIXER_B" gate="G$5" x="-43.18" y="281.94" smashed="yes"/>
 <instance part="RMODE_MIXERB" gate="G$1" x="40.64" y="477.52" smashed="yes" rot="R90">
 <attribute name="NAME" x="41.91" y="476.4786" size="1.778" layer="95"/>
 <attribute name="VALUE" x="41.91" y="474.218" size="1.778" layer="96"/>
 </instance>
-<instance part="CIN_VCA" gate="G$1" x="139.7" y="256.54" smashed="yes" rot="R90">
-<attribute name="NAME" x="139.319" y="258.064" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="144.399" y="258.064" size="1.778" layer="96" rot="R90"/>
-</instance>
 <instance part="AGND5" gate="VR1" x="25.4" y="467.36" smashed="yes"/>
-<instance part="AGND6" gate="VR1" x="-83.82" y="213.36" smashed="yes"/>
+<instance part="AGND6" gate="VR1" x="-83.82" y="226.06" smashed="yes"/>
 <instance part="AGND7" gate="VR1" x="-83.82" y="256.54" smashed="yes"/>
-<instance part="AGND8" gate="VR1" x="172.72" y="236.22" smashed="yes"/>
 <instance part="AGND13" gate="VR1" x="-83.82" y="292.1" smashed="yes"/>
 <instance part="CDEC+15V_MIXERB" gate="G$1" x="22.86" y="480.06" smashed="yes" rot="R270">
 <attribute name="NAME" x="16.256" y="484.759" size="1.778" layer="95" rot="R180"/>
@@ -25689,9 +25680,9 @@ Otherwise connect 1 with 2, and
 <instance part="SUPPLY8" gate="G$1" x="30.48" y="487.68" smashed="yes" rot="R270">
 <attribute name="VALUE" x="25.781" y="490.855" size="1.778" layer="96" rot="R270"/>
 </instance>
-<instance part="CIN4_MIXERB" gate="G$1" x="-106.68" y="236.22" smashed="yes" rot="R90">
-<attribute name="NAME" x="-107.061" y="237.744" size="1.778" layer="95" rot="R90"/>
-<attribute name="VALUE" x="-101.981" y="237.744" size="1.778" layer="96" rot="R90"/>
+<instance part="CIN4_MIXERB" gate="G$1" x="-106.68" y="248.92" smashed="yes" rot="R90">
+<attribute name="NAME" x="-107.061" y="250.444" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="-101.981" y="250.444" size="1.778" layer="96" rot="R90"/>
 </instance>
 <instance part="SUPPLY9" gate="+15V" x="48.26" y="472.44" smashed="yes" rot="R270">
 <attribute name="VALUE" x="51.435" y="474.98" size="1.778" layer="96" rot="R270"/>
@@ -25995,14 +25986,6 @@ Otherwise connect 1 with 2, and
 <instance part="SUPPLY52" gate="+15V" x="-403.86" y="490.22" smashed="yes" rot="R90">
 <attribute name="VALUE" x="-407.035" y="487.68" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="R_FM_LIN1" gate="G$1" x="-261.62" y="492.76" smashed="yes">
-<attribute name="NAME" x="-265.43" y="494.2586" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-265.43" y="489.458" size="1.778" layer="96"/>
-</instance>
-<instance part="C_FM_LIN1" gate="G$1" x="-251.46" y="492.76" smashed="yes" rot="R90">
-<attribute name="NAME" x="-247.396" y="490.601" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-252.476" y="488.061" size="1.778" layer="96"/>
-</instance>
 <instance part="3340A" gate="G$1" x="-429.26" y="360.68" smashed="yes"/>
 <instance part="R8_3" gate="G$1" x="-398.78" y="363.22" smashed="yes">
 <attribute name="NAME" x="-402.59" y="364.7186" size="1.778" layer="95"/>
@@ -26228,14 +26211,6 @@ Otherwise connect 1 with 2, and
 <instance part="AGND103" gate="VR1" x="-355.6" y="368.3" smashed="yes"/>
 <instance part="AGND104" gate="VR1" x="-297.18" y="406.4" smashed="yes" rot="R270"/>
 <instance part="AGND105" gate="VR1" x="-238.76" y="386.08" smashed="yes" rot="R90"/>
-<instance part="R_FM_LIN3" gate="G$1" x="-416.56" y="358.14" smashed="yes">
-<attribute name="NAME" x="-420.37" y="359.6386" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-420.37" y="354.838" size="1.778" layer="96"/>
-</instance>
-<instance part="C_FM_LIN3" gate="G$1" x="-406.4" y="358.14" smashed="yes" rot="R90">
-<attribute name="NAME" x="-402.336" y="355.981" size="1.778" layer="95"/>
-<attribute name="VALUE" x="-407.416" y="353.441" size="1.778" layer="96"/>
-</instance>
 <instance part="EXPCONV2" gate="A" x="-520.7" y="195.58" smashed="yes">
 <attribute name="NAME" x="-518.16" y="198.755" size="1.778" layer="95"/>
 <attribute name="VALUE" x="-518.16" y="190.5" size="1.778" layer="96"/>
@@ -26569,11 +26544,8 @@ Otherwise connect 1 with 2, and
 <attribute name="VALUE" x="262.89" y="421.64" size="1.778" layer="96" rot="R270"/>
 </instance>
 <instance part="VCF_ANALOG_SW" gate="P" x="342.9" y="457.2" smashed="yes"/>
-<instance part="JP1" gate="G$1" x="256.54" y="256.54" smashed="yes">
-<attribute name="NAME" x="252.095" y="253.0475" size="1.778" layer="95"/>
-</instance>
-<instance part="JP_FMLIN_VCO3340B" gate="G$1" x="-200.66" y="492.76" smashed="yes">
-<attribute name="NAME" x="-205.105" y="489.2675" size="1.778" layer="95"/>
+<instance part="JP1" gate="G$1" x="256.54" y="254" smashed="yes">
+<attribute name="NAME" x="252.095" y="250.5075" size="1.778" layer="95"/>
 </instance>
 <instance part="JP_TRIOUT_VCO3340B" gate="G$1" x="-200.66" y="477.52" smashed="yes">
 <attribute name="NAME" x="-205.105" y="474.0275" size="1.778" layer="95"/>
@@ -26611,6 +26583,72 @@ Otherwise connect 1 with 2, and
 <instance part="JP_SYNC_3340B_TO_A" gate="G$1" x="-342.9" y="434.34" smashed="yes" rot="R90">
 <attribute name="NAME" x="-339.4075" y="429.895" size="1.778" layer="95" rot="R90"/>
 </instance>
+<instance part="JP_FMLIN_VCO3340B1" gate="G$1" x="-383.54" y="388.62" smashed="yes">
+<attribute name="NAME" x="-387.985" y="385.1275" size="1.778" layer="95"/>
+</instance>
+<instance part="VCO1" gate="OTA1" x="177.8" y="254" smashed="yes">
+<attribute name="NAME" x="180.34" y="248.92" size="1.778" layer="95"/>
+<attribute name="VALUE" x="180.34" y="246.38" size="1.778" layer="96"/>
+</instance>
+<instance part="VCO1" gate="SUPPLY" x="175.26" y="254" smashed="yes"/>
+<instance part="RSTAB3_MIXERB1" gate="G$1" x="185.42" y="269.24" smashed="yes" rot="R270">
+<attribute name="NAME" x="186.9186" y="273.05" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="182.118" y="273.05" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="RSTAB3_MIXERB2" gate="G$1" x="162.56" y="264.16" smashed="yes" rot="R270">
+<attribute name="NAME" x="164.0586" y="270.51" size="1.016" layer="95" rot="R270"/>
+<attribute name="VALUE" x="159.258" y="267.97" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="RSTAB3_MIXERB3" gate="G$1" x="162.56" y="238.76" smashed="yes" rot="R270">
+<attribute name="NAME" x="164.0586" y="242.57" size="1.016" layer="95" rot="R270"/>
+<attribute name="VALUE" x="159.258" y="242.57" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="RSTAB3_MIXERB4" gate="G$1" x="167.64" y="264.16" smashed="yes" rot="R270">
+<attribute name="NAME" x="169.1386" y="267.97" size="1.016" layer="95" rot="R270"/>
+<attribute name="VALUE" x="164.338" y="267.97" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="RSTAB3_MIXERB5" gate="G$1" x="167.64" y="241.3" smashed="yes" rot="R90">
+<attribute name="NAME" x="173.7614" y="227.33" size="1.016" layer="95" rot="R90"/>
+<attribute name="VALUE" x="170.942" y="237.49" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="CSTAB1" gate="G$1" x="142.24" y="256.54" smashed="yes" rot="R270">
+<attribute name="NAME" x="142.621" y="255.016" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="137.541" y="255.016" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="MIXER_B" gate="G$2" x="-48.26" y="218.44" smashed="yes"/>
+<instance part="JP_OUT_VCO3340A1" gate="G$1" x="12.7" y="218.44" smashed="yes">
+<attribute name="NAME" x="8.255" y="214.9475" size="1.778" layer="95"/>
+</instance>
+<instance part="RSTAB4_MIXERB1" gate="G$1" x="-12.7" y="223.52" smashed="yes" rot="R270">
+<attribute name="NAME" x="-11.2014" y="227.33" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="-16.002" y="227.33" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="JP_OUT_VCO3340A2" gate="G$1" x="-119.38" y="218.44" smashed="yes">
+<attribute name="NAME" x="-123.825" y="214.9475" size="1.778" layer="95"/>
+</instance>
+<instance part="CSTAB2" gate="G$1" x="2.54" y="218.44" smashed="yes" rot="R270">
+<attribute name="NAME" x="2.921" y="216.916" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="-2.159" y="216.916" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="AGND1" gate="VR1" x="-12.7" y="238.76" smashed="yes" rot="R180"/>
+<instance part="RIN4_MIXERB1" gate="G$1" x="-93.98" y="218.44" smashed="yes" rot="R180">
+<attribute name="NAME" x="-90.17" y="216.9414" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-90.17" y="221.742" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="RSTAB4_MIXERB2" gate="G$1" x="-86.36" y="213.36" smashed="yes" rot="R270">
+<attribute name="NAME" x="-84.8614" y="217.17" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="-89.662" y="217.17" size="1.778" layer="96" rot="R270"/>
+</instance>
+<instance part="CSTAB3" gate="G$1" x="-86.36" y="200.66" smashed="yes" rot="R180">
+<attribute name="NAME" x="-87.884" y="200.279" size="1.778" layer="95" rot="R180"/>
+<attribute name="VALUE" x="-87.884" y="205.359" size="1.778" layer="96" rot="R180"/>
+</instance>
+<instance part="AGND2" gate="VR1" x="-86.36" y="193.04" smashed="yes"/>
+<instance part="CIN4_MIXERB1" gate="G$1" x="-109.22" y="218.44" smashed="yes" rot="R90">
+<attribute name="NAME" x="-109.601" y="219.964" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="-104.521" y="219.964" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="AGND3" gate="VR1" x="175.26" y="223.52" smashed="yes"/>
 </instances>
 <busses>
 </busses>
@@ -26753,9 +26791,9 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="411_IN_TRI" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="GPA1"/>
-<wire x1="-38.1" y1="88.9" x2="-48.26" y2="88.9" width="0.1524" layer="91"/>
-<label x="-43.18" y="88.9" size="1.27" layer="95"/>
+<label x="-43.18" y="91.44" size="1.27" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="GPA0"/>
+<wire x1="-48.26" y1="91.44" x2="-38.1" y2="91.44" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="3" gate="A" pin="IN"/>
@@ -26768,9 +26806,9 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="411_IN_SYNC" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="GPA2"/>
-<wire x1="-38.1" y1="86.36" x2="-48.26" y2="86.36" width="0.1524" layer="91"/>
 <label x="-43.18" y="86.36" size="1.27" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="GPA3"/>
+<wire x1="-38.1" y1="83.82" x2="-48.26" y2="83.82" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="3" gate="B" pin="IN"/>
@@ -26798,9 +26836,9 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="411_IN_SAW" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="GPA3"/>
-<wire x1="-38.1" y1="83.82" x2="-48.26" y2="83.82" width="0.1524" layer="91"/>
 <label x="-43.18" y="83.82" size="1.27" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="GPA2"/>
+<wire x1="-48.26" y1="86.36" x2="-38.1" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="3" gate="C" pin="IN"/>
@@ -26880,8 +26918,8 @@ Otherwise connect 1 with 2, and
 </segment>
 <segment>
 <pinref part="MIXER_B" gate="G$4" pin="GAIN_VCA"/>
-<wire x1="-35.56" y1="251.46" x2="-20.32" y2="251.46" width="0.1524" layer="91"/>
-<label x="-27.94" y="251.46" size="1.778" layer="95"/>
+<wire x1="-35.56" y1="264.16" x2="-20.32" y2="264.16" width="0.1524" layer="91"/>
+<label x="-27.94" y="264.16" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="GAIN3_B" class="0">
@@ -26896,18 +26934,6 @@ Otherwise connect 1 with 2, and
 <wire x1="-33.02" y1="297.18" x2="-43.18" y2="297.18" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="GAIN1_B" class="0">
-<segment>
-<wire x1="-175.26" y1="66.04" x2="-190.5" y2="66.04" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="VOUT_11"/>
-<label x="-175.26" y="66.04" size="1.27" layer="95"/>
-</segment>
-<segment>
-<pinref part="MIXER_B" gate="G$2" pin="GAIN_VCA"/>
-<wire x1="223.52" y1="271.78" x2="215.9" y2="271.78" width="0.1524" layer="91"/>
-<label x="223.52" y="271.78" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="GAIN2_B" class="0">
 <segment>
 <wire x1="-175.26" y1="63.5" x2="-190.5" y2="63.5" width="0.1524" layer="91"/>
@@ -26920,18 +26946,11 @@ Otherwise connect 1 with 2, and
 <label x="-35.56" y="332.74" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="NOISE_GENE" class="0">
-<segment>
-<pinref part="U1" gate="A" pin="VOUT_15"/>
-<wire x1="-190.5" y1="55.88" x2="-175.26" y2="55.88" width="0.1524" layer="91"/>
-<label x="-175.26" y="55.88" size="1.27" layer="95"/>
-</segment>
-</net>
 <net name="GAIN3_A" class="0">
 <segment>
-<wire x1="-175.26" y1="81.28" x2="-190.5" y2="81.28" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="VOUT_5"/>
-<label x="-175.26" y="81.28" size="1.27" layer="95"/>
+<label x="-175.26" y="78.74" size="1.27" layer="95"/>
+<pinref part="U1" gate="A" pin="VOUT_6"/>
+<wire x1="-190.5" y1="78.74" x2="-175.26" y2="78.74" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <label x="-38.1" y="403.86" size="1.778" layer="95"/>
@@ -26941,9 +26960,9 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="GAIN4_A" class="0">
 <segment>
-<wire x1="-175.26" y1="78.74" x2="-190.5" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="U1" gate="A" pin="VOUT_6"/>
-<label x="-175.26" y="78.74" size="1.27" layer="95"/>
+<label x="-175.26" y="81.28" size="1.27" layer="95"/>
+<pinref part="U1" gate="A" pin="VOUT_5"/>
+<wire x1="-190.5" y1="81.28" x2="-175.26" y2="81.28" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="MIXER_A" gate="G$4" pin="GAIN_VCA"/>
@@ -27180,6 +27199,7 @@ Otherwise connect 1 with 2, and
 <pinref part="R_CV_FREQ3" gate="G$1" pin="2"/>
 <wire x1="-406.4" y1="388.62" x2="-386.08" y2="388.62" width="0.1524" layer="91"/>
 <label x="-388.62" y="388.62" size="1.778" layer="95"/>
+<pinref part="JP_FMLIN_VCO3340B1" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="CV_PWM_3340A" class="0">
@@ -27364,9 +27384,9 @@ Otherwise connect 1 with 2, and
 </net>
 <net name="411_IN_PULSE" class="0">
 <segment>
-<pinref part="IC1" gate="G$1" pin="GPA0"/>
-<wire x1="-38.1" y1="91.44" x2="-48.26" y2="91.44" width="0.1524" layer="91"/>
-<label x="-43.18" y="91.44" size="1.27" layer="95"/>
+<label x="-43.18" y="88.9" size="1.27" layer="95"/>
+<pinref part="IC1" gate="G$1" pin="GPA1"/>
+<wire x1="-48.26" y1="88.9" x2="-38.1" y2="88.9" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <wire x1="-274.32" y1="378.46" x2="-274.32" y2="386.08" width="0.1524" layer="91"/>
@@ -27468,27 +27488,10 @@ Otherwise connect 1 with 2, and
 <pinref part="MIXER_B" gate="G$3" pin="I_IN"/>
 </segment>
 </net>
-<net name="2164_IN1_MIXB" class="0">
-<segment>
-<pinref part="RIN_VCA" gate="G$1" pin="1"/>
-<pinref part="RSTAB_VCA" gate="G$1" pin="1"/>
-<wire x1="170.18" y1="256.54" x2="172.72" y2="256.54" width="0.1524" layer="91"/>
-<label x="180.34" y="256.54" size="1.778" layer="95"/>
-<junction x="172.72" y="256.54"/>
-<wire x1="172.72" y1="256.54" x2="200.66" y2="256.54" width="0.1524" layer="91"/>
-<pinref part="MIXER_B" gate="G$2" pin="I_IN"/>
-</segment>
-</net>
 <net name="N$20" class="0">
 <segment>
 <pinref part="CSTAB2_MIXERB" gate="G$1" pin="2"/>
 <pinref part="RSTAB2_MIXERB" gate="G$1" pin="2"/>
-</segment>
-</net>
-<net name="N$21" class="0">
-<segment>
-<pinref part="RSTAB_VCA" gate="G$1" pin="2"/>
-<pinref part="CSTAB_VCA" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="2164_IN3_MIXB" class="0">
@@ -27641,15 +27644,29 @@ Otherwise connect 1 with 2, and
 <pinref part="SUPPLY68" gate="+15V" pin="+15V"/>
 <pinref part="VCF_ANALOG_SW" gate="P" pin="V+"/>
 </segment>
+<segment>
+<pinref part="VCO1" gate="SUPPLY" pin="V+"/>
+<pinref part="RSTAB3_MIXERB2" gate="G$1" pin="1"/>
+<wire x1="175.26" y1="271.78" x2="175.26" y2="261.62" width="0.1524" layer="91"/>
+<label x="162.56" y="271.78" size="1.778" layer="95"/>
+<wire x1="162.56" y1="271.78" x2="162.56" y2="269.24" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="271.78" x2="167.64" y2="271.78" width="0.1524" layer="91"/>
+<pinref part="RSTAB3_MIXERB4" gate="G$1" pin="1"/>
+<wire x1="167.64" y1="271.78" x2="175.26" y2="271.78" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="269.24" x2="167.64" y2="271.78" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="271.78" x2="162.56" y2="271.78" width="0.1524" layer="91"/>
+<junction x="162.56" y="271.78"/>
+<junction x="167.64" y="271.78"/>
+</segment>
 </net>
 <net name="2164_IN4_MIXB" class="0">
 <segment>
-<wire x1="-86.36" y1="236.22" x2="-83.82" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="-86.36" y1="248.92" x2="-83.82" y2="248.92" width="0.1524" layer="91"/>
 <pinref part="RIN4_MIXERB" gate="G$1" pin="1"/>
 <pinref part="RSTAB4_MIXERB" gate="G$1" pin="1"/>
-<label x="-73.66" y="238.76" size="1.778" layer="95" rot="R90"/>
-<junction x="-83.82" y="236.22"/>
-<wire x1="-83.82" y1="236.22" x2="-50.8" y2="236.22" width="0.1524" layer="91"/>
+<label x="-73.66" y="251.46" size="1.778" layer="95" rot="R90"/>
+<junction x="-83.82" y="248.92"/>
+<wire x1="-83.82" y1="248.92" x2="-50.8" y2="248.92" width="0.1524" layer="91"/>
 <pinref part="MIXER_B" gate="G$4" pin="I_IN"/>
 </segment>
 </net>
@@ -27667,13 +27684,6 @@ Otherwise connect 1 with 2, and
 <label x="40.64" y="482.6" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$62" class="0">
-<segment>
-<pinref part="CIN_VCA" gate="G$1" pin="2"/>
-<pinref part="RIN_VCA" gate="G$1" pin="2"/>
-<wire x1="144.78" y1="256.54" x2="160.02" y2="256.54" width="0.1524" layer="91"/>
-</segment>
-</net>
 <net name="N$65" class="0">
 <segment>
 <pinref part="RIN3_MIXERB" gate="G$1" pin="2"/>
@@ -27682,63 +27692,6 @@ Otherwise connect 1 with 2, and
 </segment>
 </net>
 <net name="AGND" class="0">
-<segment>
-<pinref part="MIXER_B" gate="G$1" pin="GND"/>
-<wire x1="25.4" y1="487.68" x2="25.4" y2="480.06" width="0.1524" layer="91"/>
-<pinref part="AGND5" gate="VR1" pin="AGND"/>
-<pinref part="CDEC+15V_MIXERB" gate="G$1" pin="1"/>
-<pinref part="CDEC-15V_MIXERB" gate="G$1" pin="2"/>
-<junction x="25.4" y="480.06"/>
-<wire x1="25.4" y1="469.9" x2="25.4" y2="472.44" width="0.1524" layer="91"/>
-<pinref part="CDEC+15VPOL_MIXERB" gate="G$1" pin="1"/>
-<wire x1="25.4" y1="472.44" x2="25.4" y2="480.06" width="0.1524" layer="91"/>
-<junction x="25.4" y="472.44"/>
-<pinref part="CDEC-15VPOL_MIXERB" gate="G$1" pin="2"/>
-</segment>
-<segment>
-<pinref part="CSTAB3_MIXERB" gate="G$1" pin="1"/>
-<pinref part="AGND7" gate="VR1" pin="AGND"/>
-<wire x1="-83.82" y1="259.08" x2="-83.82" y2="264.16" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="CSTAB_VCA" gate="G$1" pin="1"/>
-<pinref part="AGND8" gate="VR1" pin="AGND"/>
-</segment>
-<segment>
-<pinref part="CSTAB2_MIXERB" gate="G$1" pin="1"/>
-<pinref part="AGND13" gate="VR1" pin="AGND"/>
-<wire x1="-83.82" y1="294.64" x2="-83.82" y2="299.72" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="MIXER_A" gate="G$1" pin="GND"/>
-<pinref part="AGND57" gate="VR1" pin="AGND"/>
-<wire x1="-91.44" y1="469.9" x2="-91.44" y2="487.68" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="CSTAB3_MIXERA" gate="G$1" pin="1"/>
-<pinref part="AGND59" gate="VR1" pin="AGND"/>
-<wire x1="-76.2" y1="368.3" x2="-76.2" y2="370.84" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="CSTAB1_MIXERA" gate="G$1" pin="1"/>
-<pinref part="AGND60" gate="VR1" pin="AGND"/>
-<wire x1="-76.2" y1="439.42" x2="-76.2" y2="441.96" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="CSTAB2_MIXERA" gate="G$1" pin="1"/>
-<pinref part="AGND61" gate="VR1" pin="AGND"/>
-<wire x1="-76.2" y1="406.4" x2="-76.2" y2="408.94" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="AGND58" gate="VR1" pin="AGND"/>
-<pinref part="CSTAB4_MIXERA" gate="G$1" pin="1"/>
-<wire x1="-76.2" y1="330.2" x2="-76.2" y2="332.74" width="0.1524" layer="91"/>
-</segment>
-<segment>
-<pinref part="CONV_ITOV_OUT" gate="A" pin="+IN"/>
-<wire x1="45.72" y1="429.26" x2="33.02" y2="429.26" width="0.1524" layer="91"/>
-<label x="33.02" y="429.26" size="1.778" layer="95"/>
-</segment>
 <segment>
 <pinref part="C3" gate="G$1" pin="1"/>
 <pinref part="AGND116" gate="VR1" pin="AGND"/>
@@ -28240,6 +28193,117 @@ Otherwise connect 1 with 2, and
 <pinref part="RCAL_2" gate="G$1" pin="2"/>
 <wire x1="-231.14" y1="175.26" x2="-231.14" y2="180.34" width="0.1524" layer="91"/>
 </segment>
+<segment>
+<pinref part="AGND6" gate="VR1" pin="AGND"/>
+<pinref part="CSTAB8" gate="G$1" pin="1"/>
+<wire x1="-83.82" y1="228.6" x2="-83.82" y2="231.14" width="0.1524" layer="91"/>
+<junction x="-83.82" y="228.6"/>
+<wire x1="-83.82" y1="228.6" x2="-76.2" y2="228.6" width="0.1524" layer="91"/>
+<pinref part="CSTAB3_MIXERB" gate="G$1" pin="1"/>
+<pinref part="AGND7" gate="VR1" pin="AGND"/>
+<wire x1="-83.82" y1="259.08" x2="-83.82" y2="261.62" width="0.1524" layer="91"/>
+<wire x1="-83.82" y1="261.62" x2="-83.82" y2="264.16" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="228.6" x2="-76.2" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="236.22" x2="-76.2" y2="261.62" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="261.62" x2="-83.82" y2="261.62" width="0.1524" layer="91"/>
+<junction x="-83.82" y="261.62"/>
+<pinref part="CSTAB2_MIXERB" gate="G$1" pin="1"/>
+<pinref part="AGND13" gate="VR1" pin="AGND"/>
+<wire x1="-83.82" y1="294.64" x2="-83.82" y2="297.18" width="0.1524" layer="91"/>
+<wire x1="-83.82" y1="297.18" x2="-83.82" y2="299.72" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="261.62" x2="-76.2" y2="297.18" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="297.18" x2="-83.82" y2="297.18" width="0.1524" layer="91"/>
+<junction x="-76.2" y="261.62"/>
+<junction x="-83.82" y="297.18"/>
+<wire x1="-76.2" y1="297.18" x2="-76.2" y2="320.04" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="320.04" x2="-71.12" y2="320.04" width="0.1524" layer="91"/>
+<junction x="-76.2" y="297.18"/>
+<pinref part="MIXER_A" gate="G$1" pin="GND"/>
+<pinref part="AGND57" gate="VR1" pin="AGND"/>
+<wire x1="-91.44" y1="469.9" x2="-91.44" y2="472.44" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="472.44" x2="-91.44" y2="487.68" width="0.1524" layer="91"/>
+<wire x1="-91.44" y1="472.44" x2="-81.28" y2="472.44" width="0.1524" layer="91"/>
+<wire x1="-81.28" y1="472.44" x2="-81.28" y2="467.36" width="0.1524" layer="91"/>
+<junction x="-91.44" y="472.44"/>
+<wire x1="-81.28" y1="467.36" x2="-68.58" y2="467.36" width="0.1524" layer="91"/>
+<pinref part="CSTAB1_MIXERA" gate="G$1" pin="1"/>
+<pinref part="AGND60" gate="VR1" pin="AGND"/>
+<wire x1="-76.2" y1="439.42" x2="-76.2" y2="441.96" width="0.1524" layer="91"/>
+<pinref part="MIXER_B" gate="G$1" pin="GND"/>
+<wire x1="25.4" y1="487.68" x2="25.4" y2="480.06" width="0.1524" layer="91"/>
+<pinref part="AGND5" gate="VR1" pin="AGND"/>
+<pinref part="CDEC+15V_MIXERB" gate="G$1" pin="1"/>
+<pinref part="CDEC-15V_MIXERB" gate="G$1" pin="2"/>
+<junction x="25.4" y="480.06"/>
+<wire x1="25.4" y1="469.9" x2="25.4" y2="472.44" width="0.1524" layer="91"/>
+<pinref part="CDEC+15VPOL_MIXERB" gate="G$1" pin="1"/>
+<wire x1="25.4" y1="472.44" x2="25.4" y2="480.06" width="0.1524" layer="91"/>
+<junction x="25.4" y="472.44"/>
+<pinref part="CDEC-15VPOL_MIXERB" gate="G$1" pin="2"/>
+<label x="30.48" y="467.36" size="1.778" layer="95"/>
+<pinref part="CONV_ITOV_OUT" gate="A" pin="+IN"/>
+<wire x1="45.72" y1="429.26" x2="25.4" y2="429.26" width="0.1524" layer="91"/>
+<label x="33.02" y="429.26" size="1.778" layer="95"/>
+<wire x1="25.4" y1="469.9" x2="25.4" y2="439.42" width="0.1524" layer="91"/>
+<junction x="25.4" y="469.9"/>
+<wire x1="25.4" y1="439.42" x2="25.4" y2="429.26" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="439.42" x2="-68.58" y2="439.42" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="439.42" x2="-66.04" y2="439.42" width="0.1524" layer="91"/>
+<junction x="-76.2" y="439.42"/>
+<wire x1="-66.04" y1="439.42" x2="25.4" y2="439.42" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="467.36" x2="-68.58" y2="439.42" width="0.1524" layer="91"/>
+<junction x="-68.58" y="439.42"/>
+<pinref part="CSTAB2_MIXERA" gate="G$1" pin="1"/>
+<pinref part="AGND61" gate="VR1" pin="AGND"/>
+<wire x1="-76.2" y1="406.4" x2="-76.2" y2="408.94" width="0.1524" layer="91"/>
+<wire x1="-66.04" y1="439.42" x2="-66.04" y2="406.4" width="0.1524" layer="91"/>
+<wire x1="-66.04" y1="406.4" x2="-68.58" y2="406.4" width="0.1524" layer="91"/>
+<junction x="-66.04" y="439.42"/>
+<junction x="-76.2" y="406.4"/>
+<pinref part="CSTAB3_MIXERA" gate="G$1" pin="1"/>
+<pinref part="AGND59" gate="VR1" pin="AGND"/>
+<wire x1="-68.58" y1="406.4" x2="-76.2" y2="406.4" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="368.3" x2="-76.2" y2="370.84" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="406.4" x2="-68.58" y2="368.3" width="0.1524" layer="91"/>
+<wire x1="-68.58" y1="368.3" x2="-71.12" y2="368.3" width="0.1524" layer="91"/>
+<junction x="-68.58" y="406.4"/>
+<junction x="-76.2" y="368.3"/>
+<pinref part="AGND58" gate="VR1" pin="AGND"/>
+<pinref part="CSTAB4_MIXERA" gate="G$1" pin="1"/>
+<wire x1="-71.12" y1="368.3" x2="-76.2" y2="368.3" width="0.1524" layer="91"/>
+<wire x1="-76.2" y1="330.2" x2="-76.2" y2="332.74" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="368.3" x2="-71.12" y2="330.2" width="0.1524" layer="91"/>
+<wire x1="-71.12" y1="330.2" x2="-76.2" y2="330.2" width="0.1524" layer="91"/>
+<junction x="-71.12" y="368.3"/>
+<junction x="-76.2" y="330.2"/>
+<wire x1="-71.12" y1="320.04" x2="-71.12" y2="330.2" width="0.1524" layer="91"/>
+<junction x="-76.2" y="236.22"/>
+<wire x1="-76.2" y1="236.22" x2="-12.7" y2="236.22" width="0.1524" layer="91"/>
+<pinref part="RSTAB4_MIXERB1" gate="G$1" pin="1"/>
+<wire x1="-12.7" y1="236.22" x2="-12.7" y2="228.6" width="0.1524" layer="91"/>
+<pinref part="AGND1" gate="VR1" pin="AGND"/>
+<junction x="-12.7" y="236.22"/>
+<wire x1="-76.2" y1="228.6" x2="-76.2" y2="195.58" width="0.1524" layer="91"/>
+<junction x="-76.2" y="228.6"/>
+<pinref part="AGND2" gate="VR1" pin="AGND"/>
+<pinref part="CSTAB3" gate="G$1" pin="1"/>
+<wire x1="-86.36" y1="195.58" x2="-86.36" y2="198.12" width="0.1524" layer="91"/>
+<junction x="-86.36" y="195.58"/>
+<wire x1="-86.36" y1="195.58" x2="-76.2" y2="195.58" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<pinref part="RSTAB3_MIXERB3" gate="G$1" pin="2"/>
+<wire x1="162.56" y1="226.06" x2="162.56" y2="233.68" width="0.1524" layer="91"/>
+<wire x1="162.56" y1="226.06" x2="167.64" y2="226.06" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="226.06" x2="175.26" y2="226.06" width="0.1524" layer="91"/>
+<pinref part="AGND3" gate="VR1" pin="AGND"/>
+<pinref part="RSTAB3_MIXERB5" gate="G$1" pin="1"/>
+<wire x1="167.64" y1="236.22" x2="167.64" y2="226.06" width="0.1524" layer="91"/>
+<junction x="167.64" y="226.06"/>
+<pinref part="VCO1" gate="SUPPLY" pin="V-"/>
+<wire x1="175.26" y1="246.38" x2="175.26" y2="226.06" width="0.1524" layer="91"/>
+<junction x="175.26" y="226.06"/>
+</segment>
 </net>
 <net name="N$69" class="0">
 <segment>
@@ -28256,18 +28320,23 @@ Otherwise connect 1 with 2, and
 <wire x1="-185.42" y1="426.72" x2="-185.42" y2="383.54" width="0.1524" layer="91"/>
 <pinref part="JP_OUT_VCO3340A" gate="G$1" pin="2"/>
 <wire x1="-185.42" y1="383.54" x2="-198.12" y2="383.54" width="0.1524" layer="91"/>
+<wire x1="-185.42" y1="383.54" x2="-185.42" y2="218.44" width="0.1524" layer="91"/>
+<wire x1="-185.42" y1="218.44" x2="-121.92" y2="218.44" width="0.1524" layer="91"/>
+<junction x="-185.42" y="383.54"/>
+<pinref part="JP_OUT_VCO3340A2" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="IN_VCA" class="0">
 <segment>
-<wire x1="129.54" y1="391.16" x2="129.54" y2="256.54" width="0.1524" layer="91"/>
+<wire x1="93.98" y1="391.16" x2="93.98" y2="256.54" width="0.1524" layer="91"/>
 <label x="127" y="335.28" size="1.778" layer="95" rot="R90"/>
-<pinref part="CIN_VCA" gate="G$1" pin="1"/>
-<label x="127" y="256.54" size="1.778" layer="95" rot="R180"/>
-<wire x1="137.16" y1="256.54" x2="129.54" y2="256.54" width="0.1524" layer="91"/>
+<label x="53.34" y="279.4" size="1.778" layer="95" rot="R180"/>
 <pinref part="VCF_JUMPER" gate="1" pin="2"/>
 <wire x1="111.76" y1="386.08" x2="111.76" y2="391.16" width="0.1524" layer="91"/>
-<wire x1="111.76" y1="391.16" x2="129.54" y2="391.16" width="0.1524" layer="91"/>
+<wire x1="111.76" y1="391.16" x2="93.98" y2="391.16" width="0.1524" layer="91"/>
+<label x="114.3" y="256.54" size="1.778" layer="95" rot="R90"/>
+<pinref part="CSTAB1" gate="G$1" pin="2"/>
+<wire x1="93.98" y1="256.54" x2="137.16" y2="256.54" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="OUT_VCF" class="0">
@@ -28286,9 +28355,9 @@ Otherwise connect 1 with 2, and
 <net name="2164_OUT4_MIXB" class="0">
 <segment>
 <pinref part="MIXER_B" gate="G$4" pin="I_OUT"/>
-<label x="-10.16" y="233.68" size="1.778" layer="95" rot="R180"/>
-<wire x1="-7.62" y1="236.22" x2="10.16" y2="236.22" width="0.1524" layer="91"/>
-<wire x1="10.16" y1="236.22" x2="10.16" y2="408.94" width="0.1524" layer="91"/>
+<label x="-10.16" y="246.38" size="1.778" layer="95" rot="R180"/>
+<wire x1="-7.62" y1="248.92" x2="10.16" y2="248.92" width="0.1524" layer="91"/>
+<wire x1="10.16" y1="248.92" x2="10.16" y2="408.94" width="0.1524" layer="91"/>
 <pinref part="JP_MIXER_B" gate="G$1" pin="6"/>
 <wire x1="10.16" y1="408.94" x2="15.24" y2="408.94" width="0.1524" layer="91"/>
 </segment>
@@ -28301,14 +28370,6 @@ Otherwise connect 1 with 2, and
 <wire x1="12.7" y1="317.5" x2="12.7" y2="406.4" width="0.1524" layer="91"/>
 <pinref part="JP_MIXER_B" gate="G$1" pin="4"/>
 <wire x1="12.7" y1="406.4" x2="15.24" y2="406.4" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="OUT_VCA" class="0">
-<segment>
-<pinref part="MIXER_B" gate="G$2" pin="I_OUT"/>
-<wire x1="254" y1="256.54" x2="243.84" y2="256.54" width="0.1524" layer="91"/>
-<label x="246.38" y="259.08" size="1.778" layer="95"/>
-<pinref part="JP1" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="INPUT_CURRENT_SUM_STG" class="0">
@@ -28355,17 +28416,22 @@ Otherwise connect 1 with 2, and
 <wire x1="287.02" y1="205.74" x2="281.94" y2="205.74" width="0.1524" layer="91"/>
 <wire x1="281.94" y1="205.74" x2="281.94" y2="210.82" width="0.1524" layer="91"/>
 <junction x="281.94" y="210.82"/>
-<wire x1="264.16" y1="256.54" x2="264.16" y2="254" width="0.1524" layer="91"/>
 <junction x="264.16" y="254"/>
 <pinref part="JP1" gate="G$1" pin="2"/>
-<wire x1="264.16" y1="256.54" x2="259.08" y2="256.54" width="0.1524" layer="91"/>
+<wire x1="264.16" y1="254" x2="259.08" y2="254" width="0.1524" layer="91"/>
+</segment>
+<segment>
+<label x="246.38" y="259.08" size="1.778" layer="95"/>
+<pinref part="JP1" gate="G$1" pin="1"/>
+<wire x1="254" y1="254" x2="190.5" y2="254" width="0.1524" layer="91"/>
+<pinref part="VCO1" gate="OTA1" pin="OUT"/>
 </segment>
 </net>
 <net name="N$70" class="0">
 <segment>
 <pinref part="CIN4_MIXERB" gate="G$1" pin="2"/>
 <pinref part="RIN4_MIXERB" gate="G$1" pin="2"/>
-<wire x1="-101.6" y1="236.22" x2="-96.52" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="-101.6" y1="248.92" x2="-96.52" y2="248.92" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="JACK_SUM_STG" class="0">
@@ -28529,10 +28595,10 @@ Otherwise connect 1 with 2, and
 <segment>
 <pinref part="MIXER_A" gate="G$4" pin="I_OUT"/>
 <wire x1="-12.7" y1="350.52" x2="5.08" y2="350.52" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="350.52" x2="5.08" y2="424.18" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="424.18" x2="15.24" y2="424.18" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="350.52" x2="5.08" y2="426.72" width="0.1524" layer="91"/>
 <label x="-15.24" y="347.98" size="1.778" layer="95" rot="R180"/>
-<pinref part="JP_MIXER_A" gate="G$1" pin="6"/>
+<pinref part="JP_MIXER_A" gate="G$1" pin="8"/>
+<wire x1="15.24" y1="426.72" x2="5.08" y2="426.72" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="2164_OUT2_MIXA" class="0">
@@ -28540,29 +28606,19 @@ Otherwise connect 1 with 2, and
 <pinref part="MIXER_A" gate="G$3" pin="I_OUT"/>
 <wire x1="-12.7" y1="426.72" x2="-10.16" y2="426.72" width="0.1524" layer="91"/>
 <label x="-10.16" y="424.18" size="1.778" layer="95" rot="R180"/>
-<wire x1="-10.16" y1="426.72" x2="-10.16" y2="421.64" width="0.1524" layer="91"/>
-<wire x1="-10.16" y1="421.64" x2="15.24" y2="421.64" width="0.1524" layer="91"/>
-<pinref part="JP_MIXER_A" gate="G$1" pin="4"/>
-</segment>
-</net>
-<net name="2164_OUT1_MIXA" class="0">
-<segment>
-<pinref part="MIXER_A" gate="G$2" pin="I_OUT"/>
-<wire x1="-2.54" y1="419.1" x2="-2.54" y2="459.74" width="0.1524" layer="91"/>
-<wire x1="-2.54" y1="459.74" x2="-12.7" y2="459.74" width="0.1524" layer="91"/>
-<label x="-17.78" y="457.2" size="1.778" layer="95" rot="R180"/>
-<wire x1="-2.54" y1="419.1" x2="15.24" y2="419.1" width="0.1524" layer="91"/>
+<wire x1="-10.16" y1="426.72" x2="-10.16" y2="419.1" width="0.1524" layer="91"/>
 <pinref part="JP_MIXER_A" gate="G$1" pin="2"/>
+<wire x1="-10.16" y1="419.1" x2="15.24" y2="419.1" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="2164_OUT3_MIXA" class="0">
 <segment>
-<wire x1="15.24" y1="426.72" x2="2.54" y2="426.72" width="0.1524" layer="91"/>
-<wire x1="2.54" y1="426.72" x2="2.54" y2="388.62" width="0.1524" layer="91"/>
 <pinref part="MIXER_A" gate="G$5" pin="I_OUT"/>
 <wire x1="2.54" y1="388.62" x2="-12.7" y2="388.62" width="0.1524" layer="91"/>
 <label x="-7.62" y="386.08" size="1.778" layer="95" rot="R180"/>
-<pinref part="JP_MIXER_A" gate="G$1" pin="8"/>
+<pinref part="JP_MIXER_A" gate="G$1" pin="6"/>
+<wire x1="15.24" y1="424.18" x2="2.54" y2="424.18" width="0.1524" layer="91"/>
+<wire x1="2.54" y1="424.18" x2="2.54" y2="388.62" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$81" class="0">
@@ -28681,9 +28737,6 @@ Otherwise connect 1 with 2, and
 <wire x1="-266.7" y1="502.92" x2="-266.7" y2="500.38" width="0.1524" layer="91"/>
 <junction x="-266.7" y="500.38"/>
 <label x="-276.86" y="497.84" size="1.778" layer="95"/>
-<pinref part="R_FM_LIN1" gate="G$1" pin="1"/>
-<wire x1="-266.7" y1="492.76" x2="-266.7" y2="497.84" width="0.1524" layer="91"/>
-<junction x="-266.7" y="497.84"/>
 </segment>
 </net>
 <net name="SOFT_SYNC_VCOB" class="0">
@@ -28700,21 +28753,6 @@ Otherwise connect 1 with 2, and
 <pinref part="3340B" gate="G$1" pin="HARD_SYNC"/>
 <wire x1="-332.74" y1="485.14" x2="-327.66" y2="485.14" width="0.1524" layer="91"/>
 <label x="-332.74" y="487.68" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="N$84" class="0">
-<segment>
-<pinref part="R_FM_LIN1" gate="G$1" pin="2"/>
-<pinref part="C_FM_LIN1" gate="G$1" pin="1"/>
-<wire x1="-256.54" y1="492.76" x2="-254" y2="492.76" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="VCO3340B_FMLIN" class="0">
-<segment>
-<pinref part="C_FM_LIN1" gate="G$1" pin="2"/>
-<wire x1="-246.38" y1="492.76" x2="-203.2" y2="492.76" width="0.1524" layer="91"/>
-<pinref part="JP_FMLIN_VCO3340B" gate="G$1" pin="1"/>
-<label x="-228.6" y="492.76" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="TEMPCO1_VCOA" class="0">
@@ -28835,9 +28873,6 @@ Otherwise connect 1 with 2, and
 <wire x1="-421.64" y1="368.3" x2="-421.64" y2="365.76" width="0.1524" layer="91"/>
 <junction x="-421.64" y="365.76"/>
 <label x="-431.8" y="363.22" size="1.778" layer="95"/>
-<pinref part="R_FM_LIN3" gate="G$1" pin="1"/>
-<wire x1="-421.64" y1="358.14" x2="-421.64" y2="363.22" width="0.1524" layer="91"/>
-<junction x="-421.64" y="363.22"/>
 </segment>
 </net>
 <net name="SAW_3340_VCOA" class="0">
@@ -28971,19 +29006,6 @@ Otherwise connect 1 with 2, and
 <pinref part="3" gate="D" pin="S"/>
 <pinref part="R2S_1" gate="G$1" pin="2"/>
 <wire x1="-271.78" y1="365.76" x2="-243.84" y2="365.76" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$92" class="0">
-<segment>
-<pinref part="R_FM_LIN3" gate="G$1" pin="2"/>
-<pinref part="C_FM_LIN3" gate="G$1" pin="1"/>
-<wire x1="-411.48" y1="358.14" x2="-408.94" y2="358.14" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$93" class="0">
-<segment>
-<pinref part="C_FM_LIN3" gate="G$1" pin="2"/>
-<wire x1="-401.32" y1="358.14" x2="-388.62" y2="358.14" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="FM_ENTREE_13700_VCO13700" class="0">
@@ -29146,6 +29168,11 @@ Otherwise connect 1 with 2, and
 <pinref part="RTEST_13700FREQ2" gate="G$1" pin="1"/>
 <wire x1="-386.08" y1="215.9" x2="-358.14" y2="215.9" width="0.1524" layer="91"/>
 <label x="-365.76" y="215.9" size="1.778" layer="95" rot="R180"/>
+</segment>
+<segment>
+<wire x1="15.24" y1="218.44" x2="20.32" y2="218.44" width="0.1524" layer="91"/>
+<label x="20.32" y="218.44" size="1.27" layer="95"/>
+<pinref part="JP_OUT_VCO3340A1" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="OUT_EXPCONV_VCO13700" class="0">
@@ -29413,13 +29440,6 @@ Otherwise connect 1 with 2, and
 <wire x1="-162.56" y1="457.2" x2="-198.12" y2="457.2" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$1" class="0">
-<segment>
-<pinref part="JP_FMLIN_VCO3340B" gate="G$1" pin="2"/>
-<wire x1="-198.12" y1="492.76" x2="-180.34" y2="492.76" width="0.1524" layer="91"/>
-<label x="-182.88" y="492.76" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="VCO3340B_TRI_OUT" class="0">
 <segment>
 <pinref part="3340B" gate="G$1" pin="TRI_OUT"/>
@@ -29515,8 +29535,8 @@ Otherwise connect 1 with 2, and
 <label x="-200.66" y="213.36" size="1.778" layer="95"/>
 <pinref part="CIN4_MIXERB" gate="G$1" pin="1"/>
 <label x="-129.54" y="236.22" size="1.778" layer="95"/>
-<wire x1="-175.26" y1="213.36" x2="-175.26" y2="236.22" width="0.1524" layer="91"/>
-<wire x1="-175.26" y1="236.22" x2="-109.22" y2="236.22" width="0.1524" layer="91"/>
+<wire x1="-175.26" y1="213.36" x2="-175.26" y2="248.92" width="0.1524" layer="91"/>
+<wire x1="-175.26" y1="248.92" x2="-109.22" y2="248.92" width="0.1524" layer="91"/>
 <wire x1="-203.2" y1="213.36" x2="-175.26" y2="213.36" width="0.1524" layer="91"/>
 <pinref part="JP7" gate="G$1" pin="2"/>
 </segment>
@@ -29555,9 +29575,9 @@ Otherwise connect 1 with 2, and
 <net name="IN3_MIXERB" class="0">
 <segment>
 <pinref part="CIN3_MIXERB" gate="G$1" pin="1"/>
-<wire x1="-157.48" y1="281.94" x2="-109.22" y2="281.94" width="0.1524" layer="91"/>
-<wire x1="-157.48" y1="124.46" x2="-157.48" y2="281.94" width="0.1524" layer="91"/>
-<wire x1="-203.2" y1="124.46" x2="-157.48" y2="124.46" width="0.1524" layer="91"/>
+<wire x1="-154.94" y1="281.94" x2="-109.22" y2="281.94" width="0.1524" layer="91"/>
+<wire x1="-154.94" y1="124.46" x2="-154.94" y2="281.94" width="0.1524" layer="91"/>
+<wire x1="-203.2" y1="124.46" x2="-154.94" y2="124.46" width="0.1524" layer="91"/>
 <label x="-200.66" y="124.46" size="1.778" layer="95"/>
 <label x="-134.62" y="281.94" size="1.778" layer="95"/>
 <pinref part="JP9" gate="G$1" pin="2"/>
@@ -29572,11 +29592,125 @@ Otherwise connect 1 with 2, and
 <wire x1="106.68" y1="393.7" x2="106.68" y2="386.08" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="CSTAB3_MIXERB" class="0">
+<net name="N$2" class="0">
 <segment>
-<pinref part="AGND6" gate="VR1" pin="AGND"/>
-<pinref part="CSTAB8" gate="G$1" pin="1"/>
-<wire x1="-83.82" y1="215.9" x2="-83.82" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="JP_FMLIN_VCO3340B1" gate="G$1" pin="2"/>
+<wire x1="-381" y1="388.62" x2="-378.46" y2="388.62" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$4" class="0">
+<segment>
+<pinref part="MIXER_A" gate="G$2" pin="I_OUT"/>
+<wire x1="-2.54" y1="459.74" x2="-12.7" y2="459.74" width="0.1524" layer="91"/>
+<label x="-17.78" y="457.2" size="1.778" layer="95" rot="R180"/>
+<pinref part="JP_MIXER_A" gate="G$1" pin="4"/>
+<wire x1="-2.54" y1="459.74" x2="-2.54" y2="421.64" width="0.1524" layer="91"/>
+<wire x1="-2.54" y1="421.64" x2="15.24" y2="421.64" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$9" class="0">
+<segment>
+<pinref part="RSTAB3_MIXERB2" gate="G$1" pin="2"/>
+<pinref part="RSTAB3_MIXERB3" gate="G$1" pin="1"/>
+<wire x1="162.56" y1="259.08" x2="162.56" y2="256.54" width="0.1524" layer="91"/>
+<pinref part="CSTAB1" gate="G$1" pin="1"/>
+<wire x1="162.56" y1="256.54" x2="162.56" y2="243.84" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="256.54" x2="162.56" y2="256.54" width="0.1524" layer="91"/>
+<junction x="162.56" y="256.54"/>
+<pinref part="VCO1" gate="OTA1" pin="IN_P"/>
+<wire x1="162.56" y1="256.54" x2="170.18" y2="256.54" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$17" class="0">
+<segment>
+<pinref part="RSTAB3_MIXERB1" gate="G$1" pin="2"/>
+<pinref part="VCO1" gate="OTA1" pin="I_BIAS"/>
+<wire x1="185.42" y1="264.16" x2="185.42" y2="261.62" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="GAIN1_B" class="0">
+<segment>
+<pinref part="U1" gate="A" pin="VOUT_11"/>
+<wire x1="-175.26" y1="66.04" x2="-190.5" y2="66.04" width="0.1524" layer="91"/>
+<label x="-175.26" y="66.04" size="1.27" layer="95"/>
+</segment>
+<segment>
+<pinref part="MIXER_B" gate="G$2" pin="GAIN_VCA"/>
+<wire x1="-53.34" y1="233.68" x2="-48.26" y2="233.68" width="0.1524" layer="91"/>
+<label x="-58.42" y="233.68" size="1.27" layer="95"/>
+</segment>
+</net>
+<net name="CV_VCA" class="0">
+<segment>
+<wire x1="-157.48" y1="55.88" x2="-157.48" y2="116.84" width="0.1524" layer="91"/>
+<label x="139.7" y="187.96" size="1.778" layer="95"/>
+<pinref part="RSTAB3_MIXERB1" gate="G$1" pin="1"/>
+<wire x1="76.2" y1="274.32" x2="185.42" y2="274.32" width="0.1524" layer="91"/>
+<label x="187.96" y="279.4" size="1.778" layer="95"/>
+<pinref part="U1" gate="A" pin="VOUT_15"/>
+<label x="-175.26" y="55.88" size="1.27" layer="95"/>
+<wire x1="-157.48" y1="55.88" x2="-190.5" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="274.32" x2="76.2" y2="116.84" width="0.1524" layer="91"/>
+<wire x1="76.2" y1="116.84" x2="-157.48" y2="116.84" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$8" class="0">
+<segment>
+<pinref part="MIXER_B" gate="G$2" pin="I_OUT"/>
+<wire x1="-20.32" y1="218.44" x2="-12.7" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="RSTAB4_MIXERB1" gate="G$1" pin="2"/>
+<wire x1="-12.7" y1="218.44" x2="-2.54" y2="218.44" width="0.1524" layer="91"/>
+<junction x="-12.7" y="218.44"/>
+<pinref part="CSTAB2" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$1" class="0">
+<segment>
+<pinref part="JP_OUT_VCO3340A1" gate="G$1" pin="1"/>
+<wire x1="5.08" y1="218.44" x2="10.16" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="CSTAB2" gate="G$1" pin="1"/>
+</segment>
+</net>
+<net name="2164_IN4_MIXB1" class="0">
+<segment>
+<wire x1="-88.9" y1="218.44" x2="-86.36" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="RIN4_MIXERB1" gate="G$1" pin="1"/>
+<pinref part="RSTAB4_MIXERB2" gate="G$1" pin="1"/>
+<junction x="-86.36" y="218.44"/>
+<wire x1="-86.36" y1="218.44" x2="-63.5" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="MIXER_B" gate="G$2" pin="I_IN"/>
+</segment>
+</net>
+<net name="N$10" class="0">
+<segment>
+<pinref part="RSTAB4_MIXERB2" gate="G$1" pin="2"/>
+<pinref part="CSTAB3" gate="G$1" pin="2"/>
+<wire x1="-86.36" y1="208.28" x2="-86.36" y2="205.74" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="N$11" class="0">
+<segment>
+<pinref part="CIN4_MIXERB1" gate="G$1" pin="2"/>
+<pinref part="RIN4_MIXERB1" gate="G$1" pin="2"/>
+<wire x1="-104.14" y1="218.44" x2="-99.06" y2="218.44" width="0.1524" layer="91"/>
+</segment>
+</net>
+<net name="IN4_MIXERB1" class="0">
+<segment>
+<pinref part="CIN4_MIXERB1" gate="G$1" pin="1"/>
+<wire x1="-116.84" y1="218.44" x2="-111.76" y2="218.44" width="0.1524" layer="91"/>
+<pinref part="JP_OUT_VCO3340A2" gate="G$1" pin="2"/>
+</segment>
+</net>
+<net name="N$12" class="0">
+<segment>
+<pinref part="VCO1" gate="OTA1" pin="IN_N"/>
+<pinref part="RSTAB3_MIXERB4" gate="G$1" pin="2"/>
+<wire x1="170.18" y1="251.46" x2="167.64" y2="251.46" width="0.1524" layer="91"/>
+<pinref part="RSTAB3_MIXERB5" gate="G$1" pin="2"/>
+<wire x1="167.64" y1="251.46" x2="167.64" y2="259.08" width="0.1524" layer="91"/>
+<wire x1="167.64" y1="246.38" x2="167.64" y2="251.46" width="0.1524" layer="91"/>
+<junction x="167.64" y="251.46"/>
 </segment>
 </net>
 </nets>
@@ -29593,43 +29727,18 @@ Otherwise connect 1 with 2, and
 </sheet>
 </sheets>
 <errors>
-<approved hash="101,1,-104.14,-58.42,H1,MOUNT,,,,"/>
-<approved hash="101,1,-86.36,-58.42,H2,MOUNT,,,,"/>
-<approved hash="101,1,-104.14,-73.66,H4,MOUNT,,,,"/>
-<approved hash="101,1,-81.28,-71.12,H3,MOUNT,,,,"/>
 <approved hash="202,1,-226.06,35.56,U1A,MON_IN1,,,,"/>
 <approved hash="202,1,-226.06,33.02,U1A,MON_IN2,,,,"/>
-<approved hash="104,1,-190.5,10.16,U1B,REF_GND,GND,,,"/>
-<approved hash="104,1,-190.5,7.62,U1B,SIGNAL_GND_1,GND,,,"/>
-<approved hash="104,1,-190.5,2.54,U1B,DAC_GND_1,GND,,,"/>
 <approved hash="104,1,-226.06,-2.54,U1B,AVDD_1,5V,,,"/>
-<approved hash="104,1,-190.5,-2.54,U1B,AGND_1,GND,,,"/>
-<approved hash="104,1,-190.5,0,U1B,DAC_GND_2,GND,,,"/>
-<approved hash="104,1,-190.5,5.08,U1B,SIGNAL_GND_2,GND,,,"/>
-<approved hash="104,1,-190.5,-5.08,U1B,AGND_2,GND,,,"/>
 <approved hash="104,1,-226.06,-5.08,U1B,AVDD_2,5V,,,"/>
-<approved hash="104,1,-190.5,-7.62,U1B,1_DGND,GND,,,"/>
 <approved hash="104,1,-226.06,-7.62,U1B,1_DVDD,5V,,,"/>
 <approved hash="104,1,-226.06,-10.16,U1B,2_DVDD,5V,,,"/>
-<approved hash="104,1,-190.5,-10.16,U1B,2_DGND,GND,,,"/>
 <approved hash="104,1,-226.06,-12.7,U1B,3_DVDD,5V,,,"/>
-<approved hash="104,1,-190.5,-12.7,U1B,3_DGND,GND,,,"/>
 <approved hash="104,1,-73.66,91.44,IC1,VDD,5V,,,"/>
-<approved hash="104,1,-73.66,50.8,IC1,VSS,GND,,,"/>
 <approved hash="104,1,-66.04,-25.4,IC_EEPROM,VCC,5V,,,"/>
-<approved hash="113,1,-279.898,92.6388,CONN_3340A,,,,,"/>
-<approved hash="113,1,-265.799,59.4004,CONN_13700,,,,,"/>
-<approved hash="113,1,-307.188,-35.56,CONN_MIX_B,,,,,"/>
-<approved hash="113,1,-261.772,-2.54,CONN_MIX_A,,,,,"/>
-<approved hash="113,1,-225.412,-74.6404,CONN_VCF,,,,,"/>
-<approved hash="113,1,-216.794,-39.0804,CONN_DRUM_STM32,,,,,"/>
-<approved hash="113,1,-132.08,53.4162,CONN_ALIM,,,,,"/>
-<approved hash="113,1,-281.181,32.7304,CONN_3340B,,,,,"/>
 <approved hash="113,1,-138.421,72.3138,CONN_UART_RPI,,,,,"/>
 <approved hash="113,1,-60.96,19.6596,S1,,,,,"/>
 <approved hash="113,1,-60.96,1.8796,S2,,,,,"/>
-<approved hash="113,1,-25.4,52.1462,CONN_MCP_B,,,,,"/>
-<approved hash="113,1,-26.6122,73.3704,CONN_MCP_A,,,,,"/>
 </errors>
 </schematic>
 </drawing>
