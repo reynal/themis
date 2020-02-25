@@ -33,5 +33,6 @@ void nP_concat(uint8_t* bufferSPI,int index,uint32_t color);
 void nP_send(neopixel* np,SPI_HandleTypeDef SpiHandle);
 void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel);
 void nP_sendByteGPIO(uint8_t data);
+void nP_sendBitGPIO(uint8_t data);
 
 #endif

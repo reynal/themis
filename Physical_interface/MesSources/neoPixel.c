@@ -154,17 +154,42 @@ void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel){
  * Send a byte message to GPIOB_1
  */
 void nP_sendByteGPIO(uint8_t data){
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 0);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 0);
 	for(int i=7; i>=0; i--){ //We take into account that we read from the MSB to the LSB in every byte.
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, (data >> i) & 1);
-		//HAL_Delay(1); //TEST
+		//HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, (data >> i) & 1);
+		nP_sendBitGPIO((data >> i) & 1);
+		HAL_Delay(1); //TEST
 		//for(int i=1 ; i<100; i++){} //Small wait
 	}
 }
 
 /*
- * Send a byte message to GPIOB_1 but written in asm
- *
-void nP_sendByteGPIO(uint8_t data){
-	__asm (
-			)
-}*/
+ * Send a bit message to GPIOB_1 but written in asm
+ */
+void nP_sendBitGPIO(uint8_t data){
+	uint32_t gpiod_odr = 0x48000414;
+	uint32_t mask;
+	__asm ( "      MOV r0, %[odrrr];" //We put GPIOB_ODR in R0
+			"      LDR r1, [r0];" //We put the content of GPIOB_ODR in R1
+			"      CMP %[input], 0;" //We check if input is true or false
+			"      BEQ false;"
+			"      ORR r1, 0x2;" //We force the second bit of R1 to 1 to make GPIOG_1 on
+			"      STR r1, [r0];" //We put the new R1 back into GPIOB_ODRR
+				: //no result
+				: [input] "r" (data), [odrrr] "r" (gpiod_odr)
+				: "r0", "r1" //Cobbeled registers
+		    );
+	return;
+	false:
+	mask = 0xFFFFFFD;
+	__asm ("AND r1, %[MASK];" //We force the secod but to 0 to make it false
+		   "STR r1, [r0];"
+				: //no results
+				: [MASK] "r" (mask)
+				: "r0", "r1"
+			);
+	return;
+}
+
