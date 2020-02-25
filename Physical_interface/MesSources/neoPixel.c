@@ -28,10 +28,14 @@
  */
 void nP_create(neopixel* ret,uint32_t npixel){ //Initialise la structure
 	ret->npixel = npixel;
-	uint8_t red[npixel];
-	uint8_t green[npixel];
-	uint8_t blue[npixel];
-	uint8_t bufferSPI[3 * 3 * 8 *npixel]; //we send 3 bits to give a bit of data to neopixels, each neopixels have 3 colors, each stored on 8 bits.
+	//uint8_t red[npixel];
+	//uint8_t green[npixel];
+	//uint8_t blue[npixel];
+	//uint8_t bufferSPI[3 * 3 * npixel]; //we send 3 bits to give a bit of data to neopixels, each neopixels have 3 colors, each stored on 8 bits.
+	uint8_t* red       = malloc(npixel);
+	uint8_t* green     = malloc(npixel);
+	uint8_t* blue      = malloc(npixel);
+	uint8_t* bufferSPI = malloc(3 * 3 * npixel); //we send 3 bits to give a bit of data to neopixels, each neopixels have 3 colors, each stored on 8 bits.
 	ret->red = red;
 	ret->green = green;
 	ret->blue = blue;
@@ -64,11 +68,11 @@ void nP_setPixel(neopixel* np,uint32_t n, uint32_t rgb){ //permet de donner une 
 void nP_prepareMessage(neopixel* np){
 	for(int i=0;i < np->npixel;i++){
 		uint32_t blueColor = nP_convertByteSPI(np->blue[i]);
-		nP_concat(np->bufferSPI,i * 3 + 2,blueColor);
+		nP_concat(np->bufferSPI,i * 3 + 0,blueColor);
 		uint32_t redColor = nP_convertByteSPI(np->red[i]);
 		nP_concat(np->bufferSPI,i * 3 + 1,redColor);
 		uint32_t greenColor = nP_convertByteSPI(np->green[i]);
-		nP_concat(np->bufferSPI,i * 3 + 0,greenColor);
+		nP_concat(np->bufferSPI,i * 3 + 2,greenColor);
 	}
 }
 
@@ -103,7 +107,7 @@ uint32_t nP_convertByteSPI(uint8_t color){
 void nP_concat(uint8_t* bufferSPI,int index,uint32_t color){
 	uint8_t* curretPlace = bufferSPI + index * 3;
 	for(int i=0; i<3; i++){
-		curretPlace[i] = (char) (color >> (i * 8)) & 0xFF;
+		curretPlace[i] = (char) (color >> ((2-i) * 8)) & 0xFF;
 	}
 }
 
@@ -121,7 +125,9 @@ void nP_send(neopixel* np, SPI_HandleTypeDef SpiHandle){
 	//uint32_t null = 0;
 	while(1){ //debug
 		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 9, 1000);
-		HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 16, 1000);
+		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 16, 1000);
+		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 12, 1000);
+		nP_sendDataGPIO(np->bufferSPI, np->npixel); //HAL_Delay(190); //Play with GPIOB1 istead of SPI
 		//HAL_SPI_Transmit(&SpiHandle,(uint8_t*) &null, 1, 1000);
 		//nP_sendReset(&SpiHandle);
 		//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
@@ -135,16 +141,30 @@ void nP_sendReset(SPI_HandleTypeDef* SpiHandle){
 		HAL_SPI_Transmit(SpiHandle,(uint8_t*) &null, 1, 1000); //We send a signal as long as 100 leds to reach with a margin the 50 µs pause.
 }
 
-
+/*
+ * Send the buffer over GPIO
+ */
 void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel){
-	for(int i=0; i<nPixel; i++){
+	for(int i=0; i<nPixel * 9; i++){
 		nP_sendByteGPIO(buffer[i]);
 	}
 }
 
+/*
+ * Send a byte message to GPIOB_1
+ */
 void nP_sendByteGPIO(uint8_t data){
-	for(int i=0; i<8; i++){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3, (data >> i) & 1);
-		HAL_Delay(416);
+	for(int i=7; i>=0; i--){ //We take into account that we read from the MSB to the LSB in every byte.
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, (data >> i) & 1);
+		//HAL_Delay(1); //TEST
+		//for(int i=1 ; i<100; i++){} //Small wait
 	}
 }
+
+/*
+ * Send a byte message to GPIOB_1 but written in asm
+ *
+void nP_sendByteGPIO(uint8_t data){
+	__asm (
+			)
+}*/

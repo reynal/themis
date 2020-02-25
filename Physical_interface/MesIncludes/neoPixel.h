@@ -2,6 +2,7 @@
 #define NEOPIXEL
 
 #include <stdint.h>
+#include <stdlib.h>
 #include "stm32l4xx_hal.h"
 
 //SPI control

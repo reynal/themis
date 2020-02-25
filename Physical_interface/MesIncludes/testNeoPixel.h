@@ -11,6 +11,7 @@
 #define VERT   0x0000FF00
 #define VIOLET 0x00FF00FF
 #define ViOlEt 0x00330033
+#define NOIR   0x00000000
 
 void tnP_testGPIO();
 
