@@ -101,8 +101,8 @@ int main(void)
   //tnP_testGPIO();
   //tnP_testSPI();
   //tnP_testLed0();
-  //tnP_test1();
-  tnP_test3();
+  tnP_test1();
+  //tnP_test3();
 
 
   /* USER CODE END 2 */

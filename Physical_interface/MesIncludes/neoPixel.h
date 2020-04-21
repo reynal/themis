@@ -32,7 +32,12 @@ uint32_t nP_convertByteSPI(uint8_t color);
 void nP_concat(uint8_t* bufferSPI,int index,uint32_t color);
 void nP_send(neopixel* np,SPI_HandleTypeDef SpiHandle);
 void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel);
-void nP_sendByteGPIO(uint8_t data);
+void nP_sendBitWraperGPIO(uint8_t data);
 void nP_sendBitGPIO(uint8_t data);
+void nP_sendByteGPIO(uint8_t data);
+void nP_sendMessageGPIO(uint8_t* a, uint32_t len);
+
+uint8_t nP_switchEdian(uint8_t ch);
+void nP_switchEdianRArray(uint8_t* a, uint32_t len);
 
 #endif

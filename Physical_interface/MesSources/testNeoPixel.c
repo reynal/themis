@@ -69,17 +69,17 @@ void tnP_test3(){
 	neopixel np;
 	SPI_HandleTypeDef SpiHandle;
 	SpiHandle.Instance = SPInp;
-	nP_create(&np,10);
-	nP_setPixel(&np, 0, NOIR );
-	nP_setPixel(&np, 1, NOIR );
+	nP_create(&np,5);
+	nP_setPixel(&np, 0, ROUGE );
+	nP_setPixel(&np, 1, ROUGE );
 	nP_setPixel(&np, 2, BLEU );
-	nP_setPixel(&np, 3, NOIR );
+	nP_setPixel(&np, 3, ROUGE );
 	nP_setPixel(&np, 4, BLEU );
-	nP_setPixel(&np, 5, BLEU );
-	nP_setPixel(&np, 6, ROUGE );
-	nP_setPixel(&np, 7, BLEU );
-	nP_setPixel(&np, 8, ROUGE );
-	nP_setPixel(&np, 9, BLEU );
+	//nP_setPixel(&np, 5, BLEU );
+	//nP_setPixel(&np, 6, ROUGE );
+	//nP_setPixel(&np, 7, BLEU );
+	//nP_setPixel(&np, 8, ROUGE );
+	//nP_setPixel(&np, 9, BLEU );
 	nP_prepareMessage(&np);
 	while(1){
 		nP_send(&np, SpiHandle);

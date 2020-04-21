@@ -74,6 +74,7 @@ void nP_prepareMessage(neopixel* np){
 		uint32_t greenColor = nP_convertByteSPI(np->green[i]);
 		nP_concat(np->bufferSPI,i * 3 + 2,greenColor);
 	}
+	nP_switchEdianRArray(np->bufferSPI, np->npixel * 9);
 }
 
 /*
@@ -123,15 +124,16 @@ void nP_concat(uint8_t* bufferSPI,int index,uint32_t color){
  */
 void nP_send(neopixel* np, SPI_HandleTypeDef SpiHandle){
 	//uint32_t null = 0;
-	while(1){ //debug
+	//while(1){ //debug
 		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI, (np->npixel) * 9, 1000);
 		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 16, 1000);
 		//HAL_SPI_Transmit(&SpiHandle, np->bufferSPI,(np->npixel) * 12, 1000);
-		nP_sendDataGPIO(np->bufferSPI, np->npixel); //HAL_Delay(190); //Play with GPIOB1 istead of SPI
+		//nP_sendDataGPIO(np->bufferSPI, np->npixel); //HAL_Delay(190); //Play with GPIOB1 istead of SPI
+		nP_sendMessageGPIO(np->bufferSPI, np->npixel);
 		//HAL_SPI_Transmit(&SpiHandle,(uint8_t*) &null, 1, 1000);
 		//nP_sendReset(&SpiHandle);
 		//while (HAL_SPI_GetState(&SpiHandle) != HAL_SPI_STATE_READY) {} //We fait for the message to be send
-		HAL_Delay(10);}
+		//HAL_Delay(10);}
 }
 
 
@@ -153,7 +155,7 @@ void nP_sendDataGPIO(uint8_t* buffer,uint32_t nPixel){
 /*
  * Send a byte message to GPIOB_1
  */
-void nP_sendByteGPIO(uint8_t data){
+void nP_sendBitWraperGPIO(uint8_t data){
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 0);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 1);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, 0);
@@ -170,26 +172,97 @@ void nP_sendByteGPIO(uint8_t data){
  */
 void nP_sendBitGPIO(uint8_t data){
 	uint32_t gpiod_odr = 0x48000414;
-	uint32_t mask;
+	uint32_t mask = 0xFFFFFFD;
 	__asm ( "      MOV r0, %[odrrr];" //We put GPIOB_ODR in R0
 			"      LDR r1, [r0];" //We put the content of GPIOB_ODR in R1
 			"      CMP %[input], 0;" //We check if input is true or false
 			"      BEQ false;"
 			"      ORR r1, 0x2;" //We force the second bit of R1 to 1 to make GPIOG_1 on
 			"      STR r1, [r0];" //We put the new R1 back into GPIOB_ODRR
+			"      B end;"
+			"	   false:;"
+			"      AND r1, %[MASK];" //We force the secod but to 0 to make it false
+			"      STR r1, [r0];"
+			"      end:;"
 				: //no result
-				: [input] "r" (data), [odrrr] "r" (gpiod_odr)
+				: [input] "r" (data), [odrrr] "r" (gpiod_odr), [MASK] "r" (mask)
 				: "r0", "r1" //Cobbeled registers
 		    );
 	return;
-	false:
-	mask = 0xFFFFFFD;
-	__asm ("AND r1, %[MASK];" //We force the secod but to 0 to make it false
-		   "STR r1, [r0];"
-				: //no results
-				: [MASK] "r" (mask)
-				: "r0", "r1"
-			);
+}
+
+uint8_t nP_switchEdian(uint8_t ch){
+	char ret=0;
+	for(int i=0; i<8; i++){
+		char maskCh = 1 << i;
+		char tmp = (ch & maskCh) >> i;
+		ret += tmp << (7-i);
+	}
+	return ret;
+}
+
+void nP_switchEdianRArray(uint8_t* a, uint32_t len){
+	for(uint32_t i=0; i<len; i++)
+		a[i] = nP_switchEdian(a[i]);
+}
+
+/*
+ * Send a byte message to GPIOB_1 but written in asm
+ */
+void nP_sendByteGPIO(uint8_t data){
+	uint32_t gpiod_odr = 0x48000414;
+	__asm ( "      MOV r0, %[odrrr];" //We put GPIOB_ODR in R0
+			"      LDR r1, [r0];" //We put the content of GPIOB_ODR in R1
+			"      MOV R2, %[input];"
+			"      MOV R3, 0;" //Conteur de boucle
+			"      startLoop:;"
+			"      CMP R3, 8;"
+			"      BEQ endloop;"
+			"      AND R4, R2, 1;"
+			"      LSR R2, 1;"
+			"      LSL R4, 1;"
+			"      STR R4, [r0];"
+			"      ADD R3, 1;"
+			"      B startLoop;"
+			"      endloop:;"
+				: //no result
+				: [input] "r" (data), [odrrr] "r" (gpiod_odr)
+				: "r0", "r1" ,"r2", "r3", "r4"//Cobbeled registers
+		    );
 	return;
 }
 
+/*
+ * Send a full message to GPIOB_1 but written in asm
+ */
+void nP_sendMessageGPIO(uint8_t* a, uint32_t len){
+	uint32_t gpiod_odr = 0x48000414;
+	__asm ( "MOV r0, %[odrrr];" //We put GPIOB_ODR in R0
+			"MOV R5, %[input];" //We get a pointer to the message to send
+			"MOV R1, %[len];" //Total length of the message
+			"startSend:"
+			"LDR R2, [R5];" //We get a char of the message to send
+			"MOV R3, 0;" //Loop over each bit of the char in R2
+			"startLoopMes:;"
+			"CMP R3, 8;" //We check if we went over all bits
+			"BEQ endloopMes;"
+			"AND R4, R2, 1;" //We get the bit we want
+			"LSR R2, 1;" //We shift the char to send in order to be able to get the next bit
+			"LSL R4, 1;" //We shift the bit of R4 in order to control GIOPB_1
+			"STR R4, [r0];" //We put the bit in GPIO_ODR in order to control it
+			"ADD R3, 1;" //We increase the loop conter
+			"nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop; nop;" //We wait a bit
+			"B startLoopMes;"
+			"endloopMes:;"
+			"ADD R5, 4;" //We go over the next byte
+			"SUB R1, 1;" //We check if we read all of the message
+			"CMP R1, 0;"
+			"BNE startSend;"
+			"MOV R1, 0;" //We put the GPIO back on 0
+			"STR R1, [R0];"
+				: //no result
+				: [input] "r" (a), [odrrr] "r" (gpiod_odr), [len] "r" (len * 9)
+				: "r0", "r1" ,"r2", "r3", "r4", "r5"//Cobbeled registers
+		    );
+	return;
+}
