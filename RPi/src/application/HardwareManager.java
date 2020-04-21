@@ -93,7 +93,7 @@ public class HardwareManager {
 		
 		createSerialTransmitter(); // try SPI or UART
 		
-		initMidiInSystem(); // Midi in handler
+		createMidiInSystem(); // Midi in handler
 		
 		if (CREATE_SYNTH_CTRLPANE) createSynthControllerPane(); // based on MCP23017 and IS31FL3137 led driver
 		
@@ -202,7 +202,7 @@ public class HardwareManager {
 	 * Initializes the Midi IN system so that incoming MIDI message (e.g. from a MIDI keyboard)
 	 * are forwarded to the current serialTransmitter (e.g. UART on a Mac/PC or SPI on a Raspberry)
 	 */
-	private void initMidiInSystem() {
+	private void createMidiInSystem() {
 		
 		try {
 			midiInHandler = new MidiInHandler(serialTransmitter, DEFAULT_MIDI_CHANNEL);
@@ -245,7 +245,7 @@ public class HardwareManager {
 		ViewFactory viewFactory = new ViewFactory(is31Device);
 		synthControllerPane = new SynthControllerPane(controlFactoryLeft, controlFactoryRight, viewFactory);
 	}
-		
+			
 
 	/*
 	 * 

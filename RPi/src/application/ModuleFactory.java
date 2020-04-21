@@ -47,9 +47,12 @@ import model.Vco3340BModule;
 import model.serial.AbstractSerialTransmitter;
 
 /**
- * This class is responsible for creating all the hardware, i.e., all the modules that represent
- * a real hardware implementation of the Themis synthetizer.
- * This is implemented as a singleton (TODO: best choice? add a "DefaultFactory" instead?)
+ * This class is responsible for creating all the sound modules that represent
+ * a real hardware implementation of the Themis synthetizer. It is also
+ * responsible for constructing tables that map Midi CC codes to module parameters
+ * and back.
+ * 
+ * This is implemented as a singleton.
  * 
  * @author bastien
  * @author reynal
@@ -170,7 +173,7 @@ public class ModuleFactory {
 	// --------------------- private methods ---------------------
 	
 	/**
-	 * Init the MIDI parameter ID table 
+	 * Init the MIDI parameter ID table that maps a module parameter to a MIDI CC code.
 	 * (used for example by a serial transmitter when writing to the STM32 over the serial bus)
 	 */
 	private void initMidiCCHashMap(){
@@ -224,6 +227,7 @@ public class ModuleFactory {
 		LOGGER.info("midiCcIdTable initialized");
 	}
 	
+	/* init the reverse map, i.e., a table that maps a Midi CC code to a module parameter */
 	private void initMidiCCToModuleParameterTable(){
 		
 		midiCCToModuleParameter =  new ModuleParameter[128];

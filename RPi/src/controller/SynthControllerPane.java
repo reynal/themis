@@ -46,96 +46,100 @@ public class SynthControllerPane {
 		// ================================= COLUMN #0 :3340A =================================
 		is31Matrix = IS31FL3731.Matrix.A;
 		// encoder:
-		controls[0][0] = controlFactoryLeft.createControl(models.getVco3340A().getDetuneParameter(), MCP23017.Pin.P0A, MCP23017.Pin.P1A);
+		controls[0][0] = controlFactoryLeft.createControl(models.getVco3340A().getDetuneParameter(), MCP23017.Pin.P1B, MCP23017.Pin.P2B);
 		views[0][0] = viewFactory.createView(models.getVco3340A().getDetuneParameter(), is31Matrix, 0);
 		
 		// push:.
-		controls[0][1] = controlFactoryLeft.createControl(models.getVco3340A().getOctaveParameter(), MCP23017.Pin.P2A);
+		controls[0][1] = controlFactoryLeft.createControl(models.getVco3340A().getOctaveParameter(), MCP23017.Pin.P0B);
 		views[0][1] = viewFactory.createView(models.getVco3340A().getOctaveParameter(), is31Matrix, 6, 0);
 		
 		
 		// encoder:
-		controls[0][2] = controlFactoryLeft.createControl(models.getVco3340A().getWaveShapeParameter(), MCP23017.Pin.P3A, MCP23017.Pin.P4A);
+		controls[0][2] = controlFactoryLeft.createControl(models.getVco3340A().getWaveShapeParameter(), MCP23017.Pin.P4B, MCP23017.Pin.P6B);
 		views[0][2] = viewFactory.createView(models.getVco3340A().getWaveShapeParameter(), is31Matrix, 1, 0);
 		
 		// push:
-		controls[0][3] = controlFactoryLeft.createControl(models.getVco3340A().getSyncFrom13700Parameter(), MCP23017.Pin.P5A);
+		controls[0][3] = controlFactoryLeft.createControl(models.getVco3340A().getSyncFrom13700Parameter(), MCP23017.Pin.P3B);
 		views[0][3] = viewFactory.createView(models.getVco3340A().getSyncFrom13700Parameter(), is31Matrix, 6, 4);
 		
 		// encoder :
-		controls[0][4] = controlFactoryLeft.createControl(models.getVco3340A().getDutyParameter(), MCP23017.Pin.P6A, MCP23017.Pin.P7A);
+		controls[0][4] = controlFactoryLeft.createControl(models.getVco3340A().getDutyParameter(), MCP23017.Pin.P5B, MCP23017.Pin.P7B);
 		views[0][4] = viewFactory.createView(models.getVco3340A().getDutyParameter(), is31Matrix, 2);
 
 		
 		// ================================= COLUMN #1: 3340B =================================
 		is31Matrix = IS31FL3731.Matrix.A;
 		// encoder:
-		controls[1][0] = controlFactoryLeft.createControl(models.getVco3340B().getDetuneParameter(), MCP23017.Pin.P0B, MCP23017.Pin.P1B);
+		controls[1][0] = controlFactoryLeft.createControl(models.getVco3340B().getDetuneParameter(), MCP23017.Pin.P5A, MCP23017.Pin.P6A);
 		views[1][0] = viewFactory.createView(models.getVco3340B().getDetuneParameter(), is31Matrix, 3);
 		
 		// push:
-		controls[1][1] = controlFactoryLeft.createControl(models.getVco3340B().getOctaveParameter(), MCP23017.Pin.P2B);
+		controls[1][1] = controlFactoryLeft.createControl(models.getVco3340B().getOctaveParameter(), MCP23017.Pin.P7A);
 		views[1][1] = viewFactory.createView(models.getVco3340B().getOctaveParameter(), is31Matrix, 7, 0);
 		
 		
 		// encoder:
-		controls[1][2] = controlFactoryLeft.createControl(null, MCP23017.Pin.P3B, MCP23017.Pin.P4B);
+		controls[1][2] = controlFactoryLeft.createControl(null, MCP23017.Pin.P2A, MCP23017.Pin.P3A);
 		views[1][2] = viewFactory.createView(null, is31Matrix, 4);
 		
 		// push:
-		controls[1][3] = controlFactoryLeft.createControl(null, MCP23017.Pin.P5B);
+		controls[1][3] = controlFactoryLeft.createControl(null, MCP23017.Pin.P4A);
 		views[1][3] = viewFactory.createView(null, is31Matrix, 7, 4);
 		
 		// encoder :
-		controls[1][4] = controlFactoryLeft.createControl(null, MCP23017.Pin.P6B, MCP23017.Pin.P7B);
+		controls[1][4] = controlFactoryLeft.createControl(null, MCP23017.Pin.P0A, MCP23017.Pin.P1A);
 		views[1][4] = viewFactory.createView(null, is31Matrix, 5);		// not used (reserved for FM level)		
 		System.out.println("ViewFactory: " + viewFactory);
+		
+		
+		
+		
 		
 		// ================================= COLUMN #2 : VCA ? =================================
 		is31Matrix = IS31FL3731.Matrix.B;
 		// encoder:
-		controls[2][0] = controlFactoryRight.createControl(null, MCP23017.Pin.P0A, MCP23017.Pin.P1A);
+		controls[2][0] = controlFactoryRight.createControl(null, MCP23017.Pin.P1B, MCP23017.Pin.P2B);
 		views[2][0] = viewFactory.createView(null, is31Matrix, 0);
 		
 		// push:
-		controls[2][1] = controlFactoryRight.createControl(null, MCP23017.Pin.P2A);
+		controls[2][1] = controlFactoryRight.createControl(null, MCP23017.Pin.P0B);
 		views[2][1] = viewFactory.createView(null, is31Matrix, 6, 0);
 		
 		
 		// encoder:
-		controls[2][2] = controlFactoryRight.createControl(null, MCP23017.Pin.P3A, MCP23017.Pin.P4A);
+		controls[2][2] = controlFactoryRight.createControl(null, MCP23017.Pin.P4B, MCP23017.Pin.P6B);
 		views[2][2] = viewFactory.createView(null, is31Matrix, 1);
 		
 		// push:
-		controls[2][3] = controlFactoryRight.createControl(null, MCP23017.Pin.P5A);
+		controls[2][3] = controlFactoryRight.createControl(null, MCP23017.Pin.P3B);
 		views[2][3] = viewFactory.createView(null, is31Matrix, 6, 4);
 		
 		// encoder :
-		controls[2][4] = controlFactoryRight.createControl(null, MCP23017.Pin.P6A, MCP23017.Pin.P7A);
+		controls[2][4] = controlFactoryRight.createControl(null, MCP23017.Pin.P5B, MCP23017.Pin.P7B);
 		views[2][4] = viewFactory.createView(null, is31Matrix, 2);
 
 		
 		// ================================= COLUMN #3: VCF ? =================================
 		is31Matrix = IS31FL3731.Matrix.B;
 		// encoder:
-		controls[3][0] = controlFactoryRight.createControl(null, MCP23017.Pin.P0B, MCP23017.Pin.P1B);
+		controls[3][0] = controlFactoryRight.createControl(null, MCP23017.Pin.P5A, MCP23017.Pin.P6A);
 		views[3][0] = viewFactory.createView(null, is31Matrix, 3);
 		
 		// push:
-		controls[3][1] = controlFactoryRight.createControl(null, MCP23017.Pin.P2B);
+		controls[3][1] = controlFactoryRight.createControl(null, MCP23017.Pin.P7A);
 		views[3][1] = viewFactory.createView(null, is31Matrix, 7, 0);
 		
 		
 		// encoder:
-		controls[3][2] = controlFactoryRight.createControl(null, MCP23017.Pin.P3B, MCP23017.Pin.P4B);
+		controls[3][2] = controlFactoryRight.createControl(null, MCP23017.Pin.P2A, MCP23017.Pin.P3A);
 		views[3][2] = viewFactory.createView(null, is31Matrix, 4);
 		
 		// push:
-		controls[3][3] = controlFactoryRight.createControl(null, MCP23017.Pin.P5B);
+		controls[3][3] = controlFactoryRight.createControl(null, MCP23017.Pin.P4A);
 		views[3][3] = viewFactory.createView(null, is31Matrix, 7, 4);
 		
 		// encoder :
-		controls[3][4] = controlFactoryRight.createControl(null, MCP23017.Pin.P6B, MCP23017.Pin.P7B);
+		controls[3][4] = controlFactoryRight.createControl(null, MCP23017.Pin.P0A, MCP23017.Pin.P1A);
 		views[3][4] = viewFactory.createView(null, is31Matrix, 5);		// not used (reserved for FM level)		
 		System.out.println("ViewFactory: " + viewFactory);		
 		

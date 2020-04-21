@@ -4,7 +4,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
+import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
+
 import device.*;
+import device.MCP23017.DeviceAddress;
+import device.MCP23017.Port;
 import model.*;
 
 /**
@@ -83,14 +88,60 @@ public class ControlFactory {
 	
 	// ---------- test ---------
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		
+		//testHashset();
+		testWithHW();
+		
+	}
+	
+	private static void testHashset() throws IOException {
 		
 		// check if hashmap works:
 		ControlFactory cf = new ControlFactory(null);
 		BooleanParameter bp = new BooleanParameter("parameter on/off");
 		cf.createControl(bp, MCP23017.Pin.P0A);
 		cf.createControl(bp, MCP23017.Pin.P0A);
+
+	}
+	
+	private static void testWithHW() throws Exception {
 		
+		MCP23017 device = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04);
+		//MCP23017 device = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05);
+
+		device.registerRpiPinForReset(MCP23017.DEFAULT_RST_PIN); // pin 37
+		device.reset();
+		device.printRegisters();
+		
+		device.enableIntPinsMirror();
+		device.setInput(Port.A);
+		device.setInput(Port.B);
+		device.setPullupResistors(Port.A, true);
+		device.setPullupResistors(Port.B, true);
+		device.setInterruptOnChange(Port.A, true);
+		device.setInterruptOnChange(Port.B, true);
+		device.addInterruptListener(e -> System.out.println(e));
+		device.clearInterrupts(Port.A);
+		device.clearInterrupts(Port.B);
+		device.printRegisters();
+		
+		ControlFactory cf = new ControlFactory(device);
+		Vco3340AModule vco3340 = new Vco3340AModule();
+		cf.createControl(vco3340.getDetuneParameter(), MCP23017.Pin.P1B, MCP23017.Pin.P2B);
+
+		int i=0;
+		while ((i++)<120) {
+			//System.out.printf("INTFA: %02X \t GPIOA: %02X\n", device.readInterruptFlagRegister(Port.A), device.read(Port.A)); //, device.read(Port.B));
+			//System.out.printf("A: %02X \t B: %02X\n", device.read(Port.A), device.read(Port.B));
+			//System.out.print(i+" ");
+			System.out.print(".");
+			//device.printRegistersBriefA();
+			//device.printRegistersBriefB();
+			Thread.sleep(1000);
+		}
+		System.out.println("closing device");
+		device.close();		
 	}
 	
 }

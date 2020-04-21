@@ -274,8 +274,8 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 	// real hardware test with Vco3340 model
 	private static void test2() throws IOException, UnsupportedBusNumberException {
 		
-		IS31FL3731 is31fl3731 = new IS31FL3731();
-		//IS31FL3731 is31fl3731 = null;
+		IS31FL3731 is31fl3731 = new IS31FL3731(); // if hardware connected
+		//IS31FL3731 is31fl3731 = null; // if no hardware
 
 		Vco3340AModule vco3340 = new Vco3340AModule();		
 		
