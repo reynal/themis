@@ -83,9 +83,6 @@ UART_HandleTypeDef *huartSTlink;
 
 uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
 uint8_t rxSpiMidiBuff[3]; // RX BUFF for SPI_rpi coming from RPi (three MIDI bytes)
-const uint8_t txUartSTlinkBuff[256];
-int isUartSTlinkBusy = FALSE;
-uint8_t* txUartSTlinkBuffPtr = txUartSTlinkBuff;
 
 /* USER CODE END PV */
 
@@ -156,7 +153,7 @@ int main(void) {
 
 	initAdsrParameters();
 	initSynthParams(); // be sure to do this BEFORE starting htimDacs!
-	startAdsrTIM(); // start timer responsible for updating ADSR enveloppes and writing to DACs
+	startDacTIM(); // start timer responsible for updating ADSR enveloppes and writing to DACs
 	HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
 
 	// === VCO Calibration mode===
@@ -725,30 +722,7 @@ int __io_putchar(int ch) {
 	return ch;
 }
 
-int io_putchar(int ch){ // TODO : validate new algo
 
-	if (isUartSTlinkBusy == TRUE){
-		*(txUartSTlinkBuffPtr++) = ch;
-		if (txUartSTlinkBuffPtr >=  TX_UART_STLINK_BUFF_SZ)
-	}
-
-}
-
-// --------------------------------------------------------------------------------------------------
-//                                     peripherals
-// --------------------------------------------------------------------------------------------------
-
-void startAdsrTIM() {
-
-	HAL_TIM_Base_Start_IT(htimDacs);
-
-}
-
-void stopAdsrTIM() {
-
-	HAL_TIM_Base_Stop_IT(htimDacs);
-
-}
 
 // --------------------------------------------------------------------------------------------------
 //                                     HAL interrupt handlers
@@ -760,7 +734,7 @@ void stopAdsrTIM() {
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
 
 	if (hspi == hspiDacs)
-		spiDacs_TxCpltCallback();
+		spiDacMCP4822TxCpltCallback();
 }
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {

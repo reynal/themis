@@ -53,7 +53,7 @@
 extern MidiNote midiNote;
 extern GlobalFilterParams globalFilterParams;
 
-/* Private variables ---------------------------------------------------------*/
+/* Variables ---------------------------------------------------------*/
 
 //#define LEGATO
 
@@ -98,7 +98,7 @@ StateMachineVcf stateMachineVcf = {
 		.adsrParam = &vcfAdsr
 };
 
-/* Private function prototypes -----------------------------------------------*/
+/* User code -----------------------------------------------*/
 
 // ========================== VCA ==============================
 

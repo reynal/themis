@@ -32,6 +32,9 @@ default.size.stdout \
 OBJDUMP_LIST += \
 dac-board-F767ZI.list \
 
+OBJCOPY_BIN += \
+dac-board-F767ZI.bin \
+
 
 # All Target
 all: dac-board-F767ZI.elf secondary-outputs
@@ -52,12 +55,17 @@ dac-board-F767ZI.list: $(EXECUTABLES)
 	@echo 'Finished building: $@'
 	@echo ' '
 
+dac-board-F767ZI.bin: $(EXECUTABLES)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "dac-board-F767ZI.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
 	-$(RM) *
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
 
 .PHONY: all clean dependents
 .SECONDARY:

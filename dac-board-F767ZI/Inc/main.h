@@ -55,8 +55,6 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
 
-void startAdsrTIM();
-void stopAdsrTIM();
 
 /* USER CODE END EFP */
 

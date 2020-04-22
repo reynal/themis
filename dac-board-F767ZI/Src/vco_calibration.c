@@ -52,7 +52,7 @@ extern int midiToVCO3340ACV[128];
 extern int midiToVCO3340BCV[128];
 extern int midiToVCO13700CV[128];
 
-/* Private variables ---------------------------------------------------------*/
+/* variables ---------------------------------------------------------*/
 
 
 int calibrationVcoDACLvl; // VCO Control Voltage, i.e., DAC output !
@@ -71,7 +71,17 @@ int currentMidiNote = -1; // -1 when uninitialized
 
 int captureTimerConversionFactor; // convert from a period value (in s) to a counting interval for the htimCalib timer, used by midiNoteToTimerInterval()
 
-/* Private function prototypes -----------------------------------------------*/
+/* function prototypes -----------------------------------------------*/
+
+static int getTimerIntervalFromMidiNote(int midiNote);
+static void startCalib3340A();
+static void startCalib3340B();
+static void startCalib13700();
+static void printMidiToVCOCVTables();
+static void resetMidiToVCOCVTables();
+
+
+/* user code -----------------------------------------------*/
 
 
 /**
@@ -84,7 +94,7 @@ void runVcoCalibration(){
 
 	resetMidiToVCOCVTables(); // optional, could be commented out if we want to refine only a part of the calibration table
 
-	stopAdsrTIM(); // stop timer responsible for updating ADSR enveloppes
+	stopDacTIM(); // stop timer responsible for updating ADSR enveloppes
 
 	captureTimerConversionFactor = (int)(8.0 * 54.0e6 / (htimCalib->Init.Prescaler+1.0));
 
@@ -104,13 +114,13 @@ void runVcoCalibration(){
 	//printf("Calibration terminated!\n");
 	printMidiToVCOCVTables();
 
-	startAdsrTIM(); // restart timer responsible for updating ADSR enveloppes
+	startDacTIM(); // restart timer responsible for updating ADSR enveloppes
 
 
 }
 
 
-void startCalib3340A(){
+static void startCalib3340A(){
 
 	printf("Starting 3340 A calibration...\n");
 
@@ -126,7 +136,7 @@ void startCalib3340A(){
 	HAL_TIM_IC_Start_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340A);
 }
 
-void startCalib3340B(){
+static void startCalib3340B(){
 
 	printf("Starting 3340 B calibration...\n");
 
@@ -142,7 +152,7 @@ void startCalib3340B(){
 	HAL_TIM_IC_Start_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340B);
 }
 
-void startCalib13700(){
+static void startCalib13700(){
 
 	printf("Starting 13700 calibration...\n");
 
@@ -164,7 +174,7 @@ void startCalib13700(){
  *
  * For example, midiNote = 69 => f = 440Hz => T = 1/440 => counting_interval = T * captureTimerConversionFactor
  */
-int getTimerIntervalFromMidiNote(int midiNote){
+static int getTimerIntervalFromMidiNote(int midiNote){
 
 	return (int)(captureTimerConversionFactor * A4_PERIOD * pow(2.0, (A4_MIDI_NOTE - midiNote)/12.0));
 
@@ -189,7 +199,7 @@ int getTimerIntervalFromMidiNote(int midiNote){
 		 };
  *
  */
-void printMidiToVCOCVTables(){
+static void printMidiToVCOCVTables(){
 
 	printf("\n---- calib data ----\n\n");
 	printf("int midiToVCO3340ACV[128] = {\n");
@@ -217,7 +227,7 @@ void printMidiToVCOCVTables(){
 /**
  * reset content of Midi Note to CV arrays
  */
-void resetMidiToVCOCVTables(){
+static void resetMidiToVCOCVTables(){
 
 	for (int midiNote = 0; midiNote < 127 ; midiNote++){
 		midiToVCO3340ACV[midiNote] = 0;

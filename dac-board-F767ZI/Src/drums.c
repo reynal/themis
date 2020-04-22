@@ -13,11 +13,11 @@
 
 /* External variables --------------------------------------------------------*/
 
-/* Private variables ---------------------------------------------------------*/
+/* Variables ---------------------------------------------------------*/
 
 DrumTriggers drumTriggers = { .bassdrumCounter=0, .rimshotCounter=0, .snareCounter=0, .lowtomCounter=0, .hightomCounter=0};
 
-/* Private function prototypes -----------------------------------------------*/
+/* Function prototypes -----------------------------------------------*/
 
 
 /**

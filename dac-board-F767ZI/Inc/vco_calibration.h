@@ -24,10 +24,12 @@ typedef enum {
 #define TIM_CHANNEL_CALIB_VCO13700 TIM_CHANNEL_4 // PA3
 
 // see MX_TIM2_Init in main.c:
-#define TIM2_PRESCALER 16.0 // htim2.Init.Prescaler+1
-#define TIM2_PERIOD (TIM2_PRESCALER / 108.0e6)
-#define TIM2_FREQ (1.0/TIM2_PERIOD)
-#define TIM2_IC_PRESCALER 1
+/*
+#define TIMCALIB_PRESCALER 16.0 // htim2.Init.Prescaler+1
+#define TIMCALIB_PERIOD (TIMCALIB_PRESCALER / 108.0e6)
+#define TIMCALIB_FREQ (1.0/TIMCALIB_PERIOD)
+#define TIMCALIB_IC_PRESCALER 1
+*/
 
 // MIDI and VCO related:
 #define A4_FREQ 440.0 // LA  4
@@ -51,15 +53,9 @@ typedef enum {
  *
  */
 
-/* Private function prototypes -----------------------------------------------*/
+/* function prototypes -----------------------------------------------*/
 
-void startCalib3340A();
-void startCalib3340B();
-void startCalib13700();
 void runVcoCalibration();
-int  midiNoteToTimerInterval(int);
-void printMidiToVCOCVTables();
-void resetMidiToVCOCVTables();
 void VCO_Calib_CaptureCallback();
 
 //#define CALIBRATION_PERIODS 4

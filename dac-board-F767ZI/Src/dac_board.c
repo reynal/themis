@@ -4,12 +4,6 @@
  *  Created on: Oct 2, 2018
  *      Author: reynal
  *
- *
- *
- *
- *
- *
- *
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -29,8 +23,11 @@
 /* External variables --------------------------------------------------------*/
 
 extern MidiNote midiNote;
+extern TIM_HandleTypeDef *htimDacs;
 
-/* Private variables ---------------------------------------------------------*/
+
+
+/* Variables ---------------------------------------------------------*/
 
 
 // ------------- for debugging purpose ---------
@@ -64,8 +61,12 @@ dacTIMUpdateTask dacTIMUpdateTaskList[ADSR_TIMER_PERIOD_FACTOR] = {
 		NULL
 };
 
-/* Private function prototypes -----------------------------------------------*/
+/* Function prototypes -----------------------------------------------*/
 
+static void incDacTick();
+
+
+/* User code ---------------------------------------------------------*/
 
 void switchRedLED(GPIO_PinState state){
 	HAL_GPIO_WritePin(GPIOB, LD3_Pin, state);
@@ -125,6 +126,21 @@ void testGPIOVcfVco(){
 }
 
 
+// --------------------------------------------------------------------------------------------------
+//                                     DAC TIMER
+// --------------------------------------------------------------------------------------------------
+
+void startDacTIM() {
+
+	HAL_TIM_Base_Start_IT(htimDacs);
+
+}
+
+void stopDacTIM() {
+
+	HAL_TIM_Base_Stop_IT(htimDacs);
+
+}
 
 /**
  * Timer driven DAC update callback.
@@ -177,7 +193,7 @@ void dacTIMCallback(){
 
 }
 
-void incDacTick(){
+static void incDacTick(){
 	dacTick++;
 	if (dacTick == ADSR_TIMER_PERIOD_FACTOR) {
 		dacTick = 0;

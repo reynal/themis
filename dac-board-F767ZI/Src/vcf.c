@@ -26,14 +26,16 @@
 
 extern StateMachineVcf stateMachineVcf;
 
-/* Private variables ---------------------------------------------------------*/
+/* Variables ---------------------------------------------------------*/
 
 GlobalFilterParams globalFilterParams = {
 		.vcfCutoff = MAX_CUTOFF * DEF_MIDICC_CUTOFF / 127.0,
 		.vcfResonance = MAX_RESONANCE * DEF_MIDICC_RESONANCE / 127.0
 };
 
-/* Private function prototypes -----------------------------------------------*/
+/* Function prototypes -----------------------------------------------*/
+
+/* User code -----------------------------------------------*/
 
 void setVcfOrder(uint8_t value){
 	value = value % 2;
