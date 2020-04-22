@@ -61,10 +61,10 @@ public class HardwareManager {
 	public static final boolean DUMP_MIDI = false;
 	private static final int DEFAULT_MIDI_CHANNEL = 0; // TODO corresponds to MIDI channel 1 ???
 	
-	private static final boolean CREATE_SYNTH_CTRLPANE = false;
-	private static final boolean OPEN_SYNTH_CTRLPANE_SIMULATION = false;
+	private static final boolean CREATE_SYNTH_CTRLPANE = true;
+	private static final boolean OPEN_SYNTH_CTRLPANE_SIMULATION = true;
 	private static final boolean OPEN_TABBED_TOUCHSCREEN = true; 
-	private static final boolean OPEN_RPI_TOUCHSCREEN = false;
+	private static final boolean OPEN_RPI_TOUCHSCREEN = true;
 	
 	enum Platform {
 		RASPBERRYPI, // => SPI, possibly UART, simulator depends on available screen TODO: check screen size

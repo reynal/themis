@@ -3,7 +3,6 @@ package device;
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
-import java.util.*;
 
 import com.pi4j.io.i2c.*; // pi4j-core.jar must be in the project build path! [SR]
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
@@ -843,13 +842,13 @@ public class IS31FL3731 {
 						device.setLEDpwmGammaCorrected16(ledA, pwm);
 						device.setLEDpwmGammaCorrected16(ledB, pwm);
 						// System.out.print(".");
-						Thread.sleep(20);
+						Thread.sleep(5);
 					}
 					for (int pwm = 15; pwm >= 0; pwm--) {
 						device.setLEDpwmGammaCorrected16(ledA, pwm);
 						device.setLEDpwmGammaCorrected16(ledB, pwm);
 						// System.out.print(".");
-						Thread.sleep(20);
+						Thread.sleep(5);
 					}
 				}
 			}
