@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2019 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under BSD 3-Clause license,
@@ -64,12 +64,12 @@ void Error_Handler(void);
 #define VCP_TX_GPIO_Port GPIOA
 #define DAC_SYNC_Pin GPIO_PIN_3
 #define DAC_SYNC_GPIO_Port GPIOA
-#define DAC_BUSY_Pin GPIO_PIN_4
-#define DAC_BUSY_GPIO_Port GPIOA
 #define DAC_LDAC_Pin GPIO_PIN_5
 #define DAC_LDAC_GPIO_Port GPIOA
-#define RST_Pin GPIO_PIN_0
-#define RST_GPIO_Port GPIOB
+#define DAC_RST_Pin GPIO_PIN_0
+#define DAC_RST_GPIO_Port GPIOB
+#define LD2_Pin GPIO_PIN_1
+#define LD2_GPIO_Port GPIOB
 #define TIM1_CH1_3340A_Pin GPIO_PIN_8
 #define TIM1_CH1_3340A_GPIO_Port GPIOA
 #define TIM1_CH2_3340B_Pin GPIO_PIN_9
@@ -78,6 +78,7 @@ void Error_Handler(void);
 #define TIM1_CH3_13700_GPIO_Port GPIOA
 #define EXTI11_SW2_Pin GPIO_PIN_11
 #define EXTI11_SW2_GPIO_Port GPIOA
+#define EXTI11_SW2_EXTI_IRQn EXTI15_10_IRQn
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -88,6 +89,7 @@ void Error_Handler(void);
 #define LD3_GPIO_Port GPIOB
 #define EXTI5_SW1_Pin GPIO_PIN_5
 #define EXTI5_SW1_GPIO_Port GPIOB
+#define EXTI5_SW1_EXTI_IRQn EXTI9_5_IRQn
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

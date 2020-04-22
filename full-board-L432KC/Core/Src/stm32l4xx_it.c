@@ -23,6 +23,9 @@
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stlink_dma.h"
+#include "ad5391.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,8 +59,16 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_i2c3_tx;
+extern DMA_HandleTypeDef hdma_spi1_tx;
+extern TIM_HandleTypeDef htim2;
+extern DMA_HandleTypeDef hdma_usart2_tx;
+extern I2C_HandleTypeDef *hi2c_MCP23017;
+extern DMA_HandleTypeDef *hdma_MCP23017_tx;
 
 /* USER CODE BEGIN EV */
+extern DMA_HandleTypeDef *hdma_STlink_tx;
+extern UART_HandleTypeDef *huart_STlink;
 
 /* USER CODE END EV */
 
@@ -196,6 +207,102 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32l4xx.s).                    */
 /******************************************************************************/
+
+/**
+  * @brief This function handles DMA1 channel2 global interrupt.
+  */
+void DMA1_Channel2_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
+
+	hdma_MCP23017_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF2; // clear interrupt flag
+	hi2c_MCP23017->Instance->CR1 &= ~I2C_CR1_TXDMAEN; /* Disable DMA Request */
+	//__HAL_I2C_ENABLE_IT(hi2c, I2C_IT_STOPI | I2C_IT_TCI); /* Enable ST
+
+  /* USER CODE END DMA1_Channel2_IRQn 0 */
+  //HAL_DMA_IRQHandler(&hdma_i2c3_tx);
+  /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel3 global interrupt.
+  */
+void DMA1_Channel3_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
+
+	(&hdma_spi1_tx)->DmaBaseAddress->IFCR = DMA_ISR_GIF3; // clear interrupt flag
+
+  /* USER CODE END DMA1_Channel3_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel3_IRQn 1 */
+}
+
+/**
+  * @brief This function handles DMA1 channel7 global interrupt.
+  */
+void DMA1_Channel7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 0 */
+
+	stlink_dma_irq_handler();
+
+  /* USER CODE END DMA1_Channel7_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel7_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[9:5] interrupts.
+  */
+void EXTI9_5_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+    __HAL_GPIO_EXTI_CLEAR_IT(EXTI5_SW1_Pin); // PB5 (SW1)
+    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, HAL_GPIO_ReadPin(EXTI5_SW1_GPIO_Port, EXTI5_SW1_Pin));
+    //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+
+  /* USER CODE END EXTI9_5_IRQn 0 */
+  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+
+  /* USER CODE END EXTI9_5_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_UPDATE);
+    ad5391_TIM_IRQ();
+
+  /* USER CODE END TIM2_IRQn 0 */
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI line[15:10] interrupts.
+  */
+void EXTI15_10_IRQHandler(void)
+{
+
+  /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+	__HAL_GPIO_EXTI_CLEAR_IT(EXTI11_SW2_Pin); // PA11 (SW2)
+	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, HAL_GPIO_ReadPin(EXTI11_SW2_GPIO_Port, EXTI11_SW2_Pin));
+	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+
+  /* USER CODE END EXTI15_10_IRQn 0 */
+  /* USER CODE BEGIN EXTI15_10_IRQn 1 */
+
+  /* USER CODE END EXTI15_10_IRQn 1 */
+}
 
 /* USER CODE BEGIN 1 */
 
