@@ -105,12 +105,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   stlink_dma_init();
-  //testSpiTransmit();
-  //testSpiTransmitDMA();
-  //testSpiTransmitDMA_ManualConfig();
-  //testDAC5391();
-  //test_AD5391_Dac_With_Tim();
-  test_MCP23017();
+
+  ad5391_Test_Board();
 
   /* USER CODE END 2 */
 

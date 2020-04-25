@@ -18,15 +18,11 @@
 
 #define MCP23017_ADDRESS 0x40 // = 0x20 shift one bit to the left
 
-void ad5391_TIM_IRQ(void);
-void init_Dac_Board();
+void ad5391_Board_TIM_IRQ(void);
+void ad5391_Board_Init();
+void start_DAC_Timer();
+void stop_DAC_Timer();
 
-void test_AD5391_Spi_Transmit();
-void test_AD5391_Spi_Transmit_DMA();
-void test_AD5391_Spi_Transmit_DMA_ManualConfig();
-void test_AD5391_Dac();
-void test_AD5391_Dac_With_Tim();
-void test_MCP23017();
-
+void ad5391_Test_Board();
 
 #endif /* INC_AD5391_H_ */
