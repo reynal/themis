@@ -6,95 +6,7 @@
  *
  * Controls the AD5391 16 channel 12 bit DAC + MCP23017 GPIO expander
  *
-
- */
-
-/* Includes ------------------------------------------------------------------*/
-#include "ad5391.h"
-#include "main.h"
-#include "stdio.h"
-#include "math.h"
-
-/* External variables --------------------------------------------------------*/
-
-extern SPI_HandleTypeDef *hspi_Dac;
-extern DMA_HandleTypeDef *hdma_Dac_tx;
-extern TIM_HandleTypeDef *htimDac;
-extern I2C_HandleTypeDef *hi2c_MCP23017;
-extern DMA_HandleTypeDef *hdma_MCP23017_tx;
-
-
-/* variables ---------------------------------------------------------*/
-
-uint8_t txDAC5391Buff[3]; // 24 bit transmit buffer for DAC over SPI1
-uint32_t t;
-uint32_t x;
-uint8_t xIsValid;
-uint32_t dac;
-
-uint8_t mcp23017_gpioA_tx_Buff[2]; // {GPIOA register, value}
-uint8_t mcp23017_gpioB_tx_Buff[2]; // {GPIOB register, value}
-
-
-/* function prototypes -----------------------------------------------*/
-static void reset_devices();
-static void ad5391_Init_Device();
-static void ad5391_Write_Dma(uint32_t word, uint32_t channel);
-static void mcp23017_Init_Device();
-static void mcp23017_Write_GpioA_Dma();
-static void mcp23017_Write_GpioB_Dma();
-
-static void test_MCP23017();
-static void test_Tim_IRQ();
-
-/* user code -----------------------------------------------*/
-
-/*
- * Calls what is necessary to init the DAC board
- */
-void ad5391_Board_Init(){
-
-	reset_devices(); // also MCP23017
-
-	ad5391_Init_Device();
-
-	mcp23017_Init_Device();
-
-}
-
-/**
- * Sends a negative RESET pulse to the AD5391 and MCP23017 circuits.
- */
-static void reset_devices(){
-
-	DAC_RST_GPIO_Port->BRR = (uint32_t)(DAC_RST_Pin); // lower RST
-	HAL_Delay(1); // wait at leat 270us
-	DAC_RST_GPIO_Port->BSRR = (uint32_t)DAC_RST_Pin; // raise RST again
-	HAL_Delay(1); // necessary?
-
-}
-
-void start_DAC_Timer(){
-
-	// init TIMER DAC:
-	__HAL_TIM_ENABLE_IT(htimDac, TIM_IT_UPDATE);
-	__HAL_TIM_ENABLE(htimDac);
-
-}
-
-void stop_DAC_Timer(){
-
-	// init TIMER DAC:
-	__HAL_TIM_ENABLE_IT(htimDac, TIM_IT_UPDATE);
-	__HAL_TIM_ENABLE(htimDac);
-
-}
-
-// =================================================================================
-//                             AD5391
-// =================================================================================
-
-/*
+ *
  *
  *
  * SPI :
@@ -137,6 +49,50 @@ void stop_DAC_Timer(){
  *
  */
 
+/* Includes ------------------------------------------------------------------*/
+#include "ad5391.h"
+#include "main.h"
+#include "misc.h"
+
+/* External variables --------------------------------------------------------*/
+
+extern SPI_HandleTypeDef *hspi_Dac;
+extern DMA_HandleTypeDef *hdma_Dac_tx;
+
+
+/* variables ---------------------------------------------------------*/
+
+uint8_t txDAC5391Buff[3]; // 24 bit transmit buffer for DAC over SPI1
+uint16_t channel_data[16] = {0}; // one buffer for each DAC channel
+Boolean is_need_channel_data_sync[16] = {FALSE}; // list channels that need synchro to the DAC
+
+
+/* function prototypes -----------------------------------------------*/
+
+
+/* user code -----------------------------------------------*/
+
+
+/**
+ * Write the given word to the given channel buffer and mark data as needing sync.
+ */
+void dacWrite(int word12bits, Dac channel){
+
+	word12bits &= 0xFFF; // make sure it's >=0 and <4096
+
+	is_need_channel_data_sync[channel] = FALSE; // lock
+	channel_data[channel] = word12bits;
+	is_need_channel_data_sync[channel] = TRUE; // unlock
+
+}
+
+
+
+// =================================================================================
+//                             AD5391
+// =================================================================================
+
+
 
 /**
  * Init the AD5391 device:
@@ -155,7 +111,7 @@ void stop_DAC_Timer(){
  * PDStatus : 1 => Amplifier output is high impedance in power down ; 0 => Amplifier output is 100k to ground in power down
  * REFSelect : 1 => internal ref is 2.5V ; 0 => internal ref is 1.25V
  */
-static void ad5391_Init_Device(){
+void ad5391_Init_Device(){
 
 	// send 560ns SYNC pulse, configuring tx buffer in the meantime:
 	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin;
@@ -205,7 +161,11 @@ static void ad5391_Init_Device(){
  *   the busy signal goes low for 600ns hence minimum timer period must be above 6us.
  *
  */
-static void ad5391_Write_Dma(uint32_t word, uint32_t channel){
+void ad5391_Write_Dma(uint8_t channel){
+
+	if (is_need_channel_data_sync[channel] == FALSE) return;
+
+	uint16_t word = channel_data[channel]; // atomic copy?
 
 	// send SYNC pulse (approx 560ns negative pulse, minimum duration in datasheet is 33ns so that's perfectly safe):
 	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin;
@@ -222,260 +182,35 @@ static void ad5391_Write_Dma(uint32_t word, uint32_t channel){
 	__HAL_DMA_ENABLE(hdma_Dac_tx);
 	SET_BIT(hspi_Dac->Instance->CR2, SPI_CR2_TXDMAEN); // re-enable Tx DMA request
 
-}
-
-
-
-/**
- * DAC IRQ handler that's fit for any timer.
- * Beware: at 5Mbits/s, a complete 24 bit transfer takes 5us and then
- * the busy signal goes low for 600ns hence minimum timer period must be above 6us.
- *
- */
-void ad5391_Board_TIM_IRQ(){
-
-	LD3_GPIO_Port->BRR = LD3_Pin; // debug
-	switch(dac++){
-
-	case 0:
-		ad5391_Write_Dma(x, 0); // 8us as a whole (function call + DMA transfer)
-		break;
-	case 1:
-		mcp23017_Write_GpioA_Dma(); // 1.5us (function call) + 30us (DMA transfer)
-		break;
-	case 2:
-		ad5391_Write_Dma(x, 1);
-		break;
-	case 3:
-		mcp23017_Write_GpioB_Dma(); // 1.5us
-		break;
-	default:
-		dac=0;
-	}
-
-	t++; // debug
-	xIsValid = 0; // debug
-
-	LD3_GPIO_Port->BSRR = LD3_Pin; // debug
-}
-
-
-
-
-
-// =================================================================================
-//                             MCP23017
-// =================================================================================
-
-/*
- * MCP23017 device
- *
- * GPA0 : 411_IN_PULSE
- * GPA1 : 411_IN_TRI
- * GPA2 : 411_IN_SYNC
- * GPA3 : 411_IN_SAW
- * GPA4 : VCF_2ND_ORDER
- * GPA5 : VCF_4TH_ORDER
- * GPA6 : Connecteur CONN_MCP_A : 1 (en haut tout à droite, 1 puis 2)
- * GPA7 : idem : 2
- *
- * GPB0 : BD
- * GPB1 : Snare
- * GPB2 : RIM
- * GPB3 : TOM1
- * GPB4 : TOM2
- * GPB5 : Connecteur CONN_MCP_B : 1 (juste à gauche de l'alimentation, 3 puis 2 puis 1 de G à D)
- * GPB6 : idem : 2
- * GPB7 : idem : 3
- *
- * Important registers:
- *
- * Note : IOCON.BANK = 0 by default
- * - IODIRA : addr=0x00 ; 0=>OUTPUT, 1=>INPUT (def)
- * - IODIRB : addr=0x01
- * - GPIOA  : addr=0x12
- * - GPIOB  : addr=0x13
- *
- *
- * I2C Control byte format: S | 0 1 0 0 A2 A1 A0 R/!W | ACK
- * 		where S = start condition and the next 8 bits are called "OP" (OP device)
- * 		and ACK = acknowledgement provided by the MCP23017
- *
- * 		We have A2=A1=A0=0 here (see eagle schematics)
- *
- * 		For instance, write to register GPIOA :
- * 		START | 0x40 0x00 | ACK | Register addr 0x12 | ACK | Register value | STOP
- *
- *
- * 	Timings:
- * 	- 2 bytes transmission over I2C at 1MHz (fast mode plus) takes ~31us.
- * 	- Call to mcp23017_Write_GpioA/B_Dma() takes 1.5us @ 80MHz CPU clock
- *
- */
-
-/*
- * Init the MCP23017 device:
- * - set all pins in ports A and B as outputs
- * - initialize the DMA transfer
- * This is a blocking call.
- */
-static void mcp23017_Init_Device(){
-
-	// Set IODIRA and IODIRB as output ports:
-
-	uint8_t configBuff[2];
-
-	configBuff[0] = MCP23017_REG_IODIRA; // Register address
-	configBuff[1] = MCP23017_IODIR_ALL_OUTPUT; // Value
-	HAL_I2C_Master_Transmit(hi2c_MCP23017, MCP23017_ADDRESS, configBuff, 2, 100); // blocking call
-
-	configBuff[0] = MCP23017_REG_IODIRB;
-	HAL_I2C_Master_Transmit(hi2c_MCP23017, MCP23017_ADDRESS, configBuff, 2, 100); // blocking call
-
-	mcp23017_gpioA_tx_Buff[0] = MCP23017_REG_GPIOA;
-	mcp23017_gpioB_tx_Buff[0] = MCP23017_REG_GPIOB;
-
-	// init DMA transfer for DMA1 Channel2 (I2C3): (interrupts disabled as they seem to be useless)
-
-	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF2; // clear interrupt flags
-    hdma_MCP23017_tx->Instance->CNDTR = 2; /* Configure DMA Channel data length */
-    hdma_MCP23017_tx->Instance->CPAR = (uint32_t)&(hi2c_MCP23017->Instance->TXDR);
-    __HAL_DMA_DISABLE_IT(hdma_MCP23017_tx, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE); // no IT
+	is_need_channel_data_sync[channel] = FALSE;
 
 }
 
 
-/*
- * Write the content of mcp23017_gpioA_tx_Buff[1] to GPIO port A
- * Beware! Non-blocking call (takes 1.5us @ 80MHz CPU clock). Should be called from a TIMER IRQ.
- */
-static void mcp23017_Write_GpioA_Dma(){
-
-	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->Instance->CNDTR = 2; // TODO : necessary?
-    hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioA_tx_Buff;
-    __HAL_DMA_ENABLE(hdma_MCP23017_tx);
-
-    // send slave address:
-  	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
-  			  ((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
-			  (uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
-
-  	// trigger DMA transfer of data:
-  	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
-}
-
-/*
- * Write the content of mcp23017_gpioB_tx_Buff[1] to GPIO port B
- * Beware! Non-blocking call (takes 1.5us @ 80MHz CPU clock). Should be called from a TIMER IRQ.
- */
-static void mcp23017_Write_GpioB_Dma(){
-
-	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->Instance->CNDTR = 2;
-    hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioB_tx_Buff;
-    __HAL_DMA_ENABLE(hdma_MCP23017_tx);
-
-    // send slave address:
-  	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
-  			  ((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
-			  (uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
-
-  	// trigger DMA transfer of data:
-  	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
 
 
-}
 
 // =================================================================================
 //                             TEST CODE
 // =================================================================================
 
 
-void ad5391_Test_Board(){
-
-	//test_MCP23017();
-	test_Tim_IRQ();
-
-}
 
 
-/*
- * Test code for the MCP23017 device.
- */
-static void test_MCP23017(){
-
-	reset_devices();
-
-	mcp23017_Init_Device();
-
-  	//LD3_GPIO_Port->BRR = LD3_Pin; // debug
-  	//LD3_GPIO_Port->BSRR = LD3_Pin; // debug
 
 
-	while (1){
 
-		mcp23017_gpioA_tx_Buff[1]=0xFF;
-		LD3_GPIO_Port->BSRR = LD3_Pin; // debug
-		mcp23017_Write_GpioA_Dma();
-		LD3_GPIO_Port->BRR = LD3_Pin; // debug
-		HAL_Delay(1);
 
-		mcp23017_gpioA_tx_Buff[1]=0x00;
-		mcp23017_Write_GpioA_Dma();
-		HAL_Delay(1);
 
-		mcp23017_gpioB_tx_Buff[1]=0xFF;
-		mcp23017_Write_GpioB_Dma();
-		HAL_Delay(1);
 
-		mcp23017_gpioB_tx_Buff[1]=0x00;
-		mcp23017_Write_GpioB_Dma();
-		HAL_Delay(1);
-	}
-}
 
-static void test_Tim_IRQ(){
 
-	t=0;
-	dac=0;
-	xIsValid = 0;
-
-	reset_devices();
-
-	ad5391_Init_Device();
-
-	mcp23017_Init_Device();
-
-	start_DAC_Timer();
-
-	while (1){
-
-		if (xIsValid == 0){
-			x = (uint32_t)(2000. * (1.0+sin(0.1 * t)));
-			if (mcp23017_gpioA_tx_Buff[1]==0xFF) mcp23017_gpioA_tx_Buff[1]=0x00;
-			else mcp23017_gpioA_tx_Buff[1]=0xFF;
-			if (mcp23017_gpioB_tx_Buff[1]==0xFF) mcp23017_gpioB_tx_Buff[1]=0x00;
-			else mcp23017_gpioB_tx_Buff[1]=0xFF;
-			xIsValid = 1;
-		}
-		//HAL_Delay(1);
-	}
-}
 
 
 // ====================================================================================
 // ARXIV
 // ====================================================================================
 
-// from https://github.com/ruda/mcp23017/blob/master/src/mcp23017.c
-/*
-HAL_StatusTypeDef mcp23017_write(uint16_t reg, uint8_t *data){
-
-	return HAL_I2C_Mem_Write(hi2c_MCP23017, MCP23017_ADDRESS, reg, 1, data, 1, 10);
-
-}*/
 
 // ============================ test code ====================================
 

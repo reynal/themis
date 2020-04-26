@@ -29,8 +29,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ad5391.h"
+#include "midi.h"
+#include "dac_board.h"
 #include "stlink_dma.h"
+#include "stdio.h"
+#include "leds.h"
+#include "vco_calibration.h"
 
 /* USER CODE END Includes */
 
@@ -41,6 +45,10 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define PRINTF // comment out if no printf() to host PC is needed
+//#define USE_FULL_ASSERT // for debugging leave uncommented
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -52,7 +60,10 @@
 
 /* USER CODE BEGIN PV */
 
-//uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
+uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
+extern UART_HandleTypeDef *huart_STlink;
+extern TIM_HandleTypeDef *htimVcoCalib; // tim1
+
 
 /* USER CODE END PV */
 
@@ -106,7 +117,16 @@ int main(void)
 
   stlink_dma_init();
 
-  ad5391_Test_Board();
+  // TODO L4 initAdsrParameters();
+  // TODO L4 initSynthParams(); // be sure to do this BEFORE starting htimDacs!
+  // TODO L4 startDacTIM(); // start timer responsible for updating ADSR enveloppes and writing to DACs
+  // TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
+
+	// === VCO Calibration mode===
+	//runVcoCalibration(); // busy loop until calibration is over (uncomment when needed)
+
+
+  test_Dac_Board();
 
   /* USER CODE END 2 */
 
@@ -119,6 +139,9 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	  //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 	  HAL_Delay(100);
+	  toggleGreenLED();
+
+	  // TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg (BUG FIX)
   }
   /* USER CODE END 3 */
 }
@@ -180,6 +203,34 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+
+// --------------------------------------------------------------------------------------------------
+//                                     HAL interrupt handlers
+// --------------------------------------------------------------------------------------------------
+
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+
+	if (htim == htimVcoCalib)
+		VCO_Calib_CaptureCallback();
+}
+
+
+
+/**
+ * Callback for the UART peripheral receive data process
+ * Called when a given amount of data has been received on given UART port
+ */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+
+	if (huart == huart_STlink){ // TODO: validate
+		//printf("Received: %s\n", rxUartSTlinkBuff);
+		//toggleBlueLED();
+		processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
+		HAL_UART_Receive_IT(huart_STlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
+	}
+}
+
 /* USER CODE END 4 */
 
 /**
@@ -205,8 +256,7 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 { 
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  printf("Wrong parameters value: file %s on line %d\r\n", file, line);
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

@@ -24,7 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stlink_dma.h"
-#include "ad5391.h"
+#include "dac_board.h"
 
 /* USER CODE END Includes */
 
@@ -63,10 +63,11 @@ extern DMA_HandleTypeDef hdma_i2c3_tx;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart2_tx;
+
+/* USER CODE BEGIN EV */
 extern I2C_HandleTypeDef *hi2c_MCP23017;
 extern DMA_HandleTypeDef *hdma_MCP23017_tx;
 
-/* USER CODE BEGIN EV */
 extern DMA_HandleTypeDef *hdma_STlink_tx;
 extern UART_HandleTypeDef *huart_STlink;
 
@@ -266,6 +267,8 @@ void EXTI9_5_IRQHandler(void)
     HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, HAL_GPIO_ReadPin(EXTI5_SW1_GPIO_Port, EXTI5_SW1_Pin));
     //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
+    // TODO L4 blueButtonActionPerformedCallback(HAL_GPIO_ReadPin(EXTI5_SW1_GPIO_Port, EXTI5_SW1_Pin));
+
   /* USER CODE END EXTI9_5_IRQn 0 */
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
@@ -279,7 +282,7 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
     __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_UPDATE);
-    ad5391_Board_TIM_IRQ();
+    dac_Board_TIM_IRQ();
 
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */
