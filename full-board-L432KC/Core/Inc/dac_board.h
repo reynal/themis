@@ -18,29 +18,23 @@
 #define TIMDAC_PERIOD 50.0
 #define TIMDAC_PERIOD_SEC	((TIMDAC_PRESCALER+1) * TIMDAC_PERIOD/TIMDAC_INPUT_FREQ) // 21386.13Hz, aka 47us
 
+#define SWITCH_DEBOUNCE_DELAY 30 // ms
 
 // for Timer 2, see vco_calibration.h
 
 
-
-typedef void (*dacTIMUpdateTask)(void); // see dacTIMCallback()
-
-
 /* Private function prototypes -----------------------------------------------*/
 
-void initSynthParams();
+void init_Synth_Params();
 
-void testGPIOVcfVco();
+void dac_Board_Timer_Start();
+void dac_Board_Timer_Stop();
 
-
-void dacTIMCallback();
-void start_DAC_Timer();
-void stop_DAC_Timer();
-
-void blueButtonActionPerformedCallback(GPIO_PinState  state);
-
-void dac_Board_TIM_IRQ(void);
+void dac_Board_Timer_IRQ(void);
 void dac_Board_Init();
+
+void dac_Board_EXTI_IRQHandler_SW1();
+void dac_Board_EXTI_IRQHandler_SW2();
 
 void test_Dac_Board();
 

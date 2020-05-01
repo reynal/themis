@@ -33,8 +33,8 @@ void initVcf();
 void updateVcfCutoff();
 void updateVcfResonance();
 
-void setVcfResonanceGlobal(uint8_t midivalue);
-void setVcfCutoffGlobal(uint8_t midivalue);
+void set_Vcf_ResonanceGlobal(uint8_t midivalue);
+void set_Vcf_CutoffGlobal(uint8_t midivalue);
 
 void testVcf();
 

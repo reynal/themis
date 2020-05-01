@@ -80,7 +80,7 @@ typedef struct {
     double decayTimeMs;    //
     double sustainLevel;    // b/w 0.0 et 1.0
     double releaseTimeMs;  //
-} AdsrParams;
+} Adsr_Params;
 
 /*
  * enum for the various state machine states
@@ -90,27 +90,27 @@ typedef enum {
   ATTACK,     // 1 ... dure 5 tau
   DECAY,      // 2 ... dure jusqu'au note off
   RELEASE     // 3
-} AdsrMachineState;
+} Adsr_Machine_State;
 
 
 /*
   parameters for the generation of the VCA enveloppes
 */
 typedef struct {
-  AdsrMachineState machineState; // current state of the state machine
-  AdsrParams* adsrParam; // adsr env params
+  Adsr_Machine_State machineState; // current state of the state machine
+  Adsr_Params* adsrParam; // adsr env params
   double amplitude; // current CV value
   double velocitySensitivity; // 0-100% ; actual CV is modulated by velocity depending on this parameter (0= no mod, 1=full mod)
   double tmpDelta; // env value gets increased by this quantity at each time step (this is dx/dt * 1ms)
   double tmpTargetLevel; // target level inside each phase (ex: 1.0 for the A phase, sustain for the D phase, 0 for the R phase)
-} StateMachineVca;
+} State_Machine_Vca;
 
 /*
   parameters for the generation of the VCF enveloppes
 */
 typedef struct {
-  AdsrMachineState machineState; // current state of the state machine
-  AdsrParams* adsrParam; // adsr env params
+  Adsr_Machine_State machineState; // current state of the state machine
+  Adsr_Params* adsrParam; // adsr env params
   int t; // time, reset at the beginning of each phase
   int tMax; // max time for the current phase, if relevant (i.e. irrelevant for sustain)
   double cutoffFrequency; // current CV value
@@ -122,38 +122,38 @@ typedef struct {
   double tmpTargetLevel; // target level at end of each phase, depends on env_amount, sustain and velocity_mul_factor
   double tmpKbdtrackingShiftFactor; // global shift (aka voltage addition) due to kbd_tracking
   //double tmpIncrease; // env value gets increased by this quantity at each time step
-} StateMachineVcf;
+} State_Machine_Vcf;
 
 
 /* Private function prototypes -----------------------------------------------*/
 
-void initAdsrParameters();
+void init_Adsr_Parameters();
 
-void prepareVcaEnvelopeNoteON();
-void prepareVcaEnvelopeNoteOFF();
-void updateVcaEnvelope();
+void prepare_Vca_Envelope_NoteON();
+void prepare_Vca_Envelope_NoteOFF();
+void update_Vca_Envelope();
 
-void prepareVcfEnvelopeNoteON();
-void prepareVcfEnvelopeNoteOFF();
-void updateVcfEnvelope();
+void prepare_Vcf_Envelope_NoteON();
+void prepare_Vcf_Envelope_NoteOFF();
+void update_Vcf_Envelope();
 
-void setVcfCutoffGlobal(uint8_t value);
-void setVcfResonanceGlobal(uint8_t value);
+void set_Vcf_CutoffGlobal(uint8_t value);
+void set_Vcf_ResonanceGlobal(uint8_t value);
 
-void setVcfEgDepth(uint8_t value);
-void setVcfKbdTracking(uint8_t value);
+void set_Vcf_EgDepth(uint8_t value);
+void set_Vcf_KbdTracking(uint8_t value);
 
 
-void setVcaAdsrAttack(uint8_t value);
-void setVcaAdsrDecay(uint8_t value);
-void setVcaAdsrSustain(uint8_t value);
-void setVcaAdsrRelease(uint8_t value);
-void setVcaVelocitySensitivity(uint8_t value);
+void set_Vca_AdsrAttack(uint8_t value);
+void set_Vca_AdsrDecay(uint8_t value);
+void set_Vca_AdsrSustain(uint8_t value);
+void set_Vca_AdsrRelease(uint8_t value);
+void set_Vca_VelocitySensitivity(uint8_t value);
 
-void setVcfAdsrAttack(uint8_t value);
-void setVcfAdsrDecay(uint8_t value);
-void setVcfAdsrSustain(uint8_t value);
-void setVcfAdsrRelease(uint8_t value);
-void setVcfVelocitySensitivity(uint8_t value);
+void set_Vcf_AdsrAttack(uint8_t value);
+void set_Vcf_AdsrDecay(uint8_t value);
+void set_Vcf_AdsrSustain(uint8_t value);
+void set_Vcf_AdsrRelease(uint8_t value);
+void set_Vcf_VelocitySensitivity(uint8_t value);
 
 #endif /* INC_ADSR_H_ */

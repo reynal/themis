@@ -75,8 +75,9 @@ Boolean is_need_channel_data_sync[16] = {FALSE}; // list channels that need sync
 
 /**
  * Write the given word to the given channel buffer and mark data as needing sync.
+ * Data need then to be sync with AD5391 device using ad5391_Write_Dma(), e.g., from a timer IRQ.
  */
-void dacWrite(int word12bits, Dac channel){
+void dacWrite(uint16_t word12bits, Dac channel){
 
 	word12bits &= 0xFFF; // make sure it's >=0 and <4096
 
@@ -86,6 +87,26 @@ void dacWrite(int word12bits, Dac channel){
 
 }
 
+/**
+ * Write the given word to the given DAC channel in blocking SPI mode.
+ * Data are thus guaranteed to be written immediately to the AD5391 device.
+ */
+void dacWrite_Blocking(uint16_t word, Dac channel){
+
+	word &= 0xFFF; // make sure it's >=0 and <4096
+
+	// send SYNC pulse (approx 560ns negative pulse, minimum duration in datasheet is 33ns so that's perfectly safe):
+	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin;
+
+	txDAC5391Buff[0] = channel & 0x0F;
+	txDAC5391Buff[1] = 0xC0 | ((word & 0xFC0) >> 6U);
+	txDAC5391Buff[2] = ((word & 0x03F) << 2U);
+
+	DAC_SYNC_GPIO_Port->BSRR = DAC_SYNC_Pin;
+
+	HAL_SPI_Transmit(hspi_Dac, txDAC5391Buff, 3, 100);
+
+}
 
 
 // =================================================================================
@@ -136,8 +157,11 @@ void ad5391_Init_Device(){
 	hdma_Dac_tx->Instance->CPAR = (uint32_t)&(hspi_Dac->Instance->DR); // peripheral target address = SPI data register DR
 	hdma_Dac_tx->Instance->CMAR = (uint32_t)txDAC5391Buff; // memory source address
 
-	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_HT); // enable only transfer complete and transfer error
-	__HAL_DMA_ENABLE_IT(hdma_Dac_tx, (DMA_IT_TC | DMA_IT_TE)); // TODO : are interrupts necessary here?
+	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_HT); // half-transfer IT
+	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_TC); // transfer complete IT
+	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_TE); // transfer error IT
+
+	// __HAL_DMA_ENABLE_IT(hdma_Dac_tx, (DMA_IT_TC | DMA_IT_TE)); // we don't actually make use of SPI interrupts actually (SR 4/30/2020)
 
 	__HAL_DMA_ENABLE(hdma_Dac_tx); // re-enable DMA request
 	__HAL_SPI_ENABLE(hspi_Dac); // enable SPI peripheral
@@ -185,7 +209,6 @@ void ad5391_Write_Dma(uint8_t channel){
 	is_need_channel_data_sync[channel] = FALSE;
 
 }
-
 
 
 

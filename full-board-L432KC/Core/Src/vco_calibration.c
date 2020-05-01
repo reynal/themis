@@ -91,7 +91,7 @@ void runVcoCalibration(){
 
 	resetMidiToVCOCVTables(); // optional, could be commented out if we want to refine only a part of the calibration table
 
-	stop_DAC_Timer(); // stop timer responsible for updating ADSR enveloppes
+	dac_Board_Timer_Stop(); // stop timer responsible for updating ADSR enveloppes
 
 	captureTimerConversionFactor = (int)(8.0 * 54.0e6 / (htimCalib->Init.Prescaler+1.0));
 
@@ -111,7 +111,7 @@ void runVcoCalibration(){
 	//printf("Calibration terminated!\n");
 	printMidiToVCOCVTables();
 
-	start_DAC_Timer(); // restart timer responsible for updating ADSR enveloppes
+	dac_Board_Timer_Start(); // restart timer responsible for updating ADSR enveloppes
 
 
 }

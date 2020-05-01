@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 #include "stlink_dma.h"
 #include "dac_board.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -234,6 +235,7 @@ void DMA1_Channel3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
+	// this handler not used yet (see ad5391.c, DMA init)
 	(&hdma_spi1_tx)->DmaBaseAddress->IFCR = DMA_ISR_GIF3; // clear interrupt flag
 
   /* USER CODE END DMA1_Channel3_IRQn 0 */
@@ -263,11 +265,16 @@ void DMA1_Channel7_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-    __HAL_GPIO_EXTI_CLEAR_IT(EXTI5_SW1_Pin); // PB5 (SW1)
-    HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, HAL_GPIO_ReadPin(EXTI5_SW1_GPIO_Port, EXTI5_SW1_Pin));
-    //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 
-    // TODO L4 blueButtonActionPerformedCallback(HAL_GPIO_ReadPin(EXTI5_SW1_GPIO_Port, EXTI5_SW1_Pin));
+	// ---- SWITCH 1 ----
+
+	//HAL_GPIO_EXTI_IRQHandler(EXTI5_SW1_Pin);
+
+	__HAL_GPIO_EXTI_CLEAR_IT(EXTI5_SW1_Pin);
+
+	NVIC_DisableIRQ(EXTI9_5_IRQn); // will be re-enabled after some delay to avoid spurious interrupts from switch due to noise
+
+	dac_Board_EXTI_IRQHandler_SW1();
 
   /* USER CODE END EXTI9_5_IRQn 0 */
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
@@ -282,7 +289,7 @@ void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
     __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_UPDATE);
-    dac_Board_TIM_IRQ();
+    dac_Board_Timer_IRQ();
 
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */
@@ -297,9 +304,15 @@ void EXTI15_10_IRQHandler(void)
 {
 
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-	__HAL_GPIO_EXTI_CLEAR_IT(EXTI11_SW2_Pin); // PA11 (SW2)
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, HAL_GPIO_ReadPin(EXTI11_SW2_GPIO_Port, EXTI11_SW2_Pin));
-	//HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+
+	// ---- SWITCH 2 ----
+
+	__HAL_GPIO_EXTI_CLEAR_IT(EXTI11_SW2_Pin);
+
+	NVIC_DisableIRQ(EXTI15_10_IRQn); // will be re-enabled after some delay to avoid spurious interrupts from switch due to noise
+
+	dac_Board_EXTI_IRQHandler_SW2();
+
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */

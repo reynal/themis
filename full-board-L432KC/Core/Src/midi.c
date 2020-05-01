@@ -176,8 +176,8 @@ void midiNoteOnHandler(){
 	switchGreenLEDOn(); 	// switch on LED so that we can monitor enveloppe level TODO : pwm !
 
 	// prepare state machines:
-	prepareVcaEnvelopeNoteON();
-	prepareVcfEnvelopeNoteON();
+	prepare_Vca_Envelope_NoteON();
+	prepare_Vcf_Envelope_NoteON();
 
 }
 
@@ -194,8 +194,8 @@ void midiNoteOffHandler(){
 	switchGreenLEDOff();
 
 	// prepare state machines:
-	prepareVcaEnvelopeNoteOFF();
-	prepareVcfEnvelopeNoteOFF();
+	prepare_Vca_Envelope_NoteOFF();
+	prepare_Vcf_Envelope_NoteOFF();
 
 }
 
@@ -216,75 +216,75 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 		// ------------------------------ VCA ------------------------------
 	case VCA_ATTACK:
 		// printf("VCA A=%d\n", value);
-		setVcaAdsrAttack(value);
+		set_Vca_AdsrAttack(value);
 		break;
 
 	case VCA_DECAY:
 		// printf("VCA D=%d\n", value);
-		setVcaAdsrDecay(value);
+		set_Vca_AdsrDecay(value);
 		break;
 
 	case VCA_SUSTAIN:
 		// printf("VCA S=%d\n", value);
-		setVcaAdsrSustain(value);
+		set_Vca_AdsrSustain(value);
 		break;
 
 	case VCA_RELEASE:
 		// printf("VCA R=%d\n", value);
-		setVcaAdsrRelease(value);
+		set_Vca_AdsrRelease(value);
 		break;
 
 		// ------------------------------ VCF ------------------------------
 	case VCF_ATTACK:
 		// printf("VCF Attack=%d\n", value);
-		setVcfAdsrAttack(value);
+		set_Vcf_AdsrAttack(value);
 		break;
 
 	case VCF_DECAY:
 		// printf("VCF Decay=%d\n", value);
-		setVcfAdsrDecay(value);
+		set_Vcf_AdsrDecay(value);
 		break;
 
 	case VCF_SUSTAIN:
 		// printf("VCF Sustain=%d\n", value);
-		setVcfAdsrSustain(value);
+		set_Vcf_AdsrSustain(value);
 		break;
 
 	case VCF_RELEASE:
 		// printf("VCF Release=%d\n", value);
-		setVcfAdsrRelease(value);
+		set_Vcf_AdsrRelease(value);
 		break;
 
 	case VCF_KBDTRACKING :
 		// printf("VCF KBDTracking=%d\n", value);
-		setVcfKbdTracking(value);
+		set_Vcf_KbdTracking(value);
 		break;
 
 	case VCF_EG :
 		// printf("VCF EG=%d\n", value);
-		setVcfEgDepth(value);
+		set_Vcf_EgDepth(value);
 		break;
 
 		// ------------------------------ velocity ------------------------------
 	case VCA_VELOCITY_SENSITIVITY:
 		// printf("VCA Velo sens=%d\n", value);
-		setVcaVelocitySensitivity(value);
+		set_Vca_VelocitySensitivity(value);
 		break;
 
 	case VCF_VELOCITY_SENSITIVITY:
 		// printf("VCF Velo sens=%d\n", value);
-		setVcfVelocitySensitivity(value);
+		set_Vcf_VelocitySensitivity(value);
 		break;
 
 		// ------------------------------ filter ------------------------------
 	case VCF_CUTOFF:
 		// printf("VCF Cutoff=%d\n", value);
-		setVcfCutoffGlobal(value);
+		set_Vcf_CutoffGlobal(value);
 		break;
 
 	case VCF_RESONANCE:
 		// printf("VCF Res=%d\n", value);
-		setVcfResonanceGlobal(value);
+		set_Vcf_ResonanceGlobal(value);
 		break;
 
 	case VCF_ORDER :

@@ -31,42 +31,28 @@ extern TIM_HandleTypeDef *htimDac;
 
 /* Variables ---------------------------------------------------------*/
 
-Boolean is_enveloppes_need_update = FALSE;
+Boolean is_control_voltages_need_update = FALSE;
+int dacTick=0; // adsr enveloppes
 
+uint16_t debug_t; // debug
+int debug_counter;
 
-// ------------ adsr enveloppes -----------
-int dacTick=0;
-
-// DAC write tasks to be executed in turn at every call of adsrTIMCallback():
-dacTIMUpdateTask dacTIMUpdateTaskList[ADSR_TIMER_PERIOD_FACTOR] = {
-		updateVco13700Freq, // ALWAYS update VCO *before* VCA so that we won't hear the note jump
-		updateVco3340AFreq,
-		updateVco3340BFreq,
-		updateVcaEnvelope,
-		updateVcfEnvelope,
-		updateVcfResonance,
-		updateVco3340ALevel,
-		updateVco3340BPulseLevel,
-		updateVco3340BSawLevel,
-		updateVco3340BTriLevel,
-		updateVco3340APWMDuty,
-		updateVco3340BPWMDuty,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL
-};
+int sw1_Tick, sw2_Tick; // tick in ms to measure delay in order to debounce switches
+Boolean is_SW1_IRQ_Pending = FALSE;
+Boolean is_SW2_IRQ_Pending = FALSE;
 
 /* Function prototypes -----------------------------------------------*/
 
-static void incDacTick();
-static void reset_devices();
+static void dac_Board_Timer_incTick();
+static void dac_Board_Reset_Devices();
+static void dac_Board_EXTI_Debouncer();
+static void dac_Board_Switch1_Pressed();
+static void dac_Board_Switch2_Pressed();
+static void dac_Board_Switch1_Released();
+static void dac_Board_Switch2_Released();
 static void test_MCP23017();
 static void test_Tim_IRQ();
+static void test_AD5391();
 
 /* User code ---------------------------------------------------------*/
 
@@ -75,7 +61,7 @@ static void test_Tim_IRQ();
 /**
  * Initialize synth parameters and DAC values
  */
-void initSynthParams(){
+void init_Synth_Params(){
 
 	// TODO L4 dacVcaWrite(0.0); // makes sure we don't hear anything
 	HAL_Delay(1); // wait 1ms for transfer to complete (could be lower but HAL_Delay can't go below)
@@ -90,52 +76,121 @@ void initSynthParams(){
 //                                     DAC TIMER
 // --------------------------------------------------------------------------------------------------
 
-void start_DAC_Timer(){
-
-	// init TIMER DAC:
-	__HAL_TIM_ENABLE_IT(htimDac, TIM_IT_UPDATE);
-	__HAL_TIM_ENABLE(htimDac);
-
-}
-
-void stop_DAC_Timer(){
-
-	// init TIMER DAC:
-	__HAL_TIM_ENABLE_IT(htimDac, TIM_IT_UPDATE);
-	__HAL_TIM_ENABLE(htimDac);
-
-}
-
-
-/**
- * Timer driven DAC update callback.
- *
- * Called every 50us = 1/20kHz approximately.
- *
- * - every 50us we push a new sample to the DIG VCO dac (sample freq = 20kHz)
- *
- * - every 1ms = 20 * 50us (i.e. every 20 calls) we push a new sample to every other envelopes DAC in turn (1kHz sample freq)
- * BUT since after each SPI bus write we must wait (around 16 * 1/3MHz = 5us) for the transfer to complete before writing a new word,
- * it'd be a waste of time... so there's a clever trick that consists in writing one distinct enveloppe at each timer call
- * (since there are 20 timer calls b/w every envelope update, we could update up to 20 distinct enveloppes this way!
- * of course there are only 15 available DAC's on the board, so we do nothing during the last 5 calls anyway)
+/*
+ * starts the htimDac timer - dac_Board_TIM_IRQ callback is called @ 20kHz
  */
-void dacTIMCallback(){
+void dac_Board_Timer_Start(){
 
-		//dacTIMUpdateTask f = dacTIMUpdateTaskList[dacTick];
-		//if (f != NULL) f();
-		//incDacTick();
+	__HAL_TIM_ENABLE_IT(htimDac, TIM_IT_UPDATE);
+	__HAL_TIM_ENABLE(htimDac);
+
 }
 
-static void incDacTick(){
+/*
+ * stops the htimDac timer - dac_Board_TIM_IRQ callback not called anymore
+ */
+void dac_Board_Timer_Stop(){
+
+	__HAL_TIM_DISABLE_IT(htimDac, TIM_IT_UPDATE);
+	__HAL_TIM_DISABLE(htimDac);
+
+}
+
+
+// increments dacTick counter
+static void dac_Board_Timer_incTick(){
 	dacTick++;
 	if (dacTick == ADSR_TIMER_PERIOD_FACTOR) {
 		dacTick = 0;
 	}
 }
 
+/**
+ * Timer driven DAC and MCP23017 data update callback.
+ *
+ * Timings :
+ * - Called every 50us = 1/20kHz approximately.
+ * - At 5Mbits/s, a complete 24 bit transfer takes 5us and then the busy signal goes low for 600ns hence minimum timer period must be above 6us.
+ *
+ * How this works:
+ * - dacTick counter runs from 0 to 20 and indicates what should be updated during each call ; each task below is triggered once every 1ms = 20 * 50us
+ *
+ * - dackTick=0 : marks envelopes as needing updates (this will be carried out asynchronously in the main while loop)
+ * - dackTick=0 to 15 : write AD5391 16-channel data to device using DMA
+ * - dackTick=16 : write MCP23017 Port A data to device using DMA
+ * - dackTick=17 : write MCP23017 Port B data to device using DMA
+ * - dackTick=18 : free for any task
+ * - dackTick=19 : free for any task
+ *
+ * AD5391_CHANNEL_COUNT=16
+ * ADSR_TIMER_PERIOD_FACTOR=20
+ *
+ */
+void dac_Board_Timer_IRQ(){
+
+	//LD3_GPIO_Port->BRR = LD3_Pin; // debug
+
+	if (dacTick == 0) is_control_voltages_need_update = TRUE; // TODO : put this at the end, when dacTick > 17?
+
+
+	if (dacTick < AD5391_CHANNEL_COUNT) ad5391_Write_Dma(dacTick); // 0 to 15
+	else if (dacTick == AD5391_CHANNEL_COUNT) mcp23017_Tx_GpioA_Buffer_Dma(); // 16
+	else if (dacTick == (AD5391_CHANNEL_COUNT+1)) mcp23017_Tx_GpioB_Buffer_Dma(); // 17
+
+	dac_Board_Timer_incTick();
+	//LD3_GPIO_Port->BSRR = LD3_Pin; // debug
+}
+
+/*
+ * Asynchronously updates all control voltages in turn, e.g., from MIDI input and LFO modulations.
+ * This does not write to DAC, just to buffers.
+ * Buffers are then written to DAC by dac_Board_Timer_IRQ().
+ */
+void dac_Board_Update_Control_Voltages(){
+
+	if (is_control_voltages_need_update==FALSE) return;
+
+	//LD3_GPIO_Port->BSRR = LD3_Pin; // debug
+
+	uint16_t x = (uint16_t)(2000. * (1.0+sin(0.1 * (debug_t++))));
+	dacWrite(x, 0);
+
+
+	//			updateVco13700Freq();
+	//			updateVco3340AFreq();
+	//			updateVco3340BFreq();
+	//			updateVco3340ALevel();
+	//			updateVco3340BPulseLevel();
+	//			updateVco3340BSawLevel();
+	//			updateVco3340BTriLevel();
+	//			updateVco3340APWMDuty();
+	//			updateVco3340BPWMDuty();
+	//
+	//			updateVcaEnvelope();
+	//			updateVcfEnvelope();
+	//			updateVcfResonance();
+
+	//LD3_GPIO_Port->BRR = LD3_Pin; // debug
+
+	is_control_voltages_need_update=FALSE;
+}
+
+/*
+ * The main infinite loop.
+ */
+void dac_Board_Infinite_Loop(){
+
+	while(1){
+
+		dac_Board_Update_Control_Voltages();
+
+		dac_Board_EXTI_Debouncer();
+
+	}
+}
+
 // ---------------------------------------------------------------------------------------------------------------
-//                                     DEVICES (see also ad5391.c and mcp23017.c for specific implementations)
+//                                     DEVICES (see also ad5391.c and mcp23017.c for implementation specific details)
 // ---------------------------------------------------------------------------------------------------------------
 
 /*
@@ -143,7 +198,10 @@ static void incDacTick(){
  */
 void dac_Board_Init(){
 
-	reset_devices(); // also MCP23017
+	sw1_Tick = HAL_GetTick();
+	sw2_Tick = HAL_GetTick();
+
+	dac_Board_Reset_Devices(); // also MCP23017
 
 	ad5391_Init_Device();
 
@@ -154,7 +212,7 @@ void dac_Board_Init(){
 /**
  * Sends a negative RESET pulse to the AD5391 and MCP23017 circuits.
  */
-static void reset_devices(){
+static void dac_Board_Reset_Devices(){
 
 	DAC_RST_GPIO_Port->BRR = (uint32_t)(DAC_RST_Pin); // lower RST
 	HAL_Delay(1); // wait at leat 270us
@@ -164,42 +222,121 @@ static void reset_devices(){
 }
 
 
+// ---------------------------------------------------------------------------------------------------------------
+//                                     SWITCHES SW1 and SW2
+// ---------------------------------------------------------------------------------------------------------------
+
+void dac_Board_EXTI_IRQHandler_SW1(){ // EXTI9_5_IRQHandler
+
+	sw1_Tick = HAL_GetTick();
+	is_SW1_IRQ_Pending = TRUE;
+
+}
+
+void dac_Board_EXTI_IRQHandler_SW2(){ // EXTI15_10_IRQHandler
+
+	sw2_Tick = HAL_GetTick();
+	is_SW2_IRQ_Pending = TRUE;
+
+}
+
+/*
+ * Post-delay EXTI debouncer that dispatches to appropriate dac_Board_SwitchX_YYYY().
+ *
+ * The point is to read the value of the SW1/SW2 GPIO once they've stabilized, then to
+ * re-enable interrupts.
+ */
+static void dac_Board_EXTI_Debouncer(){
+
+	if (is_SW1_IRQ_Pending && (HAL_GetTick() - sw1_Tick > SWITCH_DEBOUNCE_DELAY)){
+
+		is_SW1_IRQ_Pending = FALSE;
+
+		if ((EXTI5_SW1_GPIO_Port->IDR & EXTI5_SW1_Pin) != 0)
+			dac_Board_Switch1_Released();
+		else
+			dac_Board_Switch1_Pressed();
+
+		// before re-enabling IRQs, make sure there's no more IRQ pending:
+		while (HAL_NVIC_GetPendingIRQ(EXTI9_5_IRQn)) {
+			__HAL_GPIO_EXTI_CLEAR_IT(EXTI5_SW1_Pin);
+			HAL_NVIC_ClearPendingIRQ(EXTI9_5_IRQn);
+		}
+
+		NVIC_EnableIRQ(EXTI9_5_IRQn);   // SW1 = EXTI5
+	}
+
+	if (is_SW2_IRQ_Pending && (HAL_GetTick() - sw2_Tick > SWITCH_DEBOUNCE_DELAY)){
+
+		is_SW2_IRQ_Pending = FALSE;
+
+		if ((EXTI11_SW2_GPIO_Port->IDR & EXTI11_SW2_Pin) != 0)
+			dac_Board_Switch2_Released();
+		else
+			dac_Board_Switch2_Pressed();
+
+		// before re-enabling IRQs, make sure there's no more IRQ pending:
+		while (HAL_NVIC_GetPendingIRQ(EXTI15_10_IRQn)) {
+			__HAL_GPIO_EXTI_CLEAR_IT(EXTI11_SW2_Pin);
+			HAL_NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+		}
+
+		// debug printf("ITfl=%d pend=%d\n", __HAL_GPIO_EXTI_GET_IT(EXTI11_SW2_Pin), HAL_NVIC_GetPendingIRQ(EXTI15_10_IRQn));
+
+		NVIC_EnableIRQ(EXTI15_10_IRQn); // SW2 = EXTI11
+	}
+
+
+
+
+
+}
 
 /**
- * DAC IRQ handler that's fit for any timer.
- * Beware: at 5Mbits/s, a complete 24 bit transfer takes 5us and then
- * the busy signal goes low for 600ns hence minimum timer period must be above 6us.
- *
+ * Called when SW1 gets pressed (SW1 is the rightmost button)
  */
-void dac_Board_TIM_IRQ(){
+static void dac_Board_Switch1_Pressed(){
 
-	LD3_GPIO_Port->BRR = LD3_Pin; // debug
+	printf("SW1 pressed %d\n", debug_counter++);
 
-	if (dacTick == 0) is_enveloppes_need_update = TRUE;
+	/* note ON
+		//int randomNote = rand() % 20 + 34;
+		//printf("rd note=%d\n", randomNote);
+		//processIncomingMidiMessage(NOTE_ON, randomNote,100);
+	}
+	else { // note OFF
+		//processIncomingMidiMessage(NOTE_OFF, 40, 0);
+	}*/
 
-	if (dacTick < AD5391_CHANNEL_COUNT) ad5391_Write_Dma(dacTick);
-	else if (dacTick == AD5391_CHANNEL_COUNT) mcp23017_Tx_GpioA_Buffer_Dma();
-	else if (dacTick == (AD5391_CHANNEL_COUNT+2)) mcp23017_Tx_GpioB_Buffer_Dma();
+	//debug_counter++;
+}
 
-	incDacTick();
-	LD3_GPIO_Port->BSRR = LD3_Pin; // debug
+/**
+ * Called when SW1 gets released (SW1 is the rightmost button)
+ */
+static void dac_Board_Switch1_Released(){
+
+	printf("SW1 released %d\n", debug_counter++);
+
 }
 
 
+/**
+ * Called when SW2 gets pressed (SW2 is the leftmost button)
+ */
+static void dac_Board_Switch2_Pressed(){
+
+	printf("SW2 pressed %d\n", debug_counter++);
+
+}
 
 /**
- * Called when the blue button gets pressed or released.
+ * Called when SW2 gets released (SW2 is the leftmost button)
  */
-void blueButtonActionPerformedCallback(GPIO_PinState state){
+static void dac_Board_Switch2_Released(){
 
-	if (state == GPIO_PIN_SET){ // note ON
-		int randomNote = rand() % 20 + 34;
-		printf("rd note=%d\n", randomNote);
-		processIncomingMidiMessage(NOTE_ON, randomNote,100);
-	}
-	else { // note OFF
-		processIncomingMidiMessage(NOTE_OFF, 40, 0);
-	}
+	printf("SW2 released %d\n", debug_counter++);
+
 }
 
 // ---------------------------------------------------------------------------------------------------------------
@@ -211,7 +348,29 @@ void test_Dac_Board(){
 
 	//test_MCP23017();
 	test_Tim_IRQ();
+	//test_AD5391();
 
+}
+
+static void test_AD5391(){
+
+	int t=0;
+	uint16_t x;
+
+	dac_Board_Reset_Devices();
+
+	ad5391_Init_Device();
+
+  	//LD3_GPIO_Port->BRR = LD3_Pin; // debug
+  	//LD3_GPIO_Port->BSRR = LD3_Pin; // debug
+
+
+	while (1){
+
+		x = (uint16_t)(2000. * (1.0+sin(0.1 * (t++))));
+		dacWrite_Blocking(x, 0);
+		HAL_Delay(1);
+	}
 }
 
 
@@ -220,7 +379,7 @@ void test_Dac_Board(){
  */
 static void test_MCP23017(){
 
-	reset_devices();
+	dac_Board_Reset_Devices();
 
 	mcp23017_Init_Device();
 
@@ -242,26 +401,30 @@ static void test_MCP23017(){
 
 static void test_Tim_IRQ(){
 
-	int t=0;
-	int x;
+	//int t=0;
+	//uint16_t x;
+	//debug_counter = 0;
 
-	reset_devices();
+
+	dac_Board_Reset_Devices();
 
 	ad5391_Init_Device();
 
 	mcp23017_Init_Device();
 
-	start_DAC_Timer();
+	dac_Board_Timer_Start();
 
-	while (1){
+	dac_Board_Infinite_Loop();
+
+	/*while (1){
 
 		if (is_enveloppes_need_update == TRUE){
-			x = (uint32_t)(2000. * (1.0+sin(0.1 * (t++))));
+			x = (uint16_t)(2000. * (1.0+sin(0.1 * (t++))));
 			dacWrite(x, 0);
 			is_enveloppes_need_update = FALSE;
 		}
 		//HAL_Delay(1);
-	}
+	}*/
 }
 
 

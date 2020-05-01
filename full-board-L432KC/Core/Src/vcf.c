@@ -23,7 +23,7 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern StateMachineVcf stateMachineVcf;
+extern State_Machine_Vcf stateMachineVcf;
 
 /* Variables ---------------------------------------------------------*/
 
@@ -46,12 +46,12 @@ void setVcfOrder(uint8_t midiValue){
 	}
 }
 
-void setVcfCutoffGlobal(uint8_t midiValue){
+void set_Vcf_CutoffGlobal(uint8_t midiValue){
 	globalFilterParams.vcfCutoff = midiValue/127.0;
 }
 
 
-void setVcfResonanceGlobal(uint8_t midiValue){
+void set_Vcf_ResonanceGlobal(uint8_t midiValue){
 	globalFilterParams.vcfResonance = midiValue;
 
 }
@@ -81,7 +81,7 @@ void testVcf(){
 
 	int i=0;
 	while(1){
-		setVcfCutoffGlobal(i);
+		set_Vcf_CutoffGlobal(i);
 		//updateVcfCutoff();
 		HAL_Delay(50); // 200ms
 		toggleGreenLED();

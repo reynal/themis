@@ -38,7 +38,7 @@ typedef enum {
 	  DAC_VCF_CUTOFF,					// AS3320 cutoff CV (ch 13)
 	  DAC_VCF_RES,						// AS3320 resonance CV (ch 14)
 
-	  DAC_VCA	              			// VCA (ch 15)
+	  DAC_VCA	              			// VCA (ch 15) aka "NOISE_GENE" on board
 
 	  // the following are aliases to mixer inputs (see function dacWrite for details on how they are being used)
 	  //DAC_V2140D_3340A_LVL,
@@ -59,7 +59,8 @@ typedef enum {
 
 void ad5391_Init_Device();
 void ad5391_Write_Dma(uint8_t channel);
-void dacWrite(int word12bits, Dac channel);
+void dacWrite(uint16_t word12bits, Dac channel);
+void dacWrite_Blocking(uint16_t word, Dac channel);
 
 
 #endif /* INC_AD5391_H_ */
