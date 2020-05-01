@@ -79,8 +79,6 @@ Boolean is_need_channel_data_sync[16] = {FALSE}; // list channels that need sync
  */
 void dacWrite(uint16_t word12bits, Dac channel){
 
-	word12bits &= 0xFFF; // make sure it's >=0 and <4096
-
 	is_need_channel_data_sync[channel] = FALSE; // lock
 	channel_data[channel] = word12bits;
 	is_need_channel_data_sync[channel] = TRUE; // unlock

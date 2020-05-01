@@ -117,16 +117,13 @@ int main(void)
 
   stlink_dma_init();
 
-  // TODO L4 initAdsrParameters();
-  // TODO L4 initSynthParams(); // be sure to do this BEFORE starting htimDacs!
-  // TODO L4 startDacTIM(); // start timer responsible for updating ADSR enveloppes and writing to DACs
-  // TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
+  // === VCO Calibration mode===
+  //runVcoCalibration(); // busy loop until calibration is over (uncomment when needed)
 
-	// === VCO Calibration mode===
-	//runVcoCalibration(); // busy loop until calibration is over (uncomment when needed)
+  dac_Board_Start();
 
 
-  test_Dac_Board();
+  // we should never reach this point
 
   /* USER CODE END 2 */
 
@@ -137,11 +134,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  //HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-	  HAL_Delay(100);
-	  toggleGreenLED();
-
-	  // TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg (BUG FIX)
   }
   /* USER CODE END 3 */
 }

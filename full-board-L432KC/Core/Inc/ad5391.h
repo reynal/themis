@@ -25,12 +25,12 @@ typedef enum {
 	  DAC_VCO_3340A_FREQ,   			// CEM3340A VCO: frequency (ch 3)
 	  DAC_VCO_3340A_PWM_DUTY,			// CEM3340A VCO: PWM duty cycle (ch 4)
 
-	  DAC_V2140D_IN3,					// V2140D QUAD VCA input #3A (ch 5) aka DAC_V2140D_3340B_PULSE_LVL:
+	  DAC_V2140D_3340B_PULSE_LVL,		// V2140D QUAD VCA input #3A (ch 5)
 	  DAC_V2140D_IN4,					// V2140D QUAD VCA input #4A (ch 6)
-	  DAC_V2140D_IN1,					// V2140D QUAD VCA input #1A (ch 7) aka DAC_V2140D_3340B_TRI_LVL
-	  DAC_V2140D_IN2,					// V2140D QUAD VCA input #2A (ch 8) aka DAC_V2140D_3340B_SAW_LVL
+	  DAC_V2140D_3340B_TRI_LVL,			// V2140D QUAD VCA input #1A (ch 7)
+	  DAC_V2140D_3340B_SAW_LVL,			// V2140D QUAD VCA input #2A (ch 8)
 
-	  DAC_V2140D_IN7,					// V2140D QUAD VCA input #3B (ch 9) aka DAC_V2140D_3340A_LVL
+	  DAC_V2140D_3340A_LVL,				// V2140D QUAD VCA input #3B (ch 9)
 	  DAC_V2140D_IN8,					// V2140D QUAD VCA input #4B (ch 10)
 	  DAC_V2140D_IN5,					// V2140D QUAD VCA input #1B (ch 11)
 	  DAC_V2140D_IN6,					// V2140D QUAD VCA input #2B (ch 12)

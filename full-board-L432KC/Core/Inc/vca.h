@@ -8,6 +8,7 @@
 #ifndef INC_VCA_H_
 #define INC_VCA_H_
 
-void dacVcaWrite(double amp);
+void dacVcaWrite_Blocking(double amp);
+void updateVca();
 
 #endif /* INC_VCA_H_ */

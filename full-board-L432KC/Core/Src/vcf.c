@@ -14,6 +14,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "ad5391.h"
 #include "vcf.h"
 #include "stm32l4xx_hal.h"
 #include "adsr.h"
@@ -57,7 +58,7 @@ void set_Vcf_ResonanceGlobal(uint8_t midiValue){
 }
 
 void updateVcfResonance(){
-	// TODO L4 dacWrite((int) (MAX_RESONANCE * globalFilterParams.vcfResonance/127.), DAC_VCF_RES);
+	dacWrite((int) (MAX_RESONANCE * globalFilterParams.vcfResonance/127.), DAC_VCF_RES);
 }
 
 
@@ -69,9 +70,12 @@ void initVcf(){
 void updateVcfCutoff(){
 
 	// cutoff frequency varies as opposed to control voltage:
-	// TODO L4 double cutoff = stateMachineVcf.cutoffFrequency; // +stateMachineVcf.tmpKbdtrackingShiftFactor; // TODO : + dbg_modulation
+	double cutoff = stateMachineVcf.cutoffFrequency; // +stateMachineVcf.tmpKbdtrackingShiftFactor; // TODO : + dbg_modulation
 	// TODO L4 int dacLvl = (int)(4095.0 * (1.0-cutoff));
-	// TODO L4 dacWrite(dacLvl, DAC_VCF_CUTOFF);
+	int dacLvl = (int)(4095.0 * (cutoff));
+	if (dacLvl<0) dacLvl=0;
+	else if (dacLvl>4095) dacLvl=4095;
+	dacWrite(dacLvl, DAC_VCF_CUTOFF);
 }
 
 

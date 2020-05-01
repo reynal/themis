@@ -159,7 +159,6 @@ void update_Vca_Envelope() {
 		break;
 
 	case ATTACK:
-		dacVcaWrite(stateMachineVca.amplitude);
 		stateMachineVca.amplitude += stateMachineVca.tmpDelta;
 		if (stateMachineVca.amplitude >= stateMachineVca.tmpTargetLevel) {
 			// prepare dyn params for DECAY phase:
@@ -176,7 +175,6 @@ void update_Vca_Envelope() {
 
 		if (stateMachineVca.amplitude > stateMachineVca.tmpTargetLevel) {
 			stateMachineVca.amplitude += stateMachineVca.tmpDelta;
-			dacVcaWrite(stateMachineVca.amplitude);
 		}
 		// else stays on sustain plateau until NOTE OFF occurs
 		break;
@@ -185,11 +183,11 @@ void update_Vca_Envelope() {
 
 		if (stateMachineVca.amplitude > 0.0) { // stateMachineVca.tmpTargetLevel) {
 			stateMachineVca.amplitude += stateMachineVca.tmpDelta; // else stays on sustain plateau until NOTE OFF occurs
-			dacVcaWrite(stateMachineVca.amplitude);
 		} else
 			stateMachineVca.machineState = IDLE;
 		break;
 	}
+	updateVca();
 
 }
 

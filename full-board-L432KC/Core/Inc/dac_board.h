@@ -25,18 +25,14 @@
 
 /* Private function prototypes -----------------------------------------------*/
 
-void init_Synth_Params();
-
 void dac_Board_Timer_Start();
 void dac_Board_Timer_Stop();
 
 void dac_Board_Timer_IRQ(void);
-void dac_Board_Init();
+void dac_Board_Start();
 
 void dac_Board_EXTI_IRQHandler_SW1();
 void dac_Board_EXTI_IRQHandler_SW2();
-
-void test_Dac_Board();
 
 
 #endif /* INC_DAC_BOARD_H_ */
