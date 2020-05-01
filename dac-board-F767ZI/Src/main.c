@@ -769,7 +769,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	// button blue as note trigger
 	else if (GPIO_Pin == USER_Btn_Pin) { // PC13
 
-		blueButtonActionPerformedCallback(HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin));
+		dac_Board_Switch1_ActionPerformed(HAL_GPIO_ReadPin(USER_Btn_GPIO_Port, USER_Btn_Pin));
 
 	}
 }

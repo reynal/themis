@@ -221,7 +221,7 @@ void initSynthParams(){
 /**
  * Called when the blue button gets pressed or released.
  */
-void blueButtonActionPerformedCallback(GPIO_PinState  state){
+void dac_Board_Switch1_ActionPerformed(GPIO_PinState  state){
 
 	if (state == GPIO_PIN_SET){ // note ON
 		int randomNote = rand() % 20 + 34;
