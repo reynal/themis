@@ -27,6 +27,7 @@
 
 extern MidiNote midiNote;
 extern TIM_HandleTypeDef *htimDac;
+extern UART_HandleTypeDef *huart_STlink;
 
 
 /* Variables ---------------------------------------------------------*/
@@ -229,10 +230,11 @@ void dac_Board_Start(){
 
 	dac_Board_Init();
 
+	stlink_Rx_Init();
+
 	dac_Board_Timer_Start();
 	dac_Board_Infinite_Loop();
 
-	// TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // starts listening to incoming message over ST-link USB virtual com port
 
 }
 

@@ -5,21 +5,32 @@
  *      Author: sydxrey
  *
  *
- *      printf support based on STLink UART TX with DMA transfer (DMA1, channel 7, hardcoded)
+ *      printf support based on STLink UART TX with DMA transfer (DMA1, channel 7, hardcoded for STM32L4)
  */
 
 
-#include "stlink_dma.h"
 #include <stdio.h>
+#include <stlink_tx_dma.h>
 #include <string.h>
 
 
+/* External variables --------------------------------------------------------*/
 
 extern DMA_HandleTypeDef *hdma_STlink_tx;
 extern UART_HandleTypeDef *huart_STlink;
 
+/* Function prototypes -----------------------------------------------*/
+
+static size_t stlink_dma_buff_write(const char* data, size_t btw); // TODO make static
+static size_t stlink_dma_buff_get_writable_size();
+static int stlink_dma_buff_get_readable_size();
+static uint8_t * stlink_dma_buff_get_linear_block_read_address();
+static size_t stlink_dma_buff_get_linear_block_read_length();
+static int stlink_dma_buff_skip(size_t len);
+static void stlink_dma_transmit();
 
 /* RING BUFFER for transmit data:
+
  buffer has size TX_BUFF_SIZE
  Reading data starts at tx_buff_r
  Writing data starts at tx_buff_w
@@ -34,6 +45,8 @@ static size_t tx_buff_w;			// Next write pointer.
 
 static size_t tx_len; // variable to be shared among IRQ handler and dma_transmit()
 
+/* User code -----------------------------------------------*/
+
 /**
  *
  */
@@ -47,7 +60,7 @@ void stlink_dma_init(){
 	// clear all interrupt flags for channel 7:
 	hdma_STlink_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF7;
 
-	// program DMA transfer features: (so far only CPAR is set, CMAR and CNDTR will be later on)
+	// program DMA transfer features: (so far only CPAR is set, CMAR and CNDTR will be set later on)
 	hdma_STlink_tx->Instance->CPAR = (uint32_t)&(huart_STlink->Instance->TDR); // set peripheral address to UART TDR register
 
 	// enable only TC (transfer complete) and TE (transfer error) interrupts for DMA channel:
@@ -60,7 +73,7 @@ void stlink_dma_init(){
 	// Enable DMA-to-UART transmit request by setting the DMAT bit in the UART CR3 register:
 	SET_BIT(huart_STlink->Instance->CR3, USART_CR3_DMAT);
 
-	// now to start the real transfer we'd just need to enable the DMA peripheral (see dma_transmit() below)
+	// now to start the real transfer we'd just need to enable the DMA peripheral (see stlink_dma_transmit() below)
 
 }
 
@@ -83,7 +96,7 @@ void stlink_dma_send_string(const char* str) {
 /**
  * Checks for data in buffer and starts transfer if not in progress
  */
-void stlink_dma_transmit() {
+static void stlink_dma_transmit() {
 
     /* If transfer is not on-going, ie EN=0 in CCR register */
     if ((hdma_STlink_tx->Instance->CCR &  DMA_CCR_EN) == 0U){
@@ -160,7 +173,7 @@ void stlink_dma_irq_handler(){
  * @param 	len: Number of bytes to skip and mark as read
  * @return  Number of bytes skipped
  */
-int stlink_dma_buff_skip(size_t len) {
+static int stlink_dma_buff_skip(size_t len) {
 
     int full = stlink_dma_buff_get_readable_size();       /* Get buffer used length */
     tx_buff_r += BUF_MIN(len, full);              /* Advance read pointer */
@@ -173,7 +186,7 @@ int stlink_dma_buff_skip(size_t len) {
 /**
  * Get number of bytes in tx_buff_data available to read
  */
-int stlink_dma_buff_get_readable_size() {
+static int stlink_dma_buff_get_readable_size() {
 
     size_t w, r, size;
 
@@ -196,7 +209,7 @@ int stlink_dma_buff_get_readable_size() {
  * \param[in]       buff: Buffer handle
  * \return          Linear buffer start address
  */
-uint8_t* stlink_dma_buff_get_linear_block_read_address() {
+static uint8_t* stlink_dma_buff_get_linear_block_read_address() {
 
     return tx_buff + tx_buff_r;
 }
@@ -206,7 +219,7 @@ uint8_t* stlink_dma_buff_get_linear_block_read_address() {
  * \param[in]       buff: Buffer handle
  * \return          Linear buffer size in units of bytes for read operation
  */
-size_t stlink_dma_buff_get_linear_block_read_length() {
+static size_t stlink_dma_buff_get_linear_block_read_length() {
 
     size_t w, r, len;
 
@@ -230,7 +243,7 @@ size_t stlink_dma_buff_get_linear_block_read_length() {
  * @return 	Number of bytes written to buffer.
  *          When returned value is less than `btw`, there was not enough memory available to copy full data array
  */
-size_t stlink_dma_buff_write(const char* data, size_t btw) {
+static size_t stlink_dma_buff_write(const char* data, size_t btw) {
 
     size_t n;
 
@@ -283,7 +296,7 @@ int __io_putchar(int ch) {
  *
  * @return Number of free bytes in tx_buff_data ; 0 if w==r-1
  */
-size_t stlink_dma_buff_get_writable_size() {
+static size_t stlink_dma_buff_get_writable_size() {
 
     size_t size, w, r;
 

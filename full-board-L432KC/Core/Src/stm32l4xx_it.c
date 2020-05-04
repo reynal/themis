@@ -19,13 +19,14 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stlink_tx_dma.h>
 #include "main.h"
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stlink_dma.h"
 #include "dac_board.h"
 #include "stdio.h"
+#include "stlink_rx_midi.h"
 
 /* USER CODE END Includes */
 
@@ -64,7 +65,7 @@ extern DMA_HandleTypeDef hdma_i2c3_tx;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart2_tx;
-
+extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 extern I2C_HandleTypeDef *hi2c_MCP23017;
 extern DMA_HandleTypeDef *hdma_MCP23017_tx;
@@ -222,7 +223,6 @@ void DMA1_Channel2_IRQHandler(void)
 	//__HAL_I2C_ENABLE_IT(hi2c, I2C_IT_STOPI | I2C_IT_TCI); /* Enable ST
 
   /* USER CODE END DMA1_Channel2_IRQn 0 */
-  //HAL_DMA_IRQHandler(&hdma_i2c3_tx);
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
 
   /* USER CODE END DMA1_Channel2_IRQn 1 */
@@ -298,11 +298,26 @@ void TIM2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles USART2 global interrupt.
+  */
+void USART2_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART2_IRQn 0 */
+
+	stlink_Rx_IRQ_Handler();
+
+  /* USER CODE END USART2_IRQn 0 */
+  //HAL_UART_IRQHandler(&huart2);
+  /* USER CODE BEGIN USART2_IRQn 1 */
+
+  /* USER CODE END USART2_IRQn 1 */
+}
+
+/**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
 void EXTI15_10_IRQHandler(void)
 {
-
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
 	// ---- SWITCH 2 ----

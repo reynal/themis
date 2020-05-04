@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <stlink_tx_dma.h>
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
@@ -31,7 +32,6 @@
 /* USER CODE BEGIN Includes */
 #include "midi.h"
 #include "dac_board.h"
-#include "stlink_dma.h"
 #include "stdio.h"
 #include "leds.h"
 #include "vco_calibration.h"
@@ -60,9 +60,8 @@
 
 /* USER CODE BEGIN PV */
 
-uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
-extern UART_HandleTypeDef *huart_STlink;
-extern TIM_HandleTypeDef *htimVcoCalib; // tim1
+extern UART_HandleTypeDef *huart_STlink; // TODO : necessary ?
+extern TIM_HandleTypeDef *htimVcoCalib; // tim1 TODO : necessary ?
 
 
 /* USER CODE END PV */
@@ -209,19 +208,6 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 
 
 
-/**
- * Callback for the UART peripheral receive data process
- * Called when a given amount of data has been received on given UART port
- */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-
-	if (huart == huart_STlink){ // TODO: validate
-		//printf("Received: %s\n", rxUartSTlinkBuff);
-		//toggleBlueLED();
-		processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
-		HAL_UART_Receive_IT(huart_STlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
-	}
-}
 
 /* USER CODE END 4 */
 
