@@ -64,7 +64,7 @@ public class MidiInHandler implements Receiver {
 		
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		
-		String str = "Listing Midi Devices with transmitters: (out of " + infos.length + " MIDI devices found)\n";
+		String str = "Listing Midi Devices with transmitters (=can transmit MIDI msg to us): (out of " + infos.length + " MIDI devices found)\n";
 
 		for (MidiDevice.Info info : infos) {
 
@@ -73,7 +73,7 @@ public class MidiInHandler implements Receiver {
 				device = MidiSystem.getMidiDevice(info);
 				int maxTransmitters = device.getMaxTransmitters();
 				if (maxTransmitters == 0 || device instanceof Sequencer) continue; // not a MIDI OUT port
-				str += "\t- \"" + info.getDescription() + "\"" + (maxTransmitters==-1 ? "" : (maxTransmitters + " transmitters"));
+				str += "\t- \"" + info.getDescription() + "\"" + (maxTransmitters==-1 ? "" : (maxTransmitters + " transmitters")) + "\n";
 			} catch (MidiUnavailableException e) {
 				e.printStackTrace();
 			}
