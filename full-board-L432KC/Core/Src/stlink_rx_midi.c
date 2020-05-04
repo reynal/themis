@@ -10,6 +10,7 @@
 
 #include "stm32l4xx_hal.h"
 #include "stdio.h"
+#include "midi.h"
 
 /* External variables --------------------------------------------------------*/
 
@@ -71,7 +72,8 @@ void stlink_Rx_IRQ_Handler(){
 	}*/
 
 	uint16_t  data = (uint16_t) READ_REG(huart_STlink->Instance->RDR);
-	printf("%d\n", data);
+	//printf("%d\n", data);
+	process_Midi_Byte(data);
 
 	// et lorsque c'est terminé :
 	/* Disable the UART Parity Error Interrupt and RXNE interrupts */

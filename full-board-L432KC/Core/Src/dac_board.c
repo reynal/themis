@@ -332,7 +332,7 @@ static void dac_Board_Switch1_Pressed(){
 	//int randomNote = rand() % 20 + 34;
 	//int randomNote = 30;
 	//printf("rd note=%d\n", randomNote);
-	processIncomingMidiMessage(NOTE_ON, 30,100);
+	//processIncomingMidiMessage(NOTE_ON, 30,100);
 
 	//debug_counter++;
 }
@@ -344,7 +344,7 @@ static void dac_Board_Switch1_Released(){
 
 	printf("SW1 released %d\n", debug_counter++);
 
-	processIncomingMidiMessage(NOTE_OFF, 30, 0);
+	//processIncomingMidiMessage(NOTE_OFF, 30, 0);
 
 }
 

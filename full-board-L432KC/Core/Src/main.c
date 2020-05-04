@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <stlink_tx_dma.h>
 #include "main.h"
 #include "dma.h"
 #include "i2c.h"
@@ -35,6 +34,7 @@
 #include "stdio.h"
 #include "leds.h"
 #include "vco_calibration.h"
+#include "stlink_tx_dma.h"
 
 /* USER CODE END Includes */
 

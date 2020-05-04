@@ -82,7 +82,16 @@ typedef enum {
 		WAITING_FOR_BYTE1, // waiting for byte #1
 		WAITING_FOR_BYTE2,  // waiting for byte #2
 		WAITING_FOR_BYTE3// waiting for byte #3
-} midi_receiver_state_t;
+} Midi_Receiver_State;
+
+/*
+ * A struct for a MIDI 3-byte short message
+ */
+typedef struct {
+	uint8_t status_channel;
+	uint8_t data1;
+	uint8_t data2;
+} Midi_Message;
 
 /*
  * A collection of constants for MIDI status bytes
@@ -94,9 +103,10 @@ typedef enum {
 
 /* Private function prototypes -----------------------------------------------*/
 
-void midiNoteOnHandler();
-void midiNoteOffHandler();
-void processIncomingMidiMessage(uint8_t status, uint8_t data1, uint8_t data2);
+void midiNoteOnHandler(uint8_t note, uint8_t vel);
+void midiNoteOffHandler(uint8_t note);
+void process_Midi_Byte(uint8_t byte);
+void processIncomingMidiMessage();
 void setMidiCCParam(MidiCCParam param, uint8_t value);
 
 

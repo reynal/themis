@@ -24,8 +24,9 @@
 /* Private variables ---------------------------------------------------------*/
 
 MidiNote midiNote = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
-// midi_receiver_state_t midi_receiver_state; // midi state-machine state
-// uint8_t midi_byte1, midi_byte2, midi_byte3; // tmp vars for midi state-machine
+Midi_Receiver_State midi_Receiver_State; // midi state-machine state
+Midi_Message midi_Message; // tmp var for state-machine
+
 Boolean dbg_noteOn = FALSE;
 
 // converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam
@@ -166,9 +167,15 @@ MidiCCParam midiccCodeToParams[128] = {
 /**
  *  Prepare the envelope state machines following a MIDI NOTE ONE message
  */
-void midiNoteOnHandler(){
+void midiNoteOnHandler(uint8_t note, uint8_t vel){
+
+	printf("Note on: %d %d\n", note, vel);
 
 	if (dbg_noteOn ==TRUE) return; // debounce button
+
+	midiNote.note = note; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
+	midiNote.velocity = vel; // but this implies changing the prototype of midiNoteOnHandler()
+
 
 	// printf("Note On\n");
 	dbg_noteOn = TRUE;
@@ -184,9 +191,13 @@ void midiNoteOnHandler(){
 /**
  *  Prepare the envelopes state machines following a MIDI NOTE ONE message
  */
-void midiNoteOffHandler(){
+void midiNoteOffHandler(uint8_t note){
+
+	printf("Note off: %d\n", note);
 
 	if (dbg_noteOn == FALSE) return; // debounce button
+
+	// TODO check if note == midiNote.note: if not, we're releasing a note that is no longer being played => do nothing
 
 	// printf("Note Off\n");
 	dbg_noteOn = FALSE;
@@ -206,6 +217,8 @@ void midiNoteOffHandler(){
  * @param value b/w 0 and 127
  */
 void setMidiCCParam(MidiCCParam param, uint8_t value){
+
+	printf("MIDI CC: %d %d\n", param, value);
 
 
 	//printf("setMidiCCParam\n");
@@ -406,13 +419,13 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 }
 
 /**
- * Generally called when a MIDI message of three successive bytes has been received on the SPI bus,
+ * Generally called when a MIDI message of three successive bytes has been received on the bus,
  * @param status a MIDI status byte, e.g., MIDI CC or NOTE ON
  */
-void processIncomingMidiMessage(uint8_t statusChannel, uint8_t data1, uint8_t data2){
+void processIncomingMidiMessage(){
 
-	int channel = statusChannel & 0x0F;
-	int status = statusChannel & 0xF0;
+	int channel = midi_Message.status_channel & 0x0F;
+	int status = midi_Message.status_channel & 0xF0;
 
 	switch (status){
 	case NOTE_ON :
@@ -420,18 +433,16 @@ void processIncomingMidiMessage(uint8_t statusChannel, uint8_t data1, uint8_t da
 			// syd 8/9/19 playDrumMachine(data1, data2);
 		}
 		else {
-			midiNote.note = data1; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
-			midiNote.velocity = data2; // but this implies changing the prototype of midiNoteOnHandler()
-			midiNoteOnHandler();
+			midiNoteOnHandler(midi_Message.data1, midi_Message.data2);
 		}
 		break;
 
 	case NOTE_OFF :
-		midiNoteOffHandler();
+		midiNoteOffHandler(midi_Message.data1);
 		break;
 
 	case CONTROL_CHANGE:
-		setMidiCCParam(midiccCodeToParams[data1], data2);
+		setMidiCCParam(midiccCodeToParams[midi_Message.data1], midi_Message.data2);
 		break;
 	}
 }
@@ -439,56 +450,53 @@ void processIncomingMidiMessage(uint8_t statusChannel, uint8_t data1, uint8_t da
 
 
 /**
- * called when a new byte arrives on the SPI bus, following the classical
- * three byte MIDI format, namely:
+ * called when a new byte arrives on the MIDI bus (either SPI or UART)
+ * following the classical three byte MIDI format, namely:
  * - one status byte starting with 1
  * - two data bytes starting with 0
- * So that this function should be called thrice in a row.
- * TODO : (SR) we should add a time out feature so that if a data byte arrives really
- * late  after a status byte, (more than ? ms - this depends on the SPI bus frequency
- * but 1ms might be a good guess) then this is really likely to be the evidence of
- * an error on the SPI bus (coz normally they should come all three in a row)
+ *
+ * This function modifies the global variable "midi_Message".
  */
-/*void midiFromSpiMessageHandler(uint8_t byte){
+void process_Midi_Byte(uint8_t byte){
 
-	switch (midi_receiver_state) {
+	switch (midi_Receiver_State) {
 
 	case WAITING_FOR_BYTE1:
 
 		if ((byte & 0x80) != 0){ // byte starts with 1 -> status byte
-			midi_byte1=byte;
-			midi_receiver_state = WAITING_FOR_BYTE2;
+			midi_Message.status_channel = byte;
+			midi_Receiver_State = WAITING_FOR_BYTE2;
 		}
-		// else this means we had more than 2 status bytes and this means there's an error on the SPI bus => wait here
+		// else this means we had more than 2 status bytes and this means there's an error on the MIDI bus => wait here
 		break;
 
 	case WAITING_FOR_BYTE2:
 
 		if ((byte & 0x80) == 0){ // byte starts with 0 -> data byte
-			midi_byte2=byte;
-			midi_receiver_state = WAITING_FOR_BYTE3;
+			midi_Message.data1 = byte;
+			midi_Receiver_State = WAITING_FOR_BYTE3;
 		}
-		else { // byte starts with a 1, means there's an ISSUE on the SPI bus probably
+		else { // byte starts with a 1, means there's an ISSUE on the bus probably
 			// so we consider this is again a status byte
-			midi_byte1=byte; // erase old status with new one
-			midi_receiver_state = WAITING_FOR_BYTE2; // still waiting for byte 2
+			midi_Message.status_channel = byte; // erase old status with new one
+			midi_Receiver_State = WAITING_FOR_BYTE2; // still waiting for byte 2
 		}
 		break;
 
 	case WAITING_FOR_BYTE3:
 
 		if ((byte & 0x80) == 0){ // byte starts with zero => data byte
-			midi_byte3=byte;
-			processIncomingMidiMessage(midi_byte1, midi_byte2, midi_byte3);
-			midi_receiver_state = WAITING_FOR_BYTE1; // back to initial state
+			midi_Message.data2 = byte;
+			processIncomingMidiMessage();
+			midi_Receiver_State = WAITING_FOR_BYTE1; // back to initial state
 		}
-		else { // ISSUE: byte starts with a 1, means there's an ISSUE on the SPI bus probably
+		else { // ISSUE: byte starts with a 1, means there's an ISSUE on the MIDI bus probably
 			// so we consider this is again a status byte
-			midi_byte1=byte; // erase old status with new one
-			midi_receiver_state = WAITING_FOR_BYTE2; // back to waiting for byte 2
+			midi_Message.data1 = byte; // erase old status with new one
+			midi_Receiver_State = WAITING_FOR_BYTE2; // back to waiting for byte 2
 		}
 		break;
 	}
-} */
+}
 
 

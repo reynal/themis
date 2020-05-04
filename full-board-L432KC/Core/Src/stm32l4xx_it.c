@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
-#include <stlink_tx_dma.h>
 #include "main.h"
 #include "stm32l4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
@@ -27,6 +26,7 @@
 #include "dac_board.h"
 #include "stdio.h"
 #include "stlink_rx_midi.h"
+#include "stlink_tx_dma.h"
 
 /* USER CODE END Includes */
 
@@ -307,7 +307,6 @@ void USART2_IRQHandler(void)
 	stlink_Rx_IRQ_Handler();
 
   /* USER CODE END USART2_IRQn 0 */
-  //HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
 
   /* USER CODE END USART2_IRQn 1 */
