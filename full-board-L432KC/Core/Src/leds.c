@@ -9,37 +9,49 @@
 
 /* User code ---------------------------------------------------------*/
 
-void switchGreenLED(GPIO_PinState state){
-	HAL_GPIO_WritePin(GPIOB, LD3_Pin, state);
+void switchGreenLED(GPIO_PinState PinState){
+	if(PinState != GPIO_PIN_RESET)
+		LD3_GPIO_Port->BSRR = (uint32_t)LD3_Pin;
+	else
+		LD3_GPIO_Port->BRR = (uint32_t)LD3_Pin;
 }
 
 void switchGreenLEDOn(){
-	HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_SET);
+	LD3_GPIO_Port->BSRR = (uint32_t)LD3_Pin;
 }
 
 void switchGreenLEDOff(){
-	HAL_GPIO_WritePin(GPIOB, LD3_Pin, GPIO_PIN_RESET);
+	LD3_GPIO_Port->BRR = (uint32_t)LD3_Pin;
 }
 
 void toggleGreenLED(){
-	HAL_GPIO_TogglePin(GPIOB, LD3_Pin);
+	if ((LD3_GPIO_Port->ODR & LD3_Pin) != 0x00u)
+		LD3_GPIO_Port->BRR = (uint32_t)LD3_Pin;
+	else
+		LD3_GPIO_Port->BSRR = (uint32_t)LD3_Pin;
 }
 
 
-void switchRedLED(GPIO_PinState state){
-	HAL_GPIO_WritePin(GPIOB, LD2_Pin, state);
+void switchRedLED(GPIO_PinState PinState){
+	if(PinState != GPIO_PIN_RESET)
+		LD2_GPIO_Port->BSRR = (uint32_t)LD2_Pin;
+	else
+		LD2_GPIO_Port->BRR = (uint32_t)LD2_Pin;
 }
 
 void switchRedLEDOn(){
-	HAL_GPIO_WritePin(GPIOB, LD2_Pin, GPIO_PIN_SET);
+	LD2_GPIO_Port->BSRR = (uint32_t)LD2_Pin;
 }
 
 void switchRedLEDOff(){
-	HAL_GPIO_WritePin(GPIOB, LD2_Pin, GPIO_PIN_RESET);
+	LD2_GPIO_Port->BRR = (uint32_t)LD2_Pin;
 }
 
 void toggleRedLED(){
-	HAL_GPIO_TogglePin(GPIOB, LD2_Pin);
+	if ((LD2_GPIO_Port->ODR & LD2_Pin) != 0x00u)
+		LD2_GPIO_Port->BRR = (uint32_t)LD2_Pin;
+	else
+		LD2_GPIO_Port->BSRR = (uint32_t)LD2_Pin;
 }
 
 
