@@ -9,6 +9,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "stm32l4xx_hal.h"
+#include "stlink_rx_midi.h"
 #include "mcp23017.h"
 #include "ad5391.h"
 #include "midi.h"
@@ -25,7 +26,7 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern MidiNote midiNote;
+extern MidiNote midi_Note;
 extern TIM_HandleTypeDef *htimDac;
 extern UART_HandleTypeDef *huart_STlink;
 
@@ -70,12 +71,16 @@ static void init_Synth_Params();
  */
 static void init_Synth_Params(){
 
-	dacVcaWrite_Blocking(0.0); // makes sure we don't hear anything
-	HAL_Delay(1); // wait 1ms for transfer to complete (could be lower but HAL_Delay can't go below)
+	init_Vca();
+	init_Vcf();
+	init_Vco();
 
-	initVcf();
-	initVco();
-
+	for (int channel=0; channel < AD5391_CHANNEL_COUNT; channel++){
+		ad5391_Write_Dma(dacTick);
+		HAL_Delay(2);
+	}
+	mcp23017_Tx_GpioA_Buffer_Dma(); HAL_Delay(2);
+	mcp23017_Tx_GpioB_Buffer_Dma(); HAL_Delay(2);
 }
 
 
@@ -148,6 +153,7 @@ void dac_Board_Timer_IRQ(){
 	//LD3_GPIO_Port->BSRR = LD3_Pin; // debug
 }
 
+
 /*
  * Asynchronously updates all control voltages in turn, e.g., from MIDI input and LFO modulations.
  * This does not write to DAC, just to buffers.
@@ -159,30 +165,30 @@ static void dac_Board_Update_Control_Voltages(){
 
 	LD3_GPIO_Port->BSRR = LD3_Pin; // debug
 
-	t++;
+	/*t++;
 	if (t == 2000) dac_Board_Switch1_Pressed();
 	else if (t >= 4000) {
 		dac_Board_Switch1_Released();
 		t=0;
-	}
+	}*/
 
 	//uint16_t x = (uint16_t)(2000. * (1.0+sin(0.1 * (debug_t++))));
 	//dacWrite(x, DAC_VCA);
 
+	// update functions are called once per ms so as to allow for LFO modulation:
 
-	//			updateVco13700Freq();
-	//			updateVco3340AFreq();
-	//			updateVco3340BFreq();
-	//			updateVco3340ALevel();
-	//			updateVco3340BPulseLevel();
-	//			updateVco3340BSawLevel();
-	//			updateVco3340BTriLevel();
-	//			updateVco3340APWMDuty();
-	//			updateVco3340BPWMDuty();
-	//
+	updateVco13700Freq();
+	updateVco3340AFreq();
+	updateVco3340BFreq();
+	updateVco3340ALevel();
+	updateVco3340BPulseLevel();
+	updateVco3340BSawLevel();
+	updateVco3340BTriLevel();
+	updateVco3340APWMDuty();
+	updateVco3340BPWMDuty();
 	update_Vca_Envelope(); // 15us
 	update_Vcf_Envelope(); // 15us
-	//			updateVcfResonance();
+	updateVcfResonance();
 
 	LD3_GPIO_Port->BRR = LD3_Pin; // debug
 
@@ -200,7 +206,6 @@ static void dac_Board_Infinite_Loop(){
 
 		dac_Board_EXTI_Debouncer();
 
-		// TODO L4 HAL_UART_Receive_IT(huartSTlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg (BUG FIX)
 	}
 }
 
@@ -213,17 +218,16 @@ static void dac_Board_Infinite_Loop(){
  */
 static void dac_Board_Init(){
 
+	dac_Board_Reset_Devices(); // also MCP23017
+	ad5391_Init_Device();
+	mcp23017_Init_Device();
+
 	init_Adsr_Parameters();
-	init_Synth_Params(); // be sure to do this BEFORE starting htimDacs!
+	init_Synth_Params();
 
 	sw1_Tick = HAL_GetTick();
 	sw2_Tick = HAL_GetTick();
 
-	dac_Board_Reset_Devices(); // also MCP23017
-
-	ad5391_Init_Device();
-
-	mcp23017_Init_Device();
 }
 
 void dac_Board_Start(){
@@ -332,7 +336,7 @@ static void dac_Board_Switch1_Pressed(){
 	//int randomNote = rand() % 20 + 34;
 	//int randomNote = 30;
 	//printf("rd note=%d\n", randomNote);
-	//processIncomingMidiMessage(NOTE_ON, 30,100);
+	midi_Process_Incoming_Message(NOTE_ON, 30,100);
 
 	//debug_counter++;
 }
@@ -344,7 +348,7 @@ static void dac_Board_Switch1_Released(){
 
 	printf("SW1 released %d\n", debug_counter++);
 
-	//processIncomingMidiMessage(NOTE_OFF, 30, 0);
+	midi_Process_Incoming_Message(NOTE_OFF, 30, 0);
 
 }
 

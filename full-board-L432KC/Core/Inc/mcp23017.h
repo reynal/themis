@@ -69,5 +69,9 @@ void mcp23017_Set_Vcf_4thOrder();
 void mcp23017_Set_Vco_Saw();
 void mcp23017_Set_Vco_Tri();
 void mcp23017_Set_Vco_Pulse();
+void mcp23017_Mute_Vco();
+void mcp23017_Set_Vco_Sync();
+void mcp23017_Reset_Vco_Sync();
+
 
 #endif /* INC_MCP23017_H_ */

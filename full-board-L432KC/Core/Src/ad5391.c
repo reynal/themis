@@ -102,7 +102,7 @@ void dacWrite_Blocking(uint16_t word, Dac channel){
 
 	DAC_SYNC_GPIO_Port->BSRR = DAC_SYNC_Pin;
 
-	HAL_SPI_Transmit(hspi_Dac, txDAC5391Buff, 3, 100);
+	HAL_SPI_Transmit(hspi_Dac, txDAC5391Buff, 3, 100); // TODO remove call to HAL, replace by registers
 
 }
 

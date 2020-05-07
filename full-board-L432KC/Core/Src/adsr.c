@@ -49,7 +49,7 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern MidiNote midiNote;
+extern MidiNote midi_Note;
 extern GlobalFilterParams globalFilterParams;
 
 /* Variables ---------------------------------------------------------*/
@@ -124,7 +124,7 @@ void init_Adsr_Parameters(){
 void prepare_Vca_Envelope_NoteON() {
 
 	// stateMachineVca.amplitude=0.0; // commented Dec 3 2019 SR : avoid clip when re-triggering note while the enveloppe is not finished
-	stateMachineVca.tmpTargetLevel = ((1.0 - stateMachineVca.velocitySensitivity)  + (midiNote.velocity / 127.) * stateMachineVca.velocitySensitivity);
+	stateMachineVca.tmpTargetLevel = ((1.0 - stateMachineVca.velocitySensitivity)  + (midi_Note.velocity / 127.) * stateMachineVca.velocitySensitivity);
 
 	stateMachineVca.tmpDelta = ADSR_TIMER_PERIOD_MS * stateMachineVca.tmpTargetLevel / vcaAdsr.attackTimeMs; // prepare dx for the attack phase of x(t)
 
@@ -215,10 +215,10 @@ void prepare_Vcf_Envelope_NoteON() {
 	 * => velocityMulFactor=1.0
 	 */
 
-	stateMachineVcf.tmpVelocityMulFactor = (1.0 - stateMachineVcf.velocitySensitivity) + (midiNote.velocity / 127.) * stateMachineVcf.velocitySensitivity;
+	stateMachineVcf.tmpVelocityMulFactor = (1.0 - stateMachineVcf.velocitySensitivity) + (midi_Note.velocity / 127.) * stateMachineVcf.velocitySensitivity;
 	stateMachineVcf.t = 0;
 	stateMachineVcf.tMax = (int) (vcfAdsr.attackTimeMs / (ADSR_TIMER_PERIOD_MS));
-	stateMachineVcf.tmpKbdtrackingShiftFactor = (midiNote.note - 64) / 64.0* stateMachineVcf.kbdTracking * MAX_KBD_TRACKING_VCF;
+	stateMachineVcf.tmpKbdtrackingShiftFactor = (midi_Note.note - 64) / 64.0* stateMachineVcf.kbdTracking * MAX_KBD_TRACKING_VCF;
 #ifndef LEGATO
 	stateMachineVcf.cutoffFrequency = globalFilterParams.vcfCutoff; // starts at global cutoff value (comment out in legato mode)
 #endif

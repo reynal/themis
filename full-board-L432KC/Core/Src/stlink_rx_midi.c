@@ -8,6 +8,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include "stlink_rx_midi.h"
 #include "stm32l4xx_hal.h"
 #include "stdio.h"
 #include "midi.h"
@@ -43,51 +44,47 @@ void stlink_Rx_Init(){
  * Callback for the UART peripheral receive data process
  * Called when a given amount of data has been received on given UART port
  */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+/*void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
-	if (huart == huart_STlink){ // TODO: validate
+	if (huart == huart_STlink){
 		printf("Received: %s\n", rxUartSTlinkBuff);
 		//toggleBlueLED();
 		//processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
 		HAL_UART_Receive_IT(huart_STlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
 	}
-}
+}*/
 
 
 void stlink_Rx_IRQ_Handler(){
 
-	// cf. HAL_UART_IRQHandler() in stm32l4xx_hal_uart.c
-
-	//uint32_t isrflags   = READ_REG(huart->Instance->ISR);
-	//uint32_t cr1its     = READ_REG(huart->Instance->CR1);
-	//uint32_t cr3its     = READ_REG(huart->Instance->CR3);
-
-	//uint32_t errorflags;
-	//uint32_t errorcode;
-
-	//errorflags = (isrflags & (uint32_t)(USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE | USART_ISR_RTOF));
-
-	/*if (((isrflags & USART_ISR_RXNE) != 0U) && ((cr1its & USART_CR1_RXNEIE) != 0U)){
-		huart->RxISR(huart);
-	}*/
-
 	uint16_t  data = (uint16_t) READ_REG(huart_STlink->Instance->RDR);
 	//printf("%d\n", data);
-	process_Midi_Byte(data);
-
-	// et lorsque c'est terminé :
-	/* Disable the UART Parity Error Interrupt and RXNE interrupts */
-	//CLEAR_BIT(huart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE));
-	/* Disable the UART Error Interrupt: (Frame error, noise error, overrun error) */
-	//CLEAR_BIT(huart->Instance->CR3, USART_CR3_EIE);
-
-
-
-
+	midi_Process_Byte(data);
 
 }
 
 
+// UART RX procedure in HAL:  cf. HAL_UART_IRQHandler() in stm32l4xx_hal_uart.c
+/*
+uint32_t isrflags   = READ_REG(huart->Instance->ISR);
+uint32_t cr1its     = READ_REG(huart->Instance->CR1);
+uint32_t cr3its     = READ_REG(huart->Instance->CR3);
+
+uint32_t errorflags;
+uint32_t errorcode;
+
+errorflags = (isrflags & (uint32_t)(USART_ISR_PE | USART_ISR_FE | USART_ISR_ORE | USART_ISR_NE | USART_ISR_RTOF));
+
+if (((isrflags & USART_ISR_RXNE) != 0U) && ((cr1its & USART_CR1_RXNEIE) != 0U)){
+	uint16_t  data = (uint16_t) READ_REG(huart_STlink->Instance->RDR);
+}
+
+// to stop the UART RX process:
+// Disable the UART Parity Error Interrupt and RXNE interrupts
+CLEAR_BIT(huart->Instance->CR1, (USART_CR1_RXNEIE | USART_CR1_PEIE));
+// Disable the UART Error Interrupt: (Frame error, noise error, overrun error)
+CLEAR_BIT(huart->Instance->CR3, USART_CR3_EIE);
+*/
 
 
 

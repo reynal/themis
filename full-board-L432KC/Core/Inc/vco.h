@@ -125,7 +125,7 @@ void updateVco3340BTriLevel();
 // calibration:
 void prepareVCOForCalibration();
 
-void initVco();
+void init_Vco();
 void testScale();
 
 

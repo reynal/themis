@@ -28,7 +28,7 @@ typedef struct {
 /* Private function prototypes -----------------------------------------------*/
 
 void setVcfOrder(uint8_t value);
-void initVcf();
+void init_Vcf();
 
 void updateVcfCutoff();
 void updateVcfResonance();

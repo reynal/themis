@@ -239,6 +239,8 @@ void mcp23017_Set_Vco_Saw(){
 	is_gpioA_buffer_need_sync = TRUE; // unlock
 }
 
+
+
 /*
  * Raise the TRI pin only
  */
@@ -259,6 +261,29 @@ void mcp23017_Set_Vco_Pulse(){
 	is_gpioA_buffer_need_sync = TRUE; // unlock
 }
 
+void mcp23017_Mute_Vco(){
+	is_gpioA_buffer_need_sync = FALSE; // lock
+	mcp23017_gpioA_tx_Buff[1] &= ~(MCP23017_SAW_3340_Pin | MCP23017_TRI_3340_Pin | MCP23017_PULSE_3340_Pin);
+	is_gpioA_buffer_need_sync = TRUE; // unlock
+}
+
+/*
+ * Raise the SYNC pin only
+ */
+void mcp23017_Set_Vco_Sync(){
+	is_gpioA_buffer_need_sync = FALSE; // lock
+	mcp23017_gpioA_tx_Buff[1] |= MCP23017_SYNC_3340_Pin;
+	is_gpioA_buffer_need_sync = TRUE; // unlock
+}
+
+/*
+ * Raise the SYNC pin only
+ */
+void mcp23017_Reset_Vco_Sync(){
+	is_gpioA_buffer_need_sync = FALSE; // lock
+	mcp23017_gpioA_tx_Buff[1] &= ~MCP23017_SYNC_3340_Pin;
+	is_gpioA_buffer_need_sync = TRUE; // unlock
+}
 
 
 // from https://github.com/ruda/mcp23017/blob/master/src/mcp23017.c

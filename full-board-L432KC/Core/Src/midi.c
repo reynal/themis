@@ -9,28 +9,32 @@
 
 #include "midi.h"
 #include "stm32l4xx_hal.h"
-#include "misc.h"
-#include "dac_board.h"
 #include "stdio.h"
 #include "adsr.h"
 #include "vco.h"
-#include "vco_calibration.h"
 #include "vcf.h"
 #include "drums.h"
 #include "leds.h"
 
 /* External variables --------------------------------------------------------*/
 
+/* Private function prototypes -----------------------------------------------*/
+
+static void process_Message();
+static void noteOn_Handler(uint8_t note, uint8_t vel);
+static void noteOff_Handler(uint8_t note);
+
 /* Private variables ---------------------------------------------------------*/
 
-MidiNote midiNote = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
+MidiNote midi_Note = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
 Midi_Receiver_State midi_Receiver_State; // midi state-machine state
 Midi_Message midi_Message; // tmp var for state-machine
 
 Boolean dbg_noteOn = FALSE;
 
-// converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam
-MidiCCParam midiccCodeToParams[128] = {
+// converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam TODO replace by a table of setXXXParam(value) functions
+// and call this function directly from process_Message():
+MidiCCParam midiCC_To_Params[128] = {
 		UNUSED_CC, 			// 0
 		UNUSED_CC, 			// 1
 		UNUSED_CC, 			// 2
@@ -162,19 +166,21 @@ MidiCCParam midiccCodeToParams[128] = {
 };
 
 
-/* Private function prototypes -----------------------------------------------*/
+
+
+/* User code -----------------------------------------------*/
 
 /**
  *  Prepare the envelope state machines following a MIDI NOTE ONE message
  */
-void midiNoteOnHandler(uint8_t note, uint8_t vel){
+static void noteOn_Handler(uint8_t note, uint8_t vel){
 
 	printf("Note on: %d %d\n", note, vel);
 
 	if (dbg_noteOn ==TRUE) return; // debounce button
 
-	midiNote.note = note; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
-	midiNote.velocity = vel; // but this implies changing the prototype of midiNoteOnHandler()
+	midi_Note.note = note; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
+	midi_Note.velocity = vel; // but this implies changing the prototype of midiNoteOnHandler()
 
 
 	// printf("Note On\n");
@@ -191,7 +197,7 @@ void midiNoteOnHandler(uint8_t note, uint8_t vel){
 /**
  *  Prepare the envelopes state machines following a MIDI NOTE ONE message
  */
-void midiNoteOffHandler(uint8_t note){
+static void noteOff_Handler(uint8_t note){
 
 	printf("Note off: %d\n", note);
 
@@ -216,7 +222,7 @@ void midiNoteOffHandler(uint8_t note){
  * Updates the appropriate parameter of the ADSR enveloppe
  * @param value b/w 0 and 127
  */
-void setMidiCCParam(MidiCCParam param, uint8_t value){
+void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value){
 
 	printf("MIDI CC: %d %d\n", param, value);
 
@@ -420,9 +426,9 @@ void setMidiCCParam(MidiCCParam param, uint8_t value){
 
 /**
  * Generally called when a MIDI message of three successive bytes has been received on the bus,
- * @param status a MIDI status byte, e.g., MIDI CC or NOTE ON
+ * Parameters are taken from the midi_Message shared variable.
  */
-void processIncomingMidiMessage(){
+static void process_Message(){
 
 	int channel = midi_Message.status_channel & 0x0F;
 	int status = midi_Message.status_channel & 0xF0;
@@ -433,20 +439,32 @@ void processIncomingMidiMessage(){
 			// syd 8/9/19 playDrumMachine(data1, data2);
 		}
 		else {
-			midiNoteOnHandler(midi_Message.data1, midi_Message.data2);
+			noteOn_Handler(midi_Message.data1, midi_Message.data2);
 		}
 		break;
 
 	case NOTE_OFF :
-		midiNoteOffHandler(midi_Message.data1);
+		noteOff_Handler(midi_Message.data1);
 		break;
 
 	case CONTROL_CHANGE:
-		setMidiCCParam(midiccCodeToParams[midi_Message.data1], midi_Message.data2);
+		midi_Set_Param_From_CC(midiCC_To_Params[midi_Message.data1], midi_Message.data2);
 		break;
 	}
 }
 
+/**
+ * Generally called when a MIDI message of three successive bytes has been received on the bus,
+ * @param statusChannel a MIDI status byte, e.g., MIDI CC or NOTE ON
+ */
+void midi_Process_Incoming_Message(uint8_t statusChannel, uint8_t data1, uint8_t data2){
+
+	midi_Message.status_channel = statusChannel;
+	midi_Message.data1 = data1;
+	midi_Message.data2 = data2;
+	process_Message();
+
+}
 
 
 /**
@@ -457,7 +475,7 @@ void processIncomingMidiMessage(){
  *
  * This function modifies the global variable "midi_Message".
  */
-void process_Midi_Byte(uint8_t byte){
+void midi_Process_Byte(uint8_t byte){
 
 	switch (midi_Receiver_State) {
 
@@ -487,7 +505,7 @@ void process_Midi_Byte(uint8_t byte){
 
 		if ((byte & 0x80) == 0){ // byte starts with zero => data byte
 			midi_Message.data2 = byte;
-			processIncomingMidiMessage();
+			process_Message();
 			midi_Receiver_State = WAITING_FOR_BYTE1; // back to initial state
 		}
 		else { // ISSUE: byte starts with a 1, means there's an ISSUE on the MIDI bus probably

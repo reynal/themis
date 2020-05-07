@@ -26,6 +26,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "ad5391.h"
+#include "mcp23017.h"
 #include "vco.h"
 #include "stm32l4xx_hal.h"
 #include "main.h"
@@ -36,7 +37,7 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern MidiNote midiNote;
+extern MidiNote midi_Note;
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -115,41 +116,50 @@ int midiToVCO13700CV[128] = {
 
 /* Private function prototypes -----------------------------------------------*/
 
-void initVco(){
+
+/* User code -----------------------------------------------*/
+
+/*
+ * mcp23017_Tx_GpioA_Buffer_Dma(), mcp23017_Tx_GpioB_Buffer_Dma() and ad5391_Write_Dma() should be called after initVco()
+ * to transfer buffer data to devices.
+ */
+void init_Vco(){
 
 	setVco3340AWaveType(DEF_MIDICC_VCO3340A_WAVE);
-	//setVco3340ASync(0);
-	setVco3340ASync(64); // debug
+	mcp23017_Reset_Vco_Sync();
 
-	midiNote.note = DEF_MIDI_NOTE;
+	midi_Note.note = DEF_MIDI_NOTE;
+	updateVco13700Freq();
+	updateVco3340AFreq();
+	updateVco3340BFreq();
 
-	setVco3340APWMDuty(DEF_MIDICC_VCO3340A_PWM_DUTY);
-	setVco3340BPWMDuty(DEF_MIDICC_VCO3340B_PWM_DUTY);
+	setVco3340APWMDuty(DEF_MIDICC_VCO3340A_PWM_DUTY); updateVco3340APWMDuty();
+	setVco3340BPWMDuty(DEF_MIDICC_VCO3340B_PWM_DUTY); updateVco3340BPWMDuty();
 
 	// mute unused mixers:
-	// TODO L4 dacWrite(4095, DAC_V2140D_IN4); HAL_Delay(1); // not connected yet
-	// TODO L4 dacWrite(4095,DAC_V2140D_IN5); HAL_Delay(1);  // not connected yet
-	// TODO L4 dacWrite(4095,DAC_V2140D_IN6); HAL_Delay(1);  // not connected yet
+	dacWrite(4095, DAC_V2140D_IN4);
+	dacWrite(4095, DAC_V2140D_IN5);
+	dacWrite(4095, DAC_V2140D_IN6);
+	dacWrite(4095, DAC_V2140D_IN8);
 
-	setVco3340ALevel(DEF_MIDICC_VCO3340A_LEVEL);
-	setVco3340BPulseLevel(DEF_MIDICC_VCO3340B_PULSE_LEVEL);
-	setVco3340BSawLevel(DEF_MIDICC_VCO3340B_SAW_LEVEL);
-	setVco3340BTriLevel(DEF_MIDICC_VCO3340B_TRI_LEVEL);
-	setVco13700SquareLevel(DEF_MIDICC_VCO13700_SQU_LEVEL);
-	setVco13700TriLevel(DEF_MIDICC_VCO13700_TRI_LEVEL);
-	setVco13700SubbassLevel(DEF_MIDICC_VCO13700_SUBBASS_LEVEL);
+	setVco3340ALevel(DEF_MIDICC_VCO3340A_LEVEL); 	updateVco3340ALevel();
 
+	setVco3340BPulseLevel(DEF_MIDICC_VCO3340B_PULSE_LEVEL); updateVco3340BPulseLevel();
+	setVco3340BSawLevel(DEF_MIDICC_VCO3340B_SAW_LEVEL); updateVco3340BSawLevel();
+	setVco3340BTriLevel(DEF_MIDICC_VCO3340B_TRI_LEVEL); updateVco3340BTriLevel();
+
+	setVco13700SquareLevel(DEF_MIDICC_VCO13700_SQU_LEVEL); updateVco13700SquareLevel();
+	setVco13700TriLevel(DEF_MIDICC_VCO13700_TRI_LEVEL); updateVco13700TriLevel();
+	setVco13700SubbassLevel(DEF_MIDICC_VCO13700_SUBBASS_LEVEL); updateVco13700SubbassLevel();
 
 }
 
 // used during calibration:
 void prepareVCOForCalibration(){
 
-	// TODO L4 HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET); // "unplug" 3340A vco output from mixer so as
-	// TODO L4 HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET); // to reduce interference with other VCO
-	// TODO L4 HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
-	// TODO L4 dacWrite(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY); HAL_Delay(1); // make sure VCO calibration output
-	// TODO L4 dacWrite(MAX_VCO3340B_PWM_DUTY, DAC_VCO_3340B_PWM_DUTY); HAL_Delay(1); // is a square (i.e., 50% duty cycle)
+	mcp23017_Mute_Vco(); // "unplug" 3340A vco output from mixer so as to reduce interference with other VCO
+	dacWrite_Blocking(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY);  // make sure VCO calibration output
+	dacWrite_Blocking(MAX_VCO3340B_PWM_DUTY, DAC_VCO_3340B_PWM_DUTY);  // is a square (i.e., 50% duty cycle)
 
 }
 
@@ -173,7 +183,7 @@ void setVco13700Detune(uint8_t value){
 
 void updateVco13700Freq(){
 
-	int dacLvl = midiToVCO13700CV[midiNote.note + 12 * (vco13700.octave-CENTER_OCTAVE) + (vco13700.semitones-NO_SHIFT)] + vco13700.detune - NO_DETUNE;
+	int dacLvl = midiToVCO13700CV[midi_Note.note + 12 * (vco13700.octave-CENTER_OCTAVE) + (vco13700.semitones-NO_SHIFT)] + vco13700.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_13700_FREQ);
 
 }
@@ -224,7 +234,7 @@ void setVco3340ADetune(uint8_t value){
 }
 
 void updateVco3340AFreq(){
-	int dacLvl = midiToVCO3340ACV[midiNote.note + 12 * (vco3340A.octave-CENTER_OCTAVE) + (vco3340A.semitones-NO_SHIFT)] + vco3340A.detune - NO_DETUNE;
+	int dacLvl = midiToVCO3340ACV[midi_Note.note + 12 * (vco3340A.octave-CENTER_OCTAVE) + (vco3340A.semitones-NO_SHIFT)] + vco3340A.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340A_FREQ);
 
 }
@@ -240,24 +250,19 @@ void updateVco3340APWMDuty(){
 void setVco3340AWaveType(uint8_t midiValue){
 	midiValue = midiValue % 3;
 	if (midiValue == 2){ // pulse
-		// TODO L4 HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_SET);
+		mcp23017_Set_Vco_Pulse();
 	}
 	else if (midiValue == 1){ // sawtooth
-		// TODO L4 HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_SET);
+		mcp23017_Set_Vco_Saw();
 	}
 	else if (midiValue == 0){ // triangle
-		// TODO L4 HAL_GPIO_WritePin(SAW_3340_GPIO_Port, SAW_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(PULSE_3340_GPIO_Port, PULSE_3340_Pin, GPIO_PIN_RESET);
-		// TODO L4 HAL_GPIO_WritePin(TRI_3340_GPIO_Port, TRI_3340_Pin, GPIO_PIN_SET);
+		mcp23017_Set_Vco_Tri();
 	}
 }
 
 void setVco3340ASync(uint8_t midiValue){
-	// TODO L4 HAL_GPIO_WritePin(SYNC_3340_GPIO_Port, SYNC_3340_Pin, midiValue>=64 ? GPIO_PIN_SET:GPIO_PIN_RESET);
+	if (midiValue>=64) mcp23017_Set_Vco_Sync();
+	else mcp23017_Reset_Vco_Sync();
 }
 
 void setVco3340ALevel(uint8_t midiValue){
@@ -292,7 +297,7 @@ void setVco3340BDetune(uint8_t value){
  *  using the current calibration table.
  */
 void updateVco3340BFreq(){
-	int dacLvl = midiToVCO3340BCV[midiNote.note + 12 * (vco3340B.octave-CENTER_OCTAVE) + (vco3340B.semitones-NO_SHIFT)] + vco3340B.detune - NO_DETUNE;
+	int dacLvl = midiToVCO3340BCV[midi_Note.note + 12 * (vco3340B.octave-CENTER_OCTAVE) + (vco3340B.semitones-NO_SHIFT)] + vco3340B.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340B_FREQ);
 }
 
@@ -335,7 +340,7 @@ void updateVco3340BTriLevel(){
 // (VCO must be connected to the DAC board)
 void testScale(){
 
-	midiNote.note  = 24;
+	midi_Note.note  = 24;
 	setVco3340BPWMDuty(100);
 	while(1){
 		//updateVco3340AFreq();
@@ -343,8 +348,8 @@ void testScale(){
 		//updateVco13700Freq();
 		HAL_Delay(200); // 200ms
 		toggleRedLED();
-		printf("%d\n", midiNote.note++);
-		if (midiNote.note > 95) midiNote.note=24;
+		printf("%d\n", midi_Note.note++);
+		if (midi_Note.note > 95) midi_Note.note=24;
 	}
 }
 

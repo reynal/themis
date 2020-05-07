@@ -103,11 +103,9 @@ typedef struct {
 
 /* Private function prototypes -----------------------------------------------*/
 
-void midiNoteOnHandler(uint8_t note, uint8_t vel);
-void midiNoteOffHandler(uint8_t note);
-void process_Midi_Byte(uint8_t byte);
-void processIncomingMidiMessage();
-void setMidiCCParam(MidiCCParam param, uint8_t value);
+void midi_Process_Byte(uint8_t byte);
+void midi_Process_Incoming_Message(uint8_t statusChannel, uint8_t data1, uint8_t data2);
+void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value);
 
 
 

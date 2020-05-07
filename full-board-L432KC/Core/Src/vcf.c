@@ -62,9 +62,11 @@ void updateVcfResonance(){
 }
 
 
-void initVcf(){
+void init_Vcf(){
 	stateMachineVcf.cutoffFrequency = globalFilterParams.vcfCutoff;
 	setVcfOrder(0);
+	updateVcfCutoff();
+	updateVcfResonance();
 }
 
 void updateVcfCutoff(){
