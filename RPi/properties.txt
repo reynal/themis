@@ -1,14 +1,42 @@
 # properties file for ThEmIS project:
-# MIDI keyboard:
+#
+# ===== MIDI keyboard =====
+#
 #MIDI_IN=Akai MAX49 Port A
 MIDI_IN=IAC Driver Bus 1
 #MIDI_IN=UM-ONE
 #MIDI_IN=USB Oxygen 61
-# name of USB connection to STM32:
+#
+DEFAULT_MIDI_CHANNEL=0
+#
+# ===== USB connection to STM32 =====
+#
 # mac mini home:
 USB_DEV=/dev/tty.usbmodem1421203
 # mac mini ensea:
 #USB_DEV=/dev/tty.usbmodem1443
 # macbook:
 #USB_DEV=/dev/tty.usbmodem413
+#
+# ===== MIDI demo file =====
+#
 MIDI_DEMO_FILE=ableton2.mid
+#
+# ===== hardware =====
+#
+# platform: RASPBERRYPI or DESKTOP ; comment out to let java choose
+PLATFORM=desktop
+#PLAFORM=raspberrypi
+#
+# serial transmitter: SPI (RPi only) or UART
+SERIAL_OUT=UART
+#
+# Touchscreen: Y or N
+OPEN_RPI_TOUCHSCREEN=N
+# Tabbedpane for debugging: Y or N
+OPEN_TABBED_TOUCHSCREEN=N
+# Create control pane (hw on RPi only, or simulation): Y or N
+CREATE_SYNTH_CTRLPANE=N
+# Control pane (encoders etc) simulation: Y or N
+OPEN_SYNTH_CTRLPANE_SIMULATION=N
+
