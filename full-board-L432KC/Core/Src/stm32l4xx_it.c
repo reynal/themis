@@ -63,15 +63,20 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_i2c3_tx;
 extern DMA_HandleTypeDef hdma_spi1_tx;
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern DMA_HandleTypeDef hdma_usart2_tx;
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
+
 extern I2C_HandleTypeDef *hi2c_MCP23017;
 extern DMA_HandleTypeDef *hdma_MCP23017_tx;
 
 extern DMA_HandleTypeDef *hdma_STlink_tx;
 extern UART_HandleTypeDef *huart_STlink;
+
+extern DMA_HandleTypeDef *hdma_Dac_tx;
 
 /* USER CODE END EV */
 
@@ -218,6 +223,7 @@ void DMA1_Channel2_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
 
+	// IT not used for I2C, leaving code here for the sake of documentation (SR: April 2020)
 	hdma_MCP23017_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF2; // clear interrupt flag
 	hi2c_MCP23017->Instance->CR1 &= ~I2C_CR1_TXDMAEN; /* Disable DMA Request */
 	//__HAL_I2C_ENABLE_IT(hi2c, I2C_IT_STOPI | I2C_IT_TCI); /* Enable ST
@@ -236,7 +242,7 @@ void DMA1_Channel3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel3_IRQn 0 */
 
 	// this handler not used yet (see ad5391.c, DMA init)
-	(&hdma_spi1_tx)->DmaBaseAddress->IFCR = DMA_ISR_GIF3; // clear interrupt flag
+	hdma_Dac_tx ->DmaBaseAddress->IFCR = DMA_ISR_GIF3; // clear interrupt flag
 
   /* USER CODE END DMA1_Channel3_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel3_IRQn 1 */
@@ -283,6 +289,20 @@ void EXTI9_5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM1 capture compare interrupt.
+  */
+void TIM1_CC_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
+
+  /* USER CODE END TIM1_CC_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim1);
+  /* USER CODE BEGIN TIM1_CC_IRQn 1 */
+
+  /* USER CODE END TIM1_CC_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM2 global interrupt.
   */
 void TIM2_IRQHandler(void)
@@ -295,6 +315,19 @@ void TIM2_IRQHandler(void)
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
   /* USER CODE END TIM2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**

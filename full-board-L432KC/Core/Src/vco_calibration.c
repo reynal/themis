@@ -32,9 +32,11 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "stm32l4xx_hal.h"
+#include "tim.h"
 #include "main.h"
 #include "vco_calibration.h"
 #include "vco.h"
+#include "ad5391.h"
 #include "dac_board.h"
 #include "math.h"
 #include "stdio.h"
@@ -44,7 +46,7 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern TIM_HandleTypeDef* htimCalib;
+extern TIM_HandleTypeDef* htimVcoCalib;
 extern int midiToVCO3340ACV[128];
 extern int midiToVCO3340BCV[128];
 extern int midiToVCO13700CV[128];
@@ -66,7 +68,11 @@ int* midiToVCOCV; // points to midiToVCO3340CV or midiToVCO13700CV
 
 int currentMidiNote = -1; // -1 when uninitialized
 
-int captureTimerConversionFactor; // convert from a period value (in s) to a counting interval for the htimCalib timer, used by midiNoteToTimerInterval()
+int time_To_Timer_Interval_Conversion_Factor; // convert from a period value (in s) to a counting interval for the htimCalib timer, used by midiNoteToTimerInterval()
+
+int dbgCounter=0;
+int dbgValues[10] = {0};
+int dbgDeltas[10] = {0};
 
 /* function prototypes -----------------------------------------------*/
 
@@ -76,10 +82,28 @@ static void startCalib3340B();
 static void startCalib13700();
 static void printMidiToVCOCVTables();
 static void resetMidiToVCOCVTables();
-
+static void init_Time_To_Timer_Interval_Conversion_Factor();
 
 /* user code -----------------------------------------------*/
 
+
+/*
+ * Compute timer_To_Midi_Conversion_Factor
+ */
+static void init_Time_To_Timer_Interval_Conversion_Factor(){
+
+	  /* Get PCLK2 frequency for TIM1 */
+	  double pclk = HAL_RCC_GetPCLK2Freq(); // 80MHz
+
+	  /* Get PCLK prescaler */
+	  if((RCC->CFGR & RCC_CFGR_PPRE2) != 0) pclk *= 2; // currently we have prescaler equal to 1
+
+	  int prescaler = 8; // see tim.c : sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+	  pclk /= prescaler;
+
+	  time_To_Timer_Interval_Conversion_Factor = (int)(pclk / (htimVcoCalib->Instance->PSC + 1));
+
+}
 
 /**
  * Launch the calibration process
@@ -89,13 +113,15 @@ static void resetMidiToVCOCVTables();
  */
 void runVcoCalibration(){
 
-	resetMidiToVCOCVTables(); // optional, could be commented out if we want to refine only a part of the calibration table
-
 	dac_Board_Timer_Stop(); // stop timer responsible for updating ADSR enveloppes
-
-	captureTimerConversionFactor = (int)(8.0 * 54.0e6 / (htimCalib->Init.Prescaler+1.0));
+	HAL_Delay(10); // wait until current DMA transfer are finished
 
 	prepareVCOForCalibration();
+
+	resetMidiToVCOCVTables(); // optional, could be commented out if we want to refine only a part of the calibration table
+
+
+	init_Time_To_Timer_Interval_Conversion_Factor();
 
 	// first start with VCO3340:
 	startCalib3340A();
@@ -111,7 +137,7 @@ void runVcoCalibration(){
 	//printf("Calibration terminated!\n");
 	printMidiToVCOCVTables();
 
-	dac_Board_Timer_Start(); // restart timer responsible for updating ADSR enveloppes
+	// debug L4 dac_Board_Timer_Start(); // restart timer responsible for updating ADSR enveloppes
 
 
 }
@@ -128,9 +154,9 @@ static void startCalib3340A(){
 	midiToVCOCV = midiToVCO3340ACV;
 	maxVcoDAC = VCO3340A_MAX_INPUT_CV;
 	calibrationVcoDACLvl = minVcoDAC = VCO3340A_MIN_INPUT_CV;
-	// TODO L4 dacWrite(calibrationVcoDACLvl, DAC_VCO_3340A_FREQ);
-	__HAL_TIM_SetCounter(htimCalib, 0); // avoid overshoots
-	HAL_TIM_IC_Start_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340A);
+	dacWrite_Blocking(calibrationVcoDACLvl, DAC_VCO_3340A_FREQ);
+	__HAL_TIM_SetCounter(htimVcoCalib, 0); // avoid overshoots
+	HAL_TIM_IC_Start_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO3340A);
 }
 
 static void startCalib3340B(){
@@ -144,9 +170,9 @@ static void startCalib3340B(){
 	midiToVCOCV = midiToVCO3340BCV;
 	maxVcoDAC = VCO3340B_MAX_INPUT_CV;
 	calibrationVcoDACLvl = minVcoDAC = VCO3340B_MIN_INPUT_CV;
-	// TODO L4 dacWrite(calibrationVcoDACLvl, DAC_VCO_3340B_FREQ);
-	__HAL_TIM_SetCounter(htimCalib, 0); // avoid overshoots
-	HAL_TIM_IC_Start_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340B);
+	dacWrite_Blocking(calibrationVcoDACLvl, DAC_VCO_3340B_FREQ);
+	__HAL_TIM_SetCounter(htimVcoCalib, 0); // avoid overshoots
+	HAL_TIM_IC_Start_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO3340B);
 }
 
 static void startCalib13700(){
@@ -160,9 +186,9 @@ static void startCalib13700(){
 	midiToVCOCV = midiToVCO13700CV;
 	maxVcoDAC = VCO13700_MAX_INPUT_CV;
 	calibrationVcoDACLvl = minVcoDAC = VCO13700_MIN_INPUT_CV; // don't start too low... stability issues !
-	// TODO L4 dacWrite(calibrationVcoDACLvl, DAC_VCO_13700_FREQ);
-	__HAL_TIM_SetCounter(htimCalib, 0); // avoid overshoots
-	HAL_TIM_IC_Start_IT(htimCalib, TIM_CHANNEL_CALIB_VCO13700);
+	dacWrite_Blocking(calibrationVcoDACLvl, DAC_VCO_13700_FREQ);
+	__HAL_TIM_SetCounter(htimVcoCalib, 0); // avoid overshoots
+	HAL_TIM_IC_Start_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO13700);
 }
 
 /**
@@ -173,7 +199,7 @@ static void startCalib13700(){
  */
 static int getTimerIntervalFromMidiNote(int midiNote){
 
-	return (int)(captureTimerConversionFactor * A4_PERIOD * pow(2.0, (A4_MIDI_NOTE - midiNote)/12.0));
+	return (int)(time_To_Timer_Interval_Conversion_Factor * A4_PERIOD * pow(2.0, (A4_MIDI_NOTE - midiNote)/12.0));
 
 }
 
@@ -232,20 +258,39 @@ static void resetMidiToVCOCVTables(){
 		midiToVCO13700CV[midiNote] = 0;
 	}
 
+
+}
+
+void VCO_Calib_CaptureCallback(){
+
+	int x = htimVcoCalib->Instance->CCR_VCO3340A;
+	dbgValues[dbgCounter] = x;
+	if (dbgCounter>0) dbgDeltas[dbgCounter] = x - dbgValues[dbgCounter-1];
+	if (dbgDeltas[dbgCounter]<0) {
+		dbgDeltas[dbgCounter] += 65536;
+		//dbgDeltas[dbgCounter] = -dbgDeltas[dbgCounter];
+	}
+	dbgCounter++;
+	if (dbgCounter == 10) {
+		dbgCounter=0;
+		//__HAL_TIM_SetCounter(htimVcoCalib, 0);
+	}
+
+
 }
 
 /**
  * interrupt callback that gets triggered whenever a rising edge is detected on the current VCO calibration pin
  * the global var calibrationTimerInterval is updated after each call
  */
-void VCO_Calib_CaptureCallback(){
+void _VCO_Calib_CaptureCallback(){
 
 	// compute timer interval b/w subsequent edges for input signal and store the result in global var "calibrationTimerInterval":
 	int x=0;
 
-	if (calibrationCurrentVco == CALIB_VCO_3340A) x = htimCalib->Instance->CCR1; // ch 1
-	else if (calibrationCurrentVco == CALIB_VCO_3340B) x = htimCalib->Instance->CCR3; // ch 3
-	else if (calibrationCurrentVco == CALIB_VCO_13700) x = htimCalib->Instance->CCR4; // ch 2
+	if (calibrationCurrentVco == CALIB_VCO_3340A) x = htimVcoCalib->Instance->CCR_VCO3340A;
+	else if (calibrationCurrentVco == CALIB_VCO_3340B) x = htimVcoCalib->Instance->CCR_VCO3340B;
+	else if (calibrationCurrentVco == CALIB_VCO_13700) x = htimVcoCalib->Instance->CCR_VCO13700;
 	else return; // CALIB_COMPLETED !!!
 
 	if (calibrationLastCapture == -1) { // init calibrationLastCapture variable
@@ -298,20 +343,20 @@ void VCO_Calib_CaptureCallback(){
 
 		switch (calibrationCurrentVco) {
 			case CALIB_VCO_3340A:
-				HAL_TIM_IC_Stop_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340A);
+				HAL_TIM_IC_Stop_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO3340A);
 				// TODO L4 dacWrite(0, DAC_VCO_3340A_FREQ);
 				//calibrationCurrentVco=CALIB_COMPLETED; // debug
 				//startCalib13700();
 				startCalib3340B();
 				break;
 			case CALIB_VCO_3340B:
-				HAL_TIM_IC_Stop_IT(htimCalib, TIM_CHANNEL_CALIB_VCO3340B);
+				HAL_TIM_IC_Stop_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO3340B);
 				// TODO L4 dacWrite(0, DAC_VCO_3340B_FREQ);
 				calibrationCurrentVco=CALIB_COMPLETED; // debug
 				//startCalib3340B();
 				break;
 			case CALIB_VCO_13700:
-				HAL_TIM_IC_Stop_IT(htimCalib, TIM_CHANNEL_CALIB_VCO13700);
+				HAL_TIM_IC_Stop_IT(htimVcoCalib, TIM_CHANNEL_CALIB_VCO13700);
 				calibrationCurrentVco=CALIB_COMPLETED; // ok over
 				// TODO L4 dacWrite(0, DAC_VCO_13700_FREQ);
 				break;

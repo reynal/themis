@@ -52,6 +52,7 @@
 extern MidiNote midi_Note;
 extern GlobalFilterParams globalFilterParams;
 
+
 /* Variables ---------------------------------------------------------*/
 
 //#define LEGATO
@@ -217,7 +218,7 @@ void prepare_Vcf_Envelope_NoteON() {
 
 	stateMachineVcf.tmpVelocityMulFactor = (1.0 - stateMachineVcf.velocitySensitivity) + (midi_Note.velocity / 127.) * stateMachineVcf.velocitySensitivity;
 	stateMachineVcf.t = 0;
-	stateMachineVcf.tMax = (int) (vcfAdsr.attackTimeMs / (ADSR_TIMER_PERIOD_MS));
+	stateMachineVcf.tMax = (int) (vcfAdsr.attackTimeMs * ADSR_TIMER_FREQUENCY_KHZ);
 	stateMachineVcf.tmpKbdtrackingShiftFactor = (midi_Note.note - 64) / 64.0* stateMachineVcf.kbdTracking * MAX_KBD_TRACKING_VCF;
 #ifndef LEGATO
 	stateMachineVcf.cutoffFrequency = globalFilterParams.vcfCutoff; // starts at global cutoff value (comment out in legato mode)
@@ -232,7 +233,7 @@ void prepare_Vcf_Envelope_NoteON() {
 void prepare_Vcf_Envelope_NoteOFF() {
 
 	stateMachineVcf.t = 0;
-	stateMachineVcf.tMax = vcfAdsr.releaseTimeMs / (ADSR_TIMER_PERIOD_MS);
+	stateMachineVcf.tMax = vcfAdsr.releaseTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
 	//stateMachineVcf.tmpTargetLevel = globalFilterParams.vcfCutoff;
 	//stateMachineVcf.tmpDelta = ADSR_TIMER_PERIOD_MS * (stateMachineVcf.tmpTargetLevel - stateMachineVcf.cutoffFrequency) / stateMachineVcf.tMax;
 
@@ -261,7 +262,7 @@ void update_Vcf_Envelope() {
 		if (s->t >= s->tMax) {
 			// prepare dyn params for DECAY phase:
 			s->t = 0;
-			s->tMax = vcfAdsr.decayTimeMs / (ADSR_TIMER_PERIOD_MS);
+			s->tMax = vcfAdsr.decayTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
 			s->machineState = DECAY;
 		}
 		break;

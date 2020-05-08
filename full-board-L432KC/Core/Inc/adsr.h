@@ -12,9 +12,10 @@
 #include "dac_board.h"
 #include "stm32l4xx_hal.h"
 
-#define	ADSR_TIMER_PERIOD_FACTOR 20
-#define	ADSR_TIMER_PERIOD (ADSR_TIMER_PERIOD_FACTOR * TIMDAC_PERIOD_SEC) // 1ms = 0.001
-#define	ADSR_TIMER_PERIOD_MS (1000.0 * ADSR_TIMER_PERIOD) // around 1ms
+// the rate at which enveloppes and LFO are updated:
+#define	ADSR_TIMER_PERIOD_MS 1
+#define	ADSR_TIMER_FREQUENCY_KHZ 1
+
 
 /**
  *  following is a list of default MIDI CC values (from 0 to 127)

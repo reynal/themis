@@ -116,9 +116,6 @@ int main(void)
 
   stlink_dma_init();
 
-  // === VCO Calibration mode===
-  //runVcoCalibration(); // busy loop until calibration is over (uncomment when needed)
-
   dac_Board_Start();
 
 
@@ -194,10 +191,6 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-
-// --------------------------------------------------------------------------------------------------
-//                                     HAL interrupt handlers
-// --------------------------------------------------------------------------------------------------
 
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {

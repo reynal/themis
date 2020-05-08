@@ -261,10 +261,15 @@ void mcp23017_Set_Vco_Pulse(){
 	is_gpioA_buffer_need_sync = TRUE; // unlock
 }
 
-void mcp23017_Mute_Vco(){
+/*
+ * mute VCO 3340 for calibration.
+ */
+void mcp23017_Mute_Vco_Blocking(){
 	is_gpioA_buffer_need_sync = FALSE; // lock
 	mcp23017_gpioA_tx_Buff[1] &= ~(MCP23017_SAW_3340_Pin | MCP23017_TRI_3340_Pin | MCP23017_PULSE_3340_Pin);
 	is_gpioA_buffer_need_sync = TRUE; // unlock
+	mcp23017_Tx_GpioA_Buffer_Dma();
+	HAL_Delay(1);
 }
 
 /*

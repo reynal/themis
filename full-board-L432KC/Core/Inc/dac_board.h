@@ -11,12 +11,7 @@
 #include "misc.h"
 #include "stm32l4xx_hal.h"
 
-// ADSR timer
-//#define TIM1_INPUT_FREQ 108000000.0
-#define TIMDAC_INPUT_FREQ 101000000.0 // test for ADSR algorithms (real value is 108e6)
-#define TIMDAC_PRESCALER 100.0
-#define TIMDAC_PERIOD 50.0
-#define TIMDAC_PERIOD_SEC	((TIMDAC_PRESCALER+1) * TIMDAC_PERIOD/TIMDAC_INPUT_FREQ) // 21386.13Hz, aka 47us
+#define	ADSR_TIMER_PERIOD_FACTOR 20
 
 #define SWITCH_DEBOUNCE_DELAY 30 // ms
 

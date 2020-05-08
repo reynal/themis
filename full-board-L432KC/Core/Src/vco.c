@@ -157,10 +157,9 @@ void init_Vco(){
 // used during calibration:
 void prepareVCOForCalibration(){
 
-	mcp23017_Mute_Vco(); // "unplug" 3340A vco output from mixer so as to reduce interference with other VCO
+	mcp23017_Mute_Vco_Blocking(); // "unplug" 3340A vco output from mixer so as to reduce interference with other VCO
 	dacWrite_Blocking(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY);  // make sure VCO calibration output
 	dacWrite_Blocking(MAX_VCO3340B_PWM_DUTY, DAC_VCO_3340B_PWM_DUTY);  // is a square (i.e., 50% duty cycle)
-
 }
 
 // ---------------------------------------------------------------------------------------------------
