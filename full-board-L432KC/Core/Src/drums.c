@@ -15,7 +15,7 @@
 
 /* Variables ---------------------------------------------------------*/
 
-DrumTriggers drumTriggers = { .bassdrumCounter=0, .rimshotCounter=0, .snareCounter=0, .lowtomCounter=0, .hightomCounter=0};
+static DrumTriggers drumTriggers = { .bassdrumCounter=0, .rimshotCounter=0, .snareCounter=0, .lowtomCounter=0, .hightomCounter=0};
 
 /* Function prototypes -----------------------------------------------*/
 

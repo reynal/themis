@@ -16,7 +16,7 @@
 #define BUF_MAX(x, y)                   ((x) > (y) ? (x) : (y))
 
 
-void stlink_dma_init();
+void stlink_Tx_dma_init();
 void stlink_dma_irq_handler();
 void stlink_dma_test();
 void stlink_dma_send_string(const char*);

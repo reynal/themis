@@ -55,11 +55,11 @@ extern GlobalFilterParams globalFilterParams;
 
 /* Variables ---------------------------------------------------------*/
 
-//#define LEGATO
+//#define LEGATO TODO
 
 
 // the following table maps a Midi CC value (0-127) to a time constant in ms in an exponential way
-const int midiValueToTimeMs[128] = { 1, 8, 16, 25, 34, 44, 53, 63, 74, 85, 96, 108, 121, 134, 147, 161, \
+static const int midiValueToTimeMs[128] = { 1, 8, 16, 25, 34, 44, 53, 63, 74, 85, 96, 108, 121, 134, 147, 161, \
 		175, 191, 206, 223, 240, 257, 276, 295, 315, 335, 357, 379, 402, 426, \
 		452, 478, 505, 533, 563, 593, 625, 658, 693, 729, 766, 805, 845, 887, \
 		931, 976, 1023, 1072, 1124, 1177, 1232, 1289, 1349, 1412, 1476, 1544, \
@@ -71,7 +71,7 @@ const int midiValueToTimeMs[128] = { 1, 8, 16, 25, 34, 44, 53, 63, 74, 85, 96, 1
 		15000, 15610, 16245, 16905, 17592, 18306, 19050, 19823, 20627, 21463, \
 		22333, 23238, 24179, 25158, 26176, 27235, 28337, 29483 };
 
-Adsr_Params vcaAdsr;
+static Adsr_Params vcaAdsr;
 
 State_Machine_Vca stateMachineVca = {
 		//.t = 0,
@@ -83,7 +83,7 @@ State_Machine_Vca stateMachineVca = {
 		.adsrParam = &vcaAdsr
 };
 
-Adsr_Params vcfAdsr;
+static Adsr_Params vcfAdsr;
 
 State_Machine_Vcf stateMachineVcf = {
 		.t = 0,

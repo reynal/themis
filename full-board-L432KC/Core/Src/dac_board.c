@@ -10,19 +10,19 @@
 
 #include "stm32l4xx_hal.h"
 #include "stlink_rx_midi.h"
+#include "stlink_tx_dma.h"
 #include "mcp23017.h"
 #include "ad5391.h"
 #include "midi.h"
 #include "main.h"
 #include "adsr.h"
 #include "vco.h"
+#include "vco_calibration.h"
 #include "vcf.h"
 #include "vca.h"
 #include "misc.h"
-#include "stdlib.h"
 #include "stdio.h"
 #include "leds.h"
-#include "math.h"
 
 /* External variables --------------------------------------------------------*/
 
@@ -33,15 +33,15 @@ extern UART_HandleTypeDef *huart_STlink;
 
 /* Variables ---------------------------------------------------------*/
 
-Boolean is_control_voltages_need_update = FALSE;
-int dacTick=0; // adsr enveloppes
+static Boolean is_control_voltages_need_update = FALSE;
+static int dacTick=0; // adsr enveloppes
 
-uint16_t t; // debug
-int debug_counter;
+//static uint16_t t; // debug
+static int debug_counter;
 
-int sw1_Tick, sw2_Tick; // tick in ms to measure delay in order to debounce switches
-Boolean is_SW1_IRQ_Pending = FALSE;
-Boolean is_SW2_IRQ_Pending = FALSE;
+static int sw1_Tick, sw2_Tick; // tick in ms to measure delay in order to debounce switches
+static Boolean is_SW1_IRQ_Pending = FALSE;
+static Boolean is_SW2_IRQ_Pending = FALSE;
 
 /* Function prototypes -----------------------------------------------*/
 
@@ -56,7 +56,6 @@ static void switch2_Pressed();
 static void switch1_Released();
 static void switch2_Released();
 static void init_Timer_Period(void);
-
 static void init_Synth_Params();
 
 //static void test_MCP23017();
@@ -185,18 +184,6 @@ static void update_Control_Voltages(){
 
 	if (is_control_voltages_need_update==FALSE) return;
 
-	LD3_GPIO_Port->BSRR = LD3_Pin; // debug
-
-	/*t++;
-	if (t == 2000) dac_Board_Switch1_Pressed();
-	else if (t >= 4000) {
-		dac_Board_Switch1_Released();
-		t=0;
-	}*/
-
-	//uint16_t x = (uint16_t)(2000. * (1.0+sin(0.1 * (debug_t++))));
-	//dacWrite(x, DAC_VCA);
-
 	// update functions are called once per ms so as to allow for LFO modulation:
 
 	updateVco13700Freq();
@@ -211,8 +198,6 @@ static void update_Control_Voltages(){
 	update_Vca_Envelope(); // 15us
 	update_Vcf_Envelope(); // 15us
 	updateVcfResonance();
-
-	LD3_GPIO_Port->BRR = LD3_Pin; // debug
 
 	is_control_voltages_need_update=FALSE;
 }
@@ -255,6 +240,8 @@ static void init(){
 }
 
 void dac_Board_Start(){
+
+	stlink_Tx_dma_init();
 
 	init();
 
@@ -384,7 +371,7 @@ static void switch2_Pressed(){
 	printf("SW2 pressed %d\n", debug_counter++);
 
 	// === VCO Calibration mode===
-	runVcoCalibration(); // busy loop until calibration is over (uncomment when needed)
+	vcoCalib_Run(); // busy loop until calibration is over (uncomment when needed)
 
 
 }

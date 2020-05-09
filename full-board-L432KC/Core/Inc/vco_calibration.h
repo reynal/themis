@@ -8,16 +8,24 @@
 #ifndef INC_VCO_CALIBRATION_H_
 #define INC_VCO_CALIBRATION_H_
 
+#include "ad5391.h"
 
-/*
- * an enum of constants to specify e.g. which VCO we currently calibrate
- */
-typedef enum {
-	CALIB_COMPLETED, // 0
-	CALIB_VCO_3340A,  // 1, CEM3340 VCO
-	CALIB_VCO_3340B,  // 2, CEM3340 VCO
-	CALIB_VCO_13700  // 3, LM13700 VCO
-} vcoCalib_t;
+#define VCO_COUNT 3
+
+typedef struct {
+	char name[10]; // e.g. "VCO3340A"
+	Dac dac; // DAC channel linked to this VCO
+	uint32_t note; // init to -1
+	uint32_t cv; // Control voltage (aka DAC output)
+	uint32_t cv_min; // lowest possible CV
+	uint32_t cv_max; // highest possible CV
+	uint32_t previous_capture; // init to -1; stores the Capture register value for interval calculation ; -1 when uninitialized
+	uint32_t previous_interval; // timer interval, that is, current capture reg - previous capture reg
+	uint32_t current_interval;
+	uint32_t * note_to_cv; // calibration table
+	uint32_t IC_Channel;
+	Boolean completed;
+} Vco_Calib;
 
 // aliases for easier code reading
 #define TIM_CHANNEL_CALIB_VCO3340A TIM_CHANNEL_1 // PA8 (TIM1)
@@ -28,15 +36,6 @@ typedef enum {
 #define CCR_VCO3340B CCR2
 #define CCR_VCO13700 CCR3
 
-// see MX_TIM2_Init in tim.c:
-/*
-#define TIMCALIB_PRESCALER 16.0 // htim2.Init.Prescaler+1
-#define TIMCALIB_PERIOD (TIMCALIB_PRESCALER / 108.0e6)
-#define TIMCALIB_FREQ (1.0/TIMCALIB_PERIOD)
-#define TIMCALIB_IC_PRESCALER 1
-*/
-
-// MIDI and VCO related:
 #define A4_FREQ 440.0 // LA  4
 #define A4_PERIOD 1.0/A4_FREQ
 #define A4_MIDI_NOTE 69
@@ -53,11 +52,8 @@ typedef enum {
 
 /* function prototypes -----------------------------------------------*/
 
-void runVcoCalibration();
-void VCO_Calib_CaptureCallback();
-
-//#define CALIBRATION_PERIODS 4
-
-
+void vcoCalib_Run();
+void vcoCalib_IC_IRQHandler(uint32_t IC_Channel);
+void vcoCalib_UP_IRQHandler();
 
 #endif /* INC_VCO_CALIBRATION_H_ */

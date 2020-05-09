@@ -62,9 +62,9 @@ extern DMA_HandleTypeDef *hdma_Dac_tx;
 
 /* variables ---------------------------------------------------------*/
 
-uint8_t txDAC5391Buff[3]; // 24 bit transmit buffer for DAC over SPI1
-uint16_t channel_data[16] = {0}; // one buffer for each DAC channel
-Boolean is_need_channel_data_sync[16] = {FALSE}; // list channels that need synchro to the DAC
+static uint8_t txDAC5391Buff[3]; // 24 bit transmit buffer for DAC over SPI1
+static uint16_t channel_data[16] = {0}; // one buffer for each DAC channel
+static Boolean is_need_channel_data_sync[16] = {FALSE}; // list channels that need synchro to the DAC
 
 
 /* function prototypes -----------------------------------------------*/

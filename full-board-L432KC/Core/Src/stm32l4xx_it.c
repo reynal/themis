@@ -27,6 +27,7 @@
 #include "stdio.h"
 #include "stlink_rx_midi.h"
 #include "stlink_tx_dma.h"
+#include "vco_calibration.h"
 
 /* USER CODE END Includes */
 
@@ -77,6 +78,9 @@ extern DMA_HandleTypeDef *hdma_STlink_tx;
 extern UART_HandleTypeDef *huart_STlink;
 
 extern DMA_HandleTypeDef *hdma_Dac_tx;
+
+extern TIM_HandleTypeDef *htimVcoCalib;
+extern TIM_HandleTypeDef *htimDac;
 
 /* USER CODE END EV */
 
@@ -289,14 +293,56 @@ void EXTI9_5_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles TIM1 update interrupt and TIM16 global interrupt.
+  */
+void TIM1_UP_TIM16_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
+
+	  /* TIM Update event */
+	  //if (__HAL_TIM_GET_FLAG(htimVcoCalib, TIM_FLAG_UPDATE) != RESET && __HAL_TIM_GET_IT_SOURCE(htimVcoCalib, TIM_IT_UPDATE) != RESET){
+	      __HAL_TIM_CLEAR_IT(htimVcoCalib, TIM_IT_UPDATE);
+	      vcoCalib_UP_IRQHandler();
+	  //}
+
+  /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
+  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
+
+  /* USER CODE END TIM1_UP_TIM16_IRQn 1 */
+}
+
+/**
   * @brief This function handles TIM1 capture compare interrupt.
   */
 void TIM1_CC_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM1_CC_IRQn 0 */
 
+	// Input Capture events on channels 1, 2 and 3 (see vco_calibration.c) :
+
+	// following code was taken from HAL_TIM_IRQHandler() in stm32l4xx_hal_tim.c:
+	// see TIM1->DIER register and TIM1->SR status register
+	// here we check what capture/compare interrupt flag was set by hardware, from CC1IF, CC2IF and CC3IF:
+
+	if (__HAL_TIM_GET_FLAG(htimVcoCalib, TIM_FLAG_CC1) != RESET) {// && __HAL_TIM_GET_IT_SOURCE(htimVcoCalib, TIM_IT_CC1) != RESET) {
+			__HAL_TIM_CLEAR_IT(htimVcoCalib, TIM_IT_CC1);
+			//if ((htimVcoCalib->Instance->CCMR1 & TIM_CCMR1_CC1S) != 0x00U) // Capture/Compare 1 Selection is set
+				vcoCalib_IC_IRQHandler(TIM_CHANNEL_1);
+	}
+
+	if (__HAL_TIM_GET_FLAG(htimVcoCalib, TIM_FLAG_CC2) != RESET) {// && __HAL_TIM_GET_IT_SOURCE(htimVcoCalib, TIM_IT_CC2) != RESET) {
+			__HAL_TIM_CLEAR_IT(htimVcoCalib, TIM_IT_CC2);
+			//if ((htimVcoCalib->Instance->CCMR1 & TIM_CCMR1_CC2S) != 0x00U)
+				vcoCalib_IC_IRQHandler(TIM_CHANNEL_2);
+	}
+
+	if (__HAL_TIM_GET_FLAG(htimVcoCalib, TIM_FLAG_CC3) != RESET) {// && __HAL_TIM_GET_IT_SOURCE(htimVcoCalib, TIM_IT_CC3) != RESET) {
+			__HAL_TIM_CLEAR_IT(htimVcoCalib, TIM_IT_CC3);
+			//if ((htimVcoCalib->Instance->CCMR2 & TIM_CCMR2_CC3S) != 0x00U)
+				vcoCalib_IC_IRQHandler(TIM_CHANNEL_3);
+	}
+
   /* USER CODE END TIM1_CC_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim1);
   /* USER CODE BEGIN TIM1_CC_IRQn 1 */
 
   /* USER CODE END TIM1_CC_IRQn 1 */
@@ -308,7 +354,7 @@ void TIM1_CC_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-    __HAL_TIM_CLEAR_IT(&htim2, TIM_IT_UPDATE);
+    __HAL_TIM_CLEAR_IT(htimDac, TIM_IT_UPDATE);
     dac_Board_Timer_IRQ();
 
   /* USER CODE END TIM2_IRQn 0 */

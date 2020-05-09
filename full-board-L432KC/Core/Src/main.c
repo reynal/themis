@@ -112,9 +112,9 @@ int main(void)
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  MX_TIM15_Init();
   /* USER CODE BEGIN 2 */
 
-  stlink_dma_init();
 
   dac_Board_Start();
 
@@ -190,16 +190,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-
-
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
-
-	if (htim == htimVcoCalib)
-		VCO_Calib_CaptureCallback();
-}
-
-
 
 
 /* USER CODE END 4 */

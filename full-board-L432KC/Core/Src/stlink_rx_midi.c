@@ -20,9 +20,6 @@ extern UART_HandleTypeDef *huart_STlink;
 
 /* Variables ---------------------------------------------------------*/
 
-uint8_t rxUartSTlinkBuff[3]; // RX BUFF for UART coming from host PC (three MIDI bytes)
-
-
 /* Function prototypes -----------------------------------------------*/
 
 /* User code ---------------------------------------------------------*/
@@ -39,21 +36,6 @@ void stlink_Rx_Init(){
 	SET_BIT(huart_STlink->Instance->CR1, USART_CR1_RXNEIE);
 
 }
-
-/**
- * Callback for the UART peripheral receive data process
- * Called when a given amount of data has been received on given UART port
- */
-/*void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-
-	if (huart == huart_STlink){
-		printf("Received: %s\n", rxUartSTlinkBuff);
-		//toggleBlueLED();
-		//processIncomingMidiMessage(rxUartSTlinkBuff[0], rxUartSTlinkBuff[1], rxUartSTlinkBuff[2]);
-		HAL_UART_Receive_IT(huart_STlink, rxUartSTlinkBuff, 3); // wait for next MIDI msg
-	}
-}*/
-
 
 void stlink_Rx_IRQ_Handler(){
 

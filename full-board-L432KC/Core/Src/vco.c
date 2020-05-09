@@ -41,7 +41,7 @@ extern MidiNote midi_Note;
 
 /* Private variables ---------------------------------------------------------*/
 
-Vco13700Parameters vco13700 = {
+static Vco13700Parameters vco13700 = {
 		.detune=NO_DETUNE,
 		.semitones=NO_SHIFT,
 		.octave=CENTER_OCTAVE,
@@ -50,7 +50,7 @@ Vco13700Parameters vco13700 = {
 		.subbass_level=DEF_MIDICC_VCO13700_SUBBASS_LEVEL
 };
 
-Vco3340AParameters vco3340A = {
+static Vco3340AParameters vco3340A = {
 		.detune=NO_DETUNE,
 		.semitones=NO_SHIFT,
 		.octave=CENTER_OCTAVE,
@@ -58,7 +58,7 @@ Vco3340AParameters vco3340A = {
 		.pwm=DEF_MIDICC_VCO3340A_PWM_DUTY
 };
 
-Vco3340BParameters vco3340B = {
+static Vco3340BParameters vco3340B = {
 		.detune=NO_DETUNE,
 		.semitones=NO_SHIFT,
 		.octave=CENTER_OCTAVE,
@@ -73,7 +73,7 @@ Vco3340BParameters vco3340B = {
 // this array is normally filled by the calibration process!
 // (diff between notes is b/w 54 and 59)
 
-int midiToVCO3340ACV[128] = {
+uint32_t  note_To_VCO3340A_CV[128] = {
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 60, 114, 171, 227, 283, 339, 394, 451,
@@ -84,9 +84,9 @@ int midiToVCO3340ACV[128] = {
 3215, 3271, 3329, 3385, 3442, 3498, 3554, 3609, 3665, 3722, 3777, 3836,
 3891, 3949, 4005, 4061, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0 };
+0, 0, 0, 0, 0, 0, 0, 0 };
 
-int midiToVCO3340BCV[128] = {
+uint32_t  note_To_VCO3340B_CV[128] = {
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 30, 85, 142, 199, 256, 312, 370, 426, 483,
@@ -97,10 +97,10 @@ int midiToVCO3340BCV[128] = {
 3268, 3323, 3382, 3437, 3495, 3551, 3608, 3665, 3721, 3780, 3835, 3894,
 3949, 4007, 4064, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0 };
+0, 0, 0, 0, 0, 0, 0, 0 };
 
 
-int midiToVCO13700CV[128] = {
+uint32_t  note_To_VCO13700_CV[128] = {
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 21, 77, 132, 192, 247, 305, 361, 361, 474,
@@ -111,7 +111,7 @@ int midiToVCO13700CV[128] = {
 3243, 3299, 3355, 3412, 3468, 3526, 3580, 3637, 3693, 3750, 3807, 3863,
 3920, 3976, 4034, 4089, 0, 0, 0, 0, 0, 0, 0, 0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0 };
+0, 0, 0, 0, 0, 0, 0, 0 };
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -155,7 +155,7 @@ void init_Vco(){
 }
 
 // used during calibration:
-void prepareVCOForCalibration(){
+void vco_Prepare_For_Calibration(){
 
 	mcp23017_Mute_Vco_Blocking(); // "unplug" 3340A vco output from mixer so as to reduce interference with other VCO
 	dacWrite_Blocking(MAX_VCO3340A_PWM_DUTY, DAC_VCO_3340A_PWM_DUTY);  // make sure VCO calibration output
@@ -182,7 +182,7 @@ void setVco13700Detune(uint8_t value){
 
 void updateVco13700Freq(){
 
-	int dacLvl = midiToVCO13700CV[midi_Note.note + 12 * (vco13700.octave-CENTER_OCTAVE) + (vco13700.semitones-NO_SHIFT)] + vco13700.detune - NO_DETUNE;
+	int dacLvl = note_To_VCO13700_CV[midi_Note.note + 12 * (vco13700.octave-CENTER_OCTAVE) + (vco13700.semitones-NO_SHIFT)] + vco13700.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_13700_FREQ);
 
 }
@@ -233,7 +233,7 @@ void setVco3340ADetune(uint8_t value){
 }
 
 void updateVco3340AFreq(){
-	int dacLvl = midiToVCO3340ACV[midi_Note.note + 12 * (vco3340A.octave-CENTER_OCTAVE) + (vco3340A.semitones-NO_SHIFT)] + vco3340A.detune - NO_DETUNE;
+	int dacLvl = note_To_VCO3340A_CV[midi_Note.note + 12 * (vco3340A.octave-CENTER_OCTAVE) + (vco3340A.semitones-NO_SHIFT)] + vco3340A.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340A_FREQ);
 
 }
@@ -296,7 +296,7 @@ void setVco3340BDetune(uint8_t value){
  *  using the current calibration table.
  */
 void updateVco3340BFreq(){
-	int dacLvl = midiToVCO3340BCV[midi_Note.note + 12 * (vco3340B.octave-CENTER_OCTAVE) + (vco3340B.semitones-NO_SHIFT)] + vco3340B.detune - NO_DETUNE;
+	int dacLvl = note_To_VCO3340B_CV[midi_Note.note + 12 * (vco3340B.octave-CENTER_OCTAVE) + (vco3340B.semitones-NO_SHIFT)] + vco3340B.detune - NO_DETUNE;
 	dacWrite(dacLvl, DAC_VCO_3340B_FREQ);
 }
 

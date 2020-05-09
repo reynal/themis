@@ -27,14 +27,14 @@ static void noteOff_Handler(uint8_t note);
 /* Private variables ---------------------------------------------------------*/
 
 MidiNote midi_Note = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
-Midi_Receiver_State midi_Receiver_State; // midi state-machine state
-Midi_Message midi_Message; // tmp var for state-machine
+static Midi_Receiver_State midi_Receiver_State; // midi state-machine state
+static Midi_Message midi_Message; // tmp var for state-machine
 
-Boolean dbg_noteOn = FALSE;
+static Boolean dbg_noteOn = FALSE;
 
 // converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam TODO replace by a table of setXXXParam(value) functions
 // and call this function directly from process_Message():
-MidiCCParam midiCC_To_Params[128] = {
+static MidiCCParam midiCC_To_Params[128] = {
 		UNUSED_CC, 			// 0
 		UNUSED_CC, 			// 1
 		UNUSED_CC, 			// 2

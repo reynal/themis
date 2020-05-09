@@ -123,7 +123,7 @@ void setVco3340BTriLevel(uint8_t midiValue);
 void updateVco3340BTriLevel();
 
 // calibration:
-void prepareVCOForCalibration();
+void vco_Prepare_For_Calibration();
 
 void init_Vco();
 void testScale();

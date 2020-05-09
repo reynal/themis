@@ -50,7 +50,7 @@ static size_t tx_len; // variable to be shared among IRQ handler and dma_transmi
 /**
  *
  */
-void stlink_dma_init(){
+void stlink_Tx_dma_init(){
 
 	// init buffer:
 	memset(tx_buff, 0x00, TX_BUFF_SIZE);
@@ -323,7 +323,7 @@ void stlink_dma_test(){
 
 	//char sprintf_buff[256];
 
-	stlink_dma_init();
+	stlink_Tx_dma_init();
 	int i=0;
 
 	while (1) {
