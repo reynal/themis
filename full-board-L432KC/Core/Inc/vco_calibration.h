@@ -10,18 +10,18 @@
 
 #include "ad5391.h"
 
-#define VCO_COUNT 3
+#define VCO_COUNT 1
 
 typedef struct {
 	char name[10]; // e.g. "VCO3340A"
 	Dac dac; // DAC channel linked to this VCO
-	uint32_t note; // init to -1
+	int note; // init to -1
 	uint32_t cv; // Control voltage (aka DAC output)
 	uint32_t cv_min; // lowest possible CV
 	uint32_t cv_max; // highest possible CV
-	uint32_t previous_capture; // init to -1; stores the Capture register value for interval calculation ; -1 when uninitialized
-	uint32_t previous_interval; // timer interval, that is, current capture reg - previous capture reg
-	uint32_t current_interval;
+	int previous_capture; // init to -1; stores the Capture register value for interval calculation ; -1 when uninitialized
+	int previous_interval; // timer interval, that is, current capture reg - previous capture reg
+	int current_interval;
 	uint32_t * note_to_cv; // calibration table
 	uint32_t IC_Channel;
 	Boolean completed;

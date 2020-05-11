@@ -54,17 +54,17 @@ extern uint32_t  note_To_VCO13700_CV[128];
 
 /* variables ---------------------------------------------------------*/
 
-static Vco_Calib vco3340A_calib = {.name="VCO3340A", .note_to_cv=note_To_VCO3340A_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340A, .cv_min=VCO3340A_MIN_INPUT_CV, .cv_max=VCO3340A_MAX_INPUT_CV};
-static Vco_Calib vco3340B_calib = {.name="VCO3340B", .note_to_cv=note_To_VCO3340B_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340B, .cv_min=VCO3340B_MIN_INPUT_CV, .cv_max=VCO3340B_MAX_INPUT_CV};
-static Vco_Calib vco13700_calib = {.name="VCO13700", .note_to_cv=note_To_VCO13700_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO13700, .cv_min=VCO13700_MIN_INPUT_CV, .cv_max=VCO13700_MAX_INPUT_CV};
-static Vco_Calib vco_Calib_Array[3];
+static Vco_Calib vco3340A_calib = {.name="VCO3340A", .dac=DAC_VCO_3340A_FREQ, .note_to_cv=note_To_VCO3340A_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340A, .cv_min=VCO3340A_MIN_INPUT_CV, .cv_max=VCO3340A_MAX_INPUT_CV};
+static Vco_Calib vco3340B_calib = {.name="VCO3340B", .dac=DAC_VCO_3340B_FREQ, .note_to_cv=note_To_VCO3340B_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340B, .cv_min=VCO3340B_MIN_INPUT_CV, .cv_max=VCO3340B_MAX_INPUT_CV};
+static Vco_Calib vco13700_calib = {.name="VCO13700", .dac=DAC_VCO_13700_FREQ, .note_to_cv=note_To_VCO13700_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO13700, .cv_min=VCO13700_MIN_INPUT_CV, .cv_max=VCO13700_MAX_INPUT_CV};
+static Vco_Calib* vco_Calib_Array[3];
 
 static double time_To_Timer; // convert from a period value (in s) to a timer counting interval TODO : const ?
-static uint32_t note_To_Timer[128];
+static int note_To_Timer[128];
 
 static Boolean is_calib_underway = FALSE; // prevent re-entrance
 
-/*static struct {
+static struct {
 	int counter;
 	uint32_t values[10];
 	uint32_t tim1Cnt[10];
@@ -72,7 +72,7 @@ static Boolean is_calib_underway = FALSE; // prevent re-entrance
 	uint32_t deltas[10];
 	double freqs[10];
 	int timUpdate;
-} debug_calib;*/
+} dbg;
 
 /* function prototypes -----------------------------------------------*/
 
@@ -88,18 +88,18 @@ static void start_Calib();
  */
 static void init_Calib(){
 
-	vco_Calib_Array[0] = vco3340A_calib;
-	vco_Calib_Array[1] = vco3340B_calib;
-	vco_Calib_Array[2] = vco13700_calib;
+	vco_Calib_Array[0] = &vco3340A_calib;
+	vco_Calib_Array[1] = &vco3340B_calib;
+	vco_Calib_Array[2] = &vco13700_calib;
 
 	for (int i=0; i<VCO_COUNT; i++){
 
-		vco_Calib_Array[i].note = -1;
-		vco_Calib_Array[i].previous_capture = -1;
-		vco_Calib_Array[i].current_interval = 0;
-		vco_Calib_Array[i].cv = vco_Calib_Array[i].cv_min;
-		for (int midiNote = 0; midiNote < 128 ; midiNote++) vco_Calib_Array[i].note_to_cv[midiNote] = 0;
-		dacWrite_Blocking(vco_Calib_Array[i].cv , vco_Calib_Array[i].dac);
+		vco_Calib_Array[i]->note = -1;
+		vco_Calib_Array[i]->previous_capture = -10; // test
+		vco_Calib_Array[i]->current_interval = 0;
+		vco_Calib_Array[i]->cv = vco_Calib_Array[i]->cv_min;
+		for (int midiNote = 0; midiNote < 128 ; midiNote++) vco_Calib_Array[i]->note_to_cv[midiNote] = 0;
+		dacWrite_Blocking(vco_Calib_Array[i]->cv , vco_Calib_Array[i]->dac);
 
 	}
 }
@@ -108,8 +108,8 @@ static void start_Calib(){
 
 	printf("Starting calibration for VCO: ");
 	for (int i=0; i<VCO_COUNT; i++){
-		HAL_TIM_IC_Start_IT(htimVcoCalib, vco_Calib_Array[i].IC_Channel);
-		printf("%s ", vco_Calib_Array[i].name);
+		HAL_TIM_IC_Start_IT(htimVcoCalib, vco_Calib_Array[i]->IC_Channel);
+		printf("%s ", vco_Calib_Array[i]->name);
 	}
 	printf("\n");
 }
@@ -183,7 +183,7 @@ void vcoCalib_Run(){
 		  toggleRedLED(); // debug L4
 		  completed = TRUE;
 		  for (int i=0; i<VCO_COUNT; i++){
-			  completed &= vco_Calib_Array[i].completed;
+			  completed &= vco_Calib_Array[i]->completed;
 		  }
 	}
 
@@ -227,13 +227,13 @@ static void print_Note_To_CV_Tables(){
 
 	for (int i=0; i<VCO_COUNT; i++){
 		printf("int midiTo");
-		printf("%s", vco_Calib_Array[i].name);
+		printf("%s", vco_Calib_Array[i]->name);
 		printf("CV[128] = {\n");
 		for (int midiNote = 0; midiNote < 127 ; midiNote++){
-			printf("%lu, ", vco_Calib_Array[i].note_to_cv[midiNote]);
+			printf("%lu, ", vco_Calib_Array[i]->note_to_cv[midiNote]);
 			if (midiNote % 12 ==11 ) printf("\n");
 		}
-		printf("%lu };\n\n", vco_Calib_Array[i].note_to_cv[127]);
+		printf("%lu };\n\n", vco_Calib_Array[i]->note_to_cv[127]);
 	}
 }
 
@@ -316,7 +316,26 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	}
 	cnt += cntMSW * (htimVcoCalib->Instance->ARR+1);
 
+	// DEBUG:
+	dbg.values[dbg.counter] = cnt;
+	if (dbg.counter>0) {
+			int delta = cnt - dbg.values[dbg.counter-1];
+			//while (delta<0) delta += htimVcoCalib->Instance->ARR+1;
+			dbg.deltas[dbg.counter] = delta;
+			dbg.freqs[dbg.counter] = time_To_Timer / delta;
+	}
+	dbg.counter++;
+	if (dbg.counter == 10) {
+		dbg.counter=0;
+		//__HAL_TIM_SetCounter(&htim15, 0);
+	}
+	if (dbg.counter < 100) return;
 
+
+	if (vco->previous_capture < -1){
+		vco->previous_capture++;
+		return;
+	}
 	if (vco->previous_capture == -1) { // initial step
 		vco->previous_capture = cnt;
 		return;
@@ -347,7 +366,7 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	}
 	else { // validate current midi note and switch to next note:
 		toggleGreenLED();
-		printf("dist(%lu)=%lu and dist(%lu)=%lu\n",
+		printf("dist(%lu)=%d and dist(%lu)=%d\n",
 				vco->cv,
 				vco->current_interval - note_To_Timer[vco->note],
 				vco->cv-1,
@@ -359,7 +378,7 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 		}
 		else
 			vco->note_to_cv[vco->note] = vco->cv;
-		printf("note=%lu -> dac=%lu\n", vco->note, vco->note_to_cv[vco->note]);
+		printf("note=%d -> dac=%lu\n", vco->note, vco->note_to_cv[vco->note]);
 		vco->note++;
 	}
 

@@ -186,6 +186,8 @@ static void update_Control_Voltages(){
 
 	// update functions are called once per ms so as to allow for LFO modulation:
 
+	switchGreenLEDOn();
+
 	updateVco13700Freq();
 	updateVco3340AFreq();
 	updateVco3340BFreq();
@@ -198,6 +200,8 @@ static void update_Control_Voltages(){
 	update_Vca_Envelope(); // 15us
 	update_Vcf_Envelope(); // 15us
 	updateVcfResonance();
+
+	switchGreenLEDOff();
 
 	is_control_voltages_need_update=FALSE;
 }
