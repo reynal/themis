@@ -38,5 +38,5 @@ OPEN_TABBED_TOUCHSCREEN=N
 # Create control pane (hw on RPi only, or simulation): Y or N
 CREATE_SYNTH_CTRLPANE=N
 # Control pane (encoders etc) simulation: Y or N
-OPEN_SYNTH_CTRLPANE_SIMULATION=N
+OPEN_SYNTH_CTRLPANE_SIMULATION=Y
 
