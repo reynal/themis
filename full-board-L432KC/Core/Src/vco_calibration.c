@@ -43,6 +43,8 @@
 #include "stdlib.h"
 #include "leds.h"
 
+//#define DEBUG_CALIB
+
 
 /* External variables --------------------------------------------------------*/
 
@@ -64,6 +66,7 @@ static int note_To_Timer[128];
 
 static Boolean is_calib_underway = FALSE; // prevent re-entrance
 
+#ifdef DGB_CALIB
 static struct {
 	int counter;
 	uint32_t values[10];
@@ -73,6 +76,7 @@ static struct {
 	double freqs[10];
 	int timUpdate;
 } dbg;
+#endif
 
 /* function prototypes -----------------------------------------------*/
 
@@ -95,7 +99,7 @@ static void init_Calib(){
 	for (int i=0; i<VCO_COUNT; i++){
 
 		vco_Calib_Array[i]->note = -1;
-		vco_Calib_Array[i]->previous_capture = -10; // test
+		vco_Calib_Array[i]->previous_capture = -3; // test
 		vco_Calib_Array[i]->current_interval = 0;
 		vco_Calib_Array[i]->cv = vco_Calib_Array[i]->cv_min;
 		for (int midiNote = 0; midiNote < 128 ; midiNote++) vco_Calib_Array[i]->note_to_cv[midiNote] = 0;
@@ -226,9 +230,9 @@ static void print_Note_To_CV_Tables(){
 	printf("\n---- calib data ----\n\n");
 
 	for (int i=0; i<VCO_COUNT; i++){
-		printf("int midiTo");
+		printf("note_To_");
 		printf("%s", vco_Calib_Array[i]->name);
-		printf("CV[128] = {\n");
+		printf("_CV[128] = {\n");
 		for (int midiNote = 0; midiNote < 127 ; midiNote++){
 			printf("%lu, ", vco_Calib_Array[i]->note_to_cv[midiNote]);
 			if (midiNote % 12 ==11 ) printf("\n");
@@ -316,7 +320,7 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	}
 	cnt += cntMSW * (htimVcoCalib->Instance->ARR+1);
 
-	// DEBUG:
+#ifdef DGB_CALIB
 	dbg.values[dbg.counter] = cnt;
 	if (dbg.counter>0) {
 			int delta = cnt - dbg.values[dbg.counter-1];
@@ -330,9 +334,10 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 		//__HAL_TIM_SetCounter(&htim15, 0);
 	}
 	if (dbg.counter < 100) return;
+#endif
 
 
-	if (vco->previous_capture < -1){
+	if (vco->previous_capture < -1){ // wait until previous_capture == -1 (this let the system settles), then init with "initial" capture
 		vco->previous_capture++;
 		return;
 	}
@@ -366,11 +371,11 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	}
 	else { // validate current midi note and switch to next note:
 		toggleGreenLED();
-		printf("dist(%lu)=%d and dist(%lu)=%d\n",
+		/*printf("dist(%lu)=%d and dist(%lu)=%d\n",
 				vco->cv,
-				vco->current_interval - note_To_Timer[vco->note],
+				(int)(vco->current_interval - note_To_Timer[vco->note]),
 				vco->cv-1,
-				vco->previous_interval - note_To_Timer[vco->note]);
+				(int)(vco->previous_interval - note_To_Timer[vco->note]));*/
 
 		// would previous DAC level match better?
 		if (abs(vco->current_interval - note_To_Timer[vco->note]) > abs(vco->previous_interval - note_To_Timer[vco->note])){
@@ -378,7 +383,9 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 		}
 		else
 			vco->note_to_cv[vco->note] = vco->cv;
-		printf("note=%d -> dac=%lu\n", vco->note, vco->note_to_cv[vco->note]);
+		double nTT = note_To_Timer[vco->note];
+		double error = 100.0 * (vco->current_interval - nTT)/nTT;
+		printf("note=%d -> dac=%lu (err=%f%%)\n", vco->note, vco->note_to_cv[vco->note], error);
 		vco->note++;
 	}
 
