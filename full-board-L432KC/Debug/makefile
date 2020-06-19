@@ -41,7 +41,7 @@ all: full-board-L432KC.elf secondary-outputs
 
 # Tool invocations
 full-board-L432KC.elf: $(OBJS) $(USER_OBJS) /Users/sydxrey/GitHub/themis/full-board-L432KC/STM32L432KCUX_FLASH.ld
-	arm-none-eabi-gcc -o "full-board-L432KC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/sydxrey/GitHub/themis/full-board-L432KC/STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="full-board-L432KC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "full-board-L432KC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/sydxrey/GitHub/themis/full-board-L432KC/STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="full-board-L432KC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
