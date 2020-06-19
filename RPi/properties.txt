@@ -34,7 +34,7 @@ SERIAL_OUT=UART
 # Touchscreen: Y or N
 OPEN_RPI_TOUCHSCREEN=N
 # Tabbedpane for debugging: Y or N
-OPEN_TABBED_TOUCHSCREEN=N
+OPEN_TABBED_TOUCHSCREEN=Y
 # Create control pane (hw on RPi only, or simulation): Y or N
 CREATE_SYNTH_CTRLPANE=N
 # Control pane (encoders etc) simulation: Y or N
