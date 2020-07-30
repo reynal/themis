@@ -185,10 +185,13 @@ void vcoCalib_Run(){
 	while(completed == FALSE){
 		  HAL_Delay(50); // LED blinks faster so we know we're calibrating!
 		  toggleRedLED(); // debug L4
+		  /*TEST 22 juillet 2020
 		  completed = TRUE;
 		  for (int i=0; i<VCO_COUNT; i++){
 			  completed &= vco_Calib_Array[i]->completed;
 		  }
+		  */
+		  completed = vco_Calib_Array[1]->completed;
 	}
 
 	// proceeds with main() code
@@ -229,7 +232,7 @@ static void print_Note_To_CV_Tables(){
 
 	printf("\n---- calib data ----\n\n");
 
-	for (int i=0; i<VCO_COUNT; i++){
+	for (int i=1; i<VCO_COUNT; i++){ // i=1 TEST 22 juillet 2020 normalement c'est i=0
 		printf("note_To_");
 		printf("%s", vco_Calib_Array[i]->name);
 		printf("_CV[128] = {\n");
@@ -239,6 +242,7 @@ static void print_Note_To_CV_Tables(){
 		}
 		printf("%lu };\n\n", vco_Calib_Array[i]->note_to_cv[127]);
 	}
+	printf("\n");
 }
 
 

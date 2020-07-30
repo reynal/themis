@@ -12,7 +12,7 @@ DEFAULT_MIDI_CHANNEL=0
 # ===== USB connection to STM32 =====
 #
 # mac mini home:
-USB_DEV=/dev/tty.usbmodem1421203
+USB_DEV=/dev/tty.usbmodem141403
 # mac mini ensea:
 #USB_DEV=/dev/tty.usbmodem1443
 # macbook:

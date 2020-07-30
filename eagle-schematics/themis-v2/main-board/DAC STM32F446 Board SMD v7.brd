@@ -4154,7 +4154,7 @@ Your Eurocircuits Team
 <attribute name="SPICEPREFIX" value="C" x="44.958" y="77.978" size="1.778" layer="27" rot="R270" display="off"/>
 <attribute name="VALUE" x="45.974" y="78.232" size="0.3048" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="C35" library="rcl" library_urn="urn:adsk.eagle:library:334" package="C0805" package3d_urn="urn:adsk.eagle:package:23617/2" value="1p" x="80.518" y="83.312" smashed="yes">
+<element name="C35" library="rcl" library_urn="urn:adsk.eagle:library:334" package="C0805" package3d_urn="urn:adsk.eagle:package:23617/2" value="100p" x="80.518" y="83.312" smashed="yes">
 <attribute name="C3" value="0.47 micro" x="80.518" y="83.312" size="1.778" layer="27" display="off"/>
 <attribute name="NAME" x="79.248" y="81.28" size="1.016" layer="25" ratio="10"/>
 <attribute name="SPICEPREFIX" value="C" x="80.518" y="83.312" size="1.778" layer="27" display="off"/>

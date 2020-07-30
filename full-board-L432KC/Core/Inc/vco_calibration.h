@@ -10,7 +10,7 @@
 
 #include "ad5391.h"
 
-#define VCO_COUNT 1
+#define VCO_COUNT 3
 
 typedef struct {
 	char name[10]; // e.g. "VCO3340A"
@@ -43,7 +43,7 @@ typedef struct {
 #define VCO3340A_MIN_INPUT_CV 0
 #define VCO3340A_MAX_INPUT_CV 4095
 
-#define VCO3340B_MIN_INPUT_CV 0
+#define VCO3340B_MIN_INPUT_CV 2400
 #define VCO3340B_MAX_INPUT_CV 4095
 
 #define VCO13700_MIN_INPUT_CV 0
