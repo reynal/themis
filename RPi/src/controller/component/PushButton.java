@@ -7,6 +7,7 @@ import com.pi4j.io.gpio.*;
 
 import controller.event.*;
 import device.MCP23017;
+import device.MCP23017.DeviceAddress;
 import device.MCP23017.InterruptEvent;
 import device.MCP23017.InterruptListener;
 
@@ -115,25 +116,40 @@ public class PushButton extends Control {
 	 
 		public static void main(String[] args) throws Exception  {
 
+			MCP23017 device1 = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05); // panneau gauche (vert)
+			MCP23017 device2 = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04); // panneau droit (rouge)
 
-			//for (int i : I2CFactory.getBusIds()) System.gpout.println(i);
-
-			MCP23017 device = new MCP23017();
-			device.registerRpiPinForReset(RaspiPin.GPIO_25);
-			device.registerRpiPinForInterrupt(RaspiPin.GPIO_04);
-			device.reset();
-			device.printRegisters();
+			device1.registerRpiPinForReset(MCP23017.DEFAULT_RST_PIN);
+			device1.reset(); // actually reset both MCP23017 #1 and #2
+			device1.printRegisters();
+			device2.printRegisters();
 			
-			PushButton pb = new PushButton("Push P4A", device, MCP23017.Pin.P4A);
+			PushButton pb;
+			
+			// device1 :
+			pb = new PushButton("Push 1:P4A", device1, MCP23017.Pin.P4A);
 			pb.addActionListener(e -> System.out.println(e));
 			
-			pb = new PushButton("Push P7A", device, MCP23017.Pin.P7A);
+			pb = new PushButton("Push 1:P7A", device1, MCP23017.Pin.P7A);
 			pb.addActionListener(e -> System.out.println(e));
 
-			pb = new PushButton("Push P0B", device, MCP23017.Pin.P0B);
+			pb = new PushButton("Push 1:P0B", device1, MCP23017.Pin.P0B);
 			pb.addActionListener(e -> System.out.println(e));
 
-			pb = new PushButton("Push P3B", device, MCP23017.Pin.P3B);
+			pb = new PushButton("Push 1:P3B", device1, MCP23017.Pin.P3B);
+			pb.addActionListener(e -> System.out.println(e));
+			
+			// device2:
+			pb = new PushButton("Push 2:P4A", device2, MCP23017.Pin.P4A);
+			pb.addActionListener(e -> System.out.println(e));
+			
+			pb = new PushButton("Push 2:P7A", device2, MCP23017.Pin.P7A);
+			pb.addActionListener(e -> System.out.println(e));
+
+			pb = new PushButton("Push 2:P0B", device2, MCP23017.Pin.P0B);
+			pb.addActionListener(e -> System.out.println(e));
+
+			pb = new PushButton("Push 2:P3B", device2, MCP23017.Pin.P3B);
 			pb.addActionListener(e -> System.out.println(e));
 
 			int i=0;
@@ -142,6 +158,6 @@ public class PushButton extends Control {
 				Thread.sleep(1000);
 			}
 			System.out.println("closing device");
-			device.close();
+			device1.close();
 		}	 
 }

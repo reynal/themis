@@ -29,6 +29,7 @@ public abstract class VcoModule extends AbstractModule {
 		// debug:
 		detuneParameter.addChangeListener(e -> LOGGER.info(e.toString())); 
 		octaveParameter.addChangeListener(e -> LOGGER.info(e.toString()));
+		semitonesParameter.addChangeListener(e -> LOGGER.info(e.toString()));
 	}
 	
 	protected abstract String getVcoName();

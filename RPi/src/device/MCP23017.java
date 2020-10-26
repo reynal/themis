@@ -503,7 +503,7 @@ public class MCP23017  {
 				while(mcp23017IntPin != null) {
 					clearInterrupts();
 					//System.out.print(".");
-					Thread.sleep(100);
+					Thread.sleep(500); // TODO : adjust value
 				}
 			} 
 			catch (InterruptedException | IOException e) {e.printStackTrace();} 
@@ -547,7 +547,7 @@ public class MCP23017  {
 			}
 			mcp23017RstPin.high();
 		}
-		else LOGGER.severe("[ERROR] No RPi pin registered for PCM23017 RST");
+		else LOGGER.severe("[ERROR] No RPi pin registered for MCP23017 RST");
 		
 	}
 
@@ -902,32 +902,52 @@ public class MCP23017  {
 	// -------------- test methods --------------
 	
 	public static void main(String[] args) throws Exception  {
-
+		
 
 		//for (int i : I2CFactory.getBusIds()) System.gpout.println(i);
 
-		//MCP23017 device = new MCP23017();
-		MCP23017 device = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04);
-		//MCP23017 device = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05);
+		MCP23017 device2 = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04); // panneau droit (rouge)
+		MCP23017 device1 = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05); // panneau gauche (vert)
 
-		device.registerRpiPinForReset(DEFAULT_RST_PIN); // pin 37
-		device.reset();
-		device.printRegisters();
+		device1.registerRpiPinForReset(DEFAULT_RST_PIN); // pin 37
+		device1.reset();
+		device1.printRegisters();
 		
-		device.enableIntPinsMirror();
-		device.setInput(Port.A);
-		device.setInput(Port.B);
-		device.setPullupResistors(Port.A, true);
-		device.setPullupResistors(Port.B, true);
-		//device.setInterruptOnChange(Port.A, true);
-		device.setInterruptOnChange(Port.B, true);
-		//device.addInterruptListener(e -> System.out.println("[main #"+ device.interruptCounter +"] INT occured: " + e));
-		device.addInterruptListener(e -> System.out.println(e));
-		device.clearInterrupts();
-		device.printRegisters();
+		device1.enableIntPinsMirror();
+		device1.setInput(Port.A);
+		device1.setInput(Port.B);
+		device1.setPullupResistors(Port.A, true);
+		device1.setPullupResistors(Port.B, true);
+		device1.setInterruptOnChange(Port.A, true);
+		device1.setInterruptOnChange(Port.B, true);
+		device1.addInterruptListener(e -> System.out.println("Panneau Gauche: " + e));
+		device1.clearInterrupts();
+		device1.printRegisters();
 
-		int i=0;
-		while ((i++)<120) {
+		device2.enableIntPinsMirror();
+		device2.setInput(Port.A);
+		device2.setInput(Port.B);
+		device2.setPullupResistors(Port.A, true);
+		device2.setPullupResistors(Port.B, true);
+		device2.setInterruptOnChange(Port.A, true);
+		device2.setInterruptOnChange(Port.B, true);
+		device2.addInterruptListener(e -> System.out.println("Panneau Droite: " + e));
+		device2.clearInterrupts();
+		device2.printRegisters();
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				System.out.println("closing I2C bus");
+				try {
+					device1.i2cBus.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		System.out.println("Press Control-C to abort");
+		while (true) {
 			//System.out.printf("INTFA: %02X \t GPIOA: %02X\n", device.readInterruptFlagRegister(Port.A), device.read(Port.A)); //, device.read(Port.B));
 			//System.out.printf("A: %02X \t B: %02X\n", device.read(Port.A), device.read(Port.B));
 			//System.out.print(i+" ");
@@ -940,7 +960,5 @@ public class MCP23017  {
 			//device.printRegistersBriefB();			
 			Thread.sleep(1000);
 		}
-		System.out.println("closing device");
-		device.close();
 	}
 }

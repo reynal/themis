@@ -52,14 +52,18 @@ public class VirtualPiano extends JPanel {
 	 * @param midiInHandler the MIDI message handler responsible for sending MIDI messages to the STM32 via the serial transmitter.  
 	 * 
 	 */
-	public VirtualPiano(MidiInHandler midiInHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
+	public VirtualPiano(MidiInHandler midiInHandler) throws IOException {
 
 		this.midiInHandler = midiInHandler;
 		setLayout(new BorderLayout());
 		add(new Keyboard(), BorderLayout.CENTER);
 		add(createVelocitySlider(), BorderLayout.EAST);
 		add(createOctaveSlider(), BorderLayout.WEST);
-		add(new DemoPanel(), BorderLayout.SOUTH);
+		try {
+			add(new DemoPanel(), BorderLayout.SOUTH);
+		} catch (InvalidMidiDataException | MidiUnavailableException e) {
+			e.printStackTrace();
+		}
 		
 		/*int i=0;
 		for (String key: KEY_BINDINGS) {

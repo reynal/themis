@@ -41,6 +41,7 @@ public class MidiInHandler implements Receiver {
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		
 		String expectedMidiDevice = Preferences.getPreferences().getStringProperty(Preferences.Key.MIDI_IN);
+		if (expectedMidiDevice == null) return;
 		
 		for (MidiDevice.Info info : infos) {
 			

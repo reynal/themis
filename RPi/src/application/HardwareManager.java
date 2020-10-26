@@ -6,7 +6,11 @@ import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 
+import com.fazecast.jSerialComm.SerialPort;
+import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.i2c.I2CFactory.UnsupportedBusNumberException;
 import com.pi4j.system.SystemInfo;
 
@@ -18,6 +22,7 @@ import controller.SynthControllerPane;
 import controller.component.ControlFactory;
 import device.IS31FL3731;
 import device.MCP23017;
+import device.MCP23017.DeviceAddress;
 import model.midi.MidiDumpReceiver;
 import model.midi.MidiInHandler;
 import model.serial.AbstractSerialTransmitter;
@@ -70,6 +75,7 @@ public class HardwareManager {
 	private AbstractSerialTransmitter serialTransmitter;
 	private MidiInHandler midiInHandler;
 	private SynthControllerPane synthControllerPane;
+	//private JLabel statusBar;
 
 	/**
 	 * TODO: handle command line options
@@ -96,6 +102,8 @@ public class HardwareManager {
 		// debug createTouchScreen();
 
 		initShutdownHook(); // closes resource before exiting
+		
+		//statusBar = new JLabel("Status:");
 
 		switch (platform) {
 
@@ -111,20 +119,21 @@ public class HardwareManager {
 
 		// hardware may be connected
 		case RASPBERRYPI:
-			if (isSynthControlPaneHWConnected) {
-				if ("Y".equalsIgnoreCase(Preferences.getPreferences().getStringProperty(Preferences.Key.OPEN_TABBED_TOUCHSCREEN)))
-					new HardwareApp(new TabbedTouchScreen(midiInHandler));
-				// else new HardwareApp(touchScreen, touchScreenMenuBar);
-			} else {
-				// if (USE_TABBED_TOUCHSCREEN) new SimulatorApp(new
-				// TabbedTouchScreen(midiInHandler));
-				// else new SimulatorApp(touchScreen, touchScreenMenuBar);
-			}
+			if ("Y".equalsIgnoreCase(Preferences.getPreferences().getStringProperty(Preferences.Key.OPEN_TABBED_TOUCHSCREEN))) 
+				new HardwareApp(new TabbedTouchScreen(midiInHandler));
 			break;
 		default:
 			break;
 		}
 	}
+	
+	/*public void setStatus(String msg) {
+		SwingUtilities.invokeLater(() -> {
+			if (statusBar != null)
+				statusBar.setText(msg);
+		});
+	}*/
+
 
 	/**
 	 * Start the hardware.
@@ -189,6 +198,8 @@ public class HardwareManager {
 	}*/
 
 	/*
+	 * Check on which platform we're running.
+	 * If file properties.txt contains an assignement for key PLATFORM, use it, otherwise tries to guess.
 	 * 
 	 */
 	private void checkPlatform() {
@@ -227,10 +238,14 @@ public class HardwareManager {
 			if (platform == Platform.RASPBERRYPI) {
 				String serialOut = Preferences.getPreferences().getStringProperty(Preferences.Key.SERIAL_OUT);
 				if ("SPI".equalsIgnoreCase(serialOut)) serialTransmitter = new SpiTransmitter();
-				else serialTransmitter = new UartTransmitter();
+				else {
+					String s = Preferences.getPreferences().getStringProperty(Preferences.Key.USB_DEV);
+					if (s != null) serialTransmitter = new UartTransmitter(SerialPort.getCommPort(s));
+				}
 			}
 			else { // let's try to see if there's a serial port available on the host station:
-				serialTransmitter = new UartTransmitter();
+				String s = Preferences.getPreferences().getStringProperty(Preferences.Key.USB_DEV);
+				if (s != null) serialTransmitter = new UartTransmitter(SerialPort.getCommPort(s));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -274,8 +289,8 @@ public class HardwareManager {
 
 		// let's try to create hardware instances:
 		try {
-			mcpDevice1 = new MCP23017(); // TODO : I2C adress must not be the same for both devices!
-			// mcpDevice2 = new MCP23017(); // TODO PENDING
+			mcpDevice1 = new MCP23017(DeviceAddress.ADR_001, RaspiPin.GPIO_05); // panneau gauche (vert)
+			mcpDevice2 = new MCP23017(DeviceAddress.ADR_000, RaspiPin.GPIO_04); // panneau droit (rouge)
 			is31Device = new IS31FL3731();
 		} catch (IOException | UnsupportedBusNumberException | UnsatisfiedLinkError e) {
 			// e.printStackTrace();
@@ -296,7 +311,7 @@ public class HardwareManager {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
-				LOGGER.info("Shutdown Hook is running !");
+				LOGGER.info("Running Shutdown Hook (Closing JVM)");
 				closeHardware();
 			}
 		});

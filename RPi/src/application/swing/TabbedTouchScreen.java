@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
@@ -31,13 +32,15 @@ import model.serial.DebugTransmitter;
 @SuppressWarnings("serial")
 public class TabbedTouchScreen extends JTabbedPane {
 	
+	private static final Logger LOGGER = Logger.getLogger("confLogger");
+	
 	private TouchScreen ts;
 
-	public TabbedTouchScreen(MidiInHandler midiInHandler) throws IOException, InvalidMidiDataException, MidiUnavailableException {
+	public TabbedTouchScreen(MidiInHandler midiInHandler) throws IOException {
 		super();
 		addTab("VCO 3340A", new Vco3340APane());
 		addTab("VCO 3340B", new Vco3340BPane());
-		addTab("VCO 13700", new Vco13700Pane());
+		//addTab("VCO 13700", new Vco13700Pane());
 		addTab("VCA", new VcaPane());
 		addTab("VCF", new VcfPane());
 		addTab("Piano", new VirtualPiano(midiInHandler));
@@ -123,6 +126,7 @@ public class TabbedTouchScreen extends JTabbedPane {
 	/*
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	private class Vco13700Pane extends Box {
 		
 		Vco13700Pane(){

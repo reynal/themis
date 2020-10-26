@@ -1,5 +1,6 @@
 package model;
 
+import controller.component.PushButtonState;
 import controller.event.PushButtonActionEvent;
 import controller.event.RotaryEncoderChangeListener;
 import controller.event.RotaryEncoderEvent;
@@ -7,7 +8,7 @@ import controller.event.RotaryEncoderEvent;
 /**
  * This class represents a model parameter of type "double"
  */
-public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> implements RotaryEncoderChangeListener {
+public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T>  {
 	
 	protected Class<T> clazz; //
 
@@ -56,15 +57,20 @@ public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> impleme
 		case UP : 
 			if (value.ordinal() < getValuesCount()-1) {
 				value = clazz.getEnumConstants()[value.ordinal()+1];
-				fireChangeEvent();
 			}			
+			else 
+				value = clazz.getEnumConstants()[0]; // wraps to origin
+			fireChangeEvent();
 			break;
 			
 		case DOWN : 
 			if (value.ordinal() > 0) {
 				value = clazz.getEnumConstants()[value.ordinal()-1];
-				fireChangeEvent();
+				
 			}			
+			else
+				value = clazz.getEnumConstants()[getValuesCount()-1];
+			fireChangeEvent();
 			break;
 		}
 		
@@ -72,6 +78,9 @@ public class EnumParameter<T extends Enum<T>> extends ModuleParameter<T> impleme
 
 	@Override
 	public void actionPerformed(PushButtonActionEvent e) {
+		// keep only button press (not release):
+		if (e.getState() != PushButtonState.PRESSED) return;
+		
 		if (value.ordinal() < getValuesCount()-1) 
 			value = clazz.getEnumConstants()[value.ordinal()+1];
 		else

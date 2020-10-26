@@ -138,7 +138,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 	 * @param v between 0 and 127
 	 * @throws IOException in case there's an issue on the I2C bus
 	 */
-	public void setValue(int midiValue) throws IOException{
+	public void setValue(int midiValue) {
 
 		if (is31fl3731 != null) {
 			
@@ -147,6 +147,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 
 
 			// first we light up the first leds at 100%
+			try {
 			for (int led=0; led < getLEDCount(); led++) {
 				if (led < fullLeds) 
 					is31fl3731.setLEDpwm(ledArray[led], IS31FL3731.MAX_PWM);
@@ -154,6 +155,9 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 					is31fl3731.setLEDpwmGammaCorrected16(ledArray[led], (midiValue + 1) % ((MIDI_MAX_VALUE+1) / getLEDCount()));
 				else
 					is31fl3731.setLEDpwm(ledArray[led], IS31FL3731.MIN_PWM);
+			}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -177,19 +181,16 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 
 		if (e.getSource() instanceof EnumParameter) {
 			EnumParameter<?> p = (EnumParameter<?>)e.getSource();
-			switchLed(p.getOrdinal());
+			if (p.getValuesCount() <= 8) switchLed(p.getOrdinal());
+			else setValue((int)(127.0 * p.getOrdinal()/p.getValuesCount()));
 		}
 		else if (e.getSource() instanceof BooleanParameter) {
 			BooleanParameter p = (BooleanParameter)e.getSource();
 			setValue(p.getValue());
 		}
 		else if (e.getSource() instanceof MIDIParameter) {
-			try {
-				MIDIParameter p = (MIDIParameter)e.getSource();
-				setValue(p.getValueAsMIDICode());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			MIDIParameter p = (MIDIParameter)e.getSource();
+			setValue(p.getValueAsMIDICode());
 		}
 
 	}	
@@ -260,11 +261,7 @@ public class BarGraph extends AbstractView implements ModuleParameterChangeListe
 		
 		f.add(s=new JSlider(0, 127));
 		s.addChangeListener(e -> {
-			try {
 				group.setValue(s.getValue());
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
 		});
 		//f.pack();
 		f.setVisible(true);

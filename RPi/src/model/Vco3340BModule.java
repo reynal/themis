@@ -19,17 +19,17 @@ public class Vco3340BModule extends VcoModule {
 	private MIDIParameter dutyParameter;
 	
 	public static final String DUTY = "Duty";
-	public static final String TRI_LEVEL = "Triangle";
-	public static final String SAW_LEVEL = "Saw";
-	public static final String PULSE_LEVEL = "Pulse";
+	public static final String TRI_LEVEL = "TriangleLvl";
+	public static final String SAW_LEVEL = "SawLvl";
+	public static final String PULSE_LEVEL = "PulseLvl";
 	
 	
 	public Vco3340BModule() {
 		super();
-		parameterList.add(triLevelParameter = new MIDIParameter(TRI_LEVEL));
-		parameterList.add(sawLevelParameter = new MIDIParameter(SAW_LEVEL));
-		parameterList.add(pulseLevelParameter = new MIDIParameter(PULSE_LEVEL));
-		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
+		parameterList.add(triLevelParameter = new MIDIParameter(getVcoName() + TRI_LEVEL));
+		parameterList.add(sawLevelParameter = new MIDIParameter(getVcoName() + SAW_LEVEL));
+		parameterList.add(pulseLevelParameter = new MIDIParameter(getVcoName() + PULSE_LEVEL));
+		parameterList.add(dutyParameter = new MIDIParameter(getVcoName() + DUTY));
 		
 		// debug:
 		triLevelParameter.addChangeListener(e -> LOGGER.info(e.toString()));

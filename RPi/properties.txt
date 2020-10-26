@@ -39,4 +39,5 @@ OPEN_TABBED_TOUCHSCREEN=Y
 CREATE_SYNTH_CTRLPANE=N
 # Control pane (encoders etc) simulation: Y or N
 OPEN_SYNTH_CTRLPANE_SIMULATION=Y
-
+# If N, remove decoration (title bar etc) from JFrame; useful on RPi with tiny touchscreen ; leave Y when debugging
+DECORATE_JFRAME=Y

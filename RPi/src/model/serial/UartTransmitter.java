@@ -36,6 +36,7 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 	 */
 	public UartTransmitter(SerialPort s) throws IOException{
 
+		if (s==null) return;
 		currentPort = s;
 		currentPort.setBaudRate(DEFAULT_BAUD_RATE);
 		if (!currentPort.openPort())

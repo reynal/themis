@@ -26,10 +26,10 @@ public class Vco3340AModule extends VcoModule {
 	
 	public Vco3340AModule() {
 		super();
-		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, WAVE));
-		parameterList.add(dutyParameter = new MIDIParameter(DUTY));
-		parameterList.add(syncFrom13700Parameter = new BooleanParameter(SYNC));
-		parameterList.add(levelParameter = new MIDIParameter(LEVEL));
+		parameterList.add(waveShapeParameter = new EnumParameter<WaveShape>(WaveShape.class, getVcoName() + WAVE));
+		parameterList.add(dutyParameter = new MIDIParameter(getVcoName() + DUTY));
+		parameterList.add(syncFrom13700Parameter = new BooleanParameter(getVcoName() + SYNC));
+		parameterList.add(levelParameter = new MIDIParameter(getVcoName() + LEVEL));
 		
 		// debug:
 		waveShapeParameter.addChangeListener(e -> LOGGER.info(e.toString())); 

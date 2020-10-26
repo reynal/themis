@@ -120,7 +120,7 @@ public abstract class ModuleParameter<T> implements RotaryEncoderChangeListener,
 
 	@Override
 	public String toString() {
-		return super.toString() + label + ": midi=" + getValueAsMIDICode() + "/" + (getValuesCount()-1) + " val=" + getValue();
+		return super.toString() + " " + label + ": midi=" + getValueAsMIDICode() + "/" + (getValuesCount()-1) + " val=" + getValue();
 	}
 	
 

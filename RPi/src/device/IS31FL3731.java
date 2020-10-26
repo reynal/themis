@@ -842,13 +842,23 @@ public class IS31FL3731 {
 						device.setLEDpwmGammaCorrected16(ledA, pwm);
 						device.setLEDpwmGammaCorrected16(ledB, pwm);
 						// System.out.print(".");
-						Thread.sleep(5);
+						Thread.sleep(3);
 					}
+				}
+			}
+			Thread.sleep(2000);
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					LEDCoordinate ledA = new LEDCoordinate(row, col, Matrix.A);
+					LEDCoordinate ledB = new LEDCoordinate(row, col, Matrix.B);
+					device.switchLED(ledA, true);
+					device.switchLED(ledB, true);
+					// System.out.print(led);
 					for (int pwm = 15; pwm >= 0; pwm--) {
 						device.setLEDpwmGammaCorrected16(ledA, pwm);
 						device.setLEDpwmGammaCorrected16(ledB, pwm);
 						// System.out.print(".");
-						Thread.sleep(5);
+						Thread.sleep(3);
 					}
 				}
 			}

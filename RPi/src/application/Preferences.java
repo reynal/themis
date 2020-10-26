@@ -28,7 +28,8 @@ public class Preferences {
 		OPEN_RPI_TOUCHSCREEN,
 		OPEN_TABBED_TOUCHSCREEN,
 		CREATE_SYNTH_CTRLPANE,
-		OPEN_SYNTH_CTRLPANE_SIMULATION;
+		OPEN_SYNTH_CTRLPANE_SIMULATION,
+		DECORATE_JFRAME; // jtabbedPane, cleaner on raspberry
 	}
 	
 	
@@ -65,7 +66,7 @@ public class Preferences {
 		String val = properties.getProperty(key.toString());
 		if (val == null) {
 			LOGGER.severe("[Reading "+fileName+"] key (String) \"" + key + "\" non definie !");
-			System.exit(0);
+			//System.exit(0);
 		}
 
 		return val;
@@ -75,7 +76,7 @@ public class Preferences {
 		String val = properties.getProperty(key.toString());
 		if (val == null) {
 			LOGGER.severe("[Reading "+fileName+"] key (int) \"" + key + "\" non definie !");
-			System.exit(0);
+			//System.exit(0);
 		}
 
 		return Integer.parseInt(val);

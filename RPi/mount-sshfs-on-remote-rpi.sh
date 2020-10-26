@@ -1,2 +1,2 @@
 #!/bin/bash
-sshfs rpi4:/home/pi/themis bin/
+sshfs rpi-themis:/home/pi/themis/bin bin/
