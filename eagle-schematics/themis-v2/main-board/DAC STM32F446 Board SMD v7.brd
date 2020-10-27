@@ -7711,7 +7711,7 @@ Your Eurocircuits Team
 <wire x1="66.802" y1="7.874" x2="76.2" y2="7.874" width="0.3048" layer="1"/>
 <wire x1="76.2" y1="7.874" x2="77.912" y2="6.162" width="0.3048" layer="1"/>
 </signal>
-<signal name="N$26">
+<signal name="BH2221_AO7">
 <contactref element="A010/9/8/7/3/4/5/6" pad="4"/>
 <contactref element="BH2221" pad="6"/>
 <wire x1="50.3426" y1="24.709" x2="49.4460125" y2="24.709" width="0.254" layer="1"/>
@@ -7720,7 +7720,7 @@ Your Eurocircuits Team
 <wire x1="48.69050625" y1="23.95349375" x2="48.69050625" y2="22.52850625" width="0.254" layer="1"/>
 <wire x1="48.69050625" y1="22.52850625" x2="46.736" y2="20.574" width="0.254" layer="1"/>
 </signal>
-<signal name="N$27">
+<signal name="BH2221_AO8">
 <contactref element="A010/9/8/7/3/4/5/6" pad="3"/>
 <contactref element="BH2221" pad="7"/>
 <wire x1="50.3426" y1="25.359" x2="49.4460125" y2="25.359" width="0.254" layer="1"/>
@@ -7729,7 +7729,7 @@ Your Eurocircuits Team
 <wire x1="46.20650625" y1="22.11949375" x2="46.20650625" y2="20.29850625" width="0.254" layer="1"/>
 <wire x1="46.20650625" y1="20.29850625" x2="44.196" y2="18.288" width="0.254" layer="1"/>
 </signal>
-<signal name="N$28">
+<signal name="BH2221_AO9">
 <contactref element="A010/9/8/7/3/4/5/6" pad="2"/>
 <contactref element="BH2221" pad="8"/>
 <wire x1="50.3426" y1="26.009" x2="49.44599375" y2="26.009" width="0.254" layer="1"/>
@@ -7738,7 +7738,7 @@ Your Eurocircuits Team
 <wire x1="45.500496875" y1="22.063503125" x2="45.500496875" y2="20.862496875" width="0.254" layer="1"/>
 <wire x1="45.500496875" y1="20.862496875" x2="41.656" y2="17.018" width="0.254" layer="1"/>
 </signal>
-<signal name="N$29">
+<signal name="BH2221_AO10">
 <contactref element="A010/9/8/7/3/4/5/6" pad="1"/>
 <contactref element="BH2221" pad="9"/>
 <wire x1="50.3426" y1="26.659" x2="49.44599375" y2="26.659" width="0.254" layer="1"/>
@@ -7749,28 +7749,28 @@ Your Eurocircuits Team
 <wire x1="41.234075" y1="19.136075" x2="39.116" y2="17.018" width="0.254" layer="1"/>
 <wire x1="39.116" y1="17.018" x2="39.116" y2="16.764" width="0.254" layer="1"/>
 </signal>
-<signal name="N$30">
+<signal name="BH2221_AO2">
 <contactref element="BH2221" pad="19"/>
 <contactref element="A02/1/12/11" pad="1"/>
 <wire x1="43.3326" y1="22.109" x2="38.619" y2="22.109" width="0.254" layer="1"/>
 <wire x1="38.619" y1="22.109" x2="37.338" y2="20.828" width="0.254" layer="1"/>
 <wire x1="37.338" y1="20.828" x2="34.544" y2="20.828" width="0.254" layer="1"/>
 </signal>
-<signal name="N$31">
+<signal name="BH2221_AO1">
 <contactref element="BH2221" pad="18"/>
 <contactref element="A02/1/12/11" pad="2"/>
 <wire x1="43.3326" y1="22.759" x2="37.439" y2="22.759" width="0.254" layer="1"/>
 <wire x1="37.439" y1="22.759" x2="36.83" y2="23.368" width="0.254" layer="1"/>
 <wire x1="36.83" y1="23.368" x2="34.544" y2="23.368" width="0.254" layer="1"/>
 </signal>
-<signal name="N$32">
+<signal name="BH2221_AO12">
 <contactref element="BH2221" pad="13"/>
 <contactref element="A02/1/12/11" pad="3"/>
 <wire x1="43.3326" y1="26.009" x2="37.439" y2="26.009" width="0.254" layer="1"/>
 <wire x1="37.439" y1="26.009" x2="37.338" y2="25.908" width="0.254" layer="1"/>
 <wire x1="37.338" y1="25.908" x2="34.544" y2="25.908" width="0.254" layer="1"/>
 </signal>
-<signal name="N$33">
+<signal name="BH2221_AO11">
 <contactref element="A02/1/12/11" pad="4"/>
 <contactref element="BH2221" pad="12"/>
 <wire x1="43.3326" y1="26.659" x2="38.619" y2="26.659" width="0.254" layer="1"/>
@@ -8522,7 +8522,7 @@ Your Eurocircuits Team
 <wire x1="93.0795" y1="61.595" x2="93.517" y2="61.595" width="0.3048" layer="1"/>
 <wire x1="95.824" y1="64.262" x2="92.964" y2="64.262" width="0.3048" layer="1"/>
 </signal>
-<signal name="N$19">
+<signal name="BH2221_AO3">
 <contactref element="A010/9/8/7/3/4/5/6" pad="5"/>
 <contactref element="BH2221" pad="2"/>
 <wire x1="49.276" y1="17.018" x2="49.276" y2="16.764" width="0.254" layer="1"/>
@@ -8531,7 +8531,7 @@ Your Eurocircuits Team
 <wire x1="49.1156" y1="21.7785875" x2="49.1156" y2="17.1784" width="0.254" layer="1"/>
 <wire x1="49.1156" y1="17.1784" x2="49.276" y2="17.018" width="0.254" layer="1"/>
 </signal>
-<signal name="N$21">
+<signal name="BH2221_AO4">
 <contactref element="A010/9/8/7/3/4/5/6" pad="6"/>
 <contactref element="BH2221" pad="3"/>
 <wire x1="50.3426" y1="22.759" x2="51.2391875" y2="22.759" width="0.254" layer="1"/>
@@ -8545,7 +8545,7 @@ Your Eurocircuits Team
 <wire x1="51.2391875" y1="23.409" x2="54.356" y2="20.2921875" width="0.254" layer="1"/>
 <wire x1="54.356" y1="20.2921875" x2="54.356" y2="16.764" width="0.254" layer="1"/>
 </signal>
-<signal name="N$25">
+<signal name="BH2221_AO6">
 <contactref element="BH2221" pad="5"/>
 <contactref element="A010/9/8/7/3/4/5/6" pad="8"/>
 <wire x1="50.3426" y1="24.059" x2="51.4372875" y2="24.059" width="0.254" layer="1"/>

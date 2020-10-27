@@ -29386,73 +29386,81 @@ Au moment de l'équipement de la carte :
 <junction x="254" y="218.44"/>
 </segment>
 </net>
-<net name="N$26" class="0">
+<net name="BH2221_AO7" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="4"/>
 <wire x1="487.68" y1="238.76" x2="495.3" y2="238.76" width="0.1524" layer="91"/>
 <wire x1="495.3" y1="238.76" x2="495.3" y2="233.68" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO7"/>
 <wire x1="495.3" y1="233.68" x2="508" y2="233.68" width="0.1524" layer="91"/>
+<label x="487.68" y="238.76" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$27" class="0">
+<net name="BH2221_AO8" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="3"/>
 <wire x1="487.68" y1="236.22" x2="492.76" y2="236.22" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO8"/>
 <wire x1="492.76" y1="236.22" x2="492.76" y2="228.6" width="0.1524" layer="91"/>
 <wire x1="492.76" y1="228.6" x2="508" y2="228.6" width="0.1524" layer="91"/>
+<label x="487.68" y="236.22" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$28" class="0">
+<net name="BH2221_AO9" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="2"/>
 <wire x1="487.68" y1="233.68" x2="490.22" y2="233.68" width="0.1524" layer="91"/>
 <wire x1="490.22" y1="233.68" x2="490.22" y2="223.52" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO9"/>
 <wire x1="490.22" y1="223.52" x2="508" y2="223.52" width="0.1524" layer="91"/>
+<label x="487.68" y="233.68" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$29" class="0">
+<net name="BH2221_AO10" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="1"/>
 <wire x1="487.68" y1="231.14" x2="487.68" y2="218.44" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO10"/>
 <wire x1="487.68" y1="218.44" x2="508" y2="218.44" width="0.1524" layer="91"/>
+<label x="490.22" y="218.44" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$30" class="0">
+<net name="BH2221_AO2" class="0">
 <segment>
 <pinref part="BH2221" gate="G$1" pin="AO2"/>
 <wire x1="574.04" y1="254" x2="596.9" y2="254" width="0.1524" layer="91"/>
 <pinref part="A02/1/12/11" gate="1" pin="1"/>
 <wire x1="596.9" y1="254" x2="596.9" y2="248.92" width="0.1524" layer="91"/>
+<label x="576.58" y="254" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$31" class="0">
+<net name="BH2221_AO1" class="0">
 <segment>
 <pinref part="BH2221" gate="G$1" pin="AO1"/>
 <wire x1="574.04" y1="248.92" x2="594.36" y2="248.92" width="0.1524" layer="91"/>
 <wire x1="594.36" y1="248.92" x2="594.36" y2="246.38" width="0.1524" layer="91"/>
 <pinref part="A02/1/12/11" gate="1" pin="2"/>
 <wire x1="594.36" y1="246.38" x2="596.9" y2="246.38" width="0.1524" layer="91"/>
+<label x="576.58" y="248.92" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$32" class="0">
+<net name="BH2221_AO12" class="0">
 <segment>
 <pinref part="BH2221" gate="G$1" pin="AO12"/>
 <wire x1="574.04" y1="223.52" x2="594.36" y2="223.52" width="0.1524" layer="91"/>
 <wire x1="594.36" y1="223.52" x2="594.36" y2="243.84" width="0.1524" layer="91"/>
 <pinref part="A02/1/12/11" gate="1" pin="3"/>
 <wire x1="594.36" y1="243.84" x2="596.9" y2="243.84" width="0.1524" layer="91"/>
+<label x="576.58" y="223.52" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$33" class="0">
+<net name="BH2221_AO11" class="0">
 <segment>
 <pinref part="A02/1/12/11" gate="1" pin="4"/>
 <wire x1="596.9" y1="241.3" x2="596.9" y2="218.44" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO11"/>
 <wire x1="596.9" y1="218.44" x2="574.04" y2="218.44" width="0.1524" layer="91"/>
+<label x="576.58" y="218.44" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="BH2221_DI" class="0">
@@ -30023,22 +30031,24 @@ Au moment de l'équipement de la carte :
 <wire x1="269.24" y1="472.44" x2="269.24" y2="467.36" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$19" class="0">
+<net name="BH2221_AO3" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="5"/>
 <wire x1="487.68" y1="241.3" x2="500.38" y2="241.3" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO3"/>
 <wire x1="500.38" y1="241.3" x2="500.38" y2="254" width="0.1524" layer="91"/>
 <wire x1="500.38" y1="254" x2="508" y2="254" width="0.1524" layer="91"/>
+<label x="487.68" y="241.3" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$21" class="0">
+<net name="BH2221_AO4" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="6"/>
 <wire x1="487.68" y1="243.84" x2="502.92" y2="243.84" width="0.1524" layer="91"/>
 <wire x1="502.92" y1="243.84" x2="502.92" y2="248.92" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO4"/>
 <wire x1="502.92" y1="248.92" x2="508" y2="248.92" width="0.1524" layer="91"/>
+<label x="487.68" y="243.84" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$23" class="0">
@@ -30050,13 +30060,14 @@ Au moment de l'équipement de la carte :
 <wire x1="505.46" y1="243.84" x2="508" y2="243.84" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$25" class="0">
+<net name="BH2221_AO6" class="0">
 <segment>
 <pinref part="BH2221" gate="G$1" pin="AO6"/>
 <wire x1="508" y1="238.76" x2="497.84" y2="238.76" width="0.1524" layer="91"/>
 <wire x1="497.84" y1="238.76" x2="497.84" y2="248.92" width="0.1524" layer="91"/>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="8"/>
 <wire x1="497.84" y1="248.92" x2="487.68" y2="248.92" width="0.1524" layer="91"/>
+<label x="487.68" y="248.92" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="SUB_OUT2" class="0">
