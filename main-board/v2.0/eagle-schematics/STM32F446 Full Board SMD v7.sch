@@ -26587,7 +26587,7 @@ Au moment de l'équipement de la carte :
 </instance>
 <instance part="C72" gate="G$1" x="706.12" y="218.44" smashed="yes" rot="R180">
 <attribute name="NAME" x="704.596" y="218.059" size="1.016" layer="95" rot="R180"/>
-<attribute name="VALUE" x="710.184" y="218.821" size="1.016" layer="96"/>
+<attribute name="VALUE" x="702.564" y="221.361" size="1.016" layer="96"/>
 </instance>
 <instance part="AGND6" gate="GND" x="706.12" y="213.36" smashed="yes"/>
 <instance part="C59" gate="G$1" x="487.68" y="210.82" smashed="yes">
@@ -26914,7 +26914,8 @@ Au moment de l'équipement de la carte :
 <attribute name="NAME" x="265.43" y="461.01" size="1.778" layer="95" rot="R90" align="bottom-center"/>
 </instance>
 <instance part="C73" gate="G$1" x="711.2" y="220.98" smashed="yes">
-<attribute name="NAME" x="709.5" y="214.16" size="1.016" layer="95" rot="R270" align="bottom-right"/>
+<attribute name="NAME" x="712.216" y="221.615" size="1.016" layer="95"/>
+<attribute name="VALUE" x="712.216" y="216.789" size="1.016" layer="96"/>
 </instance>
 <instance part="AGND4" gate="GND" x="711.2" y="213.36" smashed="yes"/>
 <instance part="A1" gate="G$1" x="-170.18" y="398.78" smashed="yes" rot="R180">
@@ -28988,7 +28989,7 @@ Au moment de l'équipement de la carte :
 <pinref part="AD5644" gate="G$0" pin="GND"/>
 <wire x1="746.76" y1="223.52" x2="759.46" y2="223.52" width="0.1524" layer="91"/>
 <wire x1="759.46" y1="223.52" x2="759.46" y2="226.06" width="0.1524" layer="91"/>
-<label x="756.92" y="223.52" size="0.254" layer="95"/>
+<label x="756.92" y="223.52" size="1.016" layer="95"/>
 </segment>
 <segment>
 <pinref part="SUB" gate="A" pin="S"/>

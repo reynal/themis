@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
 #include "i2c.h"
 #include "spi.h"
 #include "tim.h"
@@ -28,6 +29,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "math.h"
 
 /* USER CODE END Includes */
 
@@ -48,6 +50,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+extern SPI_HandleTypeDef hspi1;
 
 /* USER CODE END PV */
 
@@ -90,6 +93,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C1_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
@@ -99,6 +103,40 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+  uint8_t spiBufBH2221[2] = {0x0D, 0x80}; // A02 = 0b0000.0100 = 0x04
+  uint8_t spiBufAD5644[3] = {0x00, 0x00, 0x00};
+  uint8_t val8=0;
+  uint16_t val14=0;
+  //uint8_t ch=0;
+  //uint8_t channel[12] = {0x08, 0x04, 0x0C, 0x02, 0x0A, 0x06, 0x0E, 0x01, 0x09, 0x05, 0x0D, 0x03}; // BH2221
+
+  // SW RESET
+  spiBufAD5644[0]=0x28;
+  spiBufAD5644[1]=0x00;
+  spiBufAD5644[2]=0x01;
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
+  HAL_Delay(1);
+
+  // Internal VRef ON
+  spiBufAD5644[0]=0x38;
+  spiBufAD5644[1]=0x00;
+  spiBufAD5644[2]=0x01;
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
+  HAL_Delay(1);
+
+  // LDAC auto-update:
+  spiBufAD5644[0]=0x30;
+  spiBufAD5644[1]=0x00;
+  spiBufAD5644[2]=0x0F;
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
+  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
+  HAL_Delay(1);
 
   /* USER CODE END 2 */
 
@@ -110,7 +148,36 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 	  HAL_GPIO_TogglePin(GPIOA, LED_GREEN_Pin);
-	  HAL_Delay(200);
+
+//	  // BH2221FV DAC : SPI1 (settling time = 100us for a 0 -> 255 output jump, otherwise it's shorter)
+//	  // CLK = PA5
+//	  // MOSI = PA7
+//	  // (NSS = PA4 not used yet)
+		  spiBufBH2221[0]=0x0D; //channel[ch];
+		  spiBufBH2221[1]=val8;
+		  HAL_GPIO_WritePin(BH2221_LD_GPIO_Port, BH2221_LD_Pin, GPIO_PIN_RESET);
+		  if (HAL_SPI_Transmit(&hspi1, spiBufBH2221, 2, 100) != HAL_OK) Error_Handler();
+		  HAL_GPIO_WritePin(BH2221_LD_GPIO_Port, BH2221_LD_Pin, GPIO_PIN_SET);
+
+		  __NOP();
+		  __NOP();
+		  __NOP();
+
+//		  //}
+
+	  spiBufAD5644[0]=0x07;
+	  spiBufAD5644[1]=(val14 >> 6) & 0x00FF;
+	  spiBufAD5644[2]=(val14 << 2) & 0x00FF;
+	  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+	  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
+	  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
+	  HAL_Delay(1);
+
+	  val8+=16;
+	  val14+=256;
+	  if (val8 >= 0xFF) val8=0;
+	  if (val14 >= 0x3FFF) val14=0;
+
 
   }
   /* USER CODE END 3 */
@@ -158,7 +225,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV4;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
   {

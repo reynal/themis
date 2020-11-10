@@ -46,8 +46,8 @@ themis-stm32F446RC.bin \
 all: themis-stm32F446RC.elf secondary-outputs
 
 # Tool invocations
-themis-stm32F446RC.elf: $(OBJS) $(USER_OBJS) /Volumes/Samsung_T5/eclipse-workspaces/STM32CubeIDE/themis-stm32F446RC/STM32F446RCTX_FLASH.ld
-	arm-none-eabi-gcc -o "themis-stm32F446RC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Samsung_T5/eclipse-workspaces/STM32CubeIDE/themis-stm32F446RC/STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-stm32F446RC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+themis-stm32F446RC.elf: $(OBJS) $(USER_OBJS) /Volumes/Samsung_T5/GitHub/themis/themis-stm32F446RC/STM32F446RCTX_FLASH.ld
+	arm-none-eabi-gcc -o "themis-stm32F446RC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Samsung_T5/GitHub/themis/themis-stm32F446RC/STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-stm32F446RC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

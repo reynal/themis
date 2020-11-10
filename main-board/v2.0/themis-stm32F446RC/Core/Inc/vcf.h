@@ -1,0 +1,42 @@
+/*
+ * vcf.h
+ *
+ *  Created on: Apr 26, 2020
+ *      Author: sydxrey
+ */
+
+#ifndef INC_VCF_H_
+#define INC_VCF_H_
+
+#include "stm32f4xx_hal.h"
+
+// Filter
+#define DEF_MIDICC_CUTOFF 32 // cut off
+#define MAX_CUTOFF 1.0
+
+#define DEF_MIDICC_RESONANCE 0 // Q
+#define MAX_RESONANCE 4095
+
+
+/* global parameters cutoff and Q influence the shape of the CVF adsr enveloppe */
+typedef struct {
+  double vcfCutoff; // between 0 and 100%
+  double vcfResonance; // between 0 and 127
+} GlobalFilterParams;
+
+
+/* Private function prototypes -----------------------------------------------*/
+
+void setVcfOrder(uint8_t value);
+void init_Vcf();
+
+void updateVcfCutoff();
+void updateVcfResonance();
+
+void set_Vcf_ResonanceGlobal(uint8_t midivalue);
+void set_Vcf_CutoffGlobal(uint8_t midivalue);
+
+void testVcf();
+
+
+#endif /* INC_VCF_H_ */
