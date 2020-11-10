@@ -1,0 +1,2 @@
+This is the third release of the project. It's based on a single board encompassing both an STM32F446 chip and necessary analog modules.
+With respect to versions 1 and 1.1, it's a far more compact board that makes it possible to build a polyphonic synthetizer of reasonable size.

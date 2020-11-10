@@ -1,0 +1,4 @@
+This is the first release of the project. It's made up of several parts:
+- a DAC board equipped with an STM32H767 nucleo board and MCP4822 12 bit dual DACs.
+- separate boards containing analog modules: VCO's, mixers (including the VCA), VCF, output stage.
+

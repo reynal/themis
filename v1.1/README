@@ -1,0 +1,6 @@
+This is the second release of the project. It's made up of several parts:
+- a DAC board equipped with an STM32L432 nucleo board and 16 channel 12 bit AD5391 DAC.
+- separate boards containing analog modules: VCO's, mixers (including the VCA), VCF, output stage.
+
+With respect to version 1, the new DAC board is far smaller and the STM32 code has been optimized by using DMA transfer everywhere.
+In particular, UART based printf() is now fully functional.
