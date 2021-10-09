@@ -25927,12 +25927,12 @@ B01-04 = 14 bits
 <wire x1="-195.58" y1="513.08" x2="-195.58" y2="373.38" width="0.1524" layer="97"/>
 <wire x1="-195.58" y1="373.38" x2="-563.88" y2="373.38" width="0.1524" layer="97"/>
 <wire x1="-563.88" y1="373.38" x2="-563.88" y2="513.08" width="0.1524" layer="97"/>
-<text x="-558.8" y="502.92" size="6.4516" layer="97">VCO3340B (multiwave output)</text>
+<text x="-558.8" y="502.92" size="6.4516" layer="97">VCO3340B</text>
 <wire x1="-563.88" y1="360.68" x2="-195.58" y2="360.68" width="0.1524" layer="97"/>
 <wire x1="-195.58" y1="360.68" x2="-195.58" y2="220.98" width="0.1524" layer="97"/>
 <wire x1="-195.58" y1="220.98" x2="-563.88" y2="220.98" width="0.1524" layer="97"/>
 <wire x1="-563.88" y1="220.98" x2="-563.88" y2="360.68" width="0.1524" layer="97"/>
-<text x="-558.8" y="350.52" size="6.4516" layer="97">VCO3340A (with wave selection switch)</text>
+<text x="-558.8" y="350.52" size="6.4516" layer="97">VCO3340A</text>
 <wire x1="119.38" y1="208.28" x2="223.52" y2="208.28" width="0.1524" layer="97"/>
 <wire x1="223.52" y1="208.28" x2="223.52" y2="144.78" width="0.1524" layer="97"/>
 <wire x1="223.52" y1="144.78" x2="119.38" y2="144.78" width="0.1524" layer="97"/>
@@ -25942,6 +25942,7 @@ B01-04 = 14 bits
 Au moment de l'équipement de la carte :
 - inverser le condo polarisé C54 (+ côté 0V et non côté -15V)
 - inverser la LED "-15V" (pour la même raison)</text>
+<text x="7.62" y="444.5" size="1.778" layer="97">Ajouter une capa de liaison !</text>
 </plain>
 <instances>
 <instance part="SW2" gate="1" x="582.93" y="407.67" smashed="yes" rot="R270">
@@ -28513,8 +28514,8 @@ Au moment de l'équipement de la carte :
 <segment>
 <pinref part="C19" gate="G$1" pin="1"/>
 <wire x1="-157.48" y1="298.45" x2="-111.76" y2="298.45" width="0.1524" layer="91"/>
-<wire x1="-170.18" y1="381" x2="-157.48" y2="379.73" width="0.1524" layer="91"/>
-<wire x1="-157.48" y1="379.73" x2="-157.48" y2="298.45" width="0.1524" layer="91"/>
+<wire x1="-170.18" y1="381" x2="-157.48" y2="381" width="0.1524" layer="91"/>
+<wire x1="-157.48" y1="381" x2="-157.48" y2="298.45" width="0.1524" layer="91"/>
 <pinref part="B1" gate="G$1" pin="P$1"/>
 </segment>
 </net>
