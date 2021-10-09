@@ -130,7 +130,6 @@ public class UartTransmitter extends AbstractSerialTransmitter {
 				
 		}
 		return null;
-		
 	}
 	
 	// ----------------------------- main --------------------
