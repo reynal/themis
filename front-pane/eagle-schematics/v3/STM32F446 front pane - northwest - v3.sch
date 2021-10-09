@@ -1225,66 +1225,6 @@ Source: &lt;a href="http://www.ti.com/lit/gpn/tlc59731"&gt; Datasheet &lt;/a&gt;
 <sheets>
 <sheet>
 <plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
-<sheet>
-<plain>
 <text x="-21.59" y="-41.91" size="25.4" layer="97" font="vector">TFT EXTENSION</text>
 <wire x1="2.54" y1="71.12" x2="170.18" y2="71.12" width="0.1524" layer="97"/>
 <wire x1="170.18" y1="71.12" x2="170.18" y2="1.27" width="0.1524" layer="97"/>
@@ -1987,81 +1927,12 @@ Source: &lt;a href="http://www.ti.com/lit/gpn/tlc59731"&gt; Datasheet &lt;/a&gt;
 </net>
 </nets>
 </sheet>
-<sheet>
-<plain>
-</plain>
-<instances>
-</instances>
-<busses>
-</busses>
-<nets>
-</nets>
-</sheet>
 </sheets>
 <errors>
-<approved hash="104,1,490.22,462.28,F446,VCAP_1,VCAP1,,,"/>
-<approved hash="104,1,490.22,469.9,F446,VBAT,3V3,,,"/>
-<approved hash="104,1,490.22,360.68,F446,VSSA/VREF-,GND,,,"/>
-<approved hash="104,1,490.22,472.44,F446,VDDA/VREF+,3V3,,,"/>
-<approved hash="104,1,490.22,482.6,F446,VDD_1,3V3,,,"/>
-<approved hash="104,1,490.22,480.06,F446,VDD_2,3V3,,,"/>
-<approved hash="104,1,490.22,477.52,F446,VDD_3,3V3,,,"/>
-<approved hash="104,1,490.22,474.98,F446,VDD_4,3V3,,,"/>
-<approved hash="104,1,490.22,358.14,F446,VSS_1,GND,,,"/>
-<approved hash="104,1,490.22,355.6,F446,VSS_2,GND,,,"/>
-<approved hash="104,1,490.22,353.06,F446,VSS_3,GND,,,"/>
-<approved hash="104,1,490.22,350.52,F446,VSS_4,GND,,,"/>
-<approved hash="113,1,605.79,369.311,0V/5V,,,,,"/>
-<approved hash="113,1,414.02,455.405,GREEN,,,,,"/>
-<approved hash="113,1,631.929,353.06,LED_5V,,,,,"/>
-<approved hash="113,1,612.319,449.58,LED_3V3,,,,,"/>
-<approved hash="113,2,53.34,44.5237,ENC_11,,,,,"/>
-<approved hash="113,2,53.34,245.184,ENC_13,,,,,"/>
-<approved hash="113,2,53.34,346.784,ENC_14,,,,,"/>
-<approved hash="113,2,248.92,44.5237,ENC_21,,,,,"/>
-<approved hash="113,2,248.92,245.184,ENC_23,,,,,"/>
-<approved hash="113,2,248.92,346.784,S24,,,,,"/>
-<approved hash="113,2,457.2,44.5237,S31,,,,,"/>
-<approved hash="113,2,457.2,346.784,S34,,,,,"/>
-<approved hash="113,2,457.2,445.844,S35,,,,,"/>
-<approved hash="113,3,55.88,270.584,ENC_41,,,,,"/>
-<approved hash="113,3,55.88,168.984,ENC_44,,,,,"/>
-<approved hash="113,3,55.88,68.6537,ENC_45,,,,,"/>
-<approved hash="113,3,55.88,-32.9463,ENC_48,,,,,"/>
-<approved hash="113,4,55.88,41.9837,ENC_51,,,,,"/>
-<approved hash="113,4,55.88,124.534,ENC_53,,,,,"/>
-<approved hash="113,4,55.88,209.624,ENC_54,,,,,"/>
-<approved hash="113,4,55.88,290.904,ENC_55,,,,,"/>
-<approved hash="113,4,233.68,209.624,ENC_56,,,,,"/>
-<approved hash="113,4,233.68,290.904,ENC_57,,,,,"/>
-<approved hash="113,4,419.1,43.2537,ENC_61,,,,,"/>
-<approved hash="113,4,419.1,125.804,ENC_62,,,,,"/>
-<approved hash="113,4,419.1,209.624,ENC_63,,,,,"/>
-<approved hash="113,4,419.1,293.444,ENC_64,,,,,"/>
-<approved hash="113,6,55.88,41.9837,ENC_81,,,,,"/>
-<approved hash="113,6,55.88,123.264,ENC_82,,,,,"/>
-<approved hash="113,6,55.88,204.544,ENC_83,,,,,"/>
-<approved hash="113,6,55.88,285.824,ENC_84,,,,,"/>
-<approved hash="113,6,55.88,369.644,ENC_85,,,,,"/>
-<approved hash="113,6,55.88,450.924,ENC_86,,,,,"/>
-<approved hash="113,6,55.88,534.744,ENC_87,,,,,"/>
-<approved hash="113,6,55.88,616.024,ENC_88,,,,,"/>
-<approved hash="113,5,55.88,41.9837,ENC_71,,,,,"/>
-<approved hash="113,5,55.88,124.534,ENC_72,,,,,"/>
-<approved hash="113,5,55.88,204.544,ENC_73,,,,,"/>
-<approved hash="113,5,55.88,285.824,ENC_74,,,,,"/>
-<approved hash="113,5,55.88,372.184,ENC_75,,,,,"/>
-<approved hash="113,7,55.88,41.9837,ENC_01,,,,,"/>
-<approved hash="113,7,55.88,128.344,ENC_02,,,,,"/>
-<approved hash="113,7,55.88,209.624,ENC_3,,,,,"/>
-<approved hash="113,6,-160.02,233.97,TFT_EXT,,,,,"/>
-<approved hash="113,7,-22.86,18.0696,TFT_EXT_2,,,,,"/>
-<approved hash="113,1,537.627,401.61,CONN_STH_BRD_1,,,,,"/>
-<approved hash="113,2,-104.993,231.43,CONN_STH_BRD_2,,,,,"/>
-<approved hash="113,1,540.306,372.4,UART_DISCO,,,,,"/>
-<approved hash="113,1,538.963,357.16,UART_MIDI,,,,,"/>
-<approved hash="113,1,541.578,341.92,UART_ANALOG,,,,,"/>
-<approved hash="113,1,404.789,470.19,ANALOG_IN,,,,,"/>
+<approved hash="113,1,55.88,41.9837,ENC_01,,,,,"/>
+<approved hash="113,1,55.88,128.344,ENC_02,,,,,"/>
+<approved hash="113,1,55.88,209.624,ENC_3,,,,,"/>
+<approved hash="113,1,-22.86,18.0696,TFT_EXT_2,,,,,"/>
 </errors>
 </schematic>
 </drawing>
