@@ -1,0 +1,10 @@
+.DS_Store
+*.o
+*.su
+*.d
+*.elf
+*.list
+*.map
+*.bin
+*.mk
+Icon*
