@@ -1,4 +1,12 @@
 .DS_Store
 *.b#?
 *.s#?
+*.o
+*.su
+*.d
+*.elf
+*.list
+*.map
+*.bin
+*.mk
 Icon*
