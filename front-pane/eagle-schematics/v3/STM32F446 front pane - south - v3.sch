@@ -4330,7 +4330,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <part name="D5" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" deviceset="DIP-LED-RGB-COMMON-ANODE(4P-D8MM)" device="" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A"/>
 <part name="C75" library="stock-perso" deviceset="PASSIF-CAP" device="-0805" value="100n"/>
 <part name="C79" library="stock-perso" deviceset="PASSIF-CPOL-US" device="2917" value="10u"/>
-<part name="MCP_101" library="a_ranger_work" deviceset="MCP23017" device=""/>
+<part name="MCP_010" library="a_ranger_work" deviceset="MCP23017" device=""/>
 <part name="C49" library="stock-perso" deviceset="PASSIF-CPOL-US" device="2917" value="10u"/>
 <part name="C50" library="stock-perso" deviceset="PASSIF-CAP" device="-0805" value="100n"/>
 <part name="R85" library="6P1_EVB" deviceset="R-US_" device="R0805" value="1k"/>
@@ -7687,7 +7687,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <attribute name="NAME" x="368.046" y="280.035" size="1.778" layer="95"/>
 <attribute name="VALUE" x="368.046" y="275.209" size="1.778" layer="96"/>
 </instance>
-<instance part="MCP_101" gate="G$1" x="-78.74" y="189.23" smashed="yes">
+<instance part="MCP_010" gate="G$1" x="-78.74" y="189.23" smashed="yes">
 <attribute name="NAME" x="-88.9" y="205.74" size="1.27" layer="95" ratio="12"/>
 <attribute name="VALUE" x="-88.9" y="168.91" size="1.27" layer="96" ratio="12"/>
 </instance>
@@ -7933,7 +7933,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <junction x="354.33" y="256.54"/>
 </segment>
 <segment>
-<pinref part="MCP_101" gate="G$1" pin="VSS"/>
+<pinref part="MCP_010" gate="G$1" pin="VSS"/>
 <label x="-100.33" y="172.72" size="1.016" layer="95"/>
 <pinref part="C49" gate="G$1" pin="-"/>
 <wire x1="-124.46" y1="185.42" x2="-124.46" y2="172.72" width="0.1524" layer="91"/>
@@ -7945,12 +7945,12 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 </segment>
 <segment>
 <wire x1="-66.04" y1="172.72" x2="-57.15" y2="172.72" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="A2"/>
+<pinref part="MCP_010" gate="G$1" pin="A2"/>
 <label x="-59.69" y="172.72" size="1.016" layer="95"/>
 </segment>
 <segment>
 <wire x1="-66.04" y1="177.8" x2="-57.15" y2="177.8" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="A0"/>
+<pinref part="MCP_010" gate="G$1" pin="A0"/>
 <label x="-59.69" y="177.8" size="1.016" layer="95"/>
 </segment>
 </net>
@@ -8088,7 +8088,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <wire x1="367.03" y1="284.48" x2="367.03" y2="281.94" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="MCP_101" gate="G$1" pin="VDD"/>
+<pinref part="MCP_010" gate="G$1" pin="VDD"/>
 <label x="-100.33" y="203.2" size="1.016" layer="95"/>
 <wire x1="-91.44" y1="203.2" x2="-111.76" y2="203.2" width="0.1524" layer="91"/>
 <pinref part="C50" gate="G$1" pin="1"/>
@@ -8110,7 +8110,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 </segment>
 <segment>
 <wire x1="-66.04" y1="175.26" x2="-57.15" y2="175.26" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="A1"/>
+<pinref part="MCP_010" gate="G$1" pin="A1"/>
 <label x="-59.69" y="175.26" size="1.016" layer="95"/>
 </segment>
 </net>
@@ -8669,14 +8669,14 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="RST" class="0">
 <segment>
 <wire x1="-100.33" y1="200.66" x2="-91.44" y2="200.66" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="!RESET"/>
+<pinref part="MCP_010" gate="G$1" pin="!RESET"/>
 <label x="-100.33" y="200.66" size="1.016" layer="95"/>
 </segment>
 </net>
 <net name="GPB7_2" class="0">
 <segment>
 <wire x1="-100.33" y1="198.12" x2="-91.44" y2="198.12" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB7"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB7"/>
 <label x="-100.33" y="198.12" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8697,7 +8697,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB6_2" class="0">
 <segment>
 <wire x1="-100.33" y1="195.58" x2="-91.44" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB6"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB6"/>
 <label x="-100.33" y="195.58" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8713,7 +8713,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB5_2" class="0">
 <segment>
 <wire x1="-100.33" y1="193.04" x2="-91.44" y2="193.04" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB5"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB5"/>
 <label x="-100.33" y="193.04" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8728,7 +8728,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB4_2" class="0">
 <segment>
 <wire x1="-100.33" y1="190.5" x2="-91.44" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB4"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB4"/>
 <label x="-100.33" y="190.5" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8743,7 +8743,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB3_2" class="0">
 <segment>
 <wire x1="-100.33" y1="187.96" x2="-91.44" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB3"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB3"/>
 <label x="-100.33" y="187.96" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8759,7 +8759,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB2_2" class="0">
 <segment>
 <wire x1="-100.33" y1="185.42" x2="-91.44" y2="185.42" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB2"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB2"/>
 <label x="-100.33" y="185.42" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8774,7 +8774,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB1_2" class="0">
 <segment>
 <wire x1="-100.33" y1="182.88" x2="-91.44" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB1"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB1"/>
 <label x="-100.33" y="182.88" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8789,7 +8789,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPB0_2" class="0">
 <segment>
 <wire x1="-100.33" y1="180.34" x2="-91.44" y2="180.34" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPB0"/>
+<pinref part="MCP_010" gate="G$1" pin="GPB0"/>
 <label x="-100.33" y="180.34" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8810,7 +8810,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA0_2" class="0">
 <segment>
 <wire x1="-66.04" y1="180.34" x2="-57.15" y2="180.34" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA0"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA0"/>
 <label x="-59.69" y="180.34" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8831,7 +8831,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA1_2" class="0">
 <segment>
 <wire x1="-66.04" y1="182.88" x2="-57.15" y2="182.88" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA1"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA1"/>
 <label x="-59.69" y="182.88" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8846,7 +8846,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA2_2" class="0">
 <segment>
 <wire x1="-66.04" y1="185.42" x2="-57.15" y2="185.42" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA2"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA2"/>
 <label x="-59.69" y="185.42" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8861,7 +8861,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA3_2" class="0">
 <segment>
 <wire x1="-66.04" y1="187.96" x2="-57.15" y2="187.96" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA3"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA3"/>
 <label x="-59.69" y="187.96" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8877,7 +8877,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA4_2" class="0">
 <segment>
 <wire x1="-66.04" y1="190.5" x2="-57.15" y2="190.5" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA4"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA4"/>
 <label x="-59.69" y="190.5" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8898,7 +8898,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA5_2" class="0">
 <segment>
 <wire x1="-66.04" y1="193.04" x2="-57.15" y2="193.04" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA5"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA5"/>
 <label x="-59.69" y="193.04" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8913,7 +8913,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA6_2" class="0">
 <segment>
 <wire x1="-66.04" y1="195.58" x2="-57.15" y2="195.58" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA6"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA6"/>
 <label x="-59.69" y="195.58" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8929,7 +8929,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="GPA7_2" class="0">
 <segment>
 <wire x1="-66.04" y1="198.12" x2="-57.15" y2="198.12" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="GPA7"/>
+<pinref part="MCP_010" gate="G$1" pin="GPA7"/>
 <label x="-59.69" y="198.12" size="1.016" layer="95"/>
 </segment>
 <segment>
@@ -8944,21 +8944,21 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <net name="INTA_2" class="0">
 <segment>
 <wire x1="-66.04" y1="203.2" x2="-57.15" y2="203.2" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="INTA"/>
+<pinref part="MCP_010" gate="G$1" pin="INTA"/>
 <label x="-59.69" y="203.2" size="1.016" layer="95"/>
 </segment>
 </net>
 <net name="INTB_2" class="0">
 <segment>
 <wire x1="-66.04" y1="200.66" x2="-57.15" y2="200.66" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="INTB"/>
+<pinref part="MCP_010" gate="G$1" pin="INTB"/>
 <label x="-59.69" y="200.66" size="1.016" layer="95"/>
 </segment>
 </net>
 <net name="I2C2_SCL" class="0">
 <segment>
 <pinref part="R85" gate="G$1" pin="1"/>
-<pinref part="MCP_101" gate="G$1" pin="SCL"/>
+<pinref part="MCP_010" gate="G$1" pin="SCL"/>
 <label x="-100.33" y="177.8" size="1.016" layer="95"/>
 <wire x1="-137.16" y1="177.8" x2="-91.44" y2="177.8" width="0.1524" layer="91"/>
 </segment>
@@ -8967,7 +8967,7 @@ Feel free to contact us at &lt;a href="mailto:Support@PCBLayout.com"&gt;Support@
 <segment>
 <pinref part="R84" gate="G$1" pin="1"/>
 <wire x1="-144.78" y1="175.26" x2="-91.44" y2="175.26" width="0.1524" layer="91"/>
-<pinref part="MCP_101" gate="G$1" pin="SDA"/>
+<pinref part="MCP_010" gate="G$1" pin="SDA"/>
 <label x="-100.33" y="175.26" size="1.016" layer="95"/>
 </segment>
 </net>

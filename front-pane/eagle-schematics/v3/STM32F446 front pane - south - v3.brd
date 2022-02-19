@@ -1368,8 +1368,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D1" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="45" y="125.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="45" y="125.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="45.635" y="125.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="NAME" x="44.365" y="123.382" size="0.8128" layer="25" ratio="11"/>
+<attribute name="NAME" x="45.635" y="125.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="41.19" y="121.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="IC7" library="stock-perso" package="SOIC127P600X175-8N" value="NEOPIXEL-TLC59731DR" x="53.255" y="65.635" smashed="yes" rot="MR270">
@@ -1410,8 +1410,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D2" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="45" y="75.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="45" y="75.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="45.635" y="75.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="NAME" x="44.365" y="73.382" size="0.8128" layer="25" ratio="11"/>
+<attribute name="NAME" x="45.635" y="75.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="41.19" y="71.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="IC11" library="stock-perso" package="SOIC127P600X175-8N" value="NEOPIXEL-TLC59731DR" x="63.255" y="15.635" smashed="yes" rot="MR270">
@@ -1452,8 +1452,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D3" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="55" y="25.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="55" y="25.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="55.635" y="25.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="NAME" x="54.365" y="23.382" size="0.8128" layer="25" ratio="11"/>
+<attribute name="NAME" x="55.635" y="25.287" size="0.254" layer="33" ratio="10" rot="R180"/>
 <attribute name="VALUE" x="51.19" y="21.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="IC12" library="stock-perso" package="SOIC127P600X175-8N" value="NEOPIXEL-TLC59731DR" x="43.255" y="15.635" smashed="yes" rot="MR270">
@@ -1494,8 +1494,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D4" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="35" y="25.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="35" y="25.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="34.365" y="23.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="35.635" y="25.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="34.365" y="23.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="31.19" y="21.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="MCP_001" library="a_ranger_work" package="SOIC-28" value="MCP23017" x="48.048" y="46.525" smashed="yes" rot="MR180">
@@ -2350,8 +2350,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D10" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="265" y="125.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="265" y="125.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="264.365" y="123.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="265.635" y="125.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="264.365" y="123.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="261.19" y="121.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C120" library="stock-perso" package="0805-CAP" value="100n" x="259.666" y="122.112" smashed="yes" rot="MR270">
@@ -2400,8 +2400,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D9" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="355" y="25.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="355" y="25.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="354.365" y="23.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="355.635" y="25.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="354.365" y="23.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="351.19" y="21.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C119" library="stock-perso" package="0805-CAP" value="100n" x="349.666" y="22.112" smashed="yes" rot="MR270">
@@ -2450,8 +2450,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D8" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="145" y="110.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="145" y="110.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="144.365" y="108.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="145.635" y="110.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="144.365" y="108.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="141.19" y="106.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C78" library="stock-perso" package="0805-CAP" value="100n" x="139.666" y="107.112" smashed="yes" rot="MR270">
@@ -2500,8 +2500,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D7" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="195" y="110.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="195" y="110.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="194.365" y="108.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="195.635" y="110.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="194.365" y="108.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="191.19" y="106.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C77" library="stock-perso" package="0805-CAP" value="100n" x="189.666" y="107.112" smashed="yes" rot="MR270">
@@ -2550,8 +2550,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D6" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="145" y="40.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="145" y="40.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="144.365" y="38.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="145.635" y="40.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="144.365" y="38.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="141.19" y="36.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C76" library="stock-perso" package="0805-CAP" value="100n" x="139.666" y="37.112" smashed="yes" rot="MR270">
@@ -2600,8 +2600,8 @@ Please make sure your boards conform to these design rules.
 </element>
 <element name="D5" library="OPL_Optoelectronics" library_urn="urn:adsk.eagle:library:8004780" package="LED4-2.0-D8.0MM" package3d_urn="urn:adsk.eagle:package:8004830/1" value="CZXR-80RGB03-A" x="195" y="40.16" smashed="yes" rot="R180">
 <attribute name="MPN" value="CZXR-80RGB03-A" x="195" y="40.16" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="194.365" y="38.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="NAME" x="195.635" y="40.287" size="0.254" layer="33" ratio="10" rot="R180"/>
+<attribute name="NAME" x="194.365" y="38.382" size="0.8128" layer="25" ratio="11"/>
 <attribute name="VALUE" x="191.19" y="36.985" size="0.8128" layer="27" ratio="11"/>
 </element>
 <element name="C75" library="stock-perso" package="0805-CAP" value="100n" x="189.666" y="37.112" smashed="yes" rot="MR270">
@@ -2612,7 +2612,7 @@ Please make sure your boards conform to these design rules.
 <attribute name="NAME" x="185.348" y="30.254" size="1.016" layer="26" rot="MR270" align="bottom-center"/>
 <attribute name="VALUE" x="190.428" y="30.254" size="1.016" layer="28" rot="MR90" align="bottom-center"/>
 </element>
-<element name="MCP_101" library="a_ranger_work" package="SOIC-28" value="MCP23017" x="192.631" y="64.568" smashed="yes" rot="MR270">
+<element name="MCP_010" library="a_ranger_work" package="SOIC-28" value="MCP23017" x="192.631" y="64.568" smashed="yes" rot="MR270">
 <attribute name="NAME" x="183.106" y="67.743" size="1.016" layer="22" rot="MR270"/>
 </element>
 <element name="C49" library="stock-perso" package="CPOL2917" value="10u" x="205.839" y="63.806" smashed="yes" rot="MR270">
@@ -4101,11 +4101,11 @@ Please make sure your boards conform to these design rules.
 <wire x1="150.9327" y1="26.1293" x2="157.18950625" y2="26.1293" width="0.4064" layer="16"/>
 <wire x1="148.25" y1="30.103025" x2="150.213" y2="28.140025" width="0.4064" layer="16"/>
 <wire x1="148.25" y1="30.103025" x2="148.25" y2="32.25" width="0.4064" layer="16"/>
-<contactref element="MCP_101" pad="10"/>
+<contactref element="MCP_010" pad="10"/>
 <contactref element="C49" pad="-"/>
 <contactref element="C50" pad="2"/>
-<contactref element="MCP_101" pad="17"/>
-<contactref element="MCP_101" pad="15"/>
+<contactref element="MCP_010" pad="17"/>
+<contactref element="MCP_010" pad="15"/>
 <wire x1="200.886" y1="59.968" x2="200.886" y2="57.517" width="0.4064" layer="16"/>
 <wire x1="201.013" y1="57.39" x2="201.074" y2="57.329" width="0.4064" layer="16"/>
 <wire x1="200.886" y1="59.968" x2="202.382" y2="59.968" width="0.4064" layer="16"/>
@@ -4953,9 +4953,9 @@ Please make sure your boards conform to these design rules.
 <via x="335.633" y="67.108" extent="1-16" drill="0.35"/>
 <wire x1="335.633" y1="67.108" x2="335.633" y2="70.274" width="0.4064" layer="16"/>
 <wire x1="335.633" y1="70.274" x2="335.668" y2="70.309" width="0.4064" layer="16"/>
-<contactref element="MCP_101" pad="9"/>
+<contactref element="MCP_010" pad="9"/>
 <contactref element="C50" pad="1"/>
-<contactref element="MCP_101" pad="16"/>
+<contactref element="MCP_010" pad="16"/>
 <wire x1="199.616" y1="59.968" x2="199.616" y2="57.771" width="0.4064" layer="16"/>
 <wire x1="199.616" y1="57.771" x2="199.174" y2="57.329" width="0.4064" layer="16"/>
 <wire x1="210.157" y1="66.727" x2="209.928" y2="66.956" width="0.4064" layer="16"/>
@@ -5421,7 +5421,7 @@ Please make sure your boards conform to these design rules.
 </signal>
 <signal name="I2C2_SCL">
 <contactref element="R85" pad="1"/>
-<contactref element="MCP_101" pad="12"/>
+<contactref element="MCP_010" pad="12"/>
 <wire x1="198.346" y1="69.168" x2="198.346" y2="76.76" width="0.3048" layer="16"/>
 <wire x1="198.346" y1="88.19" x2="211.427" y2="101.271" width="0.3048" layer="16"/>
 <wire x1="198.346" y1="88.19" x2="198.346" y2="76.76" width="0.3048" layer="16"/>
@@ -5532,7 +5532,7 @@ Please make sure your boards conform to these design rules.
 </signal>
 <signal name="I2C2_SDA">
 <contactref element="R84" pad="1"/>
-<contactref element="MCP_101" pad="13"/>
+<contactref element="MCP_010" pad="13"/>
 <wire x1="199.616" y1="78.792" x2="199.616" y2="86.285" width="0.3048" layer="16"/>
 <contactref element="R130" pad="1"/>
 <contactref element="MCP_011" pad="13"/>
@@ -5581,7 +5581,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="95.73" y1="81.84" x2="87.348" y2="81.84" width="0.3048" layer="1"/>
 <wire x1="87.348" y1="81.84" x2="85.316" y2="79.808" width="0.3048" layer="1"/>
 <wire x1="85.316" y1="79.808" x2="85.316" y2="66.473" width="0.3048" layer="1"/>
-<contactref element="MCP_101" pad="18"/>
+<contactref element="MCP_010" pad="18"/>
 <wire x1="97" y1="83.11" x2="97.127" y2="83.11" width="0.3048" layer="16"/>
 <wire x1="100.3994625" y1="81.8061" x2="100.4333625" y2="81.84" width="0.3048" layer="16"/>
 <wire x1="98.4309" y1="81.8061" x2="100.3994625" y2="81.8061" width="0.3048" layer="16"/>
@@ -28468,7 +28468,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="363.7" y1="13.26" x2="361.287" y2="10.847" width="0.4064" layer="1"/>
 </signal>
 <signal name="GPB7_2">
-<contactref element="MCP_101" pad="8"/>
+<contactref element="MCP_010" pad="8"/>
 <contactref element="R116" pad="1"/>
 <contactref element="SW7" pad="4"/>
 <contactref element="SW7" pad="3"/>
@@ -28483,7 +28483,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="193.393" y1="96.107" x2="191.75" y2="97.75" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB6_2">
-<contactref element="MCP_101" pad="7"/>
+<contactref element="MCP_010" pad="7"/>
 <wire x1="191.996" y1="69.168" x2="191.996" y2="81.078" width="0.3048" layer="16"/>
 <wire x1="191.996" y1="81.078" x2="191.869" y2="81.205" width="0.3048" layer="16"/>
 <via x="191.869" y="81.205" extent="1-16" drill="0.35"/>
@@ -28506,7 +28506,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="179.804" y1="103.049" x2="179.804" y2="93.2656375" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB5_2">
-<contactref element="MCP_101" pad="6"/>
+<contactref element="MCP_010" pad="6"/>
 <wire x1="190.726" y1="69.168" x2="190.726" y2="79.935" width="0.3048" layer="16"/>
 <wire x1="190.726" y1="79.935" x2="190.091" y2="80.57" width="0.3048" layer="16"/>
 <via x="190.091" y="80.57" extent="1-16" drill="0.35"/>
@@ -28518,7 +28518,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="172.5" y1="98.161" x2="172.5" y2="107.5" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB4_2">
-<contactref element="MCP_101" pad="5"/>
+<contactref element="MCP_010" pad="5"/>
 <wire x1="189.456" y1="69.168" x2="189.456" y2="78.665" width="0.3048" layer="16"/>
 <wire x1="189.456" y1="78.665" x2="188.313" y2="79.808" width="0.3048" layer="16"/>
 <via x="188.313" y="79.808" extent="1-16" drill="0.35"/>
@@ -28531,7 +28531,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="167.5" y1="101.9936625" x2="167.5" y2="107.5" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB3_2">
-<contactref element="MCP_101" pad="4"/>
+<contactref element="MCP_010" pad="4"/>
 <wire x1="188.186" y1="69.168" x2="188.186" y2="77.776" width="0.3048" layer="16"/>
 <wire x1="188.186" y1="77.776" x2="185.011" y2="80.951" width="0.3048" layer="16"/>
 <via x="185.011" y="80.951" extent="1-16" drill="0.35"/>
@@ -28551,7 +28551,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="174.25536875" y1="93.397" x2="170.279" y2="93.397" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB2_2">
-<contactref element="MCP_101" pad="3"/>
+<contactref element="MCP_010" pad="3"/>
 <wire x1="186.916" y1="69.168" x2="186.916" y2="72.061" width="0.3048" layer="16"/>
 <wire x1="183.868" y1="75.109" x2="173.581" y2="75.109" width="0.3048" layer="16"/>
 <wire x1="186.916" y1="72.061" x2="183.868" y2="75.109" width="0.3048" layer="16"/>
@@ -28563,7 +28563,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="173.581" y1="75.109" x2="172.5" y2="76.19" width="0.3048" layer="16"/>
 </signal>
 <signal name="GPB1_2">
-<contactref element="MCP_101" pad="2"/>
+<contactref element="MCP_010" pad="2"/>
 <wire x1="185.646" y1="69.168" x2="185.646" y2="71.172" width="0.3048" layer="16"/>
 <wire x1="169.39" y1="73.839" x2="169.009" y2="74.22" width="0.3048" layer="16"/>
 <via x="169.009" y="74.22" extent="1-16" drill="0.35"/>
@@ -28578,7 +28578,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="167.358" y1="75.871" x2="167.358" y2="77.358" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPB0_2">
-<contactref element="MCP_101" pad="1"/>
+<contactref element="MCP_010" pad="1"/>
 <wire x1="184.376" y1="69.168" x2="166.878" y2="69.168" width="0.3048" layer="16"/>
 <wire x1="166.878" y1="69.168" x2="166.723" y2="69.013" width="0.3048" layer="16"/>
 <via x="166.723" y="69.013" extent="1-16" drill="0.35"/>
@@ -28595,7 +28595,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="148.181" y1="82.602" x2="148.181" y2="97.681" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPA0_2">
-<contactref element="MCP_101" pad="21"/>
+<contactref element="MCP_010" pad="21"/>
 <wire x1="193.266" y1="59.968" x2="193.139" y2="59.841" width="0.3048" layer="16"/>
 <wire x1="193.139" y1="59.841" x2="193.139" y2="59.107" width="0.3048" layer="16"/>
 <wire x1="196.0586" y1="25.7074" x2="195.1074" y2="26.6586" width="0.3048" layer="16"/>
@@ -28614,7 +28614,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="195.1074" y1="27.6306" x2="195" y2="27.738" width="0.3048" layer="16"/>
 </signal>
 <signal name="GPA1_2">
-<contactref element="MCP_101" pad="22"/>
+<contactref element="MCP_010" pad="22"/>
 <contactref element="S12" pad="A"/>
 <contactref element="R90" pad="1"/>
 <via x="188.186" y="45.391" extent="1-16" drill="0.35"/>
@@ -28633,7 +28633,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="188.186" y1="45.391" x2="191.996" y2="49.201" width="0.3048" layer="16"/>
 </signal>
 <signal name="GPA2_2">
-<contactref element="MCP_101" pad="23"/>
+<contactref element="MCP_010" pad="23"/>
 <contactref element="S12" pad="B"/>
 <contactref element="R91" pad="1"/>
 <via x="187.424" y="46.28" extent="1-16" drill="0.35"/>
@@ -28652,7 +28652,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="187.424" y1="46.28" x2="190.726" y2="49.582" width="0.3048" layer="16"/>
 </signal>
 <signal name="GPA3_2">
-<contactref element="MCP_101" pad="24"/>
+<contactref element="MCP_010" pad="24"/>
 <wire x1="189.456" y1="59.968" x2="189.456" y2="57.456" width="0.3048" layer="16"/>
 <wire x1="189.456" y1="57.456" x2="188.694" y2="56.694" width="0.3048" layer="16"/>
 <contactref element="S12" pad="3"/>
@@ -28667,7 +28667,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="188.694" y1="56.694" x2="173.415" y2="56.694" width="0.3048" layer="16"/>
 </signal>
 <signal name="GPA4_2">
-<contactref element="MCP_101" pad="25"/>
+<contactref element="MCP_010" pad="25"/>
 <wire x1="188.186" y1="59.968" x2="188.059" y2="60.095" width="0.3048" layer="16"/>
 <via x="166.977" y="65.33" extent="1-16" drill="0.35"/>
 <wire x1="188.059" y1="60.095" x2="188.059" y2="63.79513125" width="0.3048" layer="16"/>
@@ -28687,7 +28687,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="141.565" y1="27.75" x2="141.75" y2="27.75" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPA5_2">
-<contactref element="MCP_101" pad="26"/>
+<contactref element="MCP_010" pad="26"/>
 <wire x1="186.916" y1="59.968" x2="186.789" y2="60.095" width="0.3048" layer="16"/>
 <wire x1="186.789" y1="60.095" x2="186.789" y2="63.425" width="0.3048" layer="16"/>
 <wire x1="186.789" y1="63.425" x2="185.9" y2="64.314" width="0.3048" layer="16"/>
@@ -28705,7 +28705,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="150.886959375" y1="23.586534375" x2="166.97349375" y2="7.5" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPA6_2">
-<contactref element="MCP_101" pad="27"/>
+<contactref element="MCP_010" pad="27"/>
 <wire x1="185.646" y1="62.79" x2="185.138" y2="63.298" width="0.3048" layer="16"/>
 <wire x1="185.138" y1="63.298" x2="166.977" y2="63.298" width="0.3048" layer="16"/>
 <via x="166.977" y="63.298" extent="1-16" drill="0.35"/>
@@ -28731,7 +28731,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="164.564" y1="30.405" x2="164.564" y2="29.262" width="0.3048" layer="1"/>
 </signal>
 <signal name="GPA7_2">
-<contactref element="MCP_101" pad="28"/>
+<contactref element="MCP_010" pad="28"/>
 <wire x1="184.376" y1="59.968" x2="166.497" y2="59.968" width="0.4064" layer="16"/>
 <wire x1="166.497" y1="59.968" x2="166.469" y2="59.996" width="0.4064" layer="16"/>
 <via x="166.469" y="59.996" extent="1-16" drill="0.35"/>
@@ -28756,7 +28756,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="166.39486875" y1="30.532" x2="167.231" y2="30.532" width="0.3048" layer="16"/>
 </signal>
 <signal name="INTA_2">
-<contactref element="MCP_101" pad="20"/>
+<contactref element="MCP_010" pad="20"/>
 <wire x1="194.536" y1="59.968" x2="194.536" y2="62.917" width="0.3048" layer="16"/>
 <via x="194.536" y="62.917" extent="1-16" drill="0.35"/>
 <wire x1="207.109" y1="75.49" x2="207.109" y2="106.732" width="0.3048" layer="1"/>
@@ -28768,7 +28768,7 @@ Please make sure your boards conform to these design rules.
 <wire x1="205.077" y1="115.114" x2="205.077" y2="121.083" width="0.3048" layer="16"/>
 </signal>
 <signal name="INTB_2">
-<contactref element="MCP_101" pad="19"/>
+<contactref element="MCP_010" pad="19"/>
 <wire x1="195.806" y1="59.968" x2="195.806" y2="62.917" width="0.3048" layer="16"/>
 <via x="195.806" y="62.917" extent="1-16" drill="0.35"/>
 <wire x1="195.806" y1="63.171" x2="208.125" y2="75.49" width="0.3048" layer="1"/>
