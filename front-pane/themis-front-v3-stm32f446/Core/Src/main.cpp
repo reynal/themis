@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "led.h"
+#include "stdio.h"
+#include "front-panel.h"
 
 /* USER CODE END Includes */
 
@@ -129,22 +130,21 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  LED led;
-  //TLC59731 tlc;
-  //tlc.test();
+  HAL_TIM_Base_Start_IT(&htim3); // needed so that HAL_TIM_PeriodElapsedCallback() gets called, see callbacks.c
 
+  init_hardware();
+  main_loop();
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  led.wave();
-	  HAL_Delay(3000);
   }
   /* USER CODE END 3 */
 }
@@ -685,17 +685,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : MCP_001_INTA_Pin MCP_001_INTB_Pin MCP_000_INTB_Pin */
-  GPIO_InitStruct.Pin = MCP_001_INTA_Pin|MCP_001_INTB_Pin|MCP_000_INTB_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : MCP_000_INTA_Pin */
-  GPIO_InitStruct.Pin = MCP_000_INTA_Pin;
+  /*Configure GPIO pins : MCP_001_INTA_Pin MCP_001_INTB_Pin MCP_000_INTB_Pin MCP_000_INTA_Pin */
+  GPIO_InitStruct.Pin = MCP_001_INTA_Pin|MCP_001_INTB_Pin|MCP_000_INTB_Pin|MCP_000_INTA_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(MCP_000_INTA_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : MCP_RST_Pin */
   GPIO_InitStruct.Pin = MCP_RST_Pin;
@@ -730,6 +724,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+
 /* USER CODE END 4 */
 
 /**
@@ -740,9 +735,11 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
+	printf("Error_Handler!\n");
   __disable_irq();
   while (1)
   {
+	  __NOP();
   }
   /* USER CODE END Error_Handler_Debug */
 }

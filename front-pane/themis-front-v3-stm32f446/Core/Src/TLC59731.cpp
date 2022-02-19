@@ -26,12 +26,14 @@
 #include "main.h"
 #include <stdlib.h>
 
-extern SPI_HandleTypeDef hspi1;
+//extern SPI_HandleTypeDef hspi1;
 
-TLC59731::TLC59731() {
+TLC59731::TLC59731(SPI_HandleTypeDef *hspi) {
+
+	_hspi = hspi;
 
 	for (int i = 0; i < TLC_BUF_SZ; i++)
-		spiBuf[i] = 0;
+		_spiBuf[i] = 0;
 
 	// init SPI buffer for all the LEDs :
 	for (int led=0; led < TLC_LED_COUNT; led++) initSpiBuffer(led);
@@ -49,29 +51,33 @@ void TLC59731::initSpiBuffer(uint8_t led) {
 
 	int i = getDataAreaIndex(led);
 
-	spiBuf[i++] = TLC_ZERO; // write command 0x3A
-	spiBuf[i++] = TLC_ZERO;
-	spiBuf[i++] = TLC_ONE;
-	spiBuf[i++] = TLC_ONE;
-	spiBuf[i++] = TLC_ONE;
-	spiBuf[i++] = TLC_ZERO;
-	spiBuf[i++] = TLC_ONE;
-	spiBuf[i++] = TLC_ZERO;
+	_spiBuf[i++] = TLC_ZERO; // write command 0x3A
+	_spiBuf[i++] = TLC_ZERO;
+	_spiBuf[i++] = TLC_ONE;
+	_spiBuf[i++] = TLC_ONE;
+	_spiBuf[i++] = TLC_ONE;
+	_spiBuf[i++] = TLC_ZERO;
+	_spiBuf[i++] = TLC_ONE;
+	_spiBuf[i++] = TLC_ZERO;
 	// RGB data at 0% for each color:
 	for (int j = 0; j < 24; j++)
-		spiBuf[i++] = TLC_ZERO;
+		_spiBuf[i++] = TLC_ZERO;
 }
 
 void TLC59731::test() {
 
 	//RGBColor colors[] = {RGBColor::YELLOW, RGBColor::TURQUOISE, RGBColor::RED, RGBColor::BLUE, RGBColor::CYAN, RGBColor::GREEN, RGBColor::WHITE};
-	RGBColor colors[] = {RGBColor::RED, RGBColor::BLUE, RGBColor::GREEN, RGBColor::WHITE};
+	//RGBColor colors[] = {RGBColor::RED, RGBColor::BLUE, RGBColor::GREEN, RGBColor::WHITE};
 
-	int i = 0;
+	//int i = 0;
 	//while (1) {  // BRG sauf LED => RBG
 
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, colors[(i++)%7]);
+			for (int led=0; led < TLC_LED_COUNT; led++)  update(led, 20, 20, 5 * led);
+			//i++;
 
+
+			/*
 			// modulation: B R G
 			update(i++, 0, 0, 255); transmitData();   // B R G
 			update(i++, 100, 0, 200); transmitData(); // R B G
@@ -93,17 +99,18 @@ void TLC59731::test() {
 			update(i++, 150, 160, 0); transmitData(); // LED : R B G
 			update(i++, 200, 200, 0); transmitData(); // LED : R B G
 			update(i++, 200, 100, 200); transmitData();
+			 */
 
-			//transmitData();
+			transmitData();
 
 
-	while (1) {
+	/*while (1) {
 			//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 			HAL_Delay(500);
 			//i++;
 			//if (i>6) i=0;
 
-	}
+	}*/
 
 }
 
@@ -124,17 +131,17 @@ void TLC59731::update(uint8_t led, uint8_t red256, uint8_t green256, uint8_t blu
 	// data led #1 : R, G, B (8 bits each)
 	//mask = 0x80; // = 1000 0000
 	for (int j = 0; j < 8; j++) {
-		spiBuf[i++] = (mask & green256) == 0 ? TLC_ZERO : TLC_ONE;
+		_spiBuf[i++] = (mask & green256) == 0 ? TLC_ZERO : TLC_ONE;
 		mask >>= 1; // take next bit
 	}
 	mask = 0x80;
 	for (int j = 0; j < 8; j++) {
-		spiBuf[i++] = (mask & blue256) == 0 ? TLC_ZERO : TLC_ONE;
+		_spiBuf[i++] = (mask & blue256) == 0 ? TLC_ZERO : TLC_ONE;
 		mask >>= 1; // take next bit
 	}
 	mask = 0x80;
 	for (int j = 0; j < 8; j++) {
-		spiBuf[i++] = (mask & red256) == 0 ? TLC_ZERO : TLC_ONE;
+		_spiBuf[i++] = (mask & red256) == 0 ? TLC_ZERO : TLC_ONE;
 		mask >>= 1; // take next bit
 	}
 
@@ -152,7 +159,7 @@ void TLC59731::update(uint8_t led, uint32_t rgb24bits) {
 
 	// data led #1 : R, G, B (8 bits each)
 	for (int j = 0; j < 24; j++) {
-		spiBuf[i++] = (mask & rgb24bits) == 0 ? TLC_ZERO : TLC_ONE;
+		_spiBuf[i++] = (mask & rgb24bits) == 0 ? TLC_ZERO : TLC_ONE;
 		mask >>= 1; // take next bit
 	}
 
@@ -165,7 +172,7 @@ void TLC59731::update(uint8_t led, RGBColor& color) {
 }
 
 void TLC59731::transmitData() {
-	HAL_SPI_Transmit(&hspi1, spiBuf, TLC_BUF_SZ, 100);
+	HAL_SPI_Transmit(_hspi, _spiBuf, TLC_BUF_SZ, 100);
 }
 
 int TLC59731::getDataAreaIndex(uint8_t led) {

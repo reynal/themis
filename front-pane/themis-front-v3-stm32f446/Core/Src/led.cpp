@@ -33,20 +33,32 @@ const uint8_t gamma8[] = {
   177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
   215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
 
-
-LED::LED(){
-
-	  HAL_TIM_PWM_Start_IT(&htimLED, TIM_CHANNEL_1);
-	  htimLED.Instance->CCR1 = 0;
-
+/**
+ * Creates a LED object connected to the given timer and PWM channel
+ */
+LED::LED(TIM_HandleTypeDef* timer, uint32_t Channel){
+	_htim = timer;
+	_Channel = Channel;
 }
 
 LED::~LED(){}
+
+/**
+ * Starts the PWM timer with 0% duty cycle.
+ */
+void LED::_start(){
+
+	  HAL_TIM_PWM_Start_IT(_htim, _Channel); // TIM_CHANNEL_1
+	  _htim->Instance->CCR1 = 0;
+	  _isStarted = true;
+}
+
 
 /* set the duty cycle of the green led with gamma correction
  * @param pwm256 from 0 to 255 (255 = htimLED.Instance->ARR)
  * */
 void LED::setDuty(uint16_t pwm256){
+	if (_isStarted==false) _start();
 	if (pwm256 < 0) pwm256 = 0;
 	else if (pwm256 > MAX_LED_DUTY) pwm256 = MAX_LED_DUTY;
 	//htimLED.Instance->CCR1 = pwm256;
@@ -55,21 +67,25 @@ void LED::setDuty(uint16_t pwm256){
 
 /* switch the green led on */
 void LED::on(){
+	if (_isStarted==false) _start();
 	htimLED.Instance->CCR1 = 255;
 }
 
 /* switch the green led on */
 void LED::off(){
+	if (_isStarted==false) _start();
 	htimLED.Instance->CCR1 = 0;
 }
 
 /* switch the green led on */
 void LED::toggle(){
+	if (_isStarted==false) _start();
 	htimLED.Instance->CCR1 = 255 - htimLED.Instance->CCR1;
 }
 
 /* sequence of LED blinking */
 void LED::blink(){
+	if (_isStarted==false) _start();
 	for(int i=0; i<5; i++){
 		on();
 		HAL_Delay(30);
@@ -80,6 +96,7 @@ void LED::blink(){
 
 /* breathing like LED */
 void LED::wave(){
+	if (_isStarted==false) _start();
 	int i=0;
 	while(i<255){
 		setDuty(i++);

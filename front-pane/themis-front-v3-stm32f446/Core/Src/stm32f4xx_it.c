@@ -22,6 +22,8 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -211,6 +213,8 @@ void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
+	printf("EXTI0_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+
   /* USER CODE END EXTI0_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_101_INTB_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
@@ -224,6 +228,8 @@ void EXTI0_IRQHandler(void)
 void EXTI1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI1_IRQn 0 */
+
+	printf("EXTI1_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
 
   /* USER CODE END EXTI1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_011_INTB_Pin);
@@ -239,6 +245,8 @@ void EXTI2_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI2_IRQn 0 */
 
+	printf("EXTI2_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+
   /* USER CODE END EXTI2_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_110_INTB_Pin);
   /* USER CODE BEGIN EXTI2_IRQn 1 */
@@ -253,6 +261,8 @@ void EXTI3_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI3_IRQn 0 */
 
+	printf("EXTI3_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+
   /* USER CODE END EXTI3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_110_INTA_Pin);
   /* USER CODE BEGIN EXTI3_IRQn 1 */
@@ -266,6 +276,8 @@ void EXTI3_IRQHandler(void)
 void EXTI4_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_IRQn 0 */
+
+	printf("EXTI4_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
 
   /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_111_INTA_Pin);
@@ -308,6 +320,8 @@ void DMA1_Stream5_IRQHandler(void)
 void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
+
+	printf("EXTI9_5_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
 
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_111_INTB_Pin);
@@ -368,6 +382,8 @@ void USART2_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
+
+	printf("EXTI15_10_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_001_INTB_Pin);

@@ -16,7 +16,7 @@
 extern UART_HandleTypeDef huart1;
 
 char print_buffer[50];
-uint8_t midi_buffer[3];
+//uint8_t midi_buffer[3];
 
 void printSerial(){
 #ifdef USE_PRINTSERIAL
@@ -33,10 +33,3 @@ void printSerial(){
 #endif
 }*/
 
-// our own implementation of putchar used by printf, so that printf is forwarded
-// to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the PC or Mac host station)
-/*int __io_putchar(int ch){
-
-	HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF); // beware blocking call!
-	return ch;
-}*/

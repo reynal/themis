@@ -4,6 +4,19 @@
  *  Created on: Dec 22, 2021
  *      Author: sydxrey
  *
+ */
+
+#ifndef INC_MCP23017_H_
+#define INC_MCP23017_H_
+
+#include "stm32f4xx_hal.h"
+#include <string>
+
+//#define USE_DMA
+class PushButton; // workaround due to circular referencing MCP23017 <-> PushButton, see https://stackoverflow.com/questions/1429336/cross-referencing-included-headers-in-c-program
+class RotaryEncoder;
+
+/**
  * MCP23017 device with DMA support
  *
  * GPB0	1	MCP23017	28	GPA7
@@ -45,27 +58,63 @@
  * 	- Call to mcp23017_Write_GpioA/B_Dma() takes 1.5us @ 80MHz CPU clock
  *
  */
-
-#ifndef INC_MCP23017_H_
-#define INC_MCP23017_H_
-
-#include "stm32f4xx_hal.h"
-
-
-//#define USE_DMA
-
 class MCP23017 {
 
+
 public:
-	MCP23017();
+
+	/** device adress: ADR_A2A1A0 */
+	typedef enum {
+		ADDR_000=0x40, // = 0x20 shifted one bit to the left (000)
+		ADDR_001=0x42, // 001
+		ADDR_010=0x44, // 010
+		ADDR_011=0x46, // 011
+		ADDR_100=0x48, // 100
+		ADDR_101=0x4A, // 101 north
+		ADDR_110=0x4C, // 110 --
+		ADDR_111=0x4E  // 111 --
+	} Address;
+
+	/**
+	 * pin 8 bit masks
+	 */
+	enum Pin {
+
+		P0=0x01,
+		P1=0x02,
+		P2=0x04,
+		P3=0x08,
+		P4=0x10,
+		P5=0x20,
+		P6=0x40,
+		P7=0x80,
+	};
+
+	/** Port A or B */
+	enum Port {
+		PORT_A,
+		PORT_B
+	};
+
+
+	MCP23017(I2C_HandleTypeDef *hi2c, Address address);
 	~MCP23017();
+
+	void init();
 	void test();
-	void init(I2C_HandleTypeDef *hi2c, uint8_t address); //, RotaryEncoder* rotary_encoder_array);
-	void reset();
+	static void reset(); // same RST signal for all MCP's, need to be called only once
+	static std::string printPin(Pin pin);
+	static std::string printPort(Port port);
 	bool isConnected();
 	void dumpRegisters();
+	void printAttachedControllers();
 	int read(uint16_t read_reg);
 	void write(uint16_t write_reg, uint8_t data);
+	void attachButtonsA(PushButton* push, RotaryEncoder* encoder);
+	void attachButtonsB(PushButton* push, RotaryEncoder* encoder);
+	void interruptACallback();
+	void interruptBCallback();
+
 
 #ifdef USE_DMA
 	void init_Dma();
@@ -74,11 +123,6 @@ public:
 	void write_Pin_Dma(MCP23017_GPIO_Port port, uint16_t GPIO_Pin, GPIO_PinState PinState); // GPIO_PIN_RESET or GPIO_PIN_SET
 #endif
 
-	/** Port A or B */
-	enum Port {
-		PORT_A,
-		PORT_B
-	};
 
 	/** registers: (IOCON.BANK = 0, default) */
 	enum Register {
@@ -112,37 +156,12 @@ public:
 		IODIR_ALL_INPUT=0xFF
 	};
 
-	/** device adress: ADR_A2A1A0 */
-	enum Address {
-		ADDR_000=0x40, // = 0x20 shifted one bit to the left (000)
-		ADDR_001=0x42, // 001
-		ADDR_002=0x44, // 010
-		ADDR_003=0x46, // 011
-		ADDR_004=0x48, // 100
-		ADDR_005=0x4A, // 101
-		ADDR_006=0x4C, // 110
-		ADDR_007=0x4E  // 111
-	};
 
 	enum PinDirection {
 		OUTPUT,
 		INPUT
 	};
 
-	/**
-	 * pin 8 bit masks
-	 */
-	enum Pin {
-
-		P0=0x01,
-		P1=0x02,
-		P2=0x04,
-		P3=0x08,
-		P4=0x10,
-		P5=0x20,
-		P6=0x40,
-		P7=0x80
-	};
 
 	/**
 	 * available parameters for the IOCON register
@@ -182,11 +201,15 @@ public:
 		INTPOL=0x02
 	};
 
+	PushButton* buttonLinkedListA; // list of buttons attached to channel A of this MCP23017 device
+	PushButton* buttonLinkedListB; // and to channel B
+	RotaryEncoder* encoderLinkedListA; // list of encoders attached to channel A of this MCP23017 device
+	RotaryEncoder* encoderLinkedListB; // and to channel B
 
 private:
 
 	I2C_HandleTypeDef *_hi2c;
-	uint8_t _address;
+	Address _address;
 
 #ifdef MCP23017_USE_DMA
 	uint8_t mcp23017_gpioA_tx_Buff[2]; // {GPIOA register, value}

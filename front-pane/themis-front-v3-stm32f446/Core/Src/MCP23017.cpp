@@ -48,58 +48,48 @@
  */
 
 #include "MCP23017.h"
+#include "PushButton.h"
+#include "RotaryEncoder.h"
 #include "stm32f4xx_hal.h"
 #include "main.h"
 #include "stdio.h"
 #include "print.h"
+#include "misc.h"
 
-extern char print_buffer[50];
-
-MCP23017::MCP23017(){
-
-}
-
-MCP23017::~MCP23017() {
-}
-
-void MCP23017::test(){
-
-	dumpRegisters();
-
-	while(1){
-		write(GPIO_A, 0xFF);
-		//sprintf(print_buffer, "GPIOB=%.2X\n",mcp23017_Read(GPIOB));
-		HAL_Delay(200);
-		write(GPIO_A, 0x00);
-		//sprintf(print_buffer, "0\n");
-		//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-		//sprintf(print_buffer, "Loop: %d\n", x++); printSerial();
-		HAL_Delay(200);
-	}
-}
-
-void MCP23017::init(I2C_HandleTypeDef *hi2c, uint8_t address){ //, RotaryEncoder* rotary_encoder_array) {
-
+MCP23017::MCP23017(I2C_HandleTypeDef *hi2c, Address address){
 	_hi2c = hi2c;
 	_address = address;
-	//_rotary_encoder_array = rotary_encoder_array;
+}
 
-	reset();
+MCP23017::~MCP23017() {}
+
+
+/**
+ * Init a MCP23017 device with the given I2C address and I2C bus handler.
+ *
+ * Usage: mcp.init(&hi2c1, MCP23017::ADDR_101); // plaque nord, adresses 101, 110 et 111
+ *
+ */
+void MCP23017::init(){
+
+	//reset(); now static!
 
 	if (isConnected()==false) Error_Handler();
 
-	// port A: output
+	// port A: output (for debugging purpose only)
 	//write(IODIRA, IODIR_ALL_OUTPUT);
 
 	// port A: inputs, pull-up, int enabled
-	write(IODIRA, IODIR_ALL_INPUT);
 	write(GPPUA, 0xFF);
+	write(IODIRA, IODIR_ALL_INPUT);
+	read(GPIO_A); // clear pending interrupts
 	write(GPINTENA, 0xFF);
 	read(GPIO_A); // clear pending interrupts
 
 	// port B: inputs, pull-up, int enabled
-	write(IODIRB, IODIR_ALL_INPUT);
 	write(GPPUB, 0xFF);
+	write(IODIRB, IODIR_ALL_INPUT);
+	read(GPIO_B); // clear pending interrupts
 	write(GPINTENB, 0xFF);
 	read(GPIO_B); // clear pending interrupts
 
@@ -107,12 +97,18 @@ void MCP23017::init(I2C_HandleTypeDef *hi2c, uint8_t address){ //, RotaryEncoder
 
 }
 
-void MCP23017::reset(){
+/**
+ * Assert the RST pin, in effect resetting register values to their default.
+ */
+/* static*/ void MCP23017::reset(){
 	HAL_GPIO_WritePin(MCP_RST_GPIO_Port, MCP_RST_Pin, GPIO_PIN_RESET);
 	HAL_Delay(1);
 	HAL_GPIO_WritePin(MCP_RST_GPIO_Port, MCP_RST_Pin, GPIO_PIN_SET);
 }
 
+/**
+ * Returns true if the device is connected to the I2C bus and properly working.
+ */
 bool MCP23017::isConnected(){
 	if (HAL_I2C_IsDeviceReady(_hi2c, _address, 2, 5) != HAL_OK) {
 		return false;
@@ -120,31 +116,173 @@ bool MCP23017::isConnected(){
 	return true;
 }
 
-void MCP23017::dumpRegisters(){ // sprintf(print_buffer, "hello %d!\n", 50); printSerial();
-	sprintf(print_buffer, "---------- PORT A ----------\n"); printSerial();
-	sprintf(print_buffer, "IODIRA=%.2X\n",read(IODIRA)); printSerial();
-	sprintf(print_buffer, "PullUp A=%.2X\n",read(GPPUA)); printSerial();
-	sprintf(print_buffer, "Enable IntOnChange A=%.2X\n",read(GPINTENA)); printSerial();
-	sprintf(print_buffer, "Int Flag A=%.2X\n",read(INTFA)); printSerial();
-	sprintf(print_buffer, "Int Capture A=%.2X\n",read(INTCAPA)); printSerial();
-	sprintf(print_buffer, "---------- PORT B ----------\n"); printSerial();
-	sprintf(print_buffer, "IODIRB=%.2X\n",read(IODIRB)); printSerial();
-	sprintf(print_buffer, "PullUp B=%.2X\n",read(GPPUB)); printSerial();
-	sprintf(print_buffer, "Enable IntOnChange B=%.2X\n",read(GPINTENB)); printSerial();
-	sprintf(print_buffer, "Int Flag B=%.2X\n",read(INTFB)); printSerial();
-	sprintf(print_buffer, "Int Capture B=%.2X\n",read(INTCAPB)); printSerial();
+void MCP23017::dumpRegisters(){
+	printf("---------- 0x%02X: PORT A ----------\n",_address);
+	printf("IODIRA=%.2X\n",read(IODIRA));
+	printf("PullUp A=%.2X\n",read(GPPUA));
+	printf("Enable IntOnChange A=%.2X\n",read(GPINTENA));
+	printf("Int Flag A=%.2X\n",read(INTFA));
+	printf("Int Capture A=%.2X\n",read(INTCAPA));
+	printf("---------- 0x%02X: PORT B ----------\n",_address);
+	printf("IODIRB=%.2X\n",read(IODIRB));
+	printf("PullUp B=%.2X\n",read(GPPUB));
+	printf("Enable IntOnChange B=%.2X\n",read(GPINTENB));
+	printf("Int Flag B=%.2X\n",read(INTFB));
+	printf("Int Capture B=%.2X\n",read(INTCAPB));
 }
 
+/* static */ std::string MCP23017::printPin(Pin pin){
+
+	switch (pin){
+	case P0: return "0";
+	case P1: return "1";
+	case P2: return "2";
+	case P3: return "3";
+	case P4: return "4";
+	case P5: return "5";
+	case P6: return "6";
+	case P7: return "7";
+	}
+	return "";
+}
+
+/* static */ std::string MCP23017::printPort(Port port){
+
+	switch (port){
+	case PORT_A: return "PA";
+	case PORT_B: return "PB";
+	}
+	return "";
+}
+
+/**
+ * Performs an I2C read operation at the given register address.
+ * This is an 8-bit wide read.
+ */
 int MCP23017::read(uint16_t read_reg){
 	uint8_t data;
 	if (HAL_I2C_Mem_Read(_hi2c, _address, read_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000) != HAL_OK) Error_Handler();
 	return data;
 }
 
+/**
+ * Performs an I2C write operation at the given register address.
+ * This is an 8-bit wide write.
+ */
 void MCP23017::write(uint16_t write_reg, uint8_t data){
 	if (HAL_I2C_Mem_Write(_hi2c, _address, write_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000) != HAL_OK) Error_Handler();
 }
 
+
+void MCP23017::attachButtonsA(PushButton* push, RotaryEncoder* encoder){
+	buttonLinkedListA = push;
+	encoderLinkedListA = encoder;
+}
+
+void MCP23017::attachButtonsB(PushButton* push, RotaryEncoder* encoder){
+	buttonLinkedListB = push;
+	encoderLinkedListB = encoder;
+}
+
+void MCP23017::printAttachedControllers(){
+
+	PushButton* push;
+	RotaryEncoder* encoder;
+
+	printf("PushButtons on Port A:\n");
+	push = buttonLinkedListA;
+	while (push != NULL){
+		push->print();
+		push = push->next;
+	};
+
+	printf("Encoders on Port A:\n");
+	encoder = encoderLinkedListA;
+	while (encoder != NULL){
+		encoder->print();
+		encoder = encoder->next;
+	};
+
+	printf("PushButtons on Port B:\n");
+	push = buttonLinkedListB;
+	while (push != NULL){
+		push->print();
+		push = push->next;
+	};
+
+	printf("Encoders on Port B:\n");
+	encoder = encoderLinkedListB;
+	while (encoder != NULL){
+		encoder->print();
+		encoder = encoder->next;
+	};
+
+}
+
+/**
+ * This must be called by the appropriate EXTI callback when the INTA pin gets asserted.
+ */
+void MCP23017::interruptACallback(){
+
+	uint8_t flagReg = read(MCP23017::INTFA); // 50us
+	uint8_t capReg = read(MCP23017::INTCAPA);
+
+	//printf("INTCAPA=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
+
+	PushButton* controller = buttonLinkedListA;
+	while (controller != NULL){
+		if ((flagReg & controller->mask) != 0){ // this encoder triggered the interrupt
+			controller->update(capReg);
+		}
+		controller = controller->next;
+	};
+
+}
+
+/**
+ * This must be called when the INTB pin gets asserted.
+ */
+void MCP23017::interruptBCallback(){
+
+	uint8_t flagReg = read(MCP23017::INTFA); // 50us
+	uint8_t capReg = read(MCP23017::INTCAPA);
+
+	//printf("INTCAPA=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
+
+	PushButton* controller = buttonLinkedListB;
+	while (controller != NULL){
+		if ((flagReg & controller->mask) != 0){ // this encoder triggered the interrupt
+			controller->update(capReg);
+		}
+		controller = controller->next;
+	};
+
+
+}
+
+void MCP23017::test(){
+
+	dumpRegisters();
+
+	while(1){
+		//write(GPIO_A, 0xFF);
+		//printf("GPIOB=%.2X\n",mcp23017_Read(GPIOB));
+		//HAL_Delay(200);
+		//write(GPIO_A, 0x00);
+		//printf("0\n");
+		//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+		//printf("Loop: %d\n", x++); printSerial();
+
+		//int b = read(GPIO_A);
+		//printf("GPIO_A=%.2X\n",b);
+		//printf("%c%c%c%c%c%c%c%c ", BYTE_TO_BINARY(read(GPIO_A)));
+		//printf("GPIO_B=%.2X\n",read(GPIO_B));
+		//printf("%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(read(GPIO_B)));
+		HAL_Delay(500);
+		read(GPIO_A); // clear pending interrupts
+		read(GPIO_B); // clear pending interrupts
+	}
+}
 
 // ************************************ DMA *******************************************************
 
@@ -159,19 +297,19 @@ void mcp23017_Tx_GpioA_Buffer_Dma(){
 	if (is_gpioA_buffer_need_sync == FALSE) return;
 
 	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->Instance->CNDTR = 2; // TODO : necessary?
-    hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioA_tx_Buff;
-    __HAL_DMA_ENABLE(hdma_MCP23017_tx);
+	hdma_MCP23017_tx->Instance->CNDTR = 2; // TODO : necessary?
+	hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioA_tx_Buff;
+	__HAL_DMA_ENABLE(hdma_MCP23017_tx);
 
-    // send slave address:
-  	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
-  			  ((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
-			  (uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
+	// send slave address:
+	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
+			((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
+			(uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
 
-  	// trigger DMA transfer of data:
-  	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
+	// trigger DMA transfer of data:
+	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
 
-  	is_gpioA_buffer_need_sync = FALSE;
+	is_gpioA_buffer_need_sync = FALSE;
 }
 
 /*
@@ -183,19 +321,19 @@ void mcp23017_Tx_GpioB_Buffer_Dma(){
 	if (is_gpioB_buffer_need_sync == FALSE) return;
 
 	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->Instance->CNDTR = 2;
-    hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioB_tx_Buff;
-    __HAL_DMA_ENABLE(hdma_MCP23017_tx);
+	hdma_MCP23017_tx->Instance->CNDTR = 2;
+	hdma_MCP23017_tx->Instance->CMAR = (uint32_t)mcp23017_gpioB_tx_Buff;
+	__HAL_DMA_ENABLE(hdma_MCP23017_tx);
 
-    // send slave address:
-  	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
-  			  ((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
-			  (uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
+	// send slave address:
+	MODIFY_REG(hi2c_MCP23017->Instance->CR2,
+			((I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | (I2C_CR2_RD_WRN & (uint32_t)(I2C_GENERATE_START_WRITE >> (31U - I2C_CR2_RD_WRN_Pos))) | I2C_CR2_START | I2C_CR2_STOP)), \
+			(uint32_t)(((uint32_t)MCP23017_ADDRESS & I2C_CR2_SADD) | (((uint32_t)2 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | (uint32_t)I2C_AUTOEND_MODE | (uint32_t)I2C_GENERATE_START_WRITE));
 
-  	// trigger DMA transfer of data:
-  	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
+	// trigger DMA transfer of data:
+	hi2c_MCP23017->Instance->CR1 |= I2C_CR1_TXDMAEN;
 
-  	is_gpioB_buffer_need_sync = FALSE;
+	is_gpioB_buffer_need_sync = FALSE;
 
 
 }
@@ -228,10 +366,10 @@ void mcp23017_Init_Device_Dma(){
 
 	// init DMA transfer for DMA1 Channel2 (I2C3): (interrupts disabled as they are useless since we don't keep track of when the transfer is complete)
 	__HAL_DMA_DISABLE(hdma_MCP23017_tx);
-    hdma_MCP23017_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF2; // clear interrupt flags
-    hdma_MCP23017_tx->Instance->CNDTR = 2; /* Configure DMA Channel data length */
-    hdma_MCP23017_tx->Instance->CPAR = (uint32_t)&(hi2c_MCP23017->Instance->TXDR);
-    __HAL_DMA_DISABLE_IT(hdma_MCP23017_tx, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE); // no IT
+	hdma_MCP23017_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF2; // clear interrupt flags
+	hdma_MCP23017_tx->Instance->CNDTR = 2; /* Configure DMA Channel data length */
+	hdma_MCP23017_tx->Instance->CPAR = (uint32_t)&(hi2c_MCP23017->Instance->TXDR);
+	__HAL_DMA_DISABLE_IT(hdma_MCP23017_tx, DMA_IT_HT | DMA_IT_TC | DMA_IT_TE); // no IT
 
 }
 

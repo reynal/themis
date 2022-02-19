@@ -9,15 +9,15 @@
 #define INC_LED_H_
 
 #include "stdint.h"
+#include "stm32f4xx_hal.h"
 
 #define MAX_LED_DUTY 256
 
 class LED {
 
 public:
-	LED();
+	LED(TIM_HandleTypeDef* timer, uint32_t Channel);
 	~LED();
-	//void ledInit();
 	void setDuty(uint16_t pwm100);
 	void on();
 	void off();
@@ -26,6 +26,11 @@ public:
 	void wave();
 
 private:
+
+	void _start();
+	TIM_HandleTypeDef* _htim;
+	uint32_t _Channel;
+	bool _isStarted= false;
 
 };
 

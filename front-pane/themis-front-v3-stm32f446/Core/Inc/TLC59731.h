@@ -21,7 +21,7 @@
 
 class TLC59731 {
 public:
-	TLC59731();
+	TLC59731(SPI_HandleTypeDef *hspi);
 	~TLC59731();
 
 	void update(uint8_t led, uint8_t r, uint8_t g, uint8_t b);
@@ -33,7 +33,8 @@ public:
 	void test();
 
 private:
-	uint8_t spiBuf[TLC_BUF_SZ];
+	SPI_HandleTypeDef *_hspi;
+	uint8_t _spiBuf[TLC_BUF_SZ];
 
 	void initSpiBuffer(uint8_t led);
 

@@ -6,29 +6,35 @@
  */
 
 #include "PushButton.h"
+
 #include "print.h"
 #include <stdio.h>
 
-extern char print_buffer[50];
+PushButton::PushButton(std::string _name, MCP23017::Port _port, MCP23017::Pin _pin, PushButton* _next, RotaryEncoder* _hostingRotaryEncoder){ // : AbstractController(_name, _next) {
 
-PushButton::PushButton(std::string _name, MCP23017::Pin _pin) {
-	pin = _pin;
 	name = _name;
+	next = _next;
+	pin = _pin;
+	port = _port;
+	mask = pin;
+	hostingRotaryEncoder = _hostingRotaryEncoder;
 }
 
-PushButton::~PushButton() {
-}
+PushButton::~PushButton() {}
 
-void PushButton::stateChanged(State s){
+void PushButton::update(uint8_t mcp23017CaptureValue) {
 
-	state = s;
+	state = (mcp23017CaptureValue & pin) == 0 ? PushButton::RELEASED : PushButton::PUSHED;
 	changePending = true;
-
-
-}
-
-void PushButton::printState(){
-
-	sprintf(print_buffer, "name=%s state=%d\n", name.c_str(), state); printSerial();
+	// TODO : if hostingRotaryEncoder != NULL
 
 }
+
+
+void PushButton::print() {
+
+	std::string s = "Push \"" + name + "\": ["+ MCP23017::printPort(port) +  MCP23017::printPin(pin) + "]";
+	//printf("Push: [%s:%d] name=%s state=%d\n", (port == MCP23017::PORT_A ? "A":"B"), pin, name.c_str(), state);
+	printf("%s -> %s\n", s.c_str(), state == PUSHED ? "PUSHED" : "RELEASED");
+}
+
