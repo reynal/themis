@@ -6,6 +6,7 @@
  */
 
 #include <RGBColor.h>
+#include "stdlib.h"
 
 RGBColor::RGBColor() {
 	m_red = 0;
@@ -18,6 +19,12 @@ RGBColor::RGBColor(uint8_t red, uint8_t green, uint8_t blue){
 	m_red = red;
 	m_green = green;
 	m_blue = blue;
+}
+
+void RGBColor::randomize(uint8_t intensity){
+	 m_red = (uint8_t)(intensity*rand());
+	 m_green = (uint8_t)(intensity*rand());
+	 m_blue = (uint8_t)(intensity*rand());
 }
 
 void RGBColor::fade(double alpha){
@@ -40,6 +47,8 @@ void RGBColor::set(RGBColor& c){
 	m_green = c.m_green;
 	m_blue = c.m_blue;
 }
+
+
 
 const RGBColor RGBColor::RED(		0xFF, 0x00,0x00);
 const RGBColor RGBColor::GREEN(		0x00, 0xFF, 0x00);

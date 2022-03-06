@@ -97,7 +97,7 @@ public:
 	};
 
 
-	MCP23017(I2C_HandleTypeDef *hi2c, Address address);
+	MCP23017(I2C_HandleTypeDef *hi2c, Address address, PushButton* pushA, RotaryEncoder* encoderA, PushButton* pushB, RotaryEncoder* encoderB);
 	~MCP23017();
 
 	void init();
@@ -110,8 +110,8 @@ public:
 	void printAttachedControllers();
 	int read(uint16_t read_reg);
 	void write(uint16_t write_reg, uint8_t data);
-	void attachButtonsA(PushButton* push, RotaryEncoder* encoder);
-	void attachButtonsB(PushButton* push, RotaryEncoder* encoder);
+	//void attachControllersA(PushButton* push, RotaryEncoder* encoder);
+	//void attachControllersB(PushButton* push, RotaryEncoder* encoder);
 	void interruptACallback();
 	void interruptBCallback();
 

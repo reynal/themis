@@ -16,7 +16,7 @@
 #define TLC_ONE 		0xA0
 #define TLC_EOS_SZ		4		// number of Tcycles for the EOS
 #define TLC_GSLAT_SZ	10		// number of Tcycles for the GSLAT
-#define TLC_LED_COUNT	17
+#define TLC_LED_COUNT	16
 #define TLC_BUF_SZ 		(TLC_LED_COUNT * (32 + TLC_EOS_SZ) + TLC_GSLAT_SZ)
 
 class TLC59731 {

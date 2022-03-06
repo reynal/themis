@@ -56,9 +56,13 @@
 #include "print.h"
 #include "misc.h"
 
-MCP23017::MCP23017(I2C_HandleTypeDef *hi2c, Address address){
-	_hi2c = hi2c;
-	_address = address;
+MCP23017::MCP23017(I2C_HandleTypeDef *i2c, Address addr, PushButton* pushARoot, RotaryEncoder* encoderARoot, PushButton* pushBRoot, RotaryEncoder* encoderBRoot){
+	_hi2c = i2c;
+	_address = addr;
+	buttonLinkedListA = pushARoot;
+	encoderLinkedListA = encoderARoot;
+	buttonLinkedListB = pushBRoot;
+	encoderLinkedListB = encoderBRoot;
 }
 
 MCP23017::~MCP23017() {}
@@ -74,7 +78,12 @@ void MCP23017::init(){
 
 	//reset(); now static!
 
-	if (isConnected()==false) Error_Handler();
+	if (isConnected()==false) {
+		printf("MCP23017 0x%02X I2C error!\n", _address);
+		Error_Handler();
+	}
+	else
+		printf("MCP23017 0x%02X I2C init OK\n", _address);
 
 	// port A: output (for debugging purpose only)
 	//write(IODIRA, IODIR_ALL_OUTPUT);
@@ -110,7 +119,7 @@ void MCP23017::init(){
  * Returns true if the device is connected to the I2C bus and properly working.
  */
 bool MCP23017::isConnected(){
-	if (HAL_I2C_IsDeviceReady(_hi2c, _address, 2, 5) != HAL_OK) {
+	if (HAL_I2C_IsDeviceReady(_hi2c, _address, 5, 100) != HAL_OK) {
 		return false;
 	}
 	return true;
@@ -161,7 +170,11 @@ void MCP23017::dumpRegisters(){
  */
 int MCP23017::read(uint16_t read_reg){
 	uint8_t data;
-	if (HAL_I2C_Mem_Read(_hi2c, _address, read_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000) != HAL_OK) Error_Handler();
+	HAL_StatusTypeDef status=HAL_I2C_Mem_Read(_hi2c, _address, read_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000);
+	if (status != HAL_OK) {
+		printf("MCP23017 0x%02X Read error!\n", _address);
+		Error_Handler();
+	}
 	return data;
 }
 
@@ -170,20 +183,32 @@ int MCP23017::read(uint16_t read_reg){
  * This is an 8-bit wide write.
  */
 void MCP23017::write(uint16_t write_reg, uint8_t data){
-	if (HAL_I2C_Mem_Write(_hi2c, _address, write_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000) != HAL_OK) Error_Handler();
+	if (HAL_I2C_Mem_Write(_hi2c, _address, write_reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000) != HAL_OK) {
+		printf("MCP23017 0x%02X Write error!\n", _address);
+		Error_Handler();
+	}
 }
 
 
-void MCP23017::attachButtonsA(PushButton* push, RotaryEncoder* encoder){
-	buttonLinkedListA = push;
-	encoderLinkedListA = encoder;
-}
+/**
+ * Attach a linked list of controllers to this device port A.
+ * Pointers given here are in effect the first element of the linked lists.
+ */
+/*void MCP23017::attachControllersA(PushButton* pushLinkedListRoot, RotaryEncoder* encoderLinkedListRoot){
+	buttonLinkedListA = pushLinkedListRoot;
+	encoderLinkedListA = encoderLinkedListRoot;
+}*/
 
-void MCP23017::attachButtonsB(PushButton* push, RotaryEncoder* encoder){
-	buttonLinkedListB = push;
-	encoderLinkedListB = encoder;
-}
+/**
+ * Attach a linked list of controllers to this device port B.
+ * Pointers given are in effect the first element of the linked lists.
+ */
+/*void MCP23017::attachControllersB(PushButton* pushLinkedListRoot, RotaryEncoder* encoderLinkedListRoot){
+	buttonLinkedListB = pushLinkedListRoot;
+	encoderLinkedListB = encoderLinkedListRoot;
+}*/
 
+/** debugging method */
 void MCP23017::printAttachedControllers(){
 
 	PushButton* push;
@@ -224,17 +249,25 @@ void MCP23017::printAttachedControllers(){
  */
 void MCP23017::interruptACallback(){
 
-	uint8_t flagReg = read(MCP23017::INTFA); // 50us
-	uint8_t capReg = read(MCP23017::INTCAPA);
+	uint8_t flagReg = read(INTFA); // 50us
+	uint8_t capReg = read(INTCAPA);
 
 	//printf("INTCAPA=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
 
-	PushButton* controller = buttonLinkedListA;
-	while (controller != NULL){
-		if ((flagReg & controller->mask) != 0){ // this encoder triggered the interrupt
-			controller->update(capReg);
+	PushButton* b = buttonLinkedListA;
+	while (b != NULL){
+		if ((flagReg & b->mask) != 0){ // this encoder triggered the interrupt
+			b->update(capReg);
 		}
-		controller = controller->next;
+		b = b->next;
+	};
+
+	RotaryEncoder* re = encoderLinkedListA;
+	while (re!= NULL){
+		if ((flagReg & re->mask) != 0){ // this encoder triggered the interrupt
+			re->update(capReg);
+		}
+		re = re->next;
 	};
 
 }
@@ -244,10 +277,10 @@ void MCP23017::interruptACallback(){
  */
 void MCP23017::interruptBCallback(){
 
-	uint8_t flagReg = read(MCP23017::INTFA); // 50us
-	uint8_t capReg = read(MCP23017::INTCAPA);
+	uint8_t flagReg = read(INTFB); // 50us
+	uint8_t capReg = read(INTCAPB);
 
-	//printf("INTCAPA=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
+	//printf("INTCAPB=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
 
 	PushButton* controller = buttonLinkedListB;
 	while (controller != NULL){
@@ -255,6 +288,14 @@ void MCP23017::interruptBCallback(){
 			controller->update(capReg);
 		}
 		controller = controller->next;
+	};
+
+	RotaryEncoder* re = encoderLinkedListB;
+	while (re!= NULL){
+		if ((flagReg & re->mask) != 0){ // this encoder triggered the interrupt
+			re->update(capReg);
+		}
+		re = re->next;
 	};
 
 

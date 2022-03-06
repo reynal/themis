@@ -23,6 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
+//#include "callback.h"
+//void HAL_GPIO_EXTI0_Callback();
 
 /* USER CODE END Includes */
 
@@ -213,7 +215,8 @@ void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
-	printf("EXTI0_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// MCP_101 Port B, north board
+	//printf("EXTI0_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI0_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_101_INTB_Pin);
@@ -229,7 +232,8 @@ void EXTI1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI1_IRQn 0 */
 
-	printf("EXTI1_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// MCP_011, south
+	//printf("EXTI1_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI1_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_011_INTB_Pin);
@@ -245,7 +249,8 @@ void EXTI2_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI2_IRQn 0 */
 
-	printf("EXTI2_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// MCP 110 Port B, north
+	//printf("EXTI2_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI2_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_110_INTB_Pin);
@@ -261,7 +266,8 @@ void EXTI3_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI3_IRQn 0 */
 
-	printf("EXTI3_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// MCP 110 Port A, north
+	//printf("EXTI3_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI3_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_110_INTA_Pin);
@@ -277,7 +283,8 @@ void EXTI4_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_IRQn 0 */
 
-	printf("EXTI4_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// MCP 111 Port A, north
+	//printf("EXTI4_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI4_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_111_INTA_Pin);
@@ -321,7 +328,12 @@ void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
-	printf("EXTI9_5_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// EXTI5 : MCP 111 Port B (north)
+	// EXTI6 : MCP 100 Port B (south)
+	// EXTI7 : MCP 010 Port A (south)
+	// EXTI8 : MCP 010 Port B (south)
+	// EXTI9 : MCP 001 Port A (south)
+	//printf("EXTI9_5_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI9_5_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_111_INTB_Pin);
@@ -383,7 +395,13 @@ void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-	printf("EXTI15_10_IRQHandler: EXTI->PR=%.2X\n",EXTI->PR);
+	// EXTI10 : MCP 001 Port B (south)
+	// EXTI11 : MCP 000 Port B (south)
+	// EXTI12 : MCP 000 Port A (south)
+	// EXTI13 : MCP 101 Port A (north)
+	// EXTI14 : MCP 011 Port A (south)
+	// EXTI15 : MCP 100 Port A (south)
+	//printf("EXTI15_10_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
 
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(MCP_001_INTB_Pin);

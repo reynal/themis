@@ -17,13 +17,14 @@
 #include "led.h"
 #include "stdio.h"
 #include "string.h"
+#include "misc.h"
 
 /**
  * ---- MCP23017 wiring ----
  *
  * NORTH BOARD + add-on board with 3 encoders "ADDON":
  *
- * 	MCP 101 (aka 41 on I2C1)
+ * 	MCP 101 (aka 41 on I2C1) addr=0x4A
  * 		RATE.Push	PA0
  * 		SYNC.Push	PA1
  * 		SYNC.Enc	PA2/PA3
@@ -36,7 +37,7 @@
  *		ADDON2.Push	PB5
  * 		RATE.Enc 	PB6/PB7
  *
- * 	MCP 110 (aka 42 on I2C1):
+ * 	MCP 110 (aka 42 on I2C1): addr=0x4C
  * 		RANGE.Enc	PA0/PA1
  * 		HUMAN.Enc	PA2/PA3
  * 		HUMAN.Push	PA4
@@ -48,18 +49,18 @@
  * 		Drive.Enc	PB6/PB5
  * 		Drive.Push	PB7
  *
- * 	MCP 111 (aka 5 on I2C1):
+ * 	MCP 111 (aka 5 on I2C1): addr=0x4E
+ * 		REVERB.Push	PA0
+ * 		REVERB.Enc	PA2/PA1
+ * 		Delay.Push	PA3
  * 		LATCH.Enc	PA4/PA5
  * 		LATCH.Push	PA6
- * 		BF.Enc		PB0/PB1
  * 		BF.Push		PA7
- * 		ONOFF.Enc	PB3/PB4
+ * 		BF.Enc		PB0/PB1
  * 		ONOFF.Push	PB2
- * 		PORTA.Enc	PB6/PB7
+ * 		ONOFF.Enc	PB3/PB4
  * 		PORTA.Push	PB5
- * 		REVERB.Enc	PA2/PA1
- * 		REVERB.Push	PA0
- * 		Delay.Push	PA3
+ * 		PORTA.Enc	PB6/PB7
  */
 
 // ------------------------------ defines -----------------------------------
@@ -80,21 +81,60 @@ extern SPI_HandleTypeDef hspi3;
 
 LED led(&htim3, TIM_CHANNEL_1);
 
-PushButton 		__jeudisoir___ ratePush	("RATE-PUSH", 	MCP23017::PORT_A,	MCP23017::P0, NULL, NULL);
+// ===== north board MCP_101 (EXTI_13 / EXTI_0) =====
 
-// plaque nord, adresses 101, 110 et 111
-MCP23017 mcp101(&hi2c1, MCP23017::ADDR_101);
-MCP23017 mcp110(&hi2c1, MCP23017::ADDR_110);
-MCP23017 mcp111(&hi2c1, MCP23017::ADDR_111);
-// plaque sud-ouest, adresses 000 et 001
-MCP23017 mcp000(&hi2c3, MCP23017::ADDR_000);
-MCP23017 mcp001(&hi2c3, MCP23017::ADDR_001);
-// plaque sud-est, adresses 010, 011 et 100
-MCP23017 mcp010(&hi2c2, MCP23017::ADDR_010);
-MCP23017 mcp011(&hi2c2, MCP23017::ADDR_011);
-MCP23017 mcp100(&hi2c2, MCP23017::ADDR_100);
+RotaryEncoder 	add1Encoder	("ADD1-ENC", 	MCP23017::PORT_A,	MCP23017::P6, MCP23017::P5, NULL);
+RotaryEncoder 	syncEncoder	("SYNC-ENC", 	MCP23017::PORT_A,	MCP23017::P2, MCP23017::P3, &add1Encoder);
+
+RotaryEncoder 	add2Encoder	("ADD3-ENC", 	MCP23017::PORT_B,	MCP23017::P0, MCP23017::P1, NULL);
+RotaryEncoder 	add3Encoder	("ADD3-ENC", 	MCP23017::PORT_B,	MCP23017::P2, MCP23017::P3, &add2Encoder);
+RotaryEncoder 	rateEncoder	("RATE-ENC", 	MCP23017::PORT_B,	MCP23017::P6, MCP23017::P7, &add3Encoder);
+
+PushButton 		add3Push	("ADD3-PUSH", 	MCP23017::PORT_A,	MCP23017::P7, NULL, 	 &add3Encoder);
+PushButton 		ratePush	("RATE-PUSH", 	MCP23017::PORT_A,	MCP23017::P0, &add3Push, &rateEncoder);
+PushButton 		syncPush	("SYNC-PUSH", 	MCP23017::PORT_A,	MCP23017::P1, &ratePush, &syncEncoder);
+PushButton 		rangePush	("RANG-PUSH", 	MCP23017::PORT_A,	MCP23017::P4, &syncPush, NULL); // TODO : encoder
+
+PushButton 		add1Push	("ADD1-PUSH", 	MCP23017::PORT_B,	MCP23017::P4, NULL, 	 &add1Encoder);
+PushButton 		add2Push	("ADD2-PUSH", 	MCP23017::PORT_B,	MCP23017::P5, &add1Push, &add2Encoder);
+
+MCP23017 mcp101(&hi2c1, MCP23017::ADDR_101, &rangePush, &syncEncoder, &add2Push, &rateEncoder);
+
+// ===== north board MCP_110 (EXTI_3 / EXTI_2) =====
+
+PushButton 		humanPush	("HUMAN-PUSH", 	MCP23017::PORT_A,	MCP23017::P4, NULL, 		NULL);
+PushButton 		patternPush	("PATTERN-PUSH",MCP23017::PORT_A,	MCP23017::P7, &humanPush, 	NULL);
+
+PushButton 		chorusPush	("CHORUS-PUSH", MCP23017::PORT_B,	MCP23017::P4, NULL, 		NULL);
+PushButton 		drivePush	("DRIVE-PUSH", 	MCP23017::PORT_B,	MCP23017::P7, &chorusPush, 	NULL);
+
+MCP23017 mcp110(&hi2c1, MCP23017::ADDR_110, &patternPush, NULL, &drivePush, NULL);
+
+// ===== north board MCP_111 (EXTI_4 / EXTI_5) =====
+
+PushButton 		latchPush	("LATCH-PUSH", 	MCP23017::PORT_A,	MCP23017::P6, NULL, 		NULL);
+PushButton 		backfPush	("BACKF-PUSH", 	MCP23017::PORT_A,	MCP23017::P7, &latchPush, 	NULL);
+PushButton 		delayPush	("DELAY-PUSH", MCP23017::PORT_A,	MCP23017::P3, &backfPush, 	NULL);
+PushButton 		reverbPush	("REVERB-PUSH", MCP23017::PORT_A,	MCP23017::P0, &delayPush, 	NULL);
+
+PushButton 		portaPush	("PORTA-PUSH", MCP23017::PORT_B,	MCP23017::P5, NULL, 		NULL);
+PushButton 		onoffPush	("ONOFF-PUSH", MCP23017::PORT_B,	MCP23017::P2, &portaPush, 	NULL);
+
+MCP23017 mcp111(&hi2c1, MCP23017::ADDR_111, &reverbPush, NULL, &onoffPush, NULL);
+
+// south board, western part, address 000 & 001
+//MCP23017 mcp000(&hi2c3, MCP23017::ADDR_000);
+//MCP23017 mcp001(&hi2c3, MCP23017::ADDR_001);
+// south board, easter part, address 010, 011 & 100
+//MCP23017 mcp010(&hi2c2, MCP23017::ADDR_010);
+//MCP23017 mcp011(&hi2c2, MCP23017::ADDR_011);
+//MCP23017 mcp100(&hi2c2, MCP23017::ADDR_100);
+
 MCP23017* mcps[3]={&mcp101, &mcp110, &mcp111};
 
+
+
+// =========
 TLC59731 tlcNorth(&hspi2);
 TLC59731 tlcSouth1(&hspi1);
 TLC59731 tlcSouth2(&hspi3);
@@ -103,36 +143,19 @@ TLC59731 tlcSouth2(&hspi3);
 
 
 // ------------------------------ functions -----------------------------------
+/**
+ * Some initialization stuff can't be carried out before this point because the
+ * underlying hardware is not init'd yet (e.g., I2C, timers, etc), so that
+ * it's useless trying to move the code inside MCP23017.init() to the constructor alas...
+ */
 void init_hardware() {
 
 	MCP23017::reset(); // reset ALL devices
 
-	mcp101.init();
-	mcp110.init();
-	mcp111.init();
-
-	// --- MCP 101 ---
-	/*RotaryEncoder 	add1Encoder	("ADD1-ENC", 	MCP23017::PORT_A,	MCP23017::P6, MCP23017::P5, NULL);
-	PushButton 		add1Push	("ADD1-PUSH", 	MCP23017::PORT_B,	MCP23017::P4, NULL, &add1Encoder);
-
-	RotaryEncoder 	add2Encoder	("ADD3-ENC", 	MCP23017::PORT_B,	MCP23017::P0, MCP23017::P1, &add1Push);
-	PushButton 		add2Push	("ADD2-PUSH", 	MCP23017::PORT_B,	MCP23017::P5, &add2Encoder, &add2Encoder);
-
-	RotaryEncoder 	add3Encoder	("ADD3-ENC", 	MCP23017::PORT_B,	MCP23017::P2, MCP23017::P3, &add2Push);
-	PushButton 		add3Push	("ADD3-PUSH", 	MCP23017::PORT_A,	MCP23017::P7, &add1Encoder, &add3Encoder);
-
-	RotaryEncoder 	rateEncoder	("RATE-ENC", 	MCP23017::PORT_B,	MCP23017::P6, MCP23017::P7, &add3Encoder);
-	PushButton 		ratePush	("RATE-PUSH", 	MCP23017::PORT_A,	MCP23017::P0, &add3Push, &rateEncoder);
-
-	RotaryEncoder 	syncEncoder	("SYNC-ENC", 	MCP23017::PORT_A,	MCP23017::P2, MCP23017::P3, &ratePush);
-	PushButton 		syncPush	("SYNC-PUSH", 	MCP23017::PORT_A,	MCP23017::P1, &syncEncoder, &syncEncoder);
-
-	PushButton 		rangePush	("RANG-PUSH", 	MCP23017::PORT_A,	MCP23017::P4, &syncPush, NULL); // TODO : encoder
-
-	mcp101.attachButtonLinkedList(&rangePush, &rateEncoder);*/
-
-	mcp101.attachButtonsA(&ratePush, NULL);
-
+	// north board:
+	mcp101.init(); // 0x4A
+	mcp110.init(); // 0x4C
+	mcp111.init(); // 0x4E
 
 #ifdef SOUTH_BOARD_CONNECTED
 	mcp000.init();
@@ -162,6 +185,10 @@ void init_hardware() {
 		//mcp.read(MCP23017::GPIO_A); // clear pending interrupts
 		//mcp.read(MCP23017::GPIO_B); // clear pending interrupts
 
+	mcp101.printAttachedControllers();
+	mcp110.printAttachedControllers();
+	mcp111.printAttachedControllers();
+
 }
 
 void main_loop() {
@@ -173,7 +200,11 @@ void main_loop() {
 
 	while (1) {
 
-		PushButton* push = mcps[0]->buttonLinkedListA;
+		/*printf("MCP101: A=%c%c%c%c.%c%c%c%c B=%c%c%c%c.%c%c%c%c ", BYTE_TO_BINARY(mcp101.read(MCP23017::GPIO_A)),BYTE_TO_BINARY(mcp101.read(MCP23017::GPIO_B)));
+		printf("MCP110: A=%c%c%c%c.%c%c%c%c B=%c%c%c%c.%c%c%c%c ", BYTE_TO_BINARY(mcp110.read(MCP23017::GPIO_A)),BYTE_TO_BINARY(mcp110.read(MCP23017::GPIO_B)));
+		printf("MCP111: A=%c%c%c%c.%c%c%c%c B=%c%c%c%c.%c%c%c%c\n", BYTE_TO_BINARY(mcp111.read(MCP23017::GPIO_A)),BYTE_TO_BINARY(mcp111.read(MCP23017::GPIO_B)));*/
+
+		/*PushButton* push = mcps[0]->buttonLinkedListA;
 		while (push != NULL){
 			push->print();
 
@@ -182,7 +213,7 @@ void main_loop() {
 				push->changePending=false;
 			}
 			push = push->next;
-		};
+		};*/
 
 
 		/*
@@ -247,7 +278,7 @@ void main_loop() {
 		//sprintf(print_buffer, "GPIOA=%d \t GPIOB=%d\n", MCP23017_array[0].read(MCP23017::GPIO_A), MCP23017_array[0].read(MCP23017::GPIO_B) ); printSerial();
 
 		led.blink();
-		HAL_Delay(200);
+		HAL_Delay(500);
 	}
 }
 

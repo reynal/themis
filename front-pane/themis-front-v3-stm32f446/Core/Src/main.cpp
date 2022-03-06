@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "front-panel.h"
+#include "MCP23017.h"
 
 /* USER CODE END Includes */
 
@@ -145,6 +146,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	HAL_Delay(100);
   }
   /* USER CODE END 3 */
 }
@@ -736,11 +738,11 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
 	printf("Error_Handler!\n");
-  __disable_irq();
-  while (1)
-  {
-	  __NOP();
-  }
+	__disable_irq();
+	while (1)
+	{
+		__NOP();
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 

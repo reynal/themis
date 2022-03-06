@@ -24,10 +24,6 @@ class RotaryEncoder;
 class PushButton { // : public AbstractController {
 
 public:
-	/** create a PushButton
-	 * @param (optional) target a target RotaryEncoder this PushButton acts upon
-	 * @param (optional) the next controller in the linked list of controllers attached to an MCP23017
-	 */
 	PushButton(std::string _name, MCP23017::Port _port, MCP23017::Pin _pin,  PushButton* _next, RotaryEncoder *_target);
 
 	~PushButton();
@@ -59,9 +55,10 @@ public:
 private:
 	std::string name;
 
-
 	MCP23017::Pin pin; // the MCP23017 pin this button is connected to
+
 	//uint32_t time; // used for time related behaviors, e.g., a "long" press vs a "short" press
+
 	RotaryEncoder* hostingRotaryEncoder; // (optional) the hosting rotary encoder
 };
 

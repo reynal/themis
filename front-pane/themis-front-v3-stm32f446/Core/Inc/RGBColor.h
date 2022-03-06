@@ -32,6 +32,8 @@ public:
 
 	void set(RGBColor& c);
 
+	void randomize(uint8_t intensity);
+
     uint8_t m_red;
     uint8_t m_green;
     uint8_t m_blue;

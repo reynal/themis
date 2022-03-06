@@ -68,12 +68,17 @@ void TLC59731::test() {
 
 	//RGBColor colors[] = {RGBColor::YELLOW, RGBColor::TURQUOISE, RGBColor::RED, RGBColor::BLUE, RGBColor::CYAN, RGBColor::GREEN, RGBColor::WHITE};
 	//RGBColor colors[] = {RGBColor::RED, RGBColor::BLUE, RGBColor::GREEN, RGBColor::WHITE};
+	RGBColor col = RGBColor::RED;
 
 	//int i = 0;
-	//while (1) {  // BRG sauf LED => RBG
+	while (1) {  // BRG sauf LED => RBG
 
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, colors[(i++)%7]);
-			for (int led=0; led < TLC_LED_COUNT; led++)  update(led, 20, 20, 5 * led);
+			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, 20, 20, 5 * led);
+			for (int led=0; led < TLC_LED_COUNT; led++)  {
+				col.randomize(50);
+				update(led, col);
+			}
 			//i++;
 
 
@@ -102,7 +107,9 @@ void TLC59731::test() {
 			 */
 
 			transmitData();
+			HAL_Delay(500);
 
+	}
 
 	/*while (1) {
 			//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);

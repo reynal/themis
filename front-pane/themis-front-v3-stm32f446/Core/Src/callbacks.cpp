@@ -5,13 +5,15 @@
  *      Author: sydxrey
  */
 
+#include "callback.h"
 #include "stm32f4xx_hal.h"
 #include "MCP23017.h"
 #include "main.h"
 
+
 //extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart1;
-extern MCP23017 mcp101;
+extern MCP23017 mcp101, mcp110, mcp111;
 
 // our own implementation of putchar used by printf, so that printf is forwarded
 // to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the PC or Mac host station)
@@ -54,12 +56,26 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch (GPIO_Pin){
 	case MCP_101_INTA_Pin:
-		mcp101.interruptACallback();
+		mcp101.interruptACallback(); // EXTI15_10_IRQHandler
 		break;
 	case MCP_101_INTB_Pin:
-		mcp101.interruptBCallback();
+		mcp101.interruptBCallback(); // EXTI0_IRQHandler
+		break;
+	case MCP_110_INTA_Pin:
+		mcp110.interruptACallback(); //EXTI3
+		break;
+	case MCP_110_INTB_Pin:
+		mcp110.interruptBCallback(); // EXTI2
+		break;
+	case MCP_111_INTA_Pin:
+		mcp111.interruptACallback(); // EXTI4
+		break;
+	case MCP_111_INTB_Pin:
+		mcp111.interruptBCallback(); // EXTI5
+		break;
 	}
 }
 
 } // extern "C"
+
 
