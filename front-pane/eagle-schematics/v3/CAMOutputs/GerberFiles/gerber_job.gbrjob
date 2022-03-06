@@ -1,0 +1,24 @@
+{
+    "Header": {
+        "Comment": "All values are metric (mm)",
+        "CreationDate": "2022-03-01T10:15:46Z",
+        "GenerationSoftware": {
+            "Application": "EAGLE",
+            "Vendor": "Autodesk",
+            "Version": "9.6.2"
+        },
+        "Part": "Single"
+    },
+    "Overall": {
+        "BoardThickness": 1.57,
+        "LayerNumber": 2,
+        "Name": {
+            "ProjectId": "adapter-STDC14-DIL"
+        },
+        "Owner": "Syd Reynal <sylvain.reynal@u-cergy.fr>",
+        "Size": {
+            "X": 34.036,
+            "Y": 12.446
+        }
+    }
+}
