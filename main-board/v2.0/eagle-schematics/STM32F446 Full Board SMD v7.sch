@@ -30053,13 +30053,14 @@ Au moment de l'équipement de la carte :
 <label x="487.68" y="243.84" size="1.778" layer="95"/>
 </segment>
 </net>
-<net name="N$23" class="0">
+<net name="BH2221_AO5" class="0">
 <segment>
 <pinref part="A010/9/8/7/3/4/5/6" gate="1" pin="7"/>
 <wire x1="487.68" y1="246.38" x2="505.46" y2="246.38" width="0.1524" layer="91"/>
 <pinref part="BH2221" gate="G$1" pin="AO5"/>
 <wire x1="505.46" y1="246.38" x2="505.46" y2="243.84" width="0.1524" layer="91"/>
 <wire x1="505.46" y1="243.84" x2="508" y2="243.84" width="0.1524" layer="91"/>
+<label x="487.68" y="246.38" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="BH2221_AO6" class="0">

@@ -8538,7 +8538,7 @@ Your Eurocircuits Team
 <wire x1="51.2391875" y1="22.759" x2="51.816" y2="22.1821875" width="0.254" layer="1"/>
 <wire x1="51.816" y1="22.1821875" x2="51.816" y2="16.764" width="0.254" layer="1"/>
 </signal>
-<signal name="N$23">
+<signal name="BH2221_AO5">
 <contactref element="A010/9/8/7/3/4/5/6" pad="7"/>
 <contactref element="BH2221" pad="4"/>
 <wire x1="50.3426" y1="23.409" x2="51.2391875" y2="23.409" width="0.254" layer="1"/>
