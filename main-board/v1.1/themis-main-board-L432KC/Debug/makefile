@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (9-2020-q2-update)
+# Toolchain: GNU Tools for STM32 (10.3-2021.10)
 ################################################################################
 
 -include ../makefile.init
@@ -43,14 +43,14 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 EXECUTABLES += \
 themis-main-board-L432KC.elf \
 
+MAP_FILES += \
+themis-main-board-L432KC.map \
+
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
 themis-main-board-L432KC.list \
-
-OBJCOPY_BIN += \
-themis-main-board-L432KC.bin \
 
 
 # All Target
@@ -60,7 +60,7 @@ all: main-build
 main-build: themis-main-board-L432KC.elf secondary-outputs
 
 # Tool invocations
-themis-main-board-L432KC.elf: $(OBJS) $(USER_OBJS) /Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub\ repository/themis/main-board/v1.1/themis-main-board-L432KC/STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+themis-main-board-L432KC.elf themis-main-board-L432KC.map: $(OBJS) $(USER_OBJS) /Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub\ repository/themis/main-board/v1.1/themis-main-board-L432KC/STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-gcc -o "themis-main-board-L432KC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub repository/themis/main-board/v1.1/themis-main-board-L432KC/STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-main-board-L432KC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
@@ -75,17 +75,12 @@ themis-main-board-L432KC.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_T
 	@echo 'Finished building: $@'
 	@echo ' '
 
-themis-main-board-L432KC.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "themis-main-board-L432KC.bin"
-	@echo 'Finished building: $@'
-	@echo ' '
-
 # Other Targets
 clean:
-	-$(RM) default.size.stdout themis-main-board-L432KC.bin themis-main-board-L432KC.elf themis-main-board-L432KC.list
+	-$(RM) default.size.stdout themis-main-board-L432KC.elf themis-main-board-L432KC.list themis-main-board-L432KC.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
