@@ -90,17 +90,27 @@ void MCP23017::init(){
 
 	// port A: inputs, pull-up, int enabled
 	write(GPPUA, 0xFF);
+	HAL_Delay(1);
 	write(IODIRA, IODIR_ALL_INPUT);
+	HAL_Delay(1);
 	read(GPIO_A); // clear pending interrupts
+	HAL_Delay(1);
 	write(GPINTENA, 0xFF);
+	HAL_Delay(1);
 	read(GPIO_A); // clear pending interrupts
+	HAL_Delay(1);
 
 	// port B: inputs, pull-up, int enabled
 	write(GPPUB, 0xFF);
+	HAL_Delay(1);
 	write(IODIRB, IODIR_ALL_INPUT);
+	HAL_Delay(1);
 	read(GPIO_B); // clear pending interrupts
+	HAL_Delay(1);
 	write(GPINTENB, 0xFF);
+	HAL_Delay(1);
 	read(GPIO_B); // clear pending interrupts
+	HAL_Delay(1);
 
 	dumpRegisters();
 
@@ -246,6 +256,11 @@ void MCP23017::printAttachedControllers(){
 
 /**
  * This must be called by the appropriate EXTI callback when the INTA pin gets asserted.
+ * IRQ timing : ~800us (with I2C @ 100kHz)
+ *
+ * A typical sequence when rotating an encoder is made up of around 4 to 8 IRQ calls
+ * separated by around 10 to 100ms. Amongst these some are due only to mechanical bounces
+ * (even with the RC circuitry... must investigate! TODO)
  */
 void MCP23017::interruptACallback(){
 

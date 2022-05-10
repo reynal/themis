@@ -37,7 +37,7 @@ void PushButton::update(uint8_t mcp23017CaptureValue) {
 
 	state = (mcp23017CaptureValue & pin) == 0 ? PushButton::RELEASED : PushButton::PUSHED;
 	changePending = true;
-	print();
+	//print();
 	// TODO : if hostingRotaryEncoder != NULL
 
 }

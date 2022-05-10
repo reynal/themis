@@ -71,6 +71,10 @@ void Error_Handler(void);
 #define MCP_110_INTA_Pin GPIO_PIN_3
 #define MCP_110_INTA_GPIO_Port GPIOC
 #define MCP_110_INTA_EXTI_IRQn EXTI3_IRQn
+#define U2_TX_Pin GPIO_PIN_2
+#define U2_TX_GPIO_Port GPIOA
+#define U2_RX_Pin GPIO_PIN_3
+#define U2_RX_GPIO_Port GPIOA
 #define MCP_111_INTA_Pin GPIO_PIN_4
 #define MCP_111_INTA_GPIO_Port GPIOC
 #define MCP_111_INTA_EXTI_IRQn EXTI4_IRQn

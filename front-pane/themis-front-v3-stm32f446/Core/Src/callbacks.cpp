@@ -9,11 +9,13 @@
 #include "stm32f4xx_hal.h"
 #include "MCP23017.h"
 #include "main.h"
+#include "gpioDebug.h"
 
 
 //extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart1;
 extern MCP23017 mcp101, mcp110, mcp111;
+extern GpioDebug tx2;
 
 // our own implementation of putchar used by printf, so that printf is forwarded
 // to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the PC or Mac host station)
@@ -30,9 +32,13 @@ int __io_putchar(int ch) {
 	return ch;
 }
 
+// ------------------------------ HAL Callback -----------------------------------
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
-	__NOP();
+	//__NOP();
+	tx2.toggle();
+
 }
 
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
@@ -40,7 +46,6 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	__NOP();
 }
 
-// ------------------------------ HAL Callback -----------------------------------
 
 /*
  * 1) EXTI Interrupt raised
@@ -52,11 +57,11 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
  */
 
 //extern "C" {
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 
 	switch (GPIO_Pin){
 	case MCP_101_INTA_Pin:
-		mcp101.interruptACallback(); // EXTI15_10_IRQHandler
+		mcp101.interruptACallback(); // EXTI15_10_IRQHandler (13)
 		break;
 	case MCP_101_INTB_Pin:
 		mcp101.interruptBCallback(); // EXTI0_IRQHandler
@@ -74,8 +79,89 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 		mcp111.interruptBCallback(); // EXTI5
 		break;
 	}
-}
+}*/
 
 } // extern "C"
+
+void GPIO_EXTI0_Callback(){ // MCP_101_INTB_Pin
+	mcp101.interruptBCallback();
+}
+
+void GPIO_EXTI1_Callback(){ //
+	__NOP();
+}
+
+void GPIO_EXTI2_Callback(){ // MCP_110_INTB_Pin
+	mcp110.interruptBCallback();
+}
+
+void GPIO_EXTI3_Callback(){ // MCP_110_INTA_Pin
+	mcp110.interruptACallback();
+}
+
+void GPIO_EXTI4_Callback(){ // MCP_111_INTA_Pin
+	mcp111.interruptACallback();
+}
+
+
+// === same IRQ vector for EXTI5 to EXTI9 ===
+
+void GPIO_EXTI5_Callback(){ // MCP_111_INTB_Pin
+	mcp111.interruptBCallback();
+}
+
+void GPIO_EXTI6_Callback(){ //
+	__NOP();
+	//mcp100.interruptBCallback();
+}
+
+void GPIO_EXTI7_Callback(){ //
+	__NOP();
+	//mcp010.interruptACallback();
+}
+
+void GPIO_EXTI8_Callback(){ //
+	__NOP();
+	//mcp010.interruptBCallback();
+}
+
+void GPIO_EXTI9_Callback(){ //
+	__NOP();
+	// mcp001.interruptACallback();
+}
+
+
+// === same IRQ vector for EXTI10 to EXTI15 ===
+
+void GPIO_EXTI10_Callback(){ //
+	__NOP();
+	// mcp001.interruptBCallback();
+}
+
+void GPIO_EXTI11_Callback(){ //
+	__NOP();
+	// mcp000.interruptBCallback();
+}
+
+void GPIO_EXTI12_Callback(){ //
+	__NOP();
+	// mcp000.interruptACallback();
+}
+
+void GPIO_EXTI13_Callback(){ // MCP_101_INTA_Pin
+	mcp101.interruptACallback();
+}
+
+void GPIO_EXTI14_Callback(){ //
+	__NOP();
+	//mcp011.interruptACallback();
+}
+
+void GPIO_EXTI15_Callback(){ //
+	__NOP();
+	//mcp100.interruptACallback();
+}
+
+
 
 

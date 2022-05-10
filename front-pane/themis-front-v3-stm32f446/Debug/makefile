@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (9-2020-q2-update)
+# Toolchain: GNU Tools for STM32 (10.3-2021.10)
 ################################################################################
 
 -include ../makefile.init
@@ -58,14 +58,14 @@ BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ART
 EXECUTABLES += \
 themis-front-v3-stm32f446.elf \
 
+MAP_FILES += \
+themis-front-v3-stm32f446.map \
+
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
 themis-front-v3-stm32f446.list \
-
-OBJCOPY_BIN += \
-themis-front-v3-stm32f446.bin \
 
 
 # All Target
@@ -75,7 +75,7 @@ all: main-build
 main-build: themis-front-v3-stm32f446.elf secondary-outputs
 
 # Tool invocations
-themis-front-v3-stm32f446.elf: $(OBJS) $(USER_OBJS) /Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub\ repository/themis/front-pane/themis-front-v3-stm32f446/STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+themis-front-v3-stm32f446.elf themis-front-v3-stm32f446.map: $(OBJS) $(USER_OBJS) /Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub\ repository/themis/front-pane/themis-front-v3-stm32f446/STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	arm-none-eabi-g++ -o "themis-front-v3-stm32f446.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub repository/themis/front-pane/themis-front-v3-stm32f446/STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-front-v3-stm32f446.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
@@ -90,17 +90,12 @@ themis-front-v3-stm32f446.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_
 	@echo 'Finished building: $@'
 	@echo ' '
 
-themis-front-v3-stm32f446.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "themis-front-v3-stm32f446.bin"
-	@echo 'Finished building: $@'
-	@echo ' '
-
 # Other Targets
 clean:
-	-$(RM) default.size.stdout themis-front-v3-stm32f446.bin themis-front-v3-stm32f446.elf themis-front-v3-stm32f446.list
+	-$(RM) default.size.stdout themis-front-v3-stm32f446.elf themis-front-v3-stm32f446.list themis-front-v3-stm32f446.map
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_BIN)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'

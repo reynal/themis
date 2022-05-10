@@ -46,21 +46,21 @@ void RotaryEncoder::encoderMoved(Rotary_Direction direction){
 	time = HAL_GetTick();
 	switch(direction){
 		case MOVE_CW :
-			//if (dt > BIG_STEP_DT) position++; TODO
-			//else position += BIG_STEP_VAL;
-			position++;
+			if (dt > BIG_STEP_DT) position++;
+			else position += BIG_STEP_VAL;
+			//position++;
 			if (position > 127) position = 127;
 			break;
 		case MOVE_CCW :
-			//if (dt > BIG_STEP_DT) position--; TODO
-			//else position -= BIG_STEP_VAL;
-			position--;
+			if (dt > BIG_STEP_DT) position--;
+			else position -= BIG_STEP_VAL;
+			//position--;
 			if (position < 0) position = 0;
 			break;
 	}
 	if (position != previousPosition) changePending = true;
 	previousPosition = position;
-	printf("RE : name=%s pos=%d    dt=%lu       %c\n", name.c_str(), position, dt, (dt > BIG_STEP_DT ? ' ' : '*'));
+	//printf("RE : name=%s pos=%d    dt=%lu       %c\n", name.c_str(), position, dt, (dt > BIG_STEP_DT ? ' ' : '*'));
 }
 
 

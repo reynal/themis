@@ -23,8 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
-//#include "callback.h"
-//void HAL_GPIO_EXTI0_Callback();
+#include "callback.h"
 
 /* USER CODE END Includes */
 
@@ -63,9 +62,9 @@ extern DMA_HandleTypeDef hdma_spi1_tx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
 extern DMA_HandleTypeDef hdma_spi3_tx;
 extern TIM_HandleTypeDef htim3;
+extern DMA_HandleTypeDef hdma_usart1_tx;
 extern UART_HandleTypeDef huart4;
 extern UART_HandleTypeDef huart1;
-extern UART_HandleTypeDef huart2;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -215,11 +214,11 @@ void EXTI0_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
-	// MCP_101 Port B, north board
-	//printf("EXTI0_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+  __HAL_GPIO_EXTI_CLEAR_IT(MCP_101_INTB_Pin);
+  GPIO_EXTI0_Callback();
 
   /* USER CODE END EXTI0_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_101_INTB_Pin);
+  //HAL_GPIO_EXTI_IRQHandler(MCP_101_INTB_Pin);
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
@@ -232,11 +231,11 @@ void EXTI1_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI1_IRQn 0 */
 
-	// MCP_011, south
-	//printf("EXTI1_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+    __HAL_GPIO_EXTI_CLEAR_IT(MCP_011_INTB_Pin);
+    GPIO_EXTI1_Callback();
 
   /* USER CODE END EXTI1_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_011_INTB_Pin);
+  //HAL_GPIO_EXTI_IRQHandler(MCP_011_INTB_Pin);
   /* USER CODE BEGIN EXTI1_IRQn 1 */
 
   /* USER CODE END EXTI1_IRQn 1 */
@@ -249,11 +248,12 @@ void EXTI2_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI2_IRQn 0 */
 
-	// MCP 110 Port B, north
-	//printf("EXTI2_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+    __HAL_GPIO_EXTI_CLEAR_IT(MCP_110_INTB_Pin);
+    GPIO_EXTI2_Callback();
+
 
   /* USER CODE END EXTI2_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_110_INTB_Pin);
+  //HAL_GPIO_EXTI_IRQHandler(MCP_110_INTB_Pin);
   /* USER CODE BEGIN EXTI2_IRQn 1 */
 
   /* USER CODE END EXTI2_IRQn 1 */
@@ -266,11 +266,11 @@ void EXTI3_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI3_IRQn 0 */
 
-	// MCP 110 Port A, north
-	//printf("EXTI3_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+    __HAL_GPIO_EXTI_CLEAR_IT(MCP_110_INTA_Pin);
+    GPIO_EXTI3_Callback();
 
   /* USER CODE END EXTI3_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_110_INTA_Pin);
+  // HAL_GPIO_EXTI_IRQHandler(MCP_110_INTA_Pin);
   /* USER CODE BEGIN EXTI3_IRQn 1 */
 
   /* USER CODE END EXTI3_IRQn 1 */
@@ -283,11 +283,11 @@ void EXTI4_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI4_IRQn 0 */
 
-	// MCP 111 Port A, north
-	//printf("EXTI4_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+    __HAL_GPIO_EXTI_CLEAR_IT(MCP_111_INTA_Pin);
+    GPIO_EXTI4_Callback();
 
   /* USER CODE END EXTI4_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_111_INTA_Pin);
+  //HAL_GPIO_EXTI_IRQHandler(MCP_111_INTA_Pin);
   /* USER CODE BEGIN EXTI4_IRQn 1 */
 
   /* USER CODE END EXTI4_IRQn 1 */
@@ -328,19 +328,34 @@ void EXTI9_5_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
-	// EXTI5 : MCP 111 Port B (north)
-	// EXTI6 : MCP 100 Port B (south)
-	// EXTI7 : MCP 010 Port A (south)
-	// EXTI8 : MCP 010 Port B (south)
-	// EXTI9 : MCP 001 Port A (south)
-	//printf("EXTI9_5_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+	if(__HAL_GPIO_EXTI_GET_IT(MCP_111_INTB_Pin) != RESET){
+		  __HAL_GPIO_EXTI_CLEAR_IT(MCP_111_INTB_Pin);
+		  GPIO_EXTI5_Callback();
+	  }
+	  else if(__HAL_GPIO_EXTI_GET_IT(MCP_100_INTB_Pin) != RESET){
+		  __HAL_GPIO_EXTI_CLEAR_IT(MCP_100_INTB_Pin);
+		  GPIO_EXTI6_Callback();
+	  }
+	  else if(__HAL_GPIO_EXTI_GET_IT(MCP_010_INTA_Pin) != RESET){
+		  __HAL_GPIO_EXTI_CLEAR_IT(MCP_010_INTA_Pin);
+		  GPIO_EXTI7_Callback();
+	  }
+	  else if(__HAL_GPIO_EXTI_GET_IT(MCP_010_INTB_Pin) != RESET){
+		  __HAL_GPIO_EXTI_CLEAR_IT(MCP_010_INTB_Pin);
+		  GPIO_EXTI8_Callback();
+	  }
+	  else if(__HAL_GPIO_EXTI_GET_IT(MCP_001_INTA_Pin) != RESET){
+		  __HAL_GPIO_EXTI_CLEAR_IT(MCP_001_INTA_Pin);
+		  GPIO_EXTI9_Callback();
+	  }
 
   /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_111_INTB_Pin);
+	TODO 4 mai : supprimer les appels dans cubemx
+  /*HAL_GPIO_EXTI_IRQHandler(MCP_111_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_100_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_010_INTA_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_010_INTB_Pin);
-  HAL_GPIO_EXTI_IRQHandler(MCP_001_INTA_Pin);
+  HAL_GPIO_EXTI_IRQHandler(MCP_001_INTA_Pin);*/
   /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
@@ -375,41 +390,44 @@ void USART1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles USART2 global interrupt.
-  */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
-
-  /* USER CODE END USART2_IRQn 1 */
-}
-
-/**
   * @brief This function handles EXTI line[15:10] interrupts.
   */
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
 
-	// EXTI10 : MCP 001 Port B (south)
-	// EXTI11 : MCP 000 Port B (south)
-	// EXTI12 : MCP 000 Port A (south)
-	// EXTI13 : MCP 101 Port A (north)
-	// EXTI14 : MCP 011 Port A (south)
-	// EXTI15 : MCP 100 Port A (south)
-	//printf("EXTI15_10_IRQHandler: EXTI->PR=%.2X\n",(unsigned int)EXTI->PR);
+  if(__HAL_GPIO_EXTI_GET_IT(MCP_001_INTB_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_001_INTB_Pin);
+	  GPIO_EXTI10_Callback();
+  }
+  else if(__HAL_GPIO_EXTI_GET_IT(MCP_000_INTB_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_000_INTB_Pin);
+	  GPIO_EXTI11_Callback();
+  }
+  else if(__HAL_GPIO_EXTI_GET_IT(MCP_000_INTA_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_000_INTA_Pin);
+	  GPIO_EXTI12_Callback();
+  }
+  else if(__HAL_GPIO_EXTI_GET_IT(MCP_101_INTA_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_101_INTA_Pin);
+	  GPIO_EXTI13_Callback();
+  }
+  else if(__HAL_GPIO_EXTI_GET_IT(MCP_011_INTA_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_011_INTA_Pin);
+	  GPIO_EXTI14_Callback();
+  }
+  else if(__HAL_GPIO_EXTI_GET_IT(MCP_100_INTA_Pin) != RESET){
+	  __HAL_GPIO_EXTI_CLEAR_IT(MCP_100_INTA_Pin);
+	  GPIO_EXTI15_Callback();
+  }
 
   /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(MCP_001_INTB_Pin);
+  /*HAL_GPIO_EXTI_IRQHandler(MCP_001_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_000_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_000_INTA_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_101_INTA_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_011_INTA_Pin);
-  HAL_GPIO_EXTI_IRQHandler(MCP_100_INTA_Pin);
+  HAL_GPIO_EXTI_IRQHandler(MCP_100_INTA_Pin);*/
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */
@@ -436,6 +454,7 @@ void DMA2_Stream3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream3_IRQn 0 */
 
+
   /* USER CODE END DMA2_Stream3_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi1_tx);
   /* USER CODE BEGIN DMA2_Stream3_IRQn 1 */
@@ -443,7 +462,20 @@ void DMA2_Stream3_IRQHandler(void)
   /* USER CODE END DMA2_Stream3_IRQn 1 */
 }
 
+/**
+  * @brief This function handles DMA2 stream7 global interrupt.
+  */
+void DMA2_Stream7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart1_tx);
+  /* USER CODE BEGIN DMA2_Stream7_IRQn 1 */
+
+  /* USER CODE END DMA2_Stream7_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

@@ -4,7 +4,8 @@
  *  Created on: Nov 18, 2020
  *      Author: sydxrey
  *
- * Timings: 1 bit neopixel = 8 bits SPI (MOSI) = 1 byte of SPI
+ * Timings: 1 bit "neopixel" translates as 8 bits SPI (on the MOSI pin) = 1 byte of SPI
+ * For instance, 0x3A "neo" translates as 8 bytes on the SPI bus.
  *
  * <---------------> tCycle = 8 x Tspi
  *  _
@@ -13,11 +14,13 @@
  * | |__| |_________ = 1 (neopixel) = ioiooooo = 0xA0 sur le bus SPI
  *
  *  Steps :
- *  Write 0x3A (neo) = 0011 1010 (neo) ; first two bits help measure tCycle
+ *  Write 0x3A "neo" = 0011 1010 "neo" ; first two bits help measure tCycle
  *  then write 24 bits of data (=3 x 8 bits per color)
  *  then write 4tCycle of zero = 0x0000 (SPI) this is the EOS, and following bits are sent to next neopixel
  *  or
  *  write 8tCycle of zero = 0x00000000 (SPI), this is the GSLAT sequence, which copies data to the PWM controllers
+ *
+ *  !!! Timing: for TLC_LED_COUNT=17, the duration of the transmission over the SPI bus is 3.5ms
  *
  */
 
@@ -25,6 +28,7 @@
 #include "stm32f4xx_hal.h"
 #include "main.h"
 #include <stdlib.h>
+#include "stdio.h"
 
 //extern SPI_HandleTypeDef hspi1;
 
@@ -37,6 +41,8 @@ TLC59731::TLC59731(SPI_HandleTypeDef *hspi) {
 
 	// init SPI buffer for all the LEDs :
 	for (int led=0; led < TLC_LED_COUNT; led++) initSpiBuffer(led);
+
+	is_DMA_initialized=false;
 
 }
 
@@ -68,16 +74,21 @@ void TLC59731::test() {
 
 	//RGBColor colors[] = {RGBColor::YELLOW, RGBColor::TURQUOISE, RGBColor::RED, RGBColor::BLUE, RGBColor::CYAN, RGBColor::GREEN, RGBColor::WHITE};
 	//RGBColor colors[] = {RGBColor::RED, RGBColor::BLUE, RGBColor::GREEN, RGBColor::WHITE};
-	RGBColor col = RGBColor::RED;
+	//RGBColor col = RGBColor::BLUE;
 
 	//int i = 0;
-	while (1) {  // BRG sauf LED => RBG
+	//while (1) {  // BRG sauf LED => RBG
 
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, colors[(i++)%7]);
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, 20, 20, 5 * led);
 			for (int led=0; led < TLC_LED_COUNT; led++)  {
-				col.randomize(50);
-				update(led, col);
+				update(led, 0, 0, 255);
+				transmitData();
+				HAL_Delay(300);
+
+				update(led, 0, 0, 0);
+				//transmitData();
+				//HAL_Delay(100);
 			}
 			//i++;
 
@@ -106,10 +117,9 @@ void TLC59731::test() {
 			update(i++, 200, 100, 200); transmitData();
 			 */
 
-			transmitData();
-			HAL_Delay(500);
+			//HAL_Delay(500);
 
-	}
+	//}
 
 	/*while (1) {
 			//HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
@@ -125,7 +135,7 @@ void TLC59731::test() {
  * update the area of the SPI buffer containing RGB data for the given LED.
  * Leaves other areas unchanged, in particular the Write Command header and the EOS area.
  */
-void TLC59731::update(uint8_t led, uint8_t red256, uint8_t green256, uint8_t blue256) {
+void TLC59731::update(uint8_t led, uint8_t green256, uint8_t blue256, uint8_t red256) {
 
 	//uint8_t green256 = (uint8_t) (255 * green) & 0xFF;
 	//uint8_t blue256 = (uint8_t) (255 * blue) & 0xFF;
@@ -179,10 +189,45 @@ void TLC59731::update(uint8_t led, RGBColor& color) {
 }
 
 void TLC59731::transmitData() {
-	HAL_SPI_Transmit(_hspi, _spiBuf, TLC_BUF_SZ, 100);
+
+
+#ifdef TLC59731_USE_DMA
+	//same as HAL_SPI_Transmit_DMA(_hspi, _spiBuf, TLC_BUF_SZ) but optimized:
+	if (is_DMA_initialized == false){
+		_hspi->hdmatx->Instance->NDTR = TLC_BUF_SZ;
+		_hspi->hdmatx->Instance->PAR = (uint32_t)&(_hspi->Instance->DR);
+		_hspi->hdmatx->Instance->M0AR = (uint32_t)_spiBuf;
+
+		// clear all IF by writing to LIFCR register (Int Flag CR):
+		DMA_REG *regs = (DMA_REG *)_hspi->hdmatx->StreamBaseAddress;
+		regs->IFCR = 0x3FU << _hspi->hdmatx->StreamIndex; // clear all IF
+		// DMA2->LIFCR = 0x3FU << 22; // ibid as above but through direct register addressing (DMA2 for Stream 3 and 7, otherwise it's DMA1)
+		__HAL_DMA_ENABLE(_hspi->hdmatx);
+		__HAL_SPI_ENABLE(_hspi); // 1st time only
+		SET_BIT(_hspi->Instance->CR2, SPI_CR2_TXDMAEN);
+
+		is_DMA_initialized=true;
+	}
+	else {
+		  // The following 4 lines are enough to retrigger a DMA transfer provided we won't use IRQs:
+		  __HAL_DMA_DISABLE(_hspi->hdmatx);
+		  // clear all IF for DMA2/Stream3 by writing 1111X1 at proper position in DMA_LIFCR, otherwise transfer won't restart :-/
+		  // (note that this is normally done inside HAL's IRQ Handler, but since we didn't enable ITs, it won't be called...)
+		  DMA_REG *regs = (DMA_REG *)_hspi->hdmatx->StreamBaseAddress;
+		  regs->IFCR = 0x3FU << _hspi->hdmatx->StreamIndex; // clear all IF
+		  //DMA2->LIFCR = 0x3FU << 22;
+		  _hspi->hdmatx->Instance->NDTR = TLC_BUF_SZ;
+		  __HAL_DMA_ENABLE(_hspi->hdmatx);
+	}
+
+#elif
+  HAL_SPI_Transmit(_hspi, _spiBuf, TLC_BUF_SZ, 100);
+#endif
+
 }
 
 int TLC59731::getDataAreaIndex(uint8_t led) {
 
 	return led * (32 + TLC_EOS_SZ); // 8 data bits for the write command + 24 RGB data + "TLC_EOS_SZ" EOS bits
 }
+
