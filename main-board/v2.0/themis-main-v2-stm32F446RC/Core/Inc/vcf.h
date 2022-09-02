@@ -27,16 +27,16 @@ typedef struct {
 
 /* Private function prototypes -----------------------------------------------*/
 
-void setVcfOrder(uint8_t value);
-void init_Vcf();
+void vcfSetOrder(uint8_t value);
+void vcfInit();
 
-void updateVcfCutoff();
-void updateVcfResonance();
+void vcfWriteCutoffToDac();
+void vcfWriteResonanceToDac();
 
-void set_Vcf_ResonanceGlobal(uint8_t midivalue);
-void set_Vcf_CutoffGlobal(uint8_t midivalue);
+void vcfSetGlobalResonance(uint8_t midivalue);
+void vcfSetGlobalCutoff(uint8_t midivalue);
 
-void testVcf();
+void vcfTest();
 
 
 #endif /* INC_VCF_H_ */

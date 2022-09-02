@@ -15,20 +15,19 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "ad5644.h"
+#include "bh2221.h"
 #include "vcf.h"
 #include "stm32f4xx_hal.h"
 #include "adsr.h"
-//#include "stdio.h"
 #include "leds.h"
-#include "mcp23017.h"
 
 /* External variables --------------------------------------------------------*/
 
-extern State_Machine_Vcf stateMachineVcf;
+extern VcfStateMachine_t vcfStateMachine;
 
 /* Variables ---------------------------------------------------------*/
 
-GlobalFilterParams globalFilterParams = {
+GlobalFilterParams vcfGlobalParams = {
 		.vcfCutoff = MAX_CUTOFF * DEF_MIDICC_CUTOFF / 127.0,
 		.vcfResonance = MAX_RESONANCE * DEF_MIDICC_RESONANCE / 127.0
 };
@@ -37,60 +36,60 @@ GlobalFilterParams globalFilterParams = {
 
 /* User code -----------------------------------------------*/
 
-void setVcfOrder(uint8_t midiValue){
+void vcfSetOrder(uint8_t midiValue){
 	midiValue = midiValue % 2;
 	if (midiValue == 0){ // 2nd order
-		mcp23017_Set_Vcf_2ndOrder();
+		//mcp23017_Set_Vcf_2ndOrder(); // TODO
 	}
 	else if (midiValue ==1){ // 4th order
-		mcp23017_Set_Vcf_4thOrder();
+		//mcp23017_Set_Vcf_4thOrder(); // TODO
 	}
 }
 
-void set_Vcf_CutoffGlobal(uint8_t midiValue){
-	globalFilterParams.vcfCutoff = midiValue/127.0;
+void vcfSetGlobalCutoff(uint8_t midiValue){
+	vcfGlobalParams.vcfCutoff = midiValue/127.0;
 }
 
 
-void set_Vcf_ResonanceGlobal(uint8_t midiValue){
-	globalFilterParams.vcfResonance = midiValue;
+void vcfSetGlobalResonance(uint8_t midiValue){
+	vcfGlobalParams.vcfResonance = midiValue;
 
 }
 
-void updateVcfResonance(){
-	dacWrite((int) (MAX_RESONANCE * globalFilterParams.vcfResonance/127.), DAC_VCF_RES);
+void vcfWriteResonanceToDac(){
+	bh2221WriteDmaBuffer((int) (MAX_RESONANCE * vcfGlobalParams.vcfResonance/127.), BH2221_VCF_RES);
 }
 
 
-void init_Vcf(){
-	stateMachineVcf.cutoffFrequency = globalFilterParams.vcfCutoff;
-	setVcfOrder(0);
-	updateVcfCutoff();
-	updateVcfResonance();
+void vcfInit(){
+	vcfStateMachine.cutoffFrequency = vcfGlobalParams.vcfCutoff;
+	vcfSetOrder(0);
+	vcfWriteCutoffToDac();
+	vcfWriteResonanceToDac();
 }
 
-void updateVcfCutoff(){
+void vcfWriteCutoffToDac(){
 
 	// cutoff frequency varies as opposed to control voltage:
-	double cutoff = stateMachineVcf.cutoffFrequency; // +stateMachineVcf.tmpKbdtrackingShiftFactor; // TODO : + dbg_modulation
+	double cutoff = vcfStateMachine.cutoffFrequency; // +stateMachineVcf.tmpKbdtrackingShiftFactor; // TODO : + dbg_modulation
 	int dacLvl = (int)(4095.0 * (1.0-cutoff));
 	//int dacLvl = (int)(4095.0 * (cutoff));
 	if (dacLvl<0) dacLvl=0;
 	else if (dacLvl>4095) dacLvl=4095;
-	dacWrite(dacLvl, DAC_VCF_CUTOFF);
+	bh2221WriteDmaBuffer(dacLvl, BH2221_VCF_CUTOFF);
 }
 
 
 // ------------------------- hardware test ------------------------
 
-void testVcf(){
+void vcfTest(){
 
 	int i=0;
 	while(1){
-		set_Vcf_CutoffGlobal(i);
+		vcfSetGlobalCutoff(i);
 		//updateVcfCutoff();
 		HAL_Delay(50); // 200ms
-		toggleGreenLED();
+		ledToggle(LED_GREEN);
 		i ++;
 		//printf("%d\n", i++);
 		if (i > 127) break;

@@ -14,6 +14,11 @@
   * License. You may obtain a copy of the License at:
   *                        opensource.org/licenses/BSD-3-Clause
   *
+  *
+  * TODO :
+  * - replace Boolean with bool
+  *
+  *
   ******************************************************************************
   */
 /* USER CODE END Header */
@@ -26,10 +31,11 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "leds.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "math.h"
+#include "synth.h"
 
 /* USER CODE END Includes */
 
@@ -50,7 +56,6 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-extern SPI_HandleTypeDef hspi1;
 
 /* USER CODE END PV */
 
@@ -89,6 +94,8 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
+  // moved MX_DMA_Init() to the first init line (was right after GPIO_Init)
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -104,39 +111,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-  uint8_t spiBufBH2221[2] = {0x0D, 0x80}; // A02 = 0b0000.0100 = 0x04
-  uint8_t spiBufAD5644[3] = {0x00, 0x00, 0x00};
-  uint8_t val8=0;
-  uint16_t val14=0;
-  //uint8_t ch=0;
-  //uint8_t channel[12] = {0x08, 0x04, 0x0C, 0x02, 0x0A, 0x06, 0x0E, 0x01, 0x09, 0x05, 0x0D, 0x03}; // BH2221
-
-  // SW RESET
-  spiBufAD5644[0]=0x28;
-  spiBufAD5644[1]=0x00;
-  spiBufAD5644[2]=0x01;
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
-  HAL_Delay(1);
-
-  // Internal VRef ON
-  spiBufAD5644[0]=0x38;
-  spiBufAD5644[1]=0x00;
-  spiBufAD5644[2]=0x01;
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
-  HAL_Delay(1);
-
-  // LDAC auto-update:
-  spiBufAD5644[0]=0x30;
-  spiBufAD5644[1]=0x00;
-  spiBufAD5644[2]=0x0F;
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
-  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
-  HAL_Delay(1);
+  synthStart();
 
   /* USER CODE END 2 */
 
@@ -147,37 +122,6 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  HAL_GPIO_TogglePin(GPIOA, LED_GREEN_Pin);
-
-//	  // BH2221FV DAC : SPI1 (settling time = 100us for a 0 -> 255 output jump, otherwise it's shorter)
-//	  // CLK = PA5
-//	  // MOSI = PA7
-//	  // (NSS = PA4 not used yet)
-		  spiBufBH2221[0]=0x0D; //channel[ch];
-		  spiBufBH2221[1]=val8;
-		  HAL_GPIO_WritePin(BH2221_LD_GPIO_Port, BH2221_LD_Pin, GPIO_PIN_RESET);
-		  if (HAL_SPI_Transmit(&hspi1, spiBufBH2221, 2, 100) != HAL_OK) Error_Handler();
-		  HAL_GPIO_WritePin(BH2221_LD_GPIO_Port, BH2221_LD_Pin, GPIO_PIN_SET);
-
-		  __NOP();
-		  __NOP();
-		  __NOP();
-
-//		  //}
-
-	  spiBufAD5644[0]=0x07;
-	  spiBufAD5644[1]=(val14 >> 6) & 0x00FF;
-	  spiBufAD5644[2]=(val14 << 2) & 0x00FF;
-	  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-	  if (HAL_SPI_Transmit(&hspi2, spiBufAD5644, 3, 100) != HAL_OK) Error_Handler();
-	  HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
-	  HAL_Delay(1);
-
-	  val8+=16;
-	  val14+=256;
-	  if (val8 >= 0xFF) val8=0;
-	  if (val14 >= 0x3FFF) val14=0;
-
 
   }
   /* USER CODE END 3 */
@@ -196,6 +140,7 @@ void SystemClock_Config(void)
   */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -212,12 +157,14 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Activate the Over-Drive mode
   */
   if (HAL_PWREx_EnableOverDrive() != HAL_OK)
   {
     Error_Handler();
   }
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
@@ -245,7 +192,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-	HAL_GPIO_TogglePin(GPIOA, LED_GREEN_Pin);
+	//HAL_GPIO_TogglePin(GPIOA, LED_GREEN_Pin);
 	HAL_Delay(50);
   /* USER CODE END Error_Handler_Debug */
 }
@@ -266,5 +213,3 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

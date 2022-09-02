@@ -49,8 +49,8 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern MidiNote midi_Note;
-extern GlobalFilterParams globalFilterParams;
+extern MidiNote_t midiNote;
+extern GlobalFilterParams vcfGlobalParams;
 
 
 /* Variables ---------------------------------------------------------*/
@@ -71,21 +71,21 @@ static const int midiValueToTimeMs[128] = { 1, 8, 16, 25, 34, 44, 53, 63, 74, 85
 		15000, 15610, 16245, 16905, 17592, 18306, 19050, 19823, 20627, 21463, \
 		22333, 23238, 24179, 25158, 26176, 27235, 28337, 29483 };
 
-static Adsr_Params vcaAdsr;
+static AdsrParams_t adsrVca;
 
-State_Machine_Vca stateMachineVca = {
+VcaStateMachine_t vcaStateMachine = {
 		//.t = 0,
 		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCA / 127.0,
 		//.mulFactorAttack=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_ATTACK_TIME),
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_DECAY_TIME),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/DEF_RELEASE_TIME),
 		.machineState = IDLE,
-		.adsrParam = &vcaAdsr
+		.adsrParam = &adsrVca
 };
 
-static Adsr_Params vcfAdsr;
+static AdsrParams_t adsrVcf;
 
-State_Machine_Vcf stateMachineVcf = {
+VcfStateMachine_t vcfStateMachine = {
 		.t = 0,
 		.tMax = 0,
 		.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * DEF_MIDICC_VELOCITY_SENSITIVITY_VCF / 127.0,
@@ -95,7 +95,7 @@ State_Machine_Vcf stateMachineVcf = {
 		//.mulFactorDecay=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.decayTimeMs),
 		//.mulFactorRelease=exp(-1000.0*ADSR_TIMER_PERIOD/vcfAdsr.releaseTimeMs),
 		.machineState = IDLE,
-		.adsrParam = &vcfAdsr
+		.adsrParam = &adsrVcf
 };
 
 /* User code -----------------------------------------------*/
@@ -105,45 +105,45 @@ State_Machine_Vcf stateMachineVcf = {
 /**
  * Init all ADSR enveloppes parameters.
  */
-void init_Adsr_Parameters(){
+void adsrInitParameters(){
 
-	vcaAdsr.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCA];
-	vcaAdsr.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCA];
-	vcaAdsr.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCA];
-	vcaAdsr.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0;
+	adsrVca.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCA];
+	adsrVca.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCA];
+	adsrVca.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCA];
+	adsrVca.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCA / 127.0;
 
-	vcfAdsr.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCF];
-	vcfAdsr.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCF];
-	vcfAdsr.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCF];
-	vcfAdsr.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0;
+	adsrVcf.attackTimeMs = midiValueToTimeMs[DEF_MIDICC_ATTACK_TIME_VCF];
+	adsrVcf.decayTimeMs = midiValueToTimeMs[DEF_MIDICC_DECAY_TIME_VCF];
+	adsrVcf.releaseTimeMs = midiValueToTimeMs[DEF_MIDICC_RELEASE_TIME_VCF];
+	adsrVcf.sustainLevel = DEF_MIDICC_SUSTAIN_LVL_VCF / 127.0;
 
 }
 
 /**
  * Init data for the Attack phase of the VCA envelope. This is triggered by a MIDI Note On.
  */
-void prepare_Vca_Envelope_NoteON() {
+void adsrPrepareVcaEnvelopeNoteON() {
 
 	// stateMachineVca.amplitude=0.0; // commented Dec 3 2019 SR : avoid clip when re-triggering note while the enveloppe is not finished
-	stateMachineVca.tmpTargetLevel = ((1.0 - stateMachineVca.velocitySensitivity)  + (midi_Note.velocity / 127.) * stateMachineVca.velocitySensitivity);
+	vcaStateMachine.tmpTargetLevel = ((1.0 - vcaStateMachine.velocitySensitivity)  + (midiNote.velocity / 127.) * vcaStateMachine.velocitySensitivity);
 
-	stateMachineVca.tmpDelta = ADSR_TIMER_PERIOD_MS * stateMachineVca.tmpTargetLevel / vcaAdsr.attackTimeMs; // prepare dx for the attack phase of x(t)
+	vcaStateMachine.tmpDelta = ADSR_TIMER_PERIOD_MS * vcaStateMachine.tmpTargetLevel / adsrVca.attackTimeMs; // prepare dx for the attack phase of x(t)
 
-	stateMachineVca.machineState = ATTACK; // force vca machine state to ATTACK
+	vcaStateMachine.machineState = ATTACK; // force vca machine state to ATTACK
 
-	stateMachineVca.amplitude = 0.0;
+	vcaStateMachine.amplitude = 0.0;
 }
 
 /**
  * Init data for the Release phase of the VCA envelope. This is triggered by a MIDI Note Off.
  */
-void prepare_Vca_Envelope_NoteOFF() {
+void adsrPrepareVcaEnvelopeNoteOFF() {
 
-	stateMachineVca.tmpTargetLevel = 0.0;
+	vcaStateMachine.tmpTargetLevel = 0.0;
 
-	stateMachineVca.tmpDelta = - ADSR_TIMER_PERIOD_MS * stateMachineVca.amplitude / vcaAdsr.releaseTimeMs; // prepare dx for the R phase of x(t)
+	vcaStateMachine.tmpDelta = - ADSR_TIMER_PERIOD_MS * vcaStateMachine.amplitude / adsrVca.releaseTimeMs; // prepare dx for the R phase of x(t)
 
-	stateMachineVca.machineState = RELEASE; // force vca machine state to RELEASE
+	vcaStateMachine.machineState = RELEASE; // force vca machine state to RELEASE
 
 }
 
@@ -152,43 +152,43 @@ void prepare_Vca_Envelope_NoteOFF() {
  * then write "stateMachineVca.amplitude" to the appropriate DAC
  * This method should be called from the timer handler (every ms or so)
  */
-void update_Vca_Envelope() {
+void adsrUpdateVcaEnvelope() {
 
-	switch (stateMachineVca.machineState) {
+	switch (vcaStateMachine.machineState) {
 
 	case IDLE:
 		break;
 
 	case ATTACK:
-		stateMachineVca.amplitude += stateMachineVca.tmpDelta;
-		if (stateMachineVca.amplitude >= stateMachineVca.tmpTargetLevel) {
+		vcaStateMachine.amplitude += vcaStateMachine.tmpDelta;
+		if (vcaStateMachine.amplitude >= vcaStateMachine.tmpTargetLevel) {
 			// prepare dyn params for DECAY phase:
-			stateMachineVca.tmpTargetLevel *= vcaAdsr.sustainLevel; // modulate sustain level with velocity factor
-			stateMachineVca.tmpDelta = ADSR_TIMER_PERIOD_MS
-					* (stateMachineVca.tmpTargetLevel
-							- stateMachineVca.amplitude)
-					/ (vcaAdsr.decayTimeMs); // prepare dx for the decay phase of x(t)
-			stateMachineVca.machineState = DECAY;
+			vcaStateMachine.tmpTargetLevel *= adsrVca.sustainLevel; // modulate sustain level with velocity factor
+			vcaStateMachine.tmpDelta = ADSR_TIMER_PERIOD_MS
+					* (vcaStateMachine.tmpTargetLevel
+							- vcaStateMachine.amplitude)
+					/ (adsrVca.decayTimeMs); // prepare dx for the decay phase of x(t)
+			vcaStateMachine.machineState = DECAY;
 		}
 		break;
 
 	case DECAY:
 
-		if (stateMachineVca.amplitude > stateMachineVca.tmpTargetLevel) {
-			stateMachineVca.amplitude += stateMachineVca.tmpDelta;
+		if (vcaStateMachine.amplitude > vcaStateMachine.tmpTargetLevel) {
+			vcaStateMachine.amplitude += vcaStateMachine.tmpDelta;
 		}
 		// else stays on sustain plateau until NOTE OFF occurs
 		break;
 
 	case RELEASE:
 
-		if (stateMachineVca.amplitude > 0.0) { // stateMachineVca.tmpTargetLevel) {
-			stateMachineVca.amplitude += stateMachineVca.tmpDelta; // else stays on sustain plateau until NOTE OFF occurs
+		if (vcaStateMachine.amplitude > 0.0) { // stateMachineVca.tmpTargetLevel) {
+			vcaStateMachine.amplitude += vcaStateMachine.tmpDelta; // else stays on sustain plateau until NOTE OFF occurs
 		} else
-			stateMachineVca.machineState = IDLE;
+			vcaStateMachine.machineState = IDLE;
 		break;
 	}
-	updateVca();
+	vcaWriteAmplitudeToDac();
 
 }
 
@@ -197,7 +197,7 @@ void update_Vca_Envelope() {
 /**
  * Init data for the Attack phase of the VCF envelope. This is triggered by a MIDI Note On.
  */
-void prepare_Vcf_Envelope_NoteON() {
+void adsrPrepareVcfEnvelopeNoteON() {
 
 	// ---------- VCF dyn parameters -----------
 	/*
@@ -216,42 +216,42 @@ void prepare_Vcf_Envelope_NoteON() {
 	 * => velocityMulFactor=1.0
 	 */
 
-	stateMachineVcf.tmpVelocityMulFactor = (1.0 - stateMachineVcf.velocitySensitivity) + (midi_Note.velocity / 127.) * stateMachineVcf.velocitySensitivity;
-	stateMachineVcf.t = 0;
-	stateMachineVcf.tMax = (int) (vcfAdsr.attackTimeMs * ADSR_TIMER_FREQUENCY_KHZ);
-	stateMachineVcf.tmpKbdtrackingShiftFactor = (midi_Note.note - 64) / 64.0* stateMachineVcf.kbdTracking * MAX_KBD_TRACKING_VCF;
+	vcfStateMachine.tmpVelocityMulFactor = (1.0 - vcfStateMachine.velocitySensitivity) + (midiNote.velocity / 127.) * vcfStateMachine.velocitySensitivity;
+	vcfStateMachine.t = 0;
+	vcfStateMachine.tMax = (int) (adsrVcf.attackTimeMs * ADSR_TIMER_FREQUENCY_KHZ);
+	vcfStateMachine.tmpKbdtrackingShiftFactor = (midiNote.note - 64) / 64.0* vcfStateMachine.kbdTracking * MAX_KBD_TRACKING_VCF;
 #ifndef LEGATO
-	stateMachineVcf.cutoffFrequency = globalFilterParams.vcfCutoff; // starts at global cutoff value (comment out in legato mode)
+	vcfStateMachine.cutoffFrequency = vcfGlobalParams.vcfCutoff; // starts at global cutoff value (comment out in legato mode)
 #endif
 
-	stateMachineVcf.machineState = ATTACK; // force vcf machine state to ATTACK
+	vcfStateMachine.machineState = ATTACK; // force vcf machine state to ATTACK
 }
 
 /**
  * Init data for the Release phase of the VCA envelope. This is triggered by a MIDI Note Off.
  */
-void prepare_Vcf_Envelope_NoteOFF() {
+void adsrPrepareVcfEnvelopeNoteOFF() {
 
-	stateMachineVcf.t = 0;
-	stateMachineVcf.tMax = vcfAdsr.releaseTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
+	vcfStateMachine.t = 0;
+	vcfStateMachine.tMax = adsrVcf.releaseTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
 	//stateMachineVcf.tmpTargetLevel = globalFilterParams.vcfCutoff;
 	//stateMachineVcf.tmpDelta = ADSR_TIMER_PERIOD_MS * (stateMachineVcf.tmpTargetLevel - stateMachineVcf.cutoffFrequency) / stateMachineVcf.tMax;
 
-	stateMachineVcf.machineState = RELEASE; // force vcf machine state to RELEASE
+	vcfStateMachine.machineState = RELEASE; // force vcf machine state to RELEASE
 }
 
 /**
  * Updates the state machines associated with the generation of the VCF ADSR enveloppes,
  * then write it to the appropriate DAC
  */
-void update_Vcf_Envelope() {
+void adsrUpdateVcfEnvelope() {
 
-	State_Machine_Vcf* s = &stateMachineVcf; // alias for easier reading
+	VcfStateMachine_t* s = &vcfStateMachine; // alias for easier reading
 
-	switch (stateMachineVcf.machineState) {
+	switch (vcfStateMachine.machineState) {
 
 	case IDLE:
-		s->cutoffFrequency = globalFilterParams.vcfCutoff;
+		s->cutoffFrequency = vcfGlobalParams.vcfCutoff;
 		break;
 
 	case ATTACK:
@@ -262,90 +262,90 @@ void update_Vcf_Envelope() {
 		if (s->t >= s->tMax) {
 			// prepare dyn params for DECAY phase:
 			s->t = 0;
-			s->tMax = vcfAdsr.decayTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
+			s->tMax = adsrVcf.decayTimeMs * ADSR_TIMER_FREQUENCY_KHZ;
 			s->machineState = DECAY;
 		}
 		break;
 
 	case DECAY:
 		if (s->t < s->tMax) { // while DECAY phase's still ongoing...
-			s->tmpTargetLevel = globalFilterParams.vcfCutoff
-								+ (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel; // modulate sustain level with velocity factor
+			s->tmpTargetLevel = vcfGlobalParams.vcfCutoff
+								+ (s->envAmount * s->tmpVelocityMulFactor - vcfGlobalParams.vcfCutoff) * adsrVcf.sustainLevel; // modulate sustain level with velocity factor
 			s->tmpDelta = (s->tmpTargetLevel - s->cutoffFrequency) / (s->tMax  - s->t);
 			s->cutoffFrequency += s->tmpDelta;
 			s->t++;
 		}
 		else // otherwise we stay on sustain plateau until a NOTE OFF event occurs
-			s->cutoffFrequency = globalFilterParams.vcfCutoff
-								+ (s->envAmount * s->tmpVelocityMulFactor - globalFilterParams.vcfCutoff) * vcfAdsr.sustainLevel;
+			s->cutoffFrequency = vcfGlobalParams.vcfCutoff
+								+ (s->envAmount * s->tmpVelocityMulFactor - vcfGlobalParams.vcfCutoff) * adsrVcf.sustainLevel;
 
 		break;
 
 	case RELEASE:
 		if (s->t < s->tMax) {
-			s->tmpTargetLevel = globalFilterParams.vcfCutoff; // allow for realtime editing of vcf cutoff!
+			s->tmpTargetLevel = vcfGlobalParams.vcfCutoff; // allow for realtime editing of vcf cutoff!
 			s->tmpDelta = ADSR_TIMER_PERIOD_MS * (s->tmpTargetLevel - s->cutoffFrequency) / (s->tMax - s->t);
 			s->cutoffFrequency += s->tmpDelta; // else go back to IDLE state
 			s->t++;
 		}
 		else {
 			s->machineState = IDLE;
-			s->cutoffFrequency = globalFilterParams.vcfCutoff;
+			s->cutoffFrequency = vcfGlobalParams.vcfCutoff;
 		}
 		break;
 	}
-	updateVcfCutoff();
+	vcfWriteCutoffToDac();
 
 }
 
 // ===================== setters =============================
 
-void set_Vca_AdsrAttack(uint8_t value) {
-	vcaAdsr.attackTimeMs = midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_ATTACK_TIME_VCA;
+void adsrSetVcaAttack(uint8_t value) {
+	adsrVca.attackTimeMs = midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_ATTACK_TIME_VCA;
 }
 
-void set_Vca_AdsrDecay(uint8_t value) {
-	vcaAdsr.decayTimeMs =  midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_DECAY_TIME_VCA;
+void adsrSetVcaDecay(uint8_t value) {
+	adsrVca.decayTimeMs =  midiValueToTimeMs[value]; // ((value + 1) / 127.) * MAX_DECAY_TIME_VCA;
 }
 
-void set_Vca_AdsrSustain(uint8_t value) {
-	vcaAdsr.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCA;
+void adsrSetVcaSustain(uint8_t value) {
+	adsrVca.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCA;
 }
 
-void set_Vca_AdsrRelease(uint8_t value) {
-	vcaAdsr.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCA;
+void adsrSetVcaRelease(uint8_t value) {
+	adsrVca.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCA;
 }
 
-void set_Vca_VelocitySensitivity(uint8_t value) {
-	stateMachineVca.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value / 127.;
+void adsrSetVcaVelocitySensitivity(uint8_t value) {
+	vcaStateMachine.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value / 127.;
 }
 
-void set_Vcf_AdsrAttack(uint8_t value) {
-	vcfAdsr.attackTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_ATTACK_TIME_VCF;
+void adsrSetVcfAttack(uint8_t value) {
+	adsrVcf.attackTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_ATTACK_TIME_VCF;
 }
 
-void set_Vcf_AdsrDecay(uint8_t value) {
-	vcfAdsr.decayTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_DECAY_TIME_VCF;
+void adsrSetVcfDecay(uint8_t value) {
+	adsrVcf.decayTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_DECAY_TIME_VCF;
 }
 
-void set_Vcf_AdsrSustain(uint8_t value) {
-	vcfAdsr.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCF;
+void adsrSetVcfSustain(uint8_t value) {
+	adsrVcf.sustainLevel = (value / 127.); // * MAX_SUSTAIN_LVL_VCF;
 }
 
-void set_Vcf_AdsrRelease(uint8_t value) {
-	vcfAdsr.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCF;
+void adsrSetVcfRelease(uint8_t value) {
+	adsrVcf.releaseTimeMs = midiValueToTimeMs[value]; //((value + 1) / 127.) * MAX_RELEASE_TIME_VCF;
 }
 
-void set_Vcf_VelocitySensitivity(uint8_t value) {
-	stateMachineVcf.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value / 127.;
+void adsrSetVcfVelocitySensitivity(uint8_t value) {
+	vcfStateMachine.velocitySensitivity = MAX_VELOCITY_SENSITIVITY * value / 127.;
 }
 
-void set_Vcf_EgDepth(uint8_t value) {
-	stateMachineVcf.envAmount = MAX_EG_DEPTH_VCF * value / 127.;
+void adsrSetVcfEgDepth(uint8_t value) {
+	vcfStateMachine.envAmount = MAX_EG_DEPTH_VCF * value / 127.;
 }
 
-void set_Vcf_KbdTracking(uint8_t value) {
-	stateMachineVcf.kbdTracking = MAX_KBD_TRACKING_VCF * value / 127.;
+void adsrSetVcfKbdTracking(uint8_t value) {
+	vcfStateMachine.kbdTracking = MAX_KBD_TRACKING_VCF * value / 127.;
 }
 
 

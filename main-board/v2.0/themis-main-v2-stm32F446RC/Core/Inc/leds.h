@@ -8,15 +8,19 @@
 #ifndef INC_LEDS_H_
 #define INC_LEDS_H_
 
-void switchGreenLED(GPIO_PinState state);
-void switchGreenLEDOn();
-void switchGreenLEDOff();
-void toggleGreenLED();
+#define MAX_LED_DUTY 255
 
-void switchRedLED(GPIO_PinState state);
-void switchRedLEDOn();
-void switchRedLEDOff();
-void toggleRedLED();
+#define LED_GREEN 0
+#define LED_BLUE 1
+#define LED_RED 2
+
+void ledInit();
+void ledSetDuty(uint8_t led, uint8_t pwm255);
+void ledOn(uint8_t led);
+void ledOff(uint8_t led);
+void ledToggle(uint8_t led);
+void ledBlink(uint8_t led);
+void ledTest();
 
 
 #endif /* INC_LEDS_H_ */

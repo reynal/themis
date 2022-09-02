@@ -8,7 +8,7 @@
 #ifndef INC_VCA_H_
 #define INC_VCA_H_
 
-void updateVca();
-void init_Vca();
+void vcaWriteAmplitudeToDac();
+void vcaInit();
 
 #endif /* INC_VCA_H_ */

@@ -21,7 +21,7 @@
 typedef struct {
   int note; // 0-127
   int velocity; // 0-127
-} MidiNote;
+} MidiNote_t;
 
 
 
@@ -33,24 +33,21 @@ typedef enum {
 	OCTAVE_3340_A, // 0 1 2 3
 	SEMITONES_3340_A, 	// -11 to 11
 	DETUNE_3340_A,// 0-127, 0% at 64
-	WAVE_3340_A,  // 0 1 2
 	PWM_3340_A,// 0-127
-	LEVEL_3340_A, // 0-127 mixer 1
-	SYNC_3340_A, // 0 ou 127
+	SYNC_3340_A,
 
 	OCTAVE_3340_B, // 0 1 2 3
 	SEMITONES_3340_B, 	// -11 to 11
 	DETUNE_3340_B,// 0-127, 0% at 64
+	PWM_3340_B,// 0-127
+
+	LEVEL_TRI_3340_A, // 0-127 mixer 1
+	LEVEL_SAW_3340_A, // 0-127 mixer 1
+	LEVEL_PULSE_3340_A, // 0-127 mixer 1
+
 	LEVEL_TRI_3340_B, // 0-127 mixer 1
 	LEVEL_SAW_3340_B, // 0-127 mixer 1
 	LEVEL_PULSE_3340_B, // 0-127 mixer 1
-	PWM_3340_B,// 0-127
-
-	OCTAVE_13700, // 0 1 2 3
-	SEMITONES_13700, 	// -11 to 11
-	DETUNE_13700, // 0-127
-	LEVEL_TRI_13700, // 0-127 entre sq et tri (mixer 2 mixer 3)
-	LEVEL_SQU_13700, // 0-127 mixer 1
 
 	VCF_CUTOFF,
 	VCF_RESONANCE,
@@ -72,7 +69,7 @@ typedef enum {
 
 	CALIBRATE // send a non zero data to trigger a recalibration
 
-} MidiCCParam;
+} MidiCCParam_e;
 
 
 /*
@@ -82,7 +79,7 @@ typedef enum {
 		WAITING_FOR_BYTE1, // waiting for byte #1
 		WAITING_FOR_BYTE2,  // waiting for byte #2
 		WAITING_FOR_BYTE3// waiting for byte #3
-} Midi_Receiver_State;
+} MidiReceiverState_e;
 
 /*
  * A struct for a MIDI 3-byte short message
@@ -91,7 +88,7 @@ typedef struct {
 	uint8_t status_channel;
 	uint8_t data1;
 	uint8_t data2;
-} Midi_Message;
+} MidiMessage_t;
 
 /*
  * A collection of constants for MIDI status bytes
@@ -103,9 +100,9 @@ typedef struct {
 
 /* Private function prototypes -----------------------------------------------*/
 
-void midi_Process_Byte(uint8_t byte);
-void midi_Process_Incoming_Message(uint8_t statusChannel, uint8_t data1, uint8_t data2);
-void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value);
+void midiProcessByte(uint8_t byte);
+void midiProcessIncomingMessage(uint8_t statusChannel, uint8_t data1, uint8_t data2);
+void midiSetParamFromCC(MidiCCParam_e param, uint8_t value);
 
 
 

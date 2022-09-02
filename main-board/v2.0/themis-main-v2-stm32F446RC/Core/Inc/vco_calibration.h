@@ -11,10 +11,11 @@
 #define VCO_COUNT 3
 
 #include "ad5644.h"
+#include <stdbool.h>
 
 typedef struct {
 	char name[10]; // e.g. "VCO3340A"
-	Dac dac; // DAC channel linked to this VCO
+	ad5644Channel_e dac; // DAC channel linked to this VCO
 	int note; // init to -1
 	uint32_t cv; // Control voltage (aka DAC output)
 	uint32_t cv_min; // lowest possible CV
@@ -24,7 +25,7 @@ typedef struct {
 	int current_interval;
 	uint32_t * note_to_cv; // calibration table
 	uint32_t IC_Channel;
-	Boolean completed;
+	bool completed;
 } Vco_Calib;
 
 // aliases for easier code reading

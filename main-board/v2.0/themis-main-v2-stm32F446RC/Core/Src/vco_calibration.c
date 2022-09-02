@@ -30,6 +30,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
+#include <synth.h>
 #include "stm32f4xx_hal.h"
 #include "tim.h"
 #include "main.h"
@@ -37,7 +38,6 @@
 #include "vco_calibration.h"
 #include "vco.h"
 #include "ad5644.h"
-#include "dac.h"
 #include "math.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -48,23 +48,24 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern TIM_HandleTypeDef* htimVcoCalib;
-extern TIM_HandleTypeDef *htimVcoCalibSlave;
+extern TIM_HandleTypeDef htim2;
+#define htimVcoCalib (&htim2)
+
+//extern TIM_HandleTypeDef *htimVcoCalibSlave; // slave not needed anymore (32bits!)
 extern uint32_t  note_To_VCO3340A_CV[128];
 extern uint32_t  note_To_VCO3340B_CV[128];
 extern uint32_t  note_To_VCO13700_CV[128];
 
 /* variables ---------------------------------------------------------*/
 
-static Vco_Calib vco3340A_calib = {.name="VCO3340A", .dac=DAC_VCO_3340A_FREQ, .note_to_cv=note_To_VCO3340A_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340A, .cv_min=VCO3340A_MIN_INPUT_CV, .cv_max=VCO3340A_MAX_INPUT_CV};
-static Vco_Calib vco3340B_calib = {.name="VCO3340B", .dac=DAC_VCO_3340B_FREQ, .note_to_cv=note_To_VCO3340B_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340B, .cv_min=VCO3340B_MIN_INPUT_CV, .cv_max=VCO3340B_MAX_INPUT_CV};
-static Vco_Calib vco13700_calib = {.name="VCO13700", .dac=DAC_VCO_13700_FREQ, .note_to_cv=note_To_VCO13700_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO13700, .cv_min=VCO13700_MIN_INPUT_CV, .cv_max=VCO13700_MAX_INPUT_CV};
-static Vco_Calib* vco_Calib_Array[3];
+static Vco_Calib vco3340A_calib = {.name="VCO3340A", .dac=AD5644_VCO_3340A_FREQ, .note_to_cv=note_To_VCO3340A_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340A, .cv_min=VCO3340A_MIN_INPUT_CV, .cv_max=VCO3340A_MAX_INPUT_CV};
+static Vco_Calib vco3340B_calib = {.name="VCO3340B", .dac=AD5644_VCO_3340B_FREQ, .note_to_cv=note_To_VCO3340B_CV, .IC_Channel=TIM_CHANNEL_CALIB_VCO3340B, .cv_min=VCO3340B_MIN_INPUT_CV, .cv_max=VCO3340B_MAX_INPUT_CV};
+static Vco_Calib* vco_Calib_Array[2];
 
 static double time_To_Timer; // convert from a period value (in s) to a timer counting interval TODO : const ?
 static int note_To_Timer[128];
 
-static Boolean is_calib_underway = FALSE; // prevent re-entrance
+static bool is_calib_underway = false; // prevent re-entrance
 
 #ifdef DGB_CALIB
 static struct {
@@ -94,7 +95,6 @@ static void init_Calib(){
 
 	vco_Calib_Array[0] = &vco3340A_calib;
 	vco_Calib_Array[1] = &vco3340B_calib;
-	vco_Calib_Array[2] = &vco13700_calib;
 
 	for (int i=0; i<VCO_COUNT; i++){
 
@@ -103,7 +103,7 @@ static void init_Calib(){
 		vco_Calib_Array[i]->current_interval = 0;
 		vco_Calib_Array[i]->cv = vco_Calib_Array[i]->cv_min;
 		for (int midiNote = 0; midiNote < 128 ; midiNote++) vco_Calib_Array[i]->note_to_cv[midiNote] = 0;
-		dacWrite_Blocking(vco_Calib_Array[i]->cv , vco_Calib_Array[i]->dac);
+		ad5644WriteBlocking(vco_Calib_Array[i]->cv , vco_Calib_Array[i]->dac);
 
 	}
 }
@@ -161,30 +161,30 @@ static void init_Note_To_Timer_Table(){
  */
 void vcoCalib_Run(){
 
-	if (is_calib_underway == TRUE) return; // prevent re-entrance
+	if (is_calib_underway == true) return; // prevent re-entrance
 
-	is_calib_underway = TRUE;
+	is_calib_underway = true;
 
-	dac_Board_Timer_Stop(); // stop timer responsible for updating ADSR enveloppes
+	synthStopDacsTimer(); // stop timer responsible for updating ADSR enveloppes
 	HAL_Delay(10); // wait until current DMA transfer are finished
 
-	vco_Prepare_For_Calibration(); // beware: blocking calls on SPI and I2C! Make sure no DMA still underway!
+	vcoPrepareCalibration(); // beware: blocking calls on SPI and I2C! Make sure no DMA still underway!
 
 	init_Note_To_Timer_Table();
 	init_Calib();
 
-	__HAL_TIM_ENABLE(htimVcoCalibSlave);
-	__HAL_TIM_SetCounter(htimVcoCalibSlave, 0);
+	//__HAL_TIM_ENABLE(htimVcoCalibSlave); // NO NEED FOR A SLAVE TIMER ANYMORE
+	//__HAL_TIM_SetCounter(htimVcoCalibSlave, 0);
 
 	start_Calib();
 
 	//__HAL_TIM_ENABLE_IT(htimVcoCalib, TIM_IT_UPDATE); // TODO useless now
 
 	// while at least one VCO calibration has not completed yet...
-	Boolean completed = FALSE;
-	while(completed == FALSE){
+	bool completed = false;
+	while(completed == false){
 		  HAL_Delay(50); // LED blinks faster so we know we're calibrating!
-		  toggleRedLED(); // debug L4
+		  ledToggle(LED_RED); // debug L4
 		  /*TEST 22 juillet 2020
 		  completed = TRUE;
 		  for (int i=0; i<VCO_COUNT; i++){
@@ -198,13 +198,13 @@ void vcoCalib_Run(){
 	//printf("Calibration terminated!\n");
 	print_Note_To_CV_Tables();
 
-	switchRedLEDOff();
+	ledOff(LED_RED);
 
 	// debug L4 dac_Board_Timer_Start(); // restart timer responsible for updating ADSR enveloppes
 
-	__HAL_TIM_DISABLE(htimVcoCalibSlave);
+	//__HAL_TIM_DISABLE(htimVcoCalibSlave); // NO NEED FOR A SLAVE TIMER ANYMORE
 
-	is_calib_underway = FALSE;
+	is_calib_underway = false;
 
 }
 

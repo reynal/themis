@@ -29,7 +29,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -61,8 +60,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define BH2221_LD_Pin GPIO_PIN_4
 #define BH2221_LD_GPIO_Port GPIOA
-#define LED_GREEN_Pin GPIO_PIN_6
-#define LED_GREEN_GPIO_Port GPIOA
 #define AD5644_SYNC_Pin GPIO_PIN_12
 #define AD5644_SYNC_GPIO_Port GPIOB
 #define SW2_Pin GPIO_PIN_8
@@ -86,5 +83,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

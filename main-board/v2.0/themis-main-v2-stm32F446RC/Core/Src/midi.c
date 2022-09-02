@@ -11,29 +11,31 @@
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "adsr.h"
+#include "mixer.h"
 #include "vco.h"
 #include "vcf.h"
 #include "leds.h"
+#include <stdbool.h>
 
 /* External variables --------------------------------------------------------*/
 
 /* Private function prototypes -----------------------------------------------*/
 
-static void process_Message();
-static void noteOn_Handler(uint8_t note, uint8_t vel);
-static void noteOff_Handler(uint8_t note);
+static void midiProcessMessage();
+static void midiNoteOnHandler(uint8_t note, uint8_t vel);
+static void midiNoteOffHandler(uint8_t note);
 
 /* Private variables ---------------------------------------------------------*/
 
-MidiNote midi_Note = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
-static Midi_Receiver_State midi_Receiver_State; // midi state-machine state
-static Midi_Message midi_Message; // tmp var for state-machine
+MidiNote_t midiNote = { .note = 60, .velocity = 100}; // saves the note inside the last midi message
+static MidiReceiverState_e midiReceiverState; // midi state-machine state
+static MidiMessage_t midiMessage; // tmp var for state-machine
 
-static Boolean dbg_noteOn = FALSE;
+static bool dbgNoteOn = false;
 
 // converts a MIDI CC data1 value to the corresponding enum constant in MidiCCParam TODO replace by a table of setXXXParam(value) functions
 // and call this function directly from process_Message():
-static MidiCCParam midiCC_To_Params[128] = {
+static MidiCCParam_e midiCC_To_Params[128] = {
 		UNUSED_CC, 			// 0
 		UNUSED_CC, 			// 1
 		UNUSED_CC, 			// 2
@@ -49,18 +51,18 @@ static MidiCCParam midiCC_To_Params[128] = {
 		UNUSED_CC, 			// 12 (effect control 1)
 		UNUSED_CC, 			// 13 (effect control 2)
 		DETUNE_3340_A,	 	// 14
-		WAVE_3340_A, 		// 15
+		UNUSED_CC,	 		// 15
 		PWM_3340_A, 		// 16
-		LEVEL_3340_A, 		// 17
+		UNUSED_CC,	 		// 17
 		DETUNE_3340_B, 		// 18
-		LEVEL_TRI_3340_B,	// 19
-		LEVEL_PULSE_3340_B, // 20
-		LEVEL_SAW_3340_B,	// 21
+		LEVEL_TRI_3340_A,	// 19
+		LEVEL_PULSE_3340_A, // 20
+		LEVEL_SAW_3340_A,	// 21
 		PWM_3340_B, 		// 22
-		DETUNE_13700, 		// 23
-		LEVEL_TRI_13700, 	// 24
-		LEVEL_SQU_13700, 	// 25
-		UNUSED_CC, 			// 26
+		UNUSED_CC,	 		// 23
+		LEVEL_TRI_3340_B, 	// 24
+		LEVEL_PULSE_3340_B,	// 25
+		LEVEL_SAW_3340_B,	// 26
 		UNUSED_CC, 			// 27
 		VCF_CUTOFF, 		// 28 (MSB)
 		UNUSED_CC, 			// 29
@@ -107,10 +109,10 @@ static MidiCCParam midiCC_To_Params[128] = {
 		UNUSED_CC, 		// 70
 		SEMITONES_3340_A, 	// 71
 		SEMITONES_3340_B, 	// 72
-		SEMITONES_13700, 	// 73
+		UNUSED_CC,	 	// 73
 		OCTAVE_3340_A, 	// 74
 		OCTAVE_3340_B, 	// 75
-		OCTAVE_13700,	// 76
+		UNUSED_CC,		// 76
 		SYNC_3340_A, 	// 77
 		UNUSED_CC, 		// 78
 		UNUSED_CC, 		// 79
@@ -172,46 +174,46 @@ static MidiCCParam midiCC_To_Params[128] = {
 /**
  *  Prepare the envelope state machines following a MIDI NOTE ONE message
  */
-static void noteOn_Handler(uint8_t note, uint8_t vel){
+static void midiNoteOnHandler(uint8_t note, uint8_t vel){
 
 	printf("Note on: %d %d\n", note, vel);
 
-	if (dbg_noteOn ==TRUE) return; // debounce button
+	if (dbgNoteOn == true) return; // debounce button
 
-	midi_Note.note = note; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
-	midi_Note.velocity = vel; // but this implies changing the prototype of midiNoteOnHandler()
+	midiNote.note = note; // TODO SR Dec 3rd 2019: maybe move these two lines into miniNoteOnHandler() for coherence?
+	midiNote.velocity = vel; // but this implies changing the prototype of midiNoteOnHandler()
 
 
 	// printf("Note On\n");
-	dbg_noteOn = TRUE;
+	dbgNoteOn = true;
 
-	switchGreenLEDOn(); 	// switch on LED so that we can monitor enveloppe level TODO : pwm !
+	ledOn(LED_GREEN); // switch on LED so that we can monitor enveloppe level TODO : pwm !
 
 	// prepare state machines:
-	prepare_Vca_Envelope_NoteON();
-	prepare_Vcf_Envelope_NoteON();
+	adsrPrepareVcaEnvelopeNoteON();
+	adsrPrepareVcfEnvelopeNoteON();
 
 }
 
 /**
  *  Prepare the envelopes state machines following a MIDI NOTE ONE message
  */
-static void noteOff_Handler(uint8_t note){
+static void midiNoteOffHandler(uint8_t note){
 
 	printf("Note off: %d\n", note);
 
-	if (dbg_noteOn == FALSE) return; // debounce button
+	if (dbgNoteOn == false) return; // debounce button
 
 	// TODO check if note == midiNote.note: if not, we're releasing a note that is no longer being played => do nothing
 
 	// printf("Note Off\n");
-	dbg_noteOn = FALSE;
+	dbgNoteOn = false;
 
-	switchGreenLEDOff();
+	ledOff(LED_GREEN);
 
 	// prepare state machines:
-	prepare_Vca_Envelope_NoteOFF();
-	prepare_Vcf_Envelope_NoteOFF();
+	adsrPrepareVcaEnvelopeNoteOFF();
+	adsrPrepareVcfEnvelopeNoteOFF();
 
 }
 
@@ -221,156 +223,135 @@ static void noteOff_Handler(uint8_t note){
  * Updates the appropriate parameter of the ADSR enveloppe
  * @param value b/w 0 and 127
  */
-void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value){
+void midiSetParamFromCC(MidiCCParam_e param, uint8_t value){
 
 	printf("MIDI CC: %d %d\n", param, value);
 
 
 	//printf("setMidiCCParam\n");
-	toggleRedLED();
+	ledToggle(LED_RED);
 
 	switch (param){
 
 		// ------------------------------ VCA ------------------------------
 	case VCA_ATTACK:
 		// printf("VCA A=%d\n", value);
-		set_Vca_AdsrAttack(value);
+		adsrSetVcaAttack(value);
 		break;
 
 	case VCA_DECAY:
 		// printf("VCA D=%d\n", value);
-		set_Vca_AdsrDecay(value);
+		adsrSetVcaDecay(value);
 		break;
 
 	case VCA_SUSTAIN:
 		// printf("VCA S=%d\n", value);
-		set_Vca_AdsrSustain(value);
+		adsrSetVcaSustain(value);
 		break;
 
 	case VCA_RELEASE:
 		// printf("VCA R=%d\n", value);
-		set_Vca_AdsrRelease(value);
+		adsrSetVcaRelease(value);
 		break;
 
 		// ------------------------------ VCF ------------------------------
 	case VCF_ATTACK:
 		// printf("VCF Attack=%d\n", value);
-		set_Vcf_AdsrAttack(value);
+		adsrSetVcfAttack(value);
 		break;
 
 	case VCF_DECAY:
 		// printf("VCF Decay=%d\n", value);
-		set_Vcf_AdsrDecay(value);
+		adsrSetVcfDecay(value);
 		break;
 
 	case VCF_SUSTAIN:
 		// printf("VCF Sustain=%d\n", value);
-		set_Vcf_AdsrSustain(value);
+		adsrSetVcfSustain(value);
 		break;
 
 	case VCF_RELEASE:
 		// printf("VCF Release=%d\n", value);
-		set_Vcf_AdsrRelease(value);
+		adsrSetVcfRelease(value);
 		break;
 
 	case VCF_KBDTRACKING :
 		// printf("VCF KBDTracking=%d\n", value);
-		set_Vcf_KbdTracking(value);
+		adsrSetVcfKbdTracking(value);
 		break;
 
 	case VCF_EG :
 		// printf("VCF EG=%d\n", value);
-		set_Vcf_EgDepth(value);
+		adsrSetVcfEgDepth(value);
 		break;
 
 		// ------------------------------ velocity ------------------------------
 	case VCA_VELOCITY_SENSITIVITY:
 		// printf("VCA Velo sens=%d\n", value);
-		set_Vca_VelocitySensitivity(value);
+		adsrSetVcaVelocitySensitivity(value);
 		break;
 
 	case VCF_VELOCITY_SENSITIVITY:
 		// printf("VCF Velo sens=%d\n", value);
-		set_Vcf_VelocitySensitivity(value);
+		adsrSetVcfVelocitySensitivity(value);
 		break;
 
 		// ------------------------------ filter ------------------------------
 	case VCF_CUTOFF:
 		// printf("VCF Cutoff=%d\n", value);
-		set_Vcf_CutoffGlobal(value);
+		vcfSetGlobalCutoff(value);
 		break;
 
 	case VCF_RESONANCE:
 		// printf("VCF Res=%d\n", value);
-		set_Vcf_ResonanceGlobal(value);
+		vcfSetGlobalResonance(value);
 		break;
 
 	case VCF_ORDER :
 		// printf("VCF Order=%d\n", value);
-		setVcfOrder(value);
+		vcfSetOrder(value);
 		break;
 
-
-		// ------------------------------ VCO 13700 ------------------------------
-
-	case OCTAVE_13700 :
-		// printf("VCO13700 Octave=%d\n", value);
-		setVco13700Octave(value);
-		break;
-
-	case SEMITONES_13700 :
-		setVco13700Semitones(value);
-		break;
-
-	case DETUNE_13700 :
-		// printf("VCO13700 Detune=%d\n", value);
-		setVco13700Detune(value);
-		break;
-
-	case LEVEL_TRI_13700 :
-		// printf("VCO13700 Tri=%d\n", value);
-		setVco13700TriLevel(value);
-		break;
-
-	case LEVEL_SQU_13700 :
-		// printf("VCO13700 Squ=%d\n", value);
-		setVco13700SquareLevel(value);
-		break;
 
 		// ------------------------------ VCO 3340A------------------------------
 
 	case OCTAVE_3340_A:
 		// printf("VCO3340A Octave=%d\n", value);
-		setVco3340AOctave(value);
+		vcoSet3340AOctave(value);
 		break;
 
 	case SEMITONES_3340_A :
-		setVco3340ASemitones(value);
+		vcoSet3340ASemitones(value);
 		break;
 
 	case DETUNE_3340_A:
 		// printf("VCO3340A Detune=%d\n", value);
-		setVco3340ADetune(value);
+		vcoSet3340ADetune(value);
 		break;
 
-	case LEVEL_3340_A:
-		// printf("VCO3340A Level=%d\n", value);
-		setVco3340ALevel(value);
+	case LEVEL_TRI_3340_A:
+		// printf("VCO3340A Tri level=%d\n", value);
+		mixerSetVco3340ATriLevel(value);
 		break;
 
-	case WAVE_3340_A:
-		// printf("VCO3340A Wave=%d\n", value);
-		setVco3340AWaveType(value);
+	case LEVEL_SAW_3340_A:
+		// printf("VCO3340A Saw level=%d\n", value);
+		mixerSetVco3340ASawLevel(value);
+		break;
+
+	case LEVEL_PULSE_3340_A:
+		// printf("VCO3340A Pulse level=%d\n", value);
+		mixerSetVco3340APulseLevel(value);
 		break;
 
 	case PWM_3340_A:
 		// printf("VCO3340A PWM=%d\n", value);
-		setVco3340APWMDuty(value);
+		vcoSet3340APWMDuty(value);
 		break;
 
 	case SYNC_3340_A:
 		// printf("VCO3340A Sync=%d\n", value);
-		setVco3340ASync(value);
+		// TODO vcoSet3340ASync(value);
 		break;
 
 
@@ -378,36 +359,36 @@ void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value){
 
 	case OCTAVE_3340_B:
 		// printf("VCO3340B Octave=%d\n", value);
-		setVco3340BOctave(value);
+		vcoSet3340BOctave(value);
 		break;
 
 	case SEMITONES_3340_B :
-		setVco3340BSemitones(value);
+		vcoSet3340BSemitones(value);
 		break;
 
 	case DETUNE_3340_B:
 		// printf("VCO3340B Detune=%d\n", value);
-		setVco3340BDetune(value);
+		vcoSet3340BDetune(value);
 		break;
 
 	case PWM_3340_B:
 		// printf("VCO3340B PWM=%d\n", value);
-		setVco3340BPWMDuty(value);
+		vcoSet3340BPWMDuty(value);
 		break;
 
 	case LEVEL_TRI_3340_B:
 		// printf("VCO3340B Tri level=%d\n", value);
-		setVco3340BTriLevel(value);
+		mixerSetVco3340BTriLevel(value);
 		break;
 
 	case LEVEL_SAW_3340_B:
 		// printf("VCO3340B Saw level=%d\n", value);
-		setVco3340BSawLevel(value);
+		mixerSetVco3340BSawLevel(value);
 		break;
 
 	case LEVEL_PULSE_3340_B:
 		// printf("VCO3340B Pulse level=%d\n", value);
-		setVco3340BPulseLevel(value);
+		mixerSetVco3340BPulseLevel(value);
 		break;
 
 		// ------------------------------ MISC ------------------------------
@@ -427,22 +408,22 @@ void midi_Set_Param_From_CC(MidiCCParam param, uint8_t value){
  * Generally called when a MIDI message of three successive bytes has been received on the bus,
  * Parameters are taken from the midi_Message shared variable.
  */
-static void process_Message(){
+static void midiProcessMessage(){
 
-	int channel = midi_Message.status_channel & 0x0F;
-	int status = midi_Message.status_channel & 0xF0;
+	//int channel = midi_Message.status_channel & 0x0F; // in case we want to use the channel value
+	int status = midiMessage.status_channel & 0xF0;
 
 	switch (status){
 	case NOTE_ON :
-		noteOn_Handler(midi_Message.data1, midi_Message.data2);
+		midiNoteOnHandler(midiMessage.data1, midiMessage.data2);
 		break;
 
 	case NOTE_OFF :
-		noteOff_Handler(midi_Message.data1);
+		midiNoteOffHandler(midiMessage.data1);
 		break;
 
 	case CONTROL_CHANGE:
-		midi_Set_Param_From_CC(midiCC_To_Params[midi_Message.data1], midi_Message.data2);
+		midiSetParamFromCC(midiCC_To_Params[midiMessage.data1], midiMessage.data2);
 		break;
 	}
 }
@@ -451,12 +432,12 @@ static void process_Message(){
  * Generally called when a MIDI message of three successive bytes has been received on the bus,
  * @param statusChannel a MIDI status byte, e.g., MIDI CC or NOTE ON
  */
-void midi_Process_Incoming_Message(uint8_t statusChannel, uint8_t data1, uint8_t data2){
+void midiProcessIncomingMessage(uint8_t statusChannel, uint8_t data1, uint8_t data2){
 
-	midi_Message.status_channel = statusChannel;
-	midi_Message.data1 = data1;
-	midi_Message.data2 = data2;
-	process_Message();
+	midiMessage.status_channel = statusChannel;
+	midiMessage.data1 = data1;
+	midiMessage.data2 = data2;
+	midiProcessMessage();
 
 }
 
@@ -469,15 +450,15 @@ void midi_Process_Incoming_Message(uint8_t statusChannel, uint8_t data1, uint8_t
  *
  * This function modifies the global variable "midi_Message".
  */
-void midi_Process_Byte(uint8_t byte){
+void midiProcessByte(uint8_t byte){
 
-	switch (midi_Receiver_State) {
+	switch (midiReceiverState) {
 
 	case WAITING_FOR_BYTE1:
 
 		if ((byte & 0x80) != 0){ // byte starts with 1 -> status byte
-			midi_Message.status_channel = byte;
-			midi_Receiver_State = WAITING_FOR_BYTE2;
+			midiMessage.status_channel = byte;
+			midiReceiverState = WAITING_FOR_BYTE2;
 		}
 		// else this means we had more than 2 status bytes and this means there's an error on the MIDI bus => wait here
 		break;
@@ -485,27 +466,27 @@ void midi_Process_Byte(uint8_t byte){
 	case WAITING_FOR_BYTE2:
 
 		if ((byte & 0x80) == 0){ // byte starts with 0 -> data byte
-			midi_Message.data1 = byte;
-			midi_Receiver_State = WAITING_FOR_BYTE3;
+			midiMessage.data1 = byte;
+			midiReceiverState = WAITING_FOR_BYTE3;
 		}
 		else { // byte starts with a 1, means there's an ISSUE on the bus probably
 			// so we consider this is again a status byte
-			midi_Message.status_channel = byte; // erase old status with new one
-			midi_Receiver_State = WAITING_FOR_BYTE2; // still waiting for byte 2
+			midiMessage.status_channel = byte; // erase old status with new one
+			midiReceiverState = WAITING_FOR_BYTE2; // still waiting for byte 2
 		}
 		break;
 
 	case WAITING_FOR_BYTE3:
 
 		if ((byte & 0x80) == 0){ // byte starts with zero => data byte
-			midi_Message.data2 = byte;
-			process_Message();
-			midi_Receiver_State = WAITING_FOR_BYTE1; // back to initial state
+			midiMessage.data2 = byte;
+			midiProcessMessage();
+			midiReceiverState = WAITING_FOR_BYTE1; // back to initial state
 		}
 		else { // ISSUE: byte starts with a 1, means there's an ISSUE on the MIDI bus probably
 			// so we consider this is again a status byte
-			midi_Message.data1 = byte; // erase old status with new one
-			midi_Receiver_State = WAITING_FOR_BYTE2; // back to waiting for byte 2
+			midiMessage.data1 = byte; // erase old status with new one
+			midiReceiverState = WAITING_FOR_BYTE2; // back to waiting for byte 2
 		}
 		break;
 	}
