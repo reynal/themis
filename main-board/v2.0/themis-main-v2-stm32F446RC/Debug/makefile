@@ -60,8 +60,8 @@ all: main-build
 main-build: themis-main-v2-stm32F446RC.elf secondary-outputs
 
 # Tool invocations
-themis-main-v2-stm32F446RC.elf themis-main-v2-stm32F446RC.map: $(OBJS) $(USER_OBJS) /Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub\ repository/themis/main-board/v2.0/themis-main-v2-stm32F446RC/STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "themis-main-v2-stm32F446RC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Kingston/Dropbox/dev/Projets/themis/GitHub repository/themis/main-board/v2.0/themis-main-v2-stm32F446RC/STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-main-v2-stm32F446RC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+themis-main-v2-stm32F446RC.elf themis-main-v2-stm32F446RC.map: $(OBJS) $(USER_OBJS) /Volumes/Kingston\ 1/Dropbox/dev/Projets/themis/GitHub\ repository/themis/main-board/v2.0/themis-main-v2-stm32F446RC/STM32F446RCTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "themis-main-v2-stm32F446RC.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Volumes/Kingston 1/Dropbox/dev/Projets/themis/GitHub repository/themis/main-board/v2.0/themis-main-v2-stm32F446RC/STM32F446RCTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="themis-main-v2-stm32F446RC.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
