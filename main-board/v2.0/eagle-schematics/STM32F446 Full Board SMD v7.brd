@@ -7872,7 +7872,7 @@ Your Eurocircuits Team
 <wire x1="40.005" y1="32.131" x2="39.624" y2="32.512" width="0.3048" layer="1"/>
 <wire x1="39.624" y1="32.512" x2="39.624" y2="34.29" width="0.3048" layer="1"/>
 </signal>
-<signal name="N$34">
+<signal name="AD5644_A">
 <contactref element="AD5644" pad="1"/>
 <contactref element="ABCD" pad="1"/>
 <wire x1="36.052" y1="51.555" x2="36.052" y2="53.07" width="0.254" layer="1"/>
@@ -7881,7 +7881,7 @@ Your Eurocircuits Team
 <wire x1="36.322" y1="64.516" x2="34.29" y2="64.516" width="0.254" layer="1"/>
 <wire x1="37.846" y1="62.992" x2="36.322" y2="64.516" width="0.254" layer="1"/>
 </signal>
-<signal name="N$35">
+<signal name="AD5644_B">
 <contactref element="ABCD" pad="2"/>
 <contactref element="AD5644" pad="2"/>
 <wire x1="35.814" y1="61.976" x2="34.29" y2="61.976" width="0.254" layer="1"/>
@@ -7890,7 +7890,7 @@ Your Eurocircuits Team
 <wire x1="36.98" y1="55.45865625" x2="36.98" y2="60.81" width="0.254" layer="1"/>
 <wire x1="36.98" y1="60.81" x2="35.814" y2="61.976" width="0.254" layer="1"/>
 </signal>
-<signal name="N$39">
+<signal name="AD5644_C">
 <contactref element="AD5644" pad="4"/>
 <contactref element="ABCD" pad="3"/>
 <wire x1="34.552" y1="51.555" x2="34.552" y2="54.364" width="0.254" layer="1"/>
@@ -7899,7 +7899,7 @@ Your Eurocircuits Team
 <wire x1="36.322" y1="58.42" x2="35.306" y2="59.436" width="0.254" layer="1"/>
 <wire x1="35.306" y1="59.436" x2="34.29" y2="59.436" width="0.254" layer="1"/>
 </signal>
-<signal name="N$40">
+<signal name="AD5644_D">
 <contactref element="ABCD" pad="4"/>
 <contactref element="AD5644" pad="5"/>
 <wire x1="34.052" y1="51.555" x2="34.052" y2="56.658" width="0.254" layer="1"/>

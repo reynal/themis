@@ -25938,11 +25938,13 @@ B01-04 = 14 bits
 <wire x1="223.52" y1="144.78" x2="119.38" y2="144.78" width="0.1524" layer="97"/>
 <wire x1="119.38" y1="144.78" x2="119.38" y2="208.28" width="0.1524" layer="97"/>
 <text x="119.38" y="137.16" size="6.4516" layer="97">MOD RING</text>
-<text x="152.4" y="322.58" size="5.08" layer="97">!!!! Erreurs de routage à corriger !!!!
+<text x="152.4" y="322.58" size="5.08" layer="105">!!!! Erreurs de routage à corriger !!!!
 Au moment de l'équipement de la carte :
 - inverser le condo polarisé C54 (+ côté 0V et non côté -15V)
 - inverser la LED "-15V" (pour la même raison)</text>
-<text x="7.62" y="444.5" size="1.778" layer="97">Ajouter une capa de liaison !</text>
+<text x="7.62" y="444.5" size="5.08" layer="105">Ajouter une capa de liaison !</text>
+<text x="259.08" y="515.62" size="1.778" layer="105">BUG: IN_VCFORDER's CONNECTED TO NOTHING!</text>
+<text x="-309.88" y="467.36" size="1.778" layer="105">MASSE ????</text>
 </plain>
 <instances>
 <instance part="SW2" gate="1" x="582.93" y="407.67" smashed="yes" rot="R270">
@@ -29537,28 +29539,28 @@ Au moment de l'équipement de la carte :
 <label x="431.8" y="405.13" size="1.016" layer="95"/>
 </segment>
 </net>
-<net name="N$34" class="0">
+<net name="AD5644_A" class="0">
 <segment>
 <pinref part="AD5644" gate="G$0" pin="VOUTA"/>
 <pinref part="ABCD" gate="1" pin="1"/>
 <wire x1="746.76" y1="241.3" x2="751.84" y2="241.3" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$35" class="0">
+<net name="AD5644_B" class="0">
 <segment>
 <pinref part="ABCD" gate="1" pin="2"/>
 <pinref part="AD5644" gate="G$0" pin="VOUTB"/>
 <wire x1="751.84" y1="238.76" x2="746.76" y2="238.76" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$39" class="0">
+<net name="AD5644_C" class="0">
 <segment>
 <pinref part="AD5644" gate="G$0" pin="VOUTC"/>
 <pinref part="ABCD" gate="1" pin="3"/>
 <wire x1="746.76" y1="236.22" x2="751.84" y2="236.22" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="N$40" class="0">
+<net name="AD5644_D" class="0">
 <segment>
 <pinref part="ABCD" gate="1" pin="4"/>
 <pinref part="AD5644" gate="G$0" pin="VOUTD"/>
