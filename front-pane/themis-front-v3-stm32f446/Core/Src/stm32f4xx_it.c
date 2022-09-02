@@ -350,7 +350,7 @@ void EXTI9_5_IRQHandler(void)
 	  }
 
   /* USER CODE END EXTI9_5_IRQn 0 */
-	TODO 4 mai : supprimer les appels dans cubemx
+	// TODO 4 mai : supprimer les appels dans cubemx
   /*HAL_GPIO_EXTI_IRQHandler(MCP_111_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_100_INTB_Pin);
   HAL_GPIO_EXTI_IRQHandler(MCP_010_INTA_Pin);
