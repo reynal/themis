@@ -10,7 +10,11 @@
  * SPI :
  * 	- pour avoir 24 bits d'affilee sans "trou", faire NSSPMode = SPI_NSS_PULSE_DISABLE dans CubeMX
  *		- attention, meme si Hardware NSS Signal = disable, ca compte quand meme !
+ *		ADDENDUM : only for L432? also for F446?
  *
+ *
+ *
+ * =================
  * AD5644 short doc:
  *
  * input shift register (24 bits wide):
@@ -34,59 +38,81 @@
 #include "ad5644.h"
 #include "main.h"
 #include "misc.h"
+#include <stdbool.h>
 
 /* External variables --------------------------------------------------------*/
 
-extern SPI_HandleTypeDef *hspi_Dac;
-extern DMA_HandleTypeDef *hdma_Dac_tx;
+extern SPI_HandleTypeDef hspi2;
 
 
 /* variables ---------------------------------------------------------*/
 
-static uint8_t txDAC5644Buff[3]; // 24 bit transmit buffer for DAC over SPI
+static uint8_t txDacBuf[3]; // 24 bit transmit buffer for DAC over SPI
 static uint16_t channel_data[AD5644_CHANNEL_COUNT] = {0}; // one buffer for each DAC channel
-static Boolean is_need_channel_data_sync[AD5644_CHANNEL_COUNT] = {FALSE}; // list channels that need synchro to the DAC
+static bool is_need_channel_data_sync[AD5644_CHANNEL_COUNT] = {false}; // list channels that need synchro to the DAC
+
+static bool is_DMA_initialized;
 
 
 /* function prototypes -----------------------------------------------*/
 
+static void ad5644SwReset();
+static void ad5644InternalVrefOn();
+static void ad5644LdacAutoupdate();
+static void ad5644InitDma();
 
 /* user code -----------------------------------------------*/
+
+/**
+ * Init the AD5644 device:
+ * - select internal 2.5V voltage reference.
+ * - initialize the SPI-DMA transfer
+ * This is a blocking call.
+ */
+void ad5644Init(){
+
+	is_DMA_initialized=false;
+	ad5644SwReset();
+	ad5644InternalVrefOn();
+	ad5644LdacAutoupdate();
+	ad5644InitDma();
+
+}
 
 
 /**
  * Write the given word to the given channel buffer and mark data as needing sync.
  * Data need then to be sync with AD5644 device using ad5644_Write_Dma(), e.g., from a timer IRQ.
  */
-void dacWrite(uint16_t word14bits, Dac channel){
+void ad5644WriteDmaBuffer(uint16_t word14bits, ad5644Channel_e channel){
 
-	is_need_channel_data_sync[channel] = FALSE; // lock
+	is_need_channel_data_sync[channel] = false; // lock
 	channel_data[channel] = word14bits;
-	is_need_channel_data_sync[channel] = TRUE; // unlock
+	is_need_channel_data_sync[channel] = true; // unlock
 
 }
 
 /**
  * Write the given word to the given DAC channel in blocking SPI mode.
  * Data are thus guaranteed to be written immediately to the AD5644 device.
+ * @param channel 0 to 3
  */
-void dacWrite_Blocking(uint16_t word, Dac channel){
+void ad5644WriteBlocking(uint16_t val14, ad5644Channel_e channel){
 
-	word &= 0x3FFF; // make sure it's >=0 and <16384
+	val14 &= 0x3FFF; // make sure it's >=0 and <16384
 
-	// send SYNC pulse (approx 560ns negative pulse, minimum duration in datasheet is 33ns so that's perfectly safe):
-	//AD5644_SYNC_GPIO_Port->BSRR = (uint32_t)AD5644_SYNC_Pin << 16U; // =
-	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+	//txDAC5644Buff[0]=0x07; // (cf page 21 de la datasheet) : 0000 0111 => C2C1C0=000 (write to input reg) et A2A1A0=111 (update all DACs registers)
+	txDacBuf[0] = channel & 0x07;
+	txDacBuf[1]=(val14 >> 6) & 0x00FF;
+	txDacBuf[2]=(val14 << 2) & 0x00FF;
+	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET); // doc p.21: SYNC must be brough high for a min of 15ns before the next write seq (that starts with a LOW)
 
-	txDAC5644Buff[0] = channel & 0x0F;
-	txDAC5644Buff[1] = 0xC0 | ((word & 0xFC0) >> 6U);
-	txDAC5644Buff[2] = ((word & 0x03F) << 2U);
+	if (HAL_SPI_Transmit(hspi_AD5644, txDacBuf, 3, 100) != HAL_OK) Error_Handler();
+	//if (HAL_SPI_Transmit_DMA(hspi_AD5644, txDAC5644Buff, 3) != HAL_OK) Error_Handler(); // validé le 24 juin 2022
+	//HAL_Delay(1);
 
-
-	HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100); // TODO remove call to HAL, replace by registers
-
-	//AD5644_SYNC_GPIO_Port->BSRR = AD5644_SYNC_Pin; // =
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
+
 }
 
 
@@ -94,99 +120,69 @@ void dacWrite_Blocking(uint16_t word, Dac channel){
 //                             AD5644
 // =================================================================================
 
-static void ad5644_sw_reset(){
+static void ad5644SwReset(){
 
-	/* was AD5391
-	// send 560ns SYNC pulse, configuring tx buffer in the meantime:
-	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin;
-	txDAC5644Buff[0] = 0x0C; // 0000.1100 (!A/B R/!W 0 0) . (A3 A2 A1 A0)
-	txDAC5644Buff[1] = 0x14; // 0001.0100 (REG1 REG0 PDStatus REFSelect) . (Boost IntExtRef Monitor Thermal)
-	txDAC5644Buff[2] = 0x00; // 0000.0000 (don't cares)
-	DAC_SYNC_GPIO_Port->BSRR = DAC_SYNC_Pin;
-	// send 3 bytes for special function register in blocking mode:
-	HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100);*/
-
-	txDAC5644Buff[0]=0x28;
-	txDAC5644Buff[1]=0x00;
-	txDAC5644Buff[2]=0x01;
+	txDacBuf[0]=0x28; // C2 C1 C0 = 101 = RESET (page 21)
+	txDacBuf[1]=0x00; // N/A
+	txDacBuf[2]=0x01; // Perform a true Power-On reset, not just a SW reset (that is, reset every register)
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-	if (HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100) != HAL_OK) Error_Handler();
+	if (HAL_SPI_Transmit(hspi_AD5644, txDacBuf, 3, 100) != HAL_OK) Error_Handler();
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
 	HAL_Delay(1);
 
 }
 
-static void ad5644_internal_vref_on(){
+static void ad5644InternalVrefOn(){
 
-	txDAC5644Buff[0]=0x38;
-	txDAC5644Buff[1]=0x00;
-	txDAC5644Buff[2]=0x01;
+	txDacBuf[0]=0x38; // C2 C1 C0 = 111 = Internal Reference Setup
+	txDacBuf[1]=0x00; // N/A
+	txDacBuf[2]=0x01; // Turn ON internal ref
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-	if (HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100) != HAL_OK) Error_Handler();
+	if (HAL_SPI_Transmit(hspi_AD5644, txDacBuf, 3, 100) != HAL_OK) Error_Handler();
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
 	HAL_Delay(1);
 }
 
-static void ad5644_ldac_autoupdate(){
+static void ad5644LdacAutoupdate(){
 
-	txDAC5644Buff[0]=0x30;
-	txDAC5644Buff[1]=0x00;
-	txDAC5644Buff[2]=0x0F;
+	txDacBuf[0]=0x30; // C2 C1 C0 = 110 = LDAC register setup
+	txDacBuf[1]=0x00; // N/A
+	txDacBuf[2]=0x0F; // all 4 DAC registers are transparent (i.e. DAC is updated immediately: the contents of the input registers are transferred to the DAC on the falling edge of the 24th SCLK pulse)
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
-	if (HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100) != HAL_OK) Error_Handler();
+	if (HAL_SPI_Transmit(hspi_AD5644, txDacBuf, 3, 100) != HAL_OK) Error_Handler();
 	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
 	HAL_Delay(1);
 
 }
 
-static void ad5644_init_dma(){
-	/* TODO L432 vers F446 :
-	// init SPI1/DMA transfer ; DMA transmit buffer is txDAC5644[3].
-	SET_BIT(hspi_Dac->Instance->CR2, SPI_CR2_LDMATX); // transfer size is odd (1)
 
-	__HAL_DMA_DISABLE(hdma_Dac_tx);
 
-	hdma_Dac_tx->DmaBaseAddress->IFCR = DMA_ISR_GIF3; // clear all pending interrupts
-	hdma_Dac_tx->Instance->CNDTR = 3; // program 3 byte transfer
-	hdma_Dac_tx->Instance->CPAR = (uint32_t)&(hspi_Dac->Instance->DR); // peripheral target address = SPI data register DR
-	hdma_Dac_tx->Instance->CMAR = (uint32_t)txDAC5644Buff; // memory source address
+static void ad5644InitDma(){
 
-	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_HT); // half-transfer IT
-	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_TC); // transfer complete IT
-	__HAL_DMA_DISABLE_IT(hdma_Dac_tx, DMA_IT_TE); // transfer error IT
+	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
 
-	// __HAL_DMA_ENABLE_IT(hdma_Dac_tx, (DMA_IT_TC | DMA_IT_TE)); // we don't actually make use of SPI interrupts actually (SR 4/30/2020)
+	uint16_t val14  = 8192;
 
-	__HAL_DMA_ENABLE(hdma_Dac_tx); // re-enable DMA request
-	__HAL_SPI_ENABLE(hspi_Dac); // enable SPI peripheral
+	//txDAC5644Buff[0]=0x07; // (cf page 21 de la datasheet) : 0000 0111 => C210=000 (write to reg) et A210=111 update all DACs registers
+	txDacBuf[0] = 0; // arbitrary
+	txDacBuf[1]=(val14 >> 6) & 0x00FF;
+	txDacBuf[2]=(val14 << 2) & 0x00FF;
 
-	//__HAL_SPI_ENABLE_IT(spi_dac, (SPI_IT_TXE | SPI_IT_ERR)); // enable SPI TXE + ERR interrupt
-	//__HAL_SPI_ENABLE_IT(spi_dac, SPI_IT_TXE);
-	 */
+	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
+
+	hspi_AD5644->hdmatx->Instance->NDTR = 3;
+	hspi_AD5644->hdmatx->Instance->PAR = (uint32_t)&(hspi_AD5644->Instance->DR);
+	hspi_AD5644->hdmatx->Instance->M0AR = (uint32_t)txDacBuf;
+
+	// clear all IF by writing to LIFCR register (Int Flag CR):
+	DMA_REG *regs = (DMA_REG *)hspi_AD5644->hdmatx->StreamBaseAddress;
+	regs->IFCR = 0x3FU << hspi_AD5644->hdmatx->StreamIndex; // clear all IF
+	// DMA2->LIFCR = 0x3FU << 22; // ibid as above but through direct register addressing (DMA2 for Stream 3 and 7, otherwise it's DMA1)
+	__HAL_DMA_ENABLE(hspi_AD5644->hdmatx);
+	__HAL_SPI_ENABLE(hspi_AD5644); // 1st time only
+
+	SET_BIT(hspi_AD5644->Instance->CR2, SPI_CR2_TXDMAEN);
 }
-
-/**
- * Init the AD5644 device:
- * - select internal 2.5V voltage reference.
- * - initialize the SPI-DMA transfer
- * This is a blocking call.
- *
- *
- * AD5644 DAC initialization code :
- *
- *
- *
- */
-void ad5644_Init_Device(){
-
-	ad5644_sw_reset();
-	ad5644_internal_vref_on();
-	ad5644_ldac_autoupdate();
-	ad5644_init_dma();
-
-}
-
-
 
 /**
  * Write 12bit word to output A3.A2.A1.A0 (channel A) :
@@ -200,140 +196,54 @@ void ad5644_Init_Device(){
  *   the busy signal goes low for 600ns hence minimum timer period must be above 6us.
  *
  */
-void ad5644_Write_Dma(uint8_t channel){
-/* TODO L432 vers F446 :
-	if (is_need_channel_data_sync[channel] == FALSE) return;
+void ad5644XferBufferDma(ad5644Channel_e channel){
 
-	uint16_t word = channel_data[channel]; // atomic copy?
+	if (is_need_channel_data_sync[channel] == false) return;
 
-	// send SYNC pulse (approx 560ns negative pulse, minimum duration in datasheet is 33ns so that's perfectly safe):
-	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin;
+	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_SET);
 
-	txDAC5644Buff[0] = channel & 0x0F;
-	txDAC5644Buff[1] = 0xC0 | ((word & 0xFC0) >> 6U);
-	txDAC5644Buff[2] = ((word & 0x03F) << 2U);
+	uint16_t val14  = channel_data[channel] & 0x3FFF; // atomic copy? Also make sure it's >=0 and <16384
 
-	DAC_SYNC_GPIO_Port->BSRR = DAC_SYNC_Pin;
+	//txDAC5644Buff[0]=0x07; // (cf page 21 de la datasheet) : 0000 0111 => C210=000 (write to reg) et A210=111 update all DACs registers
+	txDacBuf[0] = channel & 0x07;
+	txDacBuf[1]=(val14 >> 6) & 0x00FF;
+	txDacBuf[2]=(val14 << 2) & 0x00FF;
 
-	// trigger DMA transfer:
-	__HAL_DMA_DISABLE(hdma_Dac_tx);
-	hdma_Dac_tx->Instance->CNDTR = 3; // 3 bytes ; re-writing to CNDTR is enough to "restart" DMA request, see L4 or F4 datasheet
-	__HAL_DMA_ENABLE(hdma_Dac_tx);
-	SET_BIT(hspi_Dac->Instance->CR2, SPI_CR2_TXDMAEN); // re-enable Tx DMA request
+	HAL_GPIO_WritePin(AD5644_SYNC_GPIO_Port, AD5644_SYNC_Pin, GPIO_PIN_RESET);
 
-	is_need_channel_data_sync[channel] = FALSE;
-*/
+	//same as HAL_SPI_Transmit_DMA(hspi_AD5644, _spiBuf, TLC_BUF_SZ) but optimized:
+
+	// The following 4 lines are enough to retrigger a DMA transfer provided we won't use IRQs:
+	__HAL_DMA_DISABLE(hspi_AD5644->hdmatx);
+	// clear all IF for DMA2/Stream3 by writing 1111X1 at proper position in DMA_LIFCR, otherwise transfer won't restart :-/
+	// (note that this is normally done inside HAL's IRQ Handler, but since we didn't enable ITs, it won't be called...)
+	DMA_REG *regs = (DMA_REG *)hspi_AD5644->hdmatx->StreamBaseAddress;
+	regs->IFCR = 0x3FU << hspi_AD5644->hdmatx->StreamIndex; // clear all IF
+	//DMA2->LIFCR = 0x3FU << 22;
+	hspi_AD5644->hdmatx->Instance->NDTR = 3;
+
+	__HAL_DMA_ENABLE(hspi_AD5644->hdmatx);
+
+	is_need_channel_data_sync[channel] = false;
 }
 
+// hardware test:
+void ad5644Test(){
 
+	ad5644Init();
 
-
-// =================================================================================
-//                             TEST CODE
-// =================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ====================================================================================
-// ARXIV
-// ====================================================================================
-
-
-// ============================ test code ====================================
-
-// Polling transmit
-/*void test_AD5644_Spi_Transmit(){
-
+	uint16_t val14=1000;
+	int channel = 3;
 
 	while(1){
-		DAC_SYNC_GPIO_Port->BRR = (uint32_t)(DAC_SYNC_Pin); // reset SYNC
-		HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100);
-		DAC_SYNC_GPIO_Port->BSRR = (uint32_t)DAC_SYNC_Pin; // set SYNC
-		HAL_Delay(10);
-	}
+		//ad5644_Write_Blocking(val14,0);
 
+		ad5644WriteDmaBuffer(val14, channel);
+		ad5644XferBufferDma(channel);
 
-}*/
-
-// DMA avec HAL
-/*void test_AD5644_Spi_Transmit_DMA(){
-
-	while(1){
-		HAL_SPI_Transmit_DMA(hspi_Dac, txDAC5644Buff, 3);
-		HAL_Delay(10);
-	}
-}*/
-
-// DMA avec prog a la main des registres
-/*void test_AD5644_Spi_Transmit_DMA_ManualConfig(){
-
-
-	ad5644_Init_Dma();
-
-	  while (1){
-		  HAL_Delay(5);
-		  ad5644_Transmit_Dma();
-	  }
-}*/
-
-// test du DAC AD5644
-/*void test_AD5644_Dac(){
-
-	ad5644_Reset_Board();
-
-	ad5644_Init_Dac();
-
-	ad5644_Init_Dma();
-
-	int t=0;
-	uint32_t x;
-
-	while(1){
-
-		x = (uint32_t)(2000. * (1.0+sin(0.1 * t)));
-		t++;
-		ad5644_Write_Dma(x, 0x00);
+		val14+=128;
+		if (val14 >= 0x3FFF) val14=0;
 		HAL_Delay(1);
 	}
 
-}*/
-
-/**
- * Triggers one transfer of 3 bytes to the AD5644 DAC.
- * At 5Mbits/s, this takes 5us.
- */
-/*static void ad5644_Transmit_SpiDma(){
-
-	  __HAL_DMA_DISABLE(hdma_Dac_tx);
-	  hdma_Dac_tx->Instance->CNDTR = 3;
-	  __HAL_DMA_ENABLE(hdma_Dac_tx);
-	  SET_BIT(hspi_Dac->Instance->CR2, SPI_CR2_TXDMAEN); // re-enable Tx DMA request
-
-}*/
-
-
-/*static void ad5644_Write_Blocking(uint32_t word, uint32_t channel){ // same as ad5644_Write_Dma  but blocking mode
-
-	DAC_SYNC_GPIO_Port->BRR = DAC_SYNC_Pin; // lower SYNC
-
-	txDAC5644Buff[0] = channel & 0x0F;
-	txDAC5644Buff[1] = 0xC0 | ((word & 0xFC0) >> 6U);
-	txDAC5644Buff[2] = ((word & 0x03F) << 2U);
-
-	DAC_SYNC_GPIO_Port->BSRR = DAC_SYNC_Pin; // raise SYNC (takes 560ns @ 80MHz)
-
-	HAL_SPI_Transmit(hspi_Dac, txDAC5644Buff, 3, 100);
-}*/
-
-
+}
