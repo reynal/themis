@@ -16,6 +16,7 @@
 #include "synth.h"
 #include "mixer.h"
 //#include "midi.h"
+#include "stlink_rx_midi.h"
 #include "main.h"
 #include "adsr.h"
 #include "vco.h"
@@ -246,7 +247,7 @@ void synthStart(){
 
 	switchInit();
 
-//	stlink_Rx_Init(); // MIDI
+	stlink_Rx_Init(); // MIDI
 
 	synthStartDacTimer();
 
