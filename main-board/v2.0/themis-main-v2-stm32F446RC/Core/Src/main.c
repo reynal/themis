@@ -15,9 +15,10 @@
   *                        opensource.org/licenses/BSD-3-Clause
   *
   *
-  * TODO :
-  * - replace Boolean with bool
+  * Connection programmateur STLink:
   *
+  * ORANGE	JAUNE	X
+  * ROUGE	VERT	NOIR
   *
   ******************************************************************************
   */
@@ -31,11 +32,12 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
-#include "leds.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "leds.h"
 #include "synth.h"
+#include "stdio.h"
 
 /* USER CODE END Includes */
 
@@ -117,9 +119,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  ledInit();
   while (1)
   {
     /* USER CODE END WHILE */
+	  ledToggle(LED_BLUE);
+	  HAL_Delay(300);
+
 
     /* USER CODE BEGIN 3 */
 
@@ -181,6 +187,9 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+
+
 
 /* USER CODE END 4 */
 
