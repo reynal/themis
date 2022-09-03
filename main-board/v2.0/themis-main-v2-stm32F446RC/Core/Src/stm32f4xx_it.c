@@ -258,7 +258,8 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
 
   /* USER CODE END USART1_IRQn 0 */
-  HAL_UART_IRQHandler(&huart1);
+  //HAL_UART_IRQHandler(&huart1);
+	stlink_Rx_IRQ_Handler();
   /* USER CODE BEGIN USART1_IRQn 1 */
 
   /* USER CODE END USART1_IRQn 1 */
@@ -284,6 +285,8 @@ void DMA2_Stream3_IRQHandler(void)
 void DMA2_Stream7_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA2_Stream7_IRQn 0 */
+
+	// stlink_dma_irq_handler() // TODO pending
 
   /* USER CODE END DMA2_Stream7_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart1_tx);
