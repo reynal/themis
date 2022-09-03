@@ -8,7 +8,7 @@
  *      printf support based on STLink UART TX with DMA transfer (DMA1, channel 7, hardcoded for STM32L4)
  */
 
-
+#include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include <stlink_tx_dma.h>
 #include <string.h>
@@ -16,8 +16,9 @@
 
 /* External variables --------------------------------------------------------*/
 
-extern DMA_HandleTypeDef *hdma_STlink_tx;
-extern UART_HandleTypeDef *huart_STlink;
+extern UART_HandleTypeDef huart1;
+extern DMA_HandleTypeDef hdma_usart1_tx;
+
 
 /* Function prototypes -----------------------------------------------*/
 
@@ -284,9 +285,8 @@ static size_t stlink_dma_buff_write(const char* data, size_t btw) {
 
 // our own implementation of putchar used by printf, so that printf is forwarded
 // to the Virtual Com Port (need Hyperterminal or a dedicated terminal on the PC or Mac host station)
-int __io_putchar(int ch) {
+/*int __io_putchar(int ch) {
 
-	//HAL_UART_Transmit(huartSTlink, (uint8_t*) &ch, 1, 0xFFFF); // blocking call
 
 	// check if at least one byte is available. If not, trigger DMA to empty buffer
     //size_t w = tx_buff_w;
@@ -298,6 +298,12 @@ int __io_putchar(int ch) {
 
 	if (ch =='\n') stlink_dma_transmit(); // transmit DMA at EOL
 
+	return ch;
+}*/
+
+// traditionnal blocking call implementation
+int __io_putchar(int ch) {
+	HAL_UART_Transmit(&huart1, (uint8_t*) &ch, 1, 0xFFFF); // blocking call
 	return ch;
 }
 
