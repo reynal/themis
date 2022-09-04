@@ -285,10 +285,22 @@ void _vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	}
 }*/
 
-void vcoCalib_UP_IRQHandler(){
-
+// DEBUG only:
+//void vcoCalib_UP_IRQHandler(){
+//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	//toggleGreenLED();
 	//dbg_TimUpdate++;
+//}
+
+// override from stm32f4xx_hal_tim.c:
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim){
+
+	// todo : check htim against htim2/htimVcoCalib !
+	//if (htim != htimVcoCalib) return;
+
+	vcoCalib_IC_IRQHandler(htim->Channel);
+
+	//htim->Instance->CCR1;
 }
 
 /**
