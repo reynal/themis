@@ -123,9 +123,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	  ledToggle(LED_BLUE);
-	  HAL_Delay(300);
-
 
     /* USER CODE BEGIN 3 */
 
