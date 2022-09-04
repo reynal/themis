@@ -15,7 +15,7 @@
 #define MAX_CUTOFF 1.0
 
 #define DEF_MIDICC_RESONANCE 0 // Q
-#define MAX_RESONANCE 4095
+#define MAX_RESONANCE 255
 
 
 /* global parameters cutoff and Q influence the shape of the CVF adsr enveloppe */

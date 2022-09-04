@@ -68,7 +68,7 @@ void bh2221InitDMA(){
  * Write the given byte to the given channel buffer and mark data as needing sync.
  * Data need then to be sync with BH2221 device using BH2221_Xfer_Buffer_Dma(), e.g., from a timer IRQ.
  */
-void bh2221WriteDmaBuffer(uint8_t byte, bh2221Channel_e channel){
+void bh2221WriteAsync(uint8_t byte, bh2221Channel_e channel){
 
 	is_need_channel_data_sync[channel] = false; // lock
 	channel_data[channel] = byte;
@@ -101,8 +101,6 @@ void bh2221WriteBlocking(uint8_t val8, bh2221Channel_e channel){
 
 }
 
-
-
 /**
  * Write a byte to output A3.A2.A1.A0 (channel A) :
  * 0 0 0 0 A3 A2 A1 A0 . 1 1 DB11 DB10 DB9 DB8 DB7 DB6 . DB5 DB4 DB3 DB2 DB1 DB0 0 0
@@ -112,7 +110,7 @@ void bh2221WriteBlocking(uint8_t val8, bh2221Channel_e channel){
  * Timing: at 5Mbits/s SPI baud rate, a complete 16 bit transfer takes ~3us
  *
  */
-void bh2221XferBufferDma(bh2221Channel_e channel){
+void bh2221FlushBufferDma(bh2221Channel_e channel){
 
 	if (is_need_channel_data_sync[channel] == false) return;
 
@@ -151,8 +149,8 @@ void bh2221Test(){
 	while(1){
 		//bh2221_Write_Blocking(val8,0);
 
-		bh2221WriteDmaBuffer(val8, channel);
-		bh2221XferBufferDma(channel);
+		bh2221WriteAsync(val8, channel);
+		bh2221FlushBufferDma(channel);
 
 		val8+=2;
 		if (val8 >= 0xFF) val8=0;

@@ -61,12 +61,12 @@ static void synthParametersInit(){
 	vcoInit();
 
 	for (int channel=0; channel < AD5644_CHANNEL_COUNT; channel++){
-		ad5644XferBufferDma(dacTick);
+		ad5644FlushBufferDma(dacTick);
 		HAL_Delay(2);
 	}
 
 	for (int channel=0; channel < BH2221_CHANNEL_COUNT; channel++){
-		bh2221XferBufferDma(dacTick);
+		bh2221FlushBufferDma(dacTick);
 		HAL_Delay(2);
 	}
 
@@ -138,37 +138,37 @@ void synthDacTimerIRQ(){
 
 	switch (dacTick){
 	case 0:
-		ad5644XferBufferDma(AD5644_VCO_3340A_FREQ); break;
+		ad5644FlushBufferDma(AD5644_VCO_3340A_FREQ); break;
 	case 1:
-		bh2221XferBufferDma(BH2221_VCO_3340A_PWM_DUTY); break;
+		bh2221FlushBufferDma(BH2221_VCO_3340A_PWM_DUTY); break;
 	case 2:
-		bh2221XferBufferDma(BH2221_VCO_3340B_PWM_DUTY); break;
+		bh2221FlushBufferDma(BH2221_VCO_3340B_PWM_DUTY); break;
 	case 3:
-		ad5644XferBufferDma(AD5644_VCO_3340B_FREQ); break;
+		ad5644FlushBufferDma(AD5644_VCO_3340B_FREQ); break;
 	case 4:
-		bh2221XferBufferDma(BH2221_V2140D_3340A_PULSE_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340A_PULSE_LVL); break;
 	case 5:
-		bh2221XferBufferDma(BH2221_V2140D_3340A_SAW_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340A_SAW_LVL); break;
 	case 6:
-		ad5644XferBufferDma(AD5644_WAVE_GEN); break;
+		ad5644FlushBufferDma(AD5644_WAVE_GEN); break;
 	case 7:
-		bh2221XferBufferDma(BH2221_V2140D_3340A_TRI_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340A_TRI_LVL); break;
 	case 8:
-		bh2221XferBufferDma(BH2221_V2140D_3340B_PULSE_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340B_PULSE_LVL); break;
 	case 9:
-		ad5644XferBufferDma(AD5644_VCA); break;
+		ad5644FlushBufferDma(AD5644_VCA); break;
 	case 10:
-		bh2221XferBufferDma(BH2221_V2140D_3340B_SAW_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340B_SAW_LVL); break;
 	case 11:
-		bh2221XferBufferDma(BH2221_V2140D_3340B_TRI_LVL); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340B_TRI_LVL); break;
 	case 12:
-		bh2221XferBufferDma(BH2221_VCF_CUTOFF); break;
+		bh2221FlushBufferDma(BH2221_VCF_CUTOFF); break;
 	case 13:
-		bh2221XferBufferDma(BH2221_VCF_RES); break;
+		bh2221FlushBufferDma(BH2221_VCF_RES); break;
 	case 14:
-		bh2221XferBufferDma(BH2221_V2140D_IN4); break;
+		bh2221FlushBufferDma(BH2221_V2140D_XMOD_LVL); break;
 	case 15:
-		bh2221XferBufferDma(BH2221_V2140D_IN8); break;
+		bh2221FlushBufferDma(BH2221_V2140D_3340B_SUB_LVL); break;
 	case 16:
 		is_control_voltages_need_update = true; break; // now we've time to update CV (called at 1kHz)
 
@@ -183,7 +183,7 @@ void synthDacTimerIRQ(){
 /*
  * Asynchronously updates all control voltages in turn, e.g., from MIDI input and LFO modulations.
  * This does not write to DAC, just to buffers.
- * Buffers are then written to DAC by dac_Board_Timer_IRQ().
+ * Buffers are then written to DAC by the timer IRQ Handler.
  */
 static void synthUpdateControlVoltages(){
 
@@ -222,7 +222,7 @@ static void synthInfiniteLoop(){
 
 		synthUpdateControlVoltages();
 
-		switchScan();
+		switchScanButtonsState();
 
 	}
 }

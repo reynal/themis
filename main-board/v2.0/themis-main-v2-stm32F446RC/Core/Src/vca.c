@@ -13,14 +13,14 @@
 extern VcaStateMachine_t vcaStateMachine;
 
 
-/* async update of VCA amplitude from vcaStateMachine.amplitude  */
+/* async update of VCA amplitude from vcaStateMachine.amplitude ; CV is written to AD5644 on 14 bits  */
 void vcaWriteAmplitudeToDac(){
 
 	double amplitude = vcaStateMachine.amplitude ; // TODO : + dbg_modulation
-	int dacLvl = (int)(4095.0 * amplitude);
+	int dacLvl = (int)(AD5644_MAX_VAL * amplitude);
 	if (dacLvl<0) dacLvl=0;
-	else if (dacLvl>4095) dacLvl=4095;
-	ad5644WriteDmaBuffer(dacLvl, AD5644_VCA);
+	else if (dacLvl > AD5644_MAX_VAL) dacLvl = AD5644_MAX_VAL;
+	ad5644WriteAsync(dacLvl, AD5644_VCA);
 }
 
 /* init VCA parameters */

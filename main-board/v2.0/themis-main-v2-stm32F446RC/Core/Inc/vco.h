@@ -16,13 +16,8 @@
 #define NO_DETUNE 64
 #define NO_SHIFT 11
 
-// VCO3340 A
-#define DEF_MIDICC_VCO3340A_PWM_DUTY 127 // pwm
+#define DEF_MIDICC_VCO3340_PWM_DUTY 127 // pwm
 #define MAX_VCO3340A_PWM_DUTY 150
-
-
-// VCO3340 B
-#define DEF_MIDICC_VCO3340B_PWM_DUTY 127 // pwm
 #define MAX_VCO3340B_PWM_DUTY 150
 
 
@@ -34,14 +29,8 @@ typedef struct {
 	uint8_t octave; // can be positive or negative
 	uint8_t semitones; // from -11 to +11 semitones
 	uint8_t pwm;
-} Vco3340AParameters_t;
+} Vco3340Parameters_t;
 
-typedef struct {
-	uint8_t detune; //-50%-50% of one tone
-	uint8_t octave; // can be positive or negative
-	uint8_t semitones; // from -11 to +11 semitones
-	uint8_t pwm;
-} Vco3340BParameters_t;
 
 /* Private function prototypes -----------------------------------------------*/
 

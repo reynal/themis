@@ -14,10 +14,9 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "ad5644.h"
-#include "bh2221.h"
 #include "vcf.h"
 #include "stm32f4xx_hal.h"
+#include "bh2221.h"
 #include "adsr.h"
 #include "leds.h"
 
@@ -40,9 +39,11 @@ void vcfSetOrder(uint8_t midiValue){
 	midiValue = midiValue % 2;
 	if (midiValue == 0){ // 2nd order
 		//mcp23017_Set_Vcf_2ndOrder(); // TODO
+		__NOP();
 	}
 	else if (midiValue ==1){ // 4th order
 		//mcp23017_Set_Vcf_4thOrder(); // TODO
+		__NOP();
 	}
 }
 
@@ -57,7 +58,7 @@ void vcfSetGlobalResonance(uint8_t midiValue){
 }
 
 void vcfWriteResonanceToDac(){
-	bh2221WriteDmaBuffer((int) (MAX_RESONANCE * vcfGlobalParams.vcfResonance/127.), BH2221_VCF_RES);
+	bh2221WriteAsync((int) (MAX_RESONANCE * vcfGlobalParams.vcfResonance/127.), BH2221_VCF_RES);
 }
 
 
@@ -70,13 +71,13 @@ void vcfInit(){
 
 void vcfWriteCutoffToDac(){
 
-	// cutoff frequency varies as opposed to control voltage:
+	// cutoff frequency varies in the opposite direction to control voltage:
 	double cutoff = vcfStateMachine.cutoffFrequency; // +stateMachineVcf.tmpKbdtrackingShiftFactor; // TODO : + dbg_modulation
-	int dacLvl = (int)(4095.0 * (1.0-cutoff));
-	//int dacLvl = (int)(4095.0 * (cutoff));
+	int dacLvl = (int)(BH2221_MAX_VAL * (1.0-cutoff));
+	//int dacLvl = (int)(BH2221_MAX_VAL * (cutoff)); // debug
 	if (dacLvl<0) dacLvl=0;
-	else if (dacLvl>4095) dacLvl=4095;
-	bh2221WriteDmaBuffer(dacLvl, BH2221_VCF_CUTOFF);
+	else if (dacLvl>BH2221_MAX_VAL) dacLvl=BH2221_MAX_VAL;
+	bh2221WriteAsync(dacLvl, BH2221_VCF_CUTOFF);
 }
 
 

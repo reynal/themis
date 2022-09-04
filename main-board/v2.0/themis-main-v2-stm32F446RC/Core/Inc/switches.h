@@ -15,6 +15,6 @@ void switch2Pressed();
 void switch1Released();
 void switch2Released();
 void switchInit();
-void switchScan();
+void switchScanButtonsState();
 
 #endif /* INC_SWITCHES_H_ */

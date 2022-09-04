@@ -13,6 +13,7 @@
 #define hspi_AD5644 (&hspi2)
 
 #define AD5644_CHANNEL_COUNT 4
+#define AD5644_MAX_VAL 0x3FFF
 
 
 /*
@@ -28,8 +29,8 @@ typedef enum {
 } ad5644Channel_e;
 
 void ad5644Init();
-void ad5644XferBufferDma(uint8_t channel);
-void ad5644WriteDmaBuffer(uint16_t word12bits, ad5644Channel_e channel);
+void ad5644FlushBufferDma(uint8_t channel);
+void ad5644WriteAsync(uint16_t word12bits, ad5644Channel_e channel);
 void ad5644WriteBlocking(uint16_t word, ad5644Channel_e channel);
 void ad5644Test();
 

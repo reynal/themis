@@ -27,7 +27,7 @@ void switchInit(){
 	sw2_Tick = HAL_GetTick();
 }
 
-void switchScan(){
+void switchScanButtonsState(){
 
 	GPIO_PinState sw1_Current_State = HAL_GPIO_ReadPin(GPIOC, SW1_Pin);
 	GPIO_PinState sw2_Current_State  = HAL_GPIO_ReadPin(GPIOC, SW2_Pin);

@@ -84,7 +84,7 @@ void ad5644Init(){
  * Write the given word to the given channel buffer and mark data as needing sync.
  * Data need then to be sync with AD5644 device using ad5644_Write_Dma(), e.g., from a timer IRQ.
  */
-void ad5644WriteDmaBuffer(uint16_t word14bits, ad5644Channel_e channel){
+void ad5644WriteAsync(uint16_t word14bits, ad5644Channel_e channel){
 
 	is_need_channel_data_sync[channel] = false; // lock
 	channel_data[channel] = word14bits;
@@ -196,7 +196,7 @@ static void ad5644InitDma(){
  *   the busy signal goes low for 600ns hence minimum timer period must be above 6us.
  *
  */
-void ad5644XferBufferDma(ad5644Channel_e channel){
+void ad5644FlushBufferDma(ad5644Channel_e channel){
 
 	if (is_need_channel_data_sync[channel] == false) return;
 
@@ -238,8 +238,8 @@ void ad5644Test(){
 	while(1){
 		//ad5644_Write_Blocking(val14,0);
 
-		ad5644WriteDmaBuffer(val14, channel);
-		ad5644XferBufferDma(channel);
+		ad5644WriteAsync(val14, channel);
+		ad5644FlushBufferDma(channel);
 
 		val14+=128;
 		if (val14 >= 0x3FFF) val14=0;

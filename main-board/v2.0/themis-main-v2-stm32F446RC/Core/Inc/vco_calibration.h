@@ -8,7 +8,7 @@
 #ifndef INC_VCO_CALIBRATION_H_
 #define INC_VCO_CALIBRATION_H_
 
-#define VCO_COUNT 3
+#define VCO_COUNT 2
 
 #include "ad5644.h"
 #include <stdbool.h>
@@ -28,27 +28,22 @@ typedef struct {
 	bool completed;
 } Vco_Calib;
 
-// aliases for easier code reading
-#define TIM_CHANNEL_CALIB_VCO3340A TIM_CHANNEL_1 // PA8 (TIM1)
-#define TIM_CHANNEL_CALIB_VCO3340B TIM_CHANNEL_2 // PA9 (TIM1)
-#define TIM_CHANNEL_CALIB_VCO13700 TIM_CHANNEL_3 // PA10 (TIM1)
+// aliases for easier code reading TODO
+#define TIM_CHANNEL_CALIB_VCO3340A TIM_CHANNEL_1 // PA0 (TIM2)
+#define TIM_CHANNEL_CALIB_VCO3340B TIM_CHANNEL_2 // PA1 (TIM2)
 
 #define CCR_VCO3340A CCR1
 #define CCR_VCO3340B CCR2
-#define CCR_VCO13700 CCR3
 
 #define A4_FREQ 440.0 // LA  4
 #define A4_PERIOD 1.0/A4_FREQ
 #define A4_MIDI_NOTE 69
 
 #define VCO3340A_MIN_INPUT_CV 0
-#define VCO3340A_MAX_INPUT_CV 4095
+#define VCO3340A_MAX_INPUT_CV AD5644_MAX_VAL
 
-#define VCO3340B_MIN_INPUT_CV 2400
-#define VCO3340B_MAX_INPUT_CV 4095
-
-#define VCO13700_MIN_INPUT_CV 0
-#define VCO13700_MAX_INPUT_CV 4095
+#define VCO3340B_MIN_INPUT_CV 0
+#define VCO3340B_MAX_INPUT_CV AD5644_MAX_VAL
 
 
 /* function prototypes -----------------------------------------------*/

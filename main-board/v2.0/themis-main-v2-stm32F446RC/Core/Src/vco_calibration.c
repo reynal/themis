@@ -54,7 +54,6 @@ extern TIM_HandleTypeDef htim2;
 //extern TIM_HandleTypeDef *htimVcoCalibSlave; // slave not needed anymore (32bits!)
 extern uint32_t  note_To_VCO3340A_CV[128];
 extern uint32_t  note_To_VCO3340B_CV[128];
-extern uint32_t  note_To_VCO13700_CV[128];
 
 /* variables ---------------------------------------------------------*/
 
@@ -141,10 +140,10 @@ static void start_Calib(){
 static void init_Note_To_Timer_Table(){
 
 	  /* Get PCLK2 frequency for TIM1 */
-	  double pclk = HAL_RCC_GetPCLK2Freq(); // 80MHz
+	  double pclk = HAL_RCC_GetPCLK2Freq(); // 45MHz ? 90MHz ?
 
 	  /* Get PCLK prescaler */
-	  if((RCC->CFGR & RCC_CFGR_PPRE2) != 0) pclk *= 2;
+	  if((RCC->CFGR & RCC_CFGR_PPRE2) != 0) pclk *= 2; // TODO : pas sur qu'on ait besoin du x2
 
 	  int tim_icpsc_div = 8; // see tim.c : sConfigIC.ICPrescaler = TIM_ICPSC_DIV1; => input edges trigger timer every tim_icpsc_div events => resulting frequency measurement must be multiplied by tim_icpsc_div
 
@@ -200,9 +199,7 @@ void vcoCalib_Run(){
 
 	ledOff(LED_RED);
 
-	// debug L4 dac_Board_Timer_Start(); // restart timer responsible for updating ADSR enveloppes
-
-	//__HAL_TIM_DISABLE(htimVcoCalibSlave); // NO NEED FOR A SLAVE TIMER ANYMORE
+	synthStartDacTimer(); // restart timer responsible for updating ADSR enveloppes
 
 	is_calib_underway = false;
 
@@ -300,13 +297,11 @@ void vcoCalib_UP_IRQHandler(){
  */
 void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 
-	/* TODO L432 vers F446 :
 	// compute timer interval b/w subsequent edges for input signal and store the result in global var "calibrationTimerInterval":
 
-	uint32_t cnt, cntMSW;
+	uint32_t cnt;
 	Vco_Calib* vco;
 
-	cntMSW = __HAL_TIM_GetCounter(&htim15);
 	switch (IC_Channel){
 	case TIM_CHANNEL_CALIB_VCO3340A:
 		cnt = htimVcoCalib->Instance->CCR_VCO3340A;
@@ -316,14 +311,9 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 		cnt = htimVcoCalib->Instance->CCR_VCO3340B;
 		vco = &vco3340B_calib;
 		break;
-	case TIM_CHANNEL_CALIB_VCO13700:
-		cnt = htimVcoCalib->Instance->CCR_VCO13700;
-		vco = &vco13700_calib;
-		break;
 	default:
 		break;
 	}
-	cnt += cntMSW * (htimVcoCalib->Instance->ARR+1);
 
 #ifdef DGB_CALIB
 	dbg.values[dbg.counter] = cnt;
@@ -371,11 +361,11 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	if (vco->current_interval > note_To_Timer[vco->note]) {
 		vco->cv++; // try to decrease signal period until there's a match
 		if (vco->cv <= vco->cv_max) { // else see below
-			dacWrite_Blocking(vco->cv, vco->dac);
+			ad5644WriteBlocking(vco->cv, vco->dac);
 		}
 	}
 	else { // validate current midi note and switch to next note:
-		toggleGreenLED();
+		ledToggle(LED_GREEN);
 		printf("dist(%lu)=%d and dist(%lu)=%d\n",
 				vco->cv,
 				(int)(vco->current_interval - note_To_Timer[vco->note]),
@@ -398,11 +388,11 @@ void vcoCalib_IC_IRQHandler(uint32_t IC_Channel){
 	if (vco->note > 127 || vco->cv > vco->cv_max){
 
 		HAL_TIM_IC_Stop_IT(htimVcoCalib, vco->IC_Channel);
-		dacWrite_Blocking(0, vco->dac);
-		vco->completed = TRUE;
+		ad5644WriteBlocking(0, vco->dac);
+		vco->completed = true;
 
 	}
-	*/
+
 }
 
 

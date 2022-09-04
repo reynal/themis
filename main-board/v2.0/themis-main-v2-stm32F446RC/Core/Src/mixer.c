@@ -35,7 +35,7 @@ void mixerSetVco3340APulseLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340APulseLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340A_PULSE_LEVEL * (127.0-mixerParameters.vco3340A_pulse_level)/127.0), BH2221_V2140D_3340A_PULSE_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340A_PULSE_LEVEL * (127.0-mixerParameters.vco3340A_pulse_level)/127.0), BH2221_V2140D_3340A_PULSE_LVL);
 }
 
 
@@ -44,7 +44,7 @@ void mixerSetVco3340ASawLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340ASawLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340A_SAW_LEVEL * (127.0-mixerParameters.vco3340A_saw_level) /127.0), BH2221_V2140D_3340A_SAW_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340A_SAW_LEVEL * (127.0-mixerParameters.vco3340A_saw_level) /127.0), BH2221_V2140D_3340A_SAW_LVL);
 }
 
 void mixerSetVco3340ATriLevel(uint8_t midiValue){
@@ -52,7 +52,7 @@ void mixerSetVco3340ATriLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340ATriLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340A_TRI_LEVEL * (127.0-mixerParameters.vco3340A_tri_level) /127.0), BH2221_V2140D_3340A_TRI_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340A_TRI_LEVEL * (127.0-mixerParameters.vco3340A_tri_level) /127.0), BH2221_V2140D_3340A_TRI_LVL);
 }
 
 void mixerSetVco3340BPulseLevel(uint8_t midiValue){
@@ -60,7 +60,7 @@ void mixerSetVco3340BPulseLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340BPulseLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340B_PULSE_LEVEL * (127.0-mixerParameters.vco3340B_pulse_level)/127.0), BH2221_V2140D_3340B_PULSE_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340B_PULSE_LEVEL * (127.0-mixerParameters.vco3340B_pulse_level)/127.0), BH2221_V2140D_3340B_PULSE_LVL);
 }
 
 
@@ -69,7 +69,7 @@ void mixerSetVco3340BSawLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340BSawLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340B_SAW_LEVEL * (127.0-mixerParameters.vco3340B_saw_level) /127.0), BH2221_V2140D_3340B_SAW_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340B_SAW_LEVEL * (127.0-mixerParameters.vco3340B_saw_level) /127.0), BH2221_V2140D_3340B_SAW_LVL);
 }
 
 void mixerSetVco3340BTriLevel(uint8_t midiValue){
@@ -77,5 +77,5 @@ void mixerSetVco3340BTriLevel(uint8_t midiValue){
 }
 
 void mixerWriteVco3340BTriLevelToDac(){
-	bh2221WriteDmaBuffer((int)(MAX_VCO3340B_TRI_LEVEL * (127.0-mixerParameters.vco3340B_tri_level) /127.0), BH2221_V2140D_3340B_TRI_LVL);
+	bh2221WriteAsync((int)(MAX_VCO3340B_TRI_LEVEL * (127.0-mixerParameters.vco3340B_tri_level) /127.0), BH2221_V2140D_3340B_TRI_LVL);
 }
