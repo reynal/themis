@@ -82,15 +82,17 @@ void TLC59731::test() {
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, colors[(i++)%7]);
 			//for (int led=0; led < TLC_LED_COUNT; led++)  update(led, 20, 20, 5 * led);
 			for (int led=0; led < TLC_LED_COUNT; led++)  {
-				update(led, 0, 0, 255);
+				update(led, 120, 0, 120);
 				transmitData();
-				HAL_Delay(300);
+				HAL_Delay(200);
 
-				update(led, 0, 0, 0);
+				//update(led, 0, 0, 0);
 				//transmitData();
 				//HAL_Delay(100);
 			}
 			//i++;
+			transmitData();
+			HAL_Delay(500);
 
 
 			/*
