@@ -267,7 +267,7 @@ void MCP23017::interruptACallback(){
 	uint8_t flagReg = read(INTFA); // 50us
 	uint8_t capReg = read(INTCAPA);
 
-	//printf("INTCAPA=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
+	//printf("INTCAPA=%c%c%c%c.%c%c%c%c\n", BYTE_TO_BINARY(capReg));
 
 	PushButton* b = buttonLinkedListA;
 	while (b != NULL){
@@ -295,7 +295,7 @@ void MCP23017::interruptBCallback(){
 	uint8_t flagReg = read(INTFB); // 50us
 	uint8_t capReg = read(INTCAPB);
 
-	//printf("INTCAPB=%c%c%c%c%c%c%c%c\n", BYTE_TO_BINARY(capReg));
+	//printf("INTCAPB=%c%c%c%c.%c%c%c%c\n", BYTE_TO_BINARY(capReg));
 
 	PushButton* controller = buttonLinkedListB;
 	while (controller != NULL){

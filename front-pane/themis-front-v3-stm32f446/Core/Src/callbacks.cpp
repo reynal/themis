@@ -10,11 +10,15 @@
 #include "MCP23017.h"
 #include "main.h"
 #include "gpioDebug.h"
+#include "front-panel.h"
 
 
 //extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart1;
 extern MCP23017 mcp101, mcp110, mcp111;
+#ifdef SOUTH_BOARD_CONNECTED
+extern MCP23017 mcp000, mcp001, mcp010, mcp011, mcp100;
+#endif
 extern GpioDebug tx2;
 
 // our own implementation of putchar used by printf, so that printf is forwarded
@@ -88,7 +92,8 @@ void GPIO_EXTI0_Callback(){ // MCP_101_INTB_Pin
 }
 
 void GPIO_EXTI1_Callback(){ //
-	__NOP();
+	mcp011.interruptBCallback();
+	//__NOP();
 }
 
 void GPIO_EXTI2_Callback(){ // MCP_110_INTB_Pin
@@ -111,55 +116,46 @@ void GPIO_EXTI5_Callback(){ // MCP_111_INTB_Pin
 }
 
 void GPIO_EXTI6_Callback(){ //
-	__NOP();
-	//mcp100.interruptBCallback();
+	mcp100.interruptBCallback();
 }
 
 void GPIO_EXTI7_Callback(){ //
-	__NOP();
-	//mcp010.interruptACallback();
+	mcp010.interruptACallback();
 }
 
 void GPIO_EXTI8_Callback(){ //
-	__NOP();
-	//mcp010.interruptBCallback();
+	mcp010.interruptBCallback();
 }
 
 void GPIO_EXTI9_Callback(){ //
-	__NOP();
-	// mcp001.interruptACallback();
+	 mcp001.interruptACallback();
 }
 
 
 // === same IRQ vector for EXTI10 to EXTI15 ===
 
 void GPIO_EXTI10_Callback(){ //
-	__NOP();
-	// mcp001.interruptBCallback();
+	mcp001.interruptBCallback();
 }
 
 void GPIO_EXTI11_Callback(){ //
-	__NOP();
-	// mcp000.interruptBCallback();
+	mcp000.interruptBCallback();
 }
 
 void GPIO_EXTI12_Callback(){ //
-	__NOP();
-	// mcp000.interruptACallback();
+	mcp000.interruptACallback();
 }
 
-void GPIO_EXTI13_Callback(){ // MCP_101_INTA_Pin
+void GPIO_EXTI13_Callback(){
 	mcp101.interruptACallback();
 }
 
 void GPIO_EXTI14_Callback(){ //
-	__NOP();
-	//mcp011.interruptACallback();
+	mcp011.interruptACallback();
 }
 
 void GPIO_EXTI15_Callback(){ //
-	__NOP();
-	//mcp100.interruptACallback();
+	mcp100.interruptACallback();
 }
 
 

@@ -8,6 +8,8 @@
 #ifndef INC_FRONT_PANEL_H_
 #define INC_FRONT_PANEL_H_
 
+#define SOUTH_BOARD_CONNECTED
+
 void init_hardware();
 void main_loop();
 
