@@ -112,7 +112,7 @@ void MCP23017::init(){
 	read(GPIO_B); // clear pending interrupts
 	HAL_Delay(1);
 
-	dumpRegisters();
+	//dumpRegisters();
 
 }
 
@@ -224,28 +224,28 @@ void MCP23017::printAttachedControllers(){
 	PushButton* push;
 	RotaryEncoder* encoder;
 
-	printf("PushButtons on Port A:\n");
+	printf("* PushButtons on Port A:\n");
 	push = buttonLinkedListA;
 	while (push != NULL){
 		push->print();
 		push = push->next;
 	};
 
-	printf("Encoders on Port A:\n");
+	printf("* Encoders on Port A:\n");
 	encoder = encoderLinkedListA;
 	while (encoder != NULL){
 		encoder->print();
 		encoder = encoder->next;
 	};
 
-	printf("PushButtons on Port B:\n");
+	printf("* PushButtons on Port B:\n");
 	push = buttonLinkedListB;
 	while (push != NULL){
 		push->print();
 		push = push->next;
 	};
 
-	printf("Encoders on Port B:\n");
+	printf("* Encoders on Port B:\n");
 	encoder = encoderLinkedListB;
 	while (encoder != NULL){
 		encoder->print();
@@ -272,7 +272,7 @@ void MCP23017::interruptACallback(){
 	PushButton* b = buttonLinkedListA;
 	while (b != NULL){
 		if ((flagReg & b->mask) != 0){ // this encoder triggered the interrupt
-			b->update(capReg);
+			b->updateState(capReg);
 		}
 		b = b->next;
 	};
@@ -280,7 +280,7 @@ void MCP23017::interruptACallback(){
 	RotaryEncoder* re = encoderLinkedListA;
 	while (re!= NULL){
 		if ((flagReg & re->mask) != 0){ // this encoder triggered the interrupt
-			re->update(capReg);
+			re->updatePosition(capReg);
 		}
 		re = re->next;
 	};
@@ -300,7 +300,7 @@ void MCP23017::interruptBCallback(){
 	PushButton* controller = buttonLinkedListB;
 	while (controller != NULL){
 		if ((flagReg & controller->mask) != 0){ // this encoder triggered the interrupt
-			controller->update(capReg);
+			controller->updateState(capReg);
 		}
 		controller = controller->next;
 	};
@@ -308,7 +308,7 @@ void MCP23017::interruptBCallback(){
 	RotaryEncoder* re = encoderLinkedListB;
 	while (re!= NULL){
 		if ((flagReg & re->mask) != 0){ // this encoder triggered the interrupt
-			re->update(capReg);
+			re->updatePosition(capReg);
 		}
 		re = re->next;
 	};

@@ -13,7 +13,7 @@
 #include "stm32f4xx_hal.h"
 
 #include "MCP23017.h"
-//#include "AbstractController.h"
+#include "TLC59731.h"
 
 
 #define BIG_STEP_VAL 8
@@ -24,11 +24,13 @@
 #define MAX_POS	127
 #define MIN_POS 0
 
-class RotaryEncoder { // : public AbstractController {
+#define MAX_ALT_FCNT_COUNT 4
+
+class RotaryEncoder {
 
 public:
 
-	RotaryEncoder(std::string name, MCP23017::Port _port, MCP23017::Pin pinA, MCP23017::Pin pinB, RotaryEncoder* _next);
+	RotaryEncoder(std::string name, TLC59731* ledControler, int ledIndex, MCP23017::Port _port, MCP23017::Pin pinA, MCP23017::Pin pinB, RotaryEncoder* _next);
 
 	~RotaryEncoder();
 
@@ -39,11 +41,18 @@ public:
 
 	void encoderMoved(Rotary_Direction r);
 
-	void update(uint8_t mcp23017CaptureValue);
+	void updatePosition(uint8_t mcp23017CaptureValue);
 
 	void print();
 
+	/** increment the alternate function that is currently displayed and acted upon by a rotation of the encoder */
 	void nextAltFunction();
+
+	/** set the alternate function that is currently displayed and acted upon by a rotation of the encoder, to the given index */
+	void setAltFunction(int altFunctionIndex);
+
+	/** update the LED state in the attached LED controler */
+	void updateLED();
 
 	/** linked list of controllers attached to MCP23017 */
 	RotaryEncoder* next;
@@ -61,6 +70,7 @@ private:
 
 	std::string name;
 
+	MCP23017::Pin pinA, pinB; // pin numbers for this encoder channels A and B
 
 	// PSNS (Prev State, Next State) table: see https://www.best-microcontroller-projects.com/rotary-encoder.html
 	// the table contains the increment for every PSNS code
@@ -71,21 +81,19 @@ private:
 	//int rot_enc_table[16]= {0,1,-1,0,-1,0,0,1,1,0,0,-1,0,-1,1,0};
 	uint8_t prevNextCode=0; // contains a 4 bit PSNS code
 
-	int previousPosition=0; // a way to check if button position has changed and to send a message if any
-
-	uint32_t time=0;
-
-	MCP23017::Pin pinA;
-
-	MCP23017::Pin pinB;
+	uint32_t time=0; // used to measure the rotation speed of the encoder and make small or big increases
 
 	int altFunction=0; // each value corresponds to a distinct alternate function associated to this encoder ; alt function changes through a press onto the push button
+	int altFunctionCount = MAX_ALT_FCNT_COUNT; // nb of alt functions
 
-	int altFunctionCount; // nb of alt functions
+	// --- encoder led ---
+	TLC59731* ledControler; // device that controls this encoder LED
+	int ledIndex; // index in the daisychain of pixels
 
 public:
 
-	int position=0;
+	int position[MAX_ALT_FCNT_COUNT]; // up to 4 possible alternate functions (which is already a lot seeing that each has its own colour palette)
+
 
 };
 

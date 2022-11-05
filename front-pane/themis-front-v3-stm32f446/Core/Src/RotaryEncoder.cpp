@@ -6,11 +6,12 @@
  */
 
 #include "RotaryEncoder.h"
-//#include "AbstractController.h"
 #include "MCP23017.h"
+#include "TLC59731.h"
 #include "stdio.h"
 #include "main.h"
 #include "misc.h"
+
 
 
 /**
@@ -20,9 +21,17 @@
  * @param _chB MCP23017 pin number the channel B of this encoder is connected to
  * @param _next pointer to the next encoder in the linked list of encoders attached to the same MCP23017 port, or NULL if this is the last button.
  */
-RotaryEncoder::RotaryEncoder(std::string _name, MCP23017::Port _port, MCP23017::Pin _chA, MCP23017::Pin _chB, RotaryEncoder* _next){ // : AbstractController(_name, _next){
+RotaryEncoder::RotaryEncoder(std::string _name,
+		TLC59731* _ledControler,
+		int _ledIndex,
+		MCP23017::Port _port,
+		MCP23017::Pin _chA,
+		MCP23017::Pin _chB,
+		RotaryEncoder* _next){
 
 	name = _name;
+	ledControler = _ledControler;
+	ledIndex = _ledIndex;
 	next = _next;
 	port = _port;
 	pinA = _chA;
@@ -30,7 +39,7 @@ RotaryEncoder::RotaryEncoder(std::string _name, MCP23017::Port _port, MCP23017::
 	mask = pinA | pinB;
 
 	// TODO:
-	position = 64;
+	for (int i=0; i < MAX_ALT_FCNT_COUNT; i++) position[i]= 64;
 }
 
 RotaryEncoder::~RotaryEncoder() {}
@@ -44,33 +53,45 @@ void RotaryEncoder::encoderMoved(Rotary_Direction direction){
 	uint32_t dt = HAL_GetTick()-time;
 	if (dt < BOUNCE_DT) return;
 	time = HAL_GetTick();
+	int p = position[altFunction];
 	switch(direction){
 		case MOVE_CW :
-			if (dt > BIG_STEP_DT) position++;
-			else position += BIG_STEP_VAL;
+			if (dt > BIG_STEP_DT) p++;
+			else p += BIG_STEP_VAL;
 			//position++;
-			if (position > 127) position = 127;
+			if (p > 127) p = 127;
 			break;
 		case MOVE_CCW :
-			if (dt > BIG_STEP_DT) position--;
-			else position -= BIG_STEP_VAL;
+			if (dt > BIG_STEP_DT) p--;
+			else p -= BIG_STEP_VAL;
 			//position--;
-			if (position < 0) position = 0;
+			if (p < 0) p = 0;
 			break;
 	}
-	if (position != previousPosition) changePending = true;
-	previousPosition = position;
+	if (p != position[altFunction]) changePending = true;
+	position[altFunction] = p;
 	//printf("RE : name=%s pos=%d    dt=%lu       %c\n", name.c_str(), position, dt, (dt > BIG_STEP_DT ? ' ' : '*'));
+
+	//tlc.update(ledIdxLinkedToEncoder, colorTable[position[altFunction]]);
 }
 
 
-void RotaryEncoder::nextAltFunction(){}
+void RotaryEncoder::nextAltFunction(){
+	altFunction = (altFunction+1) % altFunctionCount;
+	// TODO changePending = true;
+
+}
+
+void RotaryEncoder::setAltFunction(int altFunctionIndex){
+	altFunction  = altFunctionIndex % altFunctionCount;
+	// TODO changePending = true;
+}
 
 /**
- * This callback is called whenever the state of this encoder should changed as a result of the hosting MCP23017 device having triggered an interrupt
+ * This callback is called whenever the state of this encoder should change as a result of the hosting MCP23017 device having triggered an interrupt
  * @param mcp23017CaptureValue the value of the INTCAP register for the MCP23017 port this encoder is attached to.
  */
-void RotaryEncoder::update(uint8_t mcp23017CaptureValue){
+void RotaryEncoder::updatePosition(uint8_t mcp23017CaptureValue){
 
 	uint8_t nextState = 0;
 	if ((mcp23017CaptureValue & pinA) != 0) nextState++;  // b01
@@ -91,10 +112,34 @@ void RotaryEncoder::update(uint8_t mcp23017CaptureValue){
 
 void RotaryEncoder::print() {
 
-	std::string s = "Enc \"" + name + "\": ["+ MCP23017::printPort(port) +  MCP23017::printPin(pinA) + "," + MCP23017::printPort(port) +  MCP23017::printPin(pinB) + "]";
+	//std::string s = "Enc \"" + name + "\": ["+ MCP23017::printPort(port) +  MCP23017::printPin(pinA) + "," + MCP23017::printPort(port) +  MCP23017::printPin(pinB) + "]";
+	//printf("%s -> %d\n", s.c_str(), position[altFunction]);
 
-	//printf("Enc: [%s:%s,%s] name=%s pos=%d\n", MCP23017::printPort(port).c_str(), MCP23017::printPin(pinA).c_str(), MCP23017::printPin(pinB).c_str(), name.c_str(), position);
-	printf("%s -> %d\n", s.c_str(), position);
+	printf("Enc '%s:%d' -> %d\n", name.c_str(), altFunction, position[altFunction]);
+
+
+}
+
+/** update the LED state in the attached LED controler */
+void RotaryEncoder::updateLED(){
+
+	if (ledControler == NULL) return;
+
+	switch (altFunction){
+	case 0:
+		ledControler->update(ledIndex, 0, 0, 2*position[altFunction]);
+		break;
+	case 1:
+		ledControler->update(ledIndex, 2*position[altFunction],0,0);
+		break;
+	case 2:
+		ledControler->update(ledIndex, 0, 2*position[altFunction],0);
+		break;
+	case 3:
+		ledControler->update(ledIndex, 2*position[altFunction], 0, 2*position[altFunction]);
+		break;
+	}
+
 
 }
 

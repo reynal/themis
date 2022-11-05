@@ -9,6 +9,7 @@
 #include "led.h"
 #include "stm32f4xx_hal.h"
 
+// TIM3 currently at 133Hz
 #define htimLED htim3
 extern TIM_HandleTypeDef htimLED;
 

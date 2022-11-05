@@ -12,7 +12,7 @@
 
 void init_hardware();
 void main_loop();
-
+void asyncUpdateLeds();
 
 
 #endif /* INC_FRONT_PANEL_H_ */

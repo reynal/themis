@@ -11,6 +11,7 @@
 #include "main.h"
 #include "gpioDebug.h"
 #include "front-panel.h"
+#include "led.h"
 
 
 //extern TIM_HandleTypeDef htim3;
@@ -41,7 +42,9 @@ int __io_putchar(int ch) {
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 	//__NOP();
-	tx2.toggle();
+	//tx2.toggle();
+	asyncUpdateLeds(); // TODO : check if this is htim3 !
+
 
 }
 
@@ -50,41 +53,6 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef *htim) {
 	__NOP();
 }
 
-
-/*
- * 1) EXTI Interrupt raised
- * 2) identify which MCP (and port A or B) triggered the interrupt
- * 3) scan list of Buttons attached to this MCP port
- * 4) for each button, check if it's the one which triggered the interrupt
- * 5) if YES, call stateChanged on this button
- * 6) add this button to a list of "pending changes"
- */
-
-//extern "C" {
-/*void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-
-	switch (GPIO_Pin){
-	case MCP_101_INTA_Pin:
-		mcp101.interruptACallback(); // EXTI15_10_IRQHandler (13)
-		break;
-	case MCP_101_INTB_Pin:
-		mcp101.interruptBCallback(); // EXTI0_IRQHandler
-		break;
-	case MCP_110_INTA_Pin:
-		mcp110.interruptACallback(); //EXTI3
-		break;
-	case MCP_110_INTB_Pin:
-		mcp110.interruptBCallback(); // EXTI2
-		break;
-	case MCP_111_INTA_Pin:
-		mcp111.interruptACallback(); // EXTI4
-		break;
-	case MCP_111_INTB_Pin:
-		mcp111.interruptBCallback(); // EXTI5
-		break;
-	}
-}*/
-
 } // extern "C"
 
 void GPIO_EXTI0_Callback(){ // MCP_101_INTB_Pin
@@ -92,7 +60,9 @@ void GPIO_EXTI0_Callback(){ // MCP_101_INTB_Pin
 }
 
 void GPIO_EXTI1_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp011.interruptBCallback();
+#endif
 	//__NOP();
 }
 
@@ -116,34 +86,48 @@ void GPIO_EXTI5_Callback(){ // MCP_111_INTB_Pin
 }
 
 void GPIO_EXTI6_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp100.interruptBCallback();
+#endif
 }
 
 void GPIO_EXTI7_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp010.interruptACallback();
+#endif
 }
 
 void GPIO_EXTI8_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp010.interruptBCallback();
+#endif
 }
 
 void GPIO_EXTI9_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	 mcp001.interruptACallback();
+#endif
 }
 
 
 // === same IRQ vector for EXTI10 to EXTI15 ===
 
 void GPIO_EXTI10_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp001.interruptBCallback();
+#endif
 }
 
 void GPIO_EXTI11_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp000.interruptBCallback();
+#endif
 }
 
 void GPIO_EXTI12_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp000.interruptACallback();
+#endif
 }
 
 void GPIO_EXTI13_Callback(){
@@ -151,11 +135,15 @@ void GPIO_EXTI13_Callback(){
 }
 
 void GPIO_EXTI14_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp011.interruptACallback();
+#endif
 }
 
 void GPIO_EXTI15_Callback(){ //
+#ifdef SOUTH_BOARD_CONNECTED
 	mcp100.interruptACallback();
+#endif
 }
 
 

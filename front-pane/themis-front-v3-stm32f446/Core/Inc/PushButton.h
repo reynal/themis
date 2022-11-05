@@ -11,10 +11,10 @@
 #include <string>
 #include "stm32f4xx_hal.h"
 
-//#include "AbstractController.h"
 #include "MCP23017.h"
+#include "RotaryEncoder.h"
 
-class RotaryEncoder;
+//class RotaryEncoder; // useless now that we can include the corresponding header (no circular references anymore)
 
 /**
  * There are two types of PushButton's:
@@ -24,7 +24,16 @@ class RotaryEncoder;
 class PushButton { // : public AbstractController {
 
 public:
+	/** constructor for a PushButton that is hosted by a rotary encoder
+	 * @param next next button in the list of buttons attached to the same MCP23017 channel
+	 */
 	PushButton(std::string _name, MCP23017::Port _port, MCP23017::Pin _pin,  PushButton* _next, RotaryEncoder *_target);
+
+	/**
+	 * constructor for an isolated PushButton that has its own LED (and as result, no hosting encoder)
+	 * @param next next button in the list of buttons attached to the same MCP23017 channel
+	 */
+	PushButton(std::string _name, TLC59731* ledControler, int ledIndex, MCP23017::Port _port, MCP23017::Pin _pin,  PushButton* _next);
 
 	~PushButton();
 
@@ -33,9 +42,13 @@ public:
 		RELEASED
 	};
 
-	void update(uint8_t mcp23017CaptureValue);
+	void updateState(uint8_t mcp23017CaptureValue);
 
 	void print() ;
+
+	/** update the LED state in the attached LED controler */
+	void updateLED();
+
 
 	/** the state of this button */
 	State state = RELEASED;
@@ -59,7 +72,13 @@ private:
 
 	//uint32_t time; // used for time related behaviors, e.g., a "long" press vs a "short" press
 
-	RotaryEncoder* hostingRotaryEncoder; // (optional) the hosting rotary encoder
+	// the hosting rotary encoder if applicable, or NULL if no hosting encoder
+	RotaryEncoder* hostingRotaryEncoder;
+
+	// button led if applicable (i.e. if this button is not inside an encoder) or NULL otherwise---
+	TLC59731* ledControler; // device that controls this encoder LED
+	int ledIndex; // index in the daisychain of pixels
+
 };
 
 #endif /* SRC_PUSHBUTTON_H_ */
