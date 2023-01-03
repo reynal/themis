@@ -38,6 +38,8 @@
 #include "leds.h"
 #include "synth.h"
 #include "stdio.h"
+#include "switches.h"
+#include "ad5644.h"
 
 /* USER CODE END Includes */
 
@@ -113,18 +115,25 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-  synthStart();
+  printf("hello\n");
+
+  //ad5644Test();
+
+  synthStart(); // check dbg 15/12/22
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   ledInit();
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	ledToggle(1);
+	HAL_Delay(100);
 
   }
   /* USER CODE END 3 */

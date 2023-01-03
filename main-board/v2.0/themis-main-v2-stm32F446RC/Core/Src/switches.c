@@ -13,7 +13,7 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "leds.h"
-
+#include "midi.h"
 
 static int sw1_Tick, sw2_Tick; // tick in ms to measure delay in order to debounce switches
 static GPIO_PinState sw1_Previous_State, sw2_Previous_State;
@@ -56,10 +56,9 @@ void switchScanButtonsState(){
  */
 void switch1Pressed(){
 
-	//printf("SW1 pressed %d\n", debug_counter++);
-	ledOn(LED_BLUE);
-
-	//midi_Process_Incoming_Message(NOTE_ON, 30,100);
+	printf("SW1 pressed\n");
+	//ledOn(LED_BLUE);
+	midiProcessIncomingMessage(NOTE_ON, 30,100);
 
 	//debug_counter++;
 }
@@ -69,10 +68,9 @@ void switch1Pressed(){
  */
 void switch1Released(){
 
-	//printf("SW1 released %d\n", debug_counter++);
-	ledOff(LED_BLUE);
-
-	//midi_Process_Incoming_Message(NOTE_OFF, 30, 0);
+	printf("SW1 released\n");
+	//ledOff(LED_BLUE);
+	midiProcessIncomingMessage(NOTE_OFF, 30, 0);
 
 }
 
@@ -82,15 +80,18 @@ void switch1Released(){
  */
 void switch2Pressed(){
 
+	printf("SW2 pressed\n");
+
 	//int randomNote = rand() % 20 + 34;
 	//int randomNote = 30;
 	//printf("rd note=%d\n", randomNote);
 
-	//printf("SW2 pressed %d\n", debug_counter++);
-	ledOn(LED_RED);
+	//ledOn(LED_RED);
+	midiProcessIncomingMessage(NOTE_ON, 50,100);
 
 	// === VCO Calibration mode===
 	//vcoCalib_Run(); // busy loop until calibration is over (uncomment when needed)
+
 
 
 }
@@ -100,7 +101,8 @@ void switch2Pressed(){
  */
 void switch2Released(){
 
-	//printf("SW2 released %d\n", debug_counter++);
-	ledOff(LED_RED);
+	printf("SW2 released\n");
+	//ledOff(LED_RED);
+	midiProcessIncomingMessage(NOTE_OFF, 50, 0);
 
 }

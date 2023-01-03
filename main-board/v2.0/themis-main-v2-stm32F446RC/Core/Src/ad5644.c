@@ -233,7 +233,7 @@ void ad5644Test(){
 	ad5644Init();
 
 	uint16_t val14=1000;
-	int channel = 3;
+	int channel = 2;
 
 	while(1){
 		//ad5644_Write_Blocking(val14,0);

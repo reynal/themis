@@ -78,6 +78,7 @@ void vcfWriteCutoffToDac(){
 	if (dacLvl<0) dacLvl=0;
 	else if (dacLvl>BH2221_MAX_VAL) dacLvl=BH2221_MAX_VAL;
 	bh2221WriteAsync(dacLvl, BH2221_VCF_CUTOFF);
+	ledSetDuty(LED_BLUE, dacLvl);
 }
 
 

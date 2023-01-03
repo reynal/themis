@@ -7,6 +7,8 @@
 
 #include "ad5644.h"
 #include "adsr.h"
+#include "math.h"
+#include "leds.h"
 
 /* External variables --------------------------------------------------------*/
 
@@ -21,6 +23,7 @@ void vcaWriteAmplitudeToDac(){
 	if (dacLvl<0) dacLvl=0;
 	else if (dacLvl > AD5644_MAX_VAL) dacLvl = AD5644_MAX_VAL;
 	ad5644WriteAsync(dacLvl, AD5644_VCA);
+	ledSetDuty(LED_GREEN, dacLvl >> 6);
 }
 
 /* init VCA parameters */
@@ -28,5 +31,14 @@ void vcaInit(){
 
 	vcaStateMachine.amplitude = 0;
 	vcaWriteAmplitudeToDac();
+
+}
+
+double vcaAmplitudeToDB(double x){
+
+	const double beta = 1000;
+	const double alpha = 1.0/log(beta+1);
+
+	return alpha * log(beta * x + 1);
 
 }

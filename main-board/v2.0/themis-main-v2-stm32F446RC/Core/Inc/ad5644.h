@@ -21,10 +21,10 @@
  */
 typedef enum {
 
-	  AD5644_VCO_3340A_FREQ,
-	  AD5644_VCO_3340B_FREQ,
-	  AD5644_VCA,
-	  AD5644_WAVE_GEN
+	  AD5644_VCO_3340A_FREQ, // A
+	  AD5644_VCO_3340B_FREQ, // B
+	  AD5644_WAVE_GEN,		 // C
+	  AD5644_VCA			 // D
 
 } ad5644Channel_e;
 

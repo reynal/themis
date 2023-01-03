@@ -14,7 +14,7 @@
 #include "mixer.h"
 #include "vco.h"
 #include "vcf.h"
-#include "leds.h"
+//#include "leds.h"
 #include <stdbool.h>
 
 /* External variables --------------------------------------------------------*/
@@ -187,7 +187,7 @@ static void midiNoteOnHandler(uint8_t note, uint8_t vel){
 	// printf("Note On\n");
 	dbgNoteOn = true;
 
-	ledOn(LED_GREEN); // switch on LED so that we can monitor enveloppe level TODO : pwm !
+	//ledOn(LED_GREEN); // switch on LED so that we can monitor enveloppe level TODO : pwm !
 
 	// prepare state machines:
 	adsrPrepareVcaEnvelopeNoteON();
@@ -209,7 +209,7 @@ static void midiNoteOffHandler(uint8_t note){
 	// printf("Note Off\n");
 	dbgNoteOn = false;
 
-	ledOff(LED_GREEN);
+	//ledOff(LED_GREEN);
 
 	// prepare state machines:
 	adsrPrepareVcaEnvelopeNoteOFF();
@@ -229,7 +229,7 @@ void midiSetParamFromCC(MidiCCParam_e param, uint8_t value){
 
 
 	//printf("setMidiCCParam\n");
-	ledToggle(LED_RED);
+	//ledToggle(LED_RED);
 
 	switch (param){
 

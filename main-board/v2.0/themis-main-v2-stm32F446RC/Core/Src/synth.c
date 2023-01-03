@@ -23,9 +23,8 @@
 #include "vco_calibration.h"
 #include "vcf.h"
 #include "vca.h"
-#include "leds.h"
 //#include "stdio.h"
-//#include "leds.h"
+#include "leds.h"
 #include "switches.h"
 
 /* External variables --------------------------------------------------------*/
@@ -174,6 +173,10 @@ void synthDacTimerIRQ(){
 
 		// 16 to 19 are free for any additionnal task
 	}
+
+	//ad5644WriteAsync(dacTick * 600, 2);
+	//ad5644FlushBufferDma(2);
+
 
 	dacTick++;
 	if (dacTick >= ADSR_TIMER_PERIOD_FACTOR) dacTick = 0;
