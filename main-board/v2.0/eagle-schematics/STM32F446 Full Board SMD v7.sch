@@ -25911,11 +25911,11 @@ of the op amp.</text>
 A01-12 = 8 bits
 B01-04 = 14 bits
 
-- A01 à A08 : 2164D vca
-- A09 : VCF cutoff
-- A10 : VCF Q
-- A11 : PWM 3340A
-- A12 : PWM 3340B
+- A03-04 &amp; A07-12 : 2164D vca
+- A06 : VCF cutoff
+- A05 : VCF Q
+- A02 : PWM 3340A
+- A01 : PWM 3340B
 
 - B01 : CV 3340A
 - B02 : CV 3340B
@@ -28348,7 +28348,7 @@ Au moment de l'équipement de la carte :
 <net name="IN_VCFORDER" class="0">
 <segment>
 <wire x1="271.78" y1="508" x2="271.78" y2="500.38" width="0.1524" layer="91"/>
-<label x="274.32" y="508" size="1.016" layer="95"/>
+<label x="274.32" y="500.38" size="1.016" layer="95"/>
 <pinref part="R68" gate="G$1" pin="2"/>
 <pinref part="ADG453" gate="G$1" pin="IN1"/>
 <wire x1="251.46" y1="495.3" x2="259.08" y2="495.3" width="0.1524" layer="91"/>
