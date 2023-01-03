@@ -62,8 +62,11 @@ public:
 	/** if TRUE, signals the state of the button has changed (aka listener behaviour) ; must be cleared by client */
 	bool changePending=false;
 
-	/** MCP23017 port this controller is attached to */
-	MCP23017::Port port=MCP23017::PORT_A;
+	/** MCP23017 port this button is attached to */
+	MCP23017::Port port;
+
+	/** if this button is not hosted by an encoder, it has its own MIDI value */
+	int midiValue;
 
 private:
 	std::string name;

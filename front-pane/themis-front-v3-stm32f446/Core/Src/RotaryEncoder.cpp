@@ -22,6 +22,7 @@
  * @param _next pointer to the next encoder in the linked list of encoders attached to the same MCP23017 port, or NULL if this is the last button.
  */
 RotaryEncoder::RotaryEncoder(std::string _name,
+		int altFunctionCount,
 		TLC59731* _ledControler,
 		int _ledIndex,
 		MCP23017::Port _port,
@@ -39,7 +40,7 @@ RotaryEncoder::RotaryEncoder(std::string _name,
 	mask = pinA | pinB;
 
 	// TODO:
-	for (int i=0; i < MAX_ALT_FCNT_COUNT; i++) position[i]= 64;
+	for (int i=0; i < MAX_ALT_FCNT_COUNT; i++) midiValue[i]= 64;
 }
 
 RotaryEncoder::~RotaryEncoder() {}
@@ -53,7 +54,7 @@ void RotaryEncoder::encoderMoved(Rotary_Direction direction){
 	uint32_t dt = HAL_GetTick()-time;
 	if (dt < BOUNCE_DT) return;
 	time = HAL_GetTick();
-	int p = position[altFunction];
+	int p = midiValue[altFunction];
 	switch(direction){
 		case MOVE_CW :
 			if (dt > BIG_STEP_DT) p++;
@@ -68,8 +69,8 @@ void RotaryEncoder::encoderMoved(Rotary_Direction direction){
 			if (p < 0) p = 0;
 			break;
 	}
-	if (p != position[altFunction]) changePending = true;
-	position[altFunction] = p;
+	if (p != midiValue[altFunction]) changePending = true;
+	midiValue[altFunction] = p;
 	//printf("RE : name=%s pos=%d    dt=%lu       %c\n", name.c_str(), position, dt, (dt > BIG_STEP_DT ? ' ' : '*'));
 
 	//tlc.update(ledIdxLinkedToEncoder, colorTable[position[altFunction]]);
@@ -78,13 +79,10 @@ void RotaryEncoder::encoderMoved(Rotary_Direction direction){
 
 void RotaryEncoder::nextAltFunction(){
 	altFunction = (altFunction+1) % altFunctionCount;
-	// TODO changePending = true;
-
 }
 
 void RotaryEncoder::setAltFunction(int altFunctionIndex){
 	altFunction  = altFunctionIndex % altFunctionCount;
-	// TODO changePending = true;
 }
 
 /**
@@ -115,7 +113,7 @@ void RotaryEncoder::print() {
 	//std::string s = "Enc \"" + name + "\": ["+ MCP23017::printPort(port) +  MCP23017::printPin(pinA) + "," + MCP23017::printPort(port) +  MCP23017::printPin(pinB) + "]";
 	//printf("%s -> %d\n", s.c_str(), position[altFunction]);
 
-	printf("Enc '%s:%d' -> %d\n", name.c_str(), altFunction, position[altFunction]);
+	printf("Enc '%s:%d' -> %d\n", name.c_str(), altFunction, midiValue[altFunction]);
 
 
 }
@@ -127,16 +125,16 @@ void RotaryEncoder::updateLED(){
 
 	switch (altFunction){
 	case 0:
-		ledControler->update(ledIndex, 0, 0, 2*position[altFunction]);
+		ledControler->update(ledIndex, 0, 0, 2*midiValue[altFunction]);
 		break;
 	case 1:
-		ledControler->update(ledIndex, 2*position[altFunction],0,0);
+		ledControler->update(ledIndex, 2*midiValue[altFunction],0,0);
 		break;
 	case 2:
-		ledControler->update(ledIndex, 0, 2*position[altFunction],0);
+		ledControler->update(ledIndex, 0, 2*midiValue[altFunction],0);
 		break;
 	case 3:
-		ledControler->update(ledIndex, 2*position[altFunction], 0, 2*position[altFunction]);
+		ledControler->update(ledIndex, 2*midiValue[altFunction], 0, 2*midiValue[altFunction]);
 		break;
 	}
 

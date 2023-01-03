@@ -200,6 +200,7 @@ bool isLedNeedUpdate=false;
 
 // ===== north board MCP_110 (EXTI_3 / EXTI_2) =====
 
+// UNDERWAY 5 novembre : ajouter le parametre "altFunctionCount" (puis faire de meme pour les PushButtons)
 RotaryEncoder 	patternEncoder("PATTRN-ENC",&tlcNorth, 8, MCP23017::PORT_A,	MCP23017::P6, MCP23017::P5, NULL);
 RotaryEncoder 	humanEncoder("HUMAN-ENC", 	&tlcNorth, 9, MCP23017::PORT_A,	MCP23017::P3, MCP23017::P2, &patternEncoder);
 RotaryEncoder 	rangeEncoder("RANGE-ENC", 	&tlcNorth, 10,MCP23017::PORT_A,	MCP23017::P1, MCP23017::P0, &humanEncoder);

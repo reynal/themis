@@ -30,7 +30,7 @@ class RotaryEncoder {
 
 public:
 
-	RotaryEncoder(std::string name, TLC59731* ledControler, int ledIndex, MCP23017::Port _port, MCP23017::Pin pinA, MCP23017::Pin pinB, RotaryEncoder* _next);
+	RotaryEncoder(std::string name, int altFunctionCount, TLC59731* ledControler, int ledIndex, MCP23017::Port _port, MCP23017::Pin pinA, MCP23017::Pin pinB, RotaryEncoder* _next);
 
 	~RotaryEncoder();
 
@@ -66,6 +66,8 @@ public:
 	/** MCP23017 port this controller is attached to */
 	MCP23017::Port port=MCP23017::PORT_A;
 
+	int midiValue[MAX_ALT_FCNT_COUNT]; // up to 4 possible alternate functions (which is already a lot seeing that each has its own colour palette)
+
 private:
 
 	std::string name;
@@ -89,10 +91,6 @@ private:
 	// --- encoder led ---
 	TLC59731* ledControler; // device that controls this encoder LED
 	int ledIndex; // index in the daisychain of pixels
-
-public:
-
-	int position[MAX_ALT_FCNT_COUNT]; // up to 4 possible alternate functions (which is already a lot seeing that each has its own colour palette)
 
 
 };
